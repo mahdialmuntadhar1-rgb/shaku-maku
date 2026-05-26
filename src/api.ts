@@ -1,7 +1,7 @@
 // API Client for Cloudflare Workers Backend
 // Replaces Firebase with REST API calls
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8787';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://iraq-businesses-dashboard.mahdialmuntadhar1.workers.dev';
 
 interface ApiResponse<T> {
   success?: boolean;
@@ -109,8 +109,7 @@ export const authApi = {
   },
 
   googleSignIn() {
-    const apiUrl = import.meta.env.VITE_API_URL || 'https://iraq-businesses-dashboard.mahdialmuntadhar1.workers.dev';
-    window.location.href = `${apiUrl}/api/auth/google`;
+    window.location.href = `${API_BASE_URL}/api/auth/google`;
   },
 
   async logout() {
