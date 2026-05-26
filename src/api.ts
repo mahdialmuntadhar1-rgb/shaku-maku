@@ -161,6 +161,37 @@ export const authApi = {
       return { token, user };
     }
     return null;
+  },
+
+  // Forgot Password
+  async forgotPassword(email: string): Promise<any> {
+    return apiRequest('/api/auth/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
+  },
+
+  // Reset Password
+  async resetPassword(token: string, newPassword: string): Promise<any> {
+    return apiRequest('/api/auth/reset-password', {
+      method: 'POST',
+      body: JSON.stringify({ token, newPassword }),
+    });
+  },
+
+  // Handle password reset from URL params
+  handlePasswordReset(): { token: string; email: string } | null {
+    const params = new URLSearchParams(window.location.search);
+    const resetToken = params.get('reset_token');
+    const email = params.get('email');
+
+    if (resetToken && email) {
+      return {
+        token: resetToken,
+        email: decodeURIComponent(email)
+      };
+    }
+    return null;
   }
 };
 

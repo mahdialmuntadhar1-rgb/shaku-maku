@@ -13,7 +13,7 @@ interface AuthModalProps {
 }
 
 export default function AuthModal({ isOpen, onClose, currentLang, onAuthSuccess }: AuthModalProps) {
-  const [mode, setMode] = useState<'login' | 'signup'>('login');
+  const [mode, setMode] = useState<'login' | 'signup' | 'forgot' | 'reset'>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
@@ -21,14 +21,27 @@ export default function AuthModal({ isOpen, onClose, currentLang, onAuthSuccess 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [resetToken, setResetToken] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
-  // Check for OAuth error from URL when modal opens
+  // Check for OAuth error and password reset from URL when modal opens
   useEffect(() => {
     if (isOpen) {
       const params = new URLSearchParams(window.location.search);
       const authError = params.get('auth_error');
       if (authError) {
         setError(decodeURIComponent(authError));
+        // Clean URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+
+      // Check for password reset token
+      const resetData = authApi.handlePasswordReset();
+      if (resetData) {
+        setEmail(resetData.email);
+        setResetToken(resetData.token);
+        setMode('reset');
         // Clean URL
         window.history.replaceState({}, document.title, window.location.pathname);
       }
@@ -63,6 +76,20 @@ export default function AuthModal({ isOpen, onClose, currentLang, onAuthSuccess 
         } else {
           setError(result.error || 'Login failed');
         }
+      } else if (mode === 'forgot') {
+        const result = await authApi.forgotPassword(email);
+        if (result.success) {
+          setSuccess(result.message);
+          if (result.debug) {
+            console.log('Reset link (testing only):', result.debug);
+          }
+          setTimeout(() => {
+            setMode('login');
+            resetForm();
+          }, 3000);
+        } else {
+          setError(result.error || 'Failed to send reset email');
+        }
       } else {
         if (password.length < 6) {
           setError(currentLang === 'en' ? 'Password must be at least 6 characters' : currentLang === 'ku' ? 'وشەی نهێنی با لای ٦ پیت بێت' : 'كلمة المرور يجب أن تكون 6 أحرف على الأقل');
@@ -87,6 +114,69 @@ export default function AuthModal({ isOpen, onClose, currentLang, onAuthSuccess 
 
   const handleGoogle = () => {
     authApi.googleSignIn();
+  };
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+    setLoading(true);
+
+    try {
+      const result = await authApi.forgotPassword(email);
+      if (result.success) {
+        setSuccess(result.message);
+        if (result.debug) {
+          console.log('Reset link (testing only):', result.debug);
+        }
+        setTimeout(() => {
+          setMode('login');
+          resetForm();
+        }, 3000);
+      } else {
+        setError(result.error || 'Failed to send reset email');
+      }
+    } catch (err: any) {
+      setError(err.message || 'Network error. Please try again.');
+    }
+
+    setLoading(false);
+  };
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+    setLoading(true);
+
+    if (newPassword !== confirmPassword) {
+      setError('Passwords do not match');
+      setLoading(false);
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      setError('Password must be at least 6 characters');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const result = await authApi.resetPassword(resetToken, newPassword);
+      if (result.success) {
+        setSuccess(result.message);
+        setTimeout(() => {
+          setMode('login');
+          resetForm();
+        }, 2000);
+      } else {
+        setError(result.error || 'Failed to reset password');
+      }
+    } catch (err: any) {
+      setError(err.message || 'Network error. Please try again.');
+    }
+
+    setLoading(false);
   };
 
   if (!isOpen) return null;
@@ -123,13 +213,21 @@ export default function AuthModal({ isOpen, onClose, currentLang, onAuthSuccess 
               <h2 className="text-xl font-black text-white">
                 {mode === 'login'
                   ? (currentLang === 'en' ? 'Welcome Back' : currentLang === 'ku' ? 'بەخێربێیتەوە' : 'مرحباً بعودتك')
-                  : (currentLang === 'en' ? 'Create Account' : currentLang === 'ku' ? 'دروستکردنی هەژمار' : 'إنشاء حساب')
+                  : mode === 'signup'
+                    ? (currentLang === 'en' ? 'Create Account' : currentLang === 'ku' ? 'دروستکردنی هەژمار' : 'إنشاء حساب')
+                    : mode === 'forgot'
+                      ? (currentLang === 'en' ? 'Forgot Password' : currentLang === 'ku' ? 'بیرچوونەوەی وشەی نهێنی' : 'نسيت كلمة المرور')
+                      : (currentLang === 'en' ? 'Reset Password' : currentLang === 'ku' ? 'دابڕستاندنی وشەی نهێنی' : 'إعادة تعيين كلمة المرور')
                 }
               </h2>
               <p className="text-xs text-zinc-400">
                 {mode === 'login'
                   ? (currentLang === 'en' ? 'Sign in to post and interact' : currentLang === 'ku' ? 'بچۆ ژوورەوە بۆ بڵاوکردنەوە' : 'سجل دخولك للنشر والتفاعل')
-                  : (currentLang === 'en' ? 'Join the Iraq Business community' : currentLang === 'ku' ? 'بەشداربوون لە کۆمەڵگا' : 'انضم إلى مجتمع الأعمال العراقي')
+                  : mode === 'signup'
+                    ? (currentLang === 'en' ? 'Join the Iraq Business community' : currentLang === 'ku' ? 'بەشداربوون لە کۆمەڵگا' : 'انضم إلى مجتمع الأعمال العراقي')
+                    : mode === 'forgot'
+                      ? (currentLang === 'en' ? 'Enter your email to receive reset link' : currentLang === 'ku' ? 'ئیمەیڵ بنوسە بۆ بەدەست هێنانی بەستەر' : 'أدخل بريدك الإلكتروني لتلقي رابط إعادة التعيين')
+                      : (currentLang === 'en' ? 'Enter your new password' : currentLang === 'ku' ? 'وشەی نهەنی نوێ بنوسە' : 'أدخل كلمة المرور الجديدة')
                 }
               </p>
             </div>
@@ -200,31 +298,33 @@ export default function AuthModal({ isOpen, onClose, currentLang, onAuthSuccess 
                 </div>
               </div>
 
-              <div className="space-y-1">
-                <label className="text-zinc-500 font-bold text-[10px] uppercase block">
-                  {currentLang === 'en' ? 'Password' : currentLang === 'ku' ? 'وشەی نهێنی' : 'كلمة المرور'}
-                </label>
-                <div className="relative">
-                  <Lock className="w-3.5 h-3.5 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2" />
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder={currentLang === 'en' ? 'Min 6 characters' : currentLang === 'ku' ? 'لای ٦ پیت' : '6 أحرف على الأقل'}
-                    required
-                    minLength={6}
-                    className="w-full bg-black/40 border border-white/15 text-white p-3 pl-10 pr-10 rounded-xl focus:outline-none focus:border-blue-400 placeholder-zinc-600"
-                    dir="ltr"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition cursor-pointer"
-                  >
-                    {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                  </button>
+              {mode !== 'forgot' && (
+                <div className="space-y-1">
+                  <label className="text-zinc-500 font-bold text-[10px] uppercase block">
+                    {currentLang === 'en' ? 'Password' : currentLang === 'ku' ? 'وشەی نهێنی' : 'كلمة المرور'}
+                  </label>
+                  <div className="relative">
+                    <Lock className="w-3.5 h-3.5 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder={currentLang === 'en' ? 'Min 6 characters' : currentLang === 'ku' ? 'لای ٦ پیت' : '6 أحرف على الأقل'}
+                      required={mode !== 'forgot'}
+                      minLength={6}
+                      className="w-full bg-black/40 border border-white/15 text-white p-3 pl-10 pr-10 rounded-xl focus:outline-none focus:border-blue-400 placeholder-zinc-600"
+                      dir="ltr"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition cursor-pointer"
+                    >
+                      {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
 
               <motion.button
                 whileHover={{ scale: 1.01 }}
@@ -237,7 +337,9 @@ export default function AuthModal({ isOpen, onClose, currentLang, onAuthSuccess 
                   ? (currentLang === 'en' ? 'Please wait...' : currentLang === 'ku' ? 'تکایە چاوەڕوان بە...' : 'يرجى الانتظار...')
                   : mode === 'login'
                     ? (currentLang === 'en' ? 'Sign In' : currentLang === 'ku' ? 'چوونەژوورەوە' : 'تسجيل الدخول')
-                    : (currentLang === 'en' ? 'Create Account' : currentLang === 'ku' ? 'دروستکردنی هەژمار' : 'إنشاء حساب')
+                    : mode === 'forgot'
+                      ? (currentLang === 'en' ? 'Send Reset Link' : currentLang === 'ku' ? 'بەستەرەک بنێرە' : 'إرسال رابط إعادة التعيين')
+                      : (currentLang === 'en' ? 'Create Account' : currentLang === 'ku' ? 'دروستکردنی هەژمار' : 'إنشاء حساب')
                 }
               </motion.button>
             </form>
@@ -245,13 +347,31 @@ export default function AuthModal({ isOpen, onClose, currentLang, onAuthSuccess 
             {/* Toggle mode */}
             <div className="text-center text-xs text-zinc-500">
               {mode === 'login' ? (
-                <span>
-                  {currentLang === 'en' ? "Don't have an account?" : currentLang === 'ku' ? 'هەژمارت نییە؟' : 'ليس لديك حساب؟'}{' '}
+                <div className="space-y-2">
                   <button
-                    onClick={() => { setMode('signup'); resetForm(); }}
+                    onClick={() => { setMode('forgot'); resetForm(); }}
+                    className="text-blue-400 hover:text-blue-300 font-bold cursor-pointer block"
+                  >
+                    {currentLang === 'en' ? 'Forgot password?' : currentLang === 'ku' ? 'وشەی نهێنیت لەبیرچووە؟' : 'نسيت كلمة المرور؟'}
+                  </button>
+                  <span>
+                    {currentLang === 'en' ? "Don't have an account?" : currentLang === 'ku' ? 'هەژمارت نییە؟' : 'ليس لديك حساب؟'}{' '}
+                    <button
+                      onClick={() => { setMode('signup'); resetForm(); }}
+                      className="text-blue-400 hover:text-blue-300 font-bold cursor-pointer"
+                    >
+                      {currentLang === 'en' ? 'Sign Up' : currentLang === 'ku' ? 'تۆمارکردن' : 'التسجيل'}
+                    </button>
+                  </span>
+                </div>
+              ) : mode === 'forgot' ? (
+                <span>
+                  {currentLang === 'en' ? 'Remember your password?' : currentLang === 'ku' ? 'وشەی نهێنیت لەبیرچووە؟' : 'تذكرت كلمة المرور؟'}{' '}
+                  <button
+                    onClick={() => { setMode('login'); resetForm(); }}
                     className="text-blue-400 hover:text-blue-300 font-bold cursor-pointer"
                   >
-                    {currentLang === 'en' ? 'Sign Up' : currentLang === 'ku' ? 'تۆمارکردن' : 'التسجيل'}
+                    {currentLang === 'en' ? 'Back to login' : currentLang === 'ku' ? 'گەڕانەوە بۆ چوونەژوورەوە' : 'العودة إلى تسجيل الدخول'}
                   </button>
                 </span>
               ) : (
