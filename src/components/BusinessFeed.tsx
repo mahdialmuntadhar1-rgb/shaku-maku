@@ -200,6 +200,16 @@ export default function BusinessFeed({
                           </div>
                         </div>
 
+                        {/* Governorate & Category Badges */}
+                        <div className="flex items-center gap-1.5 mb-2">
+                          <span className="text-[10px] font-bold bg-blue-500/15 text-blue-400 px-1.5 py-0.5 rounded-md border border-blue-500/20">
+                            {biz.governorate}
+                          </span>
+                          <span className="text-[10px] font-bold bg-purple-500/15 text-purple-400 px-1.5 py-0.5 rounded-md border border-purple-500/20">
+                            {biz.category}
+                          </span>
+                        </div>
+
                         {/* Location Subtext */}
                         <div className="flex items-center gap-1 text-[11px] text-zinc-400 mb-2">
                           <MapPin className="w-3.5 h-3.5 text-rose-500" />

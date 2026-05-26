@@ -7,8 +7,7 @@ import {
 } from 'lucide-react';
 import { SocialPost, Language, GovernorateCode } from '../types';
 import { TRANSLATIONS, CATEGORIES } from '../data';
-import { setDoc, doc, updateDoc } from 'firebase/firestore';
-import { db, handleFirestoreError, OperationType } from '../firebase';
+import { postsApi } from '../api';
 
 interface SocialFeedProps {
   currentLang: Language;
@@ -136,11 +135,11 @@ export default function SocialFeed({
             en: newPromo.trim()
           }
         : undefined,
-      authorUid: user?.uid || 'anonymous'
+      authorUid: user?.id || 'anonymous'
     };
 
     try {
-      await setDoc(doc(db, 'posts', newPostItem.id), newPostItem);
+      await postsApi.create(newPostItem);
 
       // Reset fields
       setNewBizName('');
@@ -150,9 +149,14 @@ export default function SocialFeed({
       setUploadedImage(null);
       setUploadedVideo(null);
       setUploadedFile(null);
+      
+      // Refresh posts
+      const data = await postsApi.list();
+      if (data && Array.isArray(data)) {
+        setPosts(data);
+      }
     } catch (err) {
-      console.error("Error creating post in Firestore: ", err);
-      handleFirestoreError(err, OperationType.CREATE, `posts/${newPostItem.id}`);
+      console.error("Error creating post: ", err);
     }
   };
 
@@ -160,14 +164,16 @@ export default function SocialFeed({
     const post = posts.find(p => p.id === postId);
     if (!post) return;
     const liked = !post.likedByUser;
-    const payload = {
-      likedByUser: liked,
-      likes: liked ? post.likes + 1 : post.likes - 1
-    };
     try {
-      await updateDoc(doc(db, 'posts', postId), payload);
+      await postsApi.like(postId);
+      // Optimistic update
+      setPosts(prev => prev.map(p => 
+        p.id === postId 
+          ? { ...p, likedByUser: liked, likes: liked ? p.likes + 1 : p.likes - 1 }
+          : p
+      ));
     } catch (err) {
-      console.error("Error liking post in Firestore: ", err);
+      console.error("Error liking post: ", err);
     }
   };
 
@@ -175,14 +181,16 @@ export default function SocialFeed({
     const post = posts.find(p => p.id === postId);
     if (!post) return;
     const saved = !post.savedByUser;
-    const payload = {
-      savedByUser: saved,
-      shares: saved ? post.shares + 1 : post.shares
-    };
     try {
-      await updateDoc(doc(db, 'posts', postId), payload);
+      await postsApi.update(postId, { savedByUser: saved, shares: saved ? post.shares + 1 : post.shares });
+      // Optimistic update
+      setPosts(prev => prev.map(p => 
+        p.id === postId 
+          ? { ...p, savedByUser: saved, shares: saved ? p.shares + 1 : p.shares }
+          : p
+      ));
     } catch (err) {
-      console.error("Error saving post in Firestore: ", err);
+      console.error("Error saving post: ", err);
     }
   };
 
@@ -208,10 +216,15 @@ export default function SocialFeed({
     };
 
     try {
-      await updateDoc(doc(db, 'posts', postId), payload);
+      await postsApi.addComment(postId, { text: txt.trim(), username: user?.displayName || 'iraqi_explorer_99' });
       setCommentInputs(prev => ({ ...prev, [postId]: '' }));
+      // Refresh posts to get updated comments
+      const data = await postsApi.list();
+      if (data && Array.isArray(data)) {
+        setPosts(data);
+      }
     } catch (err) {
-      console.error("Error adding post comment in Firestore: ", err);
+      console.error("Error adding post comment: ", err);
     }
   };
 

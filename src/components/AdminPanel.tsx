@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { 
   ShieldCheck, Lock, LogOut, CheckCircle2, Trash2, 
-  Sparkles, Layers, Eye, Users, FileText, BarChart3, Star, AlertCircle
+  Sparkles, Layers, Eye, Users, FileText, BarChart3, Star, AlertCircle,
+  MapPin, Tag, TrendingUp, MessageCircle, Heart, Share2, Save
 } from 'lucide-react';
-import { Language, GovernorateCode, Business, SocialPost } from '../types';
+import { Language, Business, SocialPost } from '../types';
 import { CATEGORIES } from '../data';
+import { adminApi, businessesApi, postsApi } from '../api';
 
 interface AdminPanelProps {
   currentLang: Language;
@@ -13,6 +15,16 @@ interface AdminPanelProps {
   setBusinesses: React.Dispatch<React.SetStateAction<Business[]>>;
   posts: SocialPost[];
   setPosts: React.Dispatch<React.SetStateAction<SocialPost[]>>;
+}
+
+interface Stats {
+  total_businesses: number;
+  active_businesses: number;
+  total_posts: number;
+  active_posts: number;
+  total_comments: number;
+  total_imports: number;
+  total_likes: number;
 }
 
 export default function AdminPanel({
@@ -23,27 +35,63 @@ export default function AdminPanel({
   setPosts
 }: AdminPanelProps) {
   // Login auth state
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [username, setUsername] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState(adminApi.isLoggedIn());
+  const [email, setEmail] = useState('mahdialmuntadhar1@gmail.com');
   const [password, setPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
+  const [loading, setLoading] = useState(false);
 
   // Admin section navigation tab
-  const [adminTab, setAdminTab] = useState<'stats' | 'businesses' | 'posts'>('stats');
+  const [adminTab, setAdminTab] = useState<'stats' | 'businesses' | 'posts' | 'comments'>('stats');
+  const [stats, setStats] = useState<Stats | null>(null);
+  const [comments, setComments] = useState<any[]>([]);
+
+  // Fetch stats on login
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchStats();
+    }
+  }, [isAuthenticated]);
+
+  const fetchStats = async () => {
+    try {
+      const data = await adminApi.getStats();
+      if (data) setStats(data);
+    } catch (err) {
+      console.error('Failed to fetch stats:', err);
+    }
+  };
+
+  const fetchComments = async () => {
+    try {
+      const data = await adminApi.getComments();
+      if (data && Array.isArray(data)) setComments(data);
+    } catch (err) {
+      console.error('Failed to fetch comments:', err);
+    }
+  };
 
   // Handle Login Authentication
-  const handleLoginSubmit = (e: React.FormEvent) => {
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (username.trim() === 'admin' && password === 'admin123') {
-      setIsAuthenticated(true);
-      setErrorMsg('');
-    } else {
-      setErrorMsg(
-        currentLang === 'en' 
-          ? 'Invalid Credentials! Use username "admin" & password "admin123" to authenticate.' 
-          : 'بيانات غير صحيحة! يرجى استخدام اسم "admin" وكلمة مرور "admin123" للدخول.'
-      );
+    setLoading(true);
+    try {
+      const result = await adminApi.login({ email, password });
+      if (result.success) {
+        setIsAuthenticated(true);
+        setErrorMsg('');
+      } else {
+        setErrorMsg(result.error || 'Login failed');
+      }
+    } catch (err: any) {
+      setErrorMsg(err.message || 'Network error');
     }
+    setLoading(false);
+  };
+
+  const handleLogout = () => {
+    adminApi.logout();
+    setIsAuthenticated(false);
   };
 
   // Admin Actions: Toggle verification badge of high-street brands
@@ -75,16 +123,26 @@ export default function AdminPanel({
   };
 
   // Admin Actions: Delete Business Listing completely
-  const handleDeleteBusiness = (bizId: string) => {
-    if (window.confirm('Are you absolute sure you want to remove this local business listing from Saku Maku?')) {
-      setBusinesses(prev => prev.filter(b => b.id !== bizId));
+  const handleDeleteBusiness = async (bizId: string) => {
+    if (window.confirm('Are you absolute sure you want to remove this business?')) {
+      try {
+        await businessesApi.delete(bizId);
+        setBusinesses(prev => prev.filter(b => b.id !== bizId));
+      } catch (err) {
+        console.error('Failed to delete business:', err);
+      }
     }
   };
 
   // Admin Actions: Delete social user post
-  const handleDeletePost = (postId: string) => {
-    if (window.confirm('Delete this user post from the live Social Pulse feed stream immediately?')) {
-      setPosts(prev => prev.filter(p => p.id !== postId));
+  const handleDeletePost = async (postId: string) => {
+    if (window.confirm('Delete this post from the feed?')) {
+      try {
+        await postsApi.delete(postId);
+        setPosts(prev => prev.filter(p => p.id !== postId));
+      } catch (err) {
+        console.error('Failed to delete post:', err);
+      }
     }
   };
 
@@ -150,12 +208,12 @@ export default function AdminPanel({
 
           <form onSubmit={handleLoginSubmit} className="space-y-4 text-left">
             <div className="space-y-1">
-              <label className="text-[10px] uppercase font-black text-white/55 block">Admin Username</label>
+              <label className="text-[10px] uppercase font-black text-white/55 block">Admin Email</label>
               <input
-                type="text"
-                placeholder="e.g. admin"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                type="email"
+                placeholder="mahdialmuntadhar1@gmail.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full bg-black/40 border border-white/15 text-xs px-4 py-3 rounded-xl text-white placeholder-zinc-650 focus:outline-none focus:border-blue-400 transition"
                 required
               />
@@ -261,6 +319,21 @@ export default function AdminPanel({
           <FileText className="w-4 h-4" />
           <span>Moderate Social Feeds ({totalFeeds})</span>
         </button>
+
+        <button
+          onClick={() => {
+            setAdminTab('comments');
+            fetchComments();
+          }}
+          className={`px-4.5 py-2.5 rounded-xl border text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+            adminTab === 'comments'
+              ? 'bg-orange-550 bg-orange-500/15 border-orange-500 text-orange-400'
+              : 'border-transparent text-zinc-400 hover:text-white'
+          }`}
+        >
+          <MessageCircle className="w-4 h-4" />
+          <span>Comments</span>
+        </button>
       </div>
 
       {/* Admin Body Content Switcher */}
@@ -346,7 +419,7 @@ export default function AdminPanel({
             {/* Live Security logs simulated block */}
             <div className="p-5 bg-black/40 border border-white/5 rounded-2xl font-mono text-[11px] text-zinc-400 space-y-2">
               <span className="text-zinc-500 block text-[10px] uppercase font-black font-sans leading-none pb-1 border-b border-white/5">System Audit Log</span>
-              <p className="text-green-400">[SYSTEM] • Saku Maku Secure Gate unlocked by {username} at {new Date().toLocaleTimeString()}</p>
+              <p className="text-green-400">[SYSTEM] • Saku Maku Secure Gate unlocked by {email} at {new Date().toLocaleTimeString()}</p>
               <p>[ROUTING] • Port 3000 mapped proxy active with server process</p>
               <p>[DATABASE] • Bound local reactive client storage state securely on mount</p>
               <p className="text-cyan-400">[MEDIA] • Render engines verified for Photos, MP4 Videos, and PDF Document Menu upload modules</p>
@@ -495,6 +568,48 @@ export default function AdminPanel({
                   </div>
                 );
               })}
+            </div>
+          </div>
+        )}
+
+        {adminTab === 'comments' && (
+          <div className="bg-white/5 border border-white/10 rounded-3xl p-5 space-y-4">
+            <div className="flex items-center justify-between border-b border-white/5 pb-2">
+              <h3 className="text-sm font-black text-white">Comments Moderation</h3>
+              <span className="text-[10px] text-zinc-400">{comments.length} Comments</span>
+            </div>
+            <div className="space-y-3">
+              {comments.length === 0 && (
+                <div className="text-center py-8 text-zinc-500 text-xs">
+                  <MessageCircle className="w-8 h-8 mx-auto mb-2 opacity-30" />
+                  <p>No comments to moderate yet.</p>
+                </div>
+              )}
+              {comments.map((comment) => (
+                <div key={comment.id} className="p-4 bg-black/30 border border-white/5 rounded-xl flex items-start justify-between gap-3">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-xs font-bold text-white">{comment.username || 'Anonymous'}</span>
+                      <span className="text-[10px] text-zinc-500">{new Date(comment.created_at).toLocaleDateString()}</span>
+                    </div>
+                    <p className="text-xs text-zinc-300 leading-relaxed">{comment.text}</p>
+                    <span className="text-[10px] text-zinc-500 mt-1 block">On post: {comment.post_title || comment.post_id}</span>
+                  </div>
+                  <button
+                    onClick={async () => {
+                      try {
+                        await adminApi.deleteComment(comment.id);
+                        setComments(prev => prev.filter(c => c.id !== comment.id));
+                      } catch (err) {
+                        console.error('Failed to delete comment:', err);
+                      }
+                    }}
+                    className="px-2.5 py-1.5 text-[9px] bg-red-950/20 hover:bg-red-900/40 border border-red-500/20 hover:border-red-500 text-red-300 hover:text-white rounded-lg transition cursor-pointer font-bold shrink-0"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              ))}
             </div>
           </div>
         )}

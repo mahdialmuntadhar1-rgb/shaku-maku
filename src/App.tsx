@@ -6,9 +6,8 @@ import {
 } from 'lucide-react';
 import { Language, GovernorateCode, Business, SocialPost } from './types';
 import { INITIAL_BUSINESSES, TRANSLATIONS, CATEGORIES, INITIAL_POSTS } from './data';
-import { auth, db, signInWithGoogle } from './firebase';
-import { onAuthStateChanged, signOut, User } from 'firebase/auth';
-import { collection, onSnapshot, setDoc, doc, updateDoc } from 'firebase/firestore';
+import { authApi, businessesApi, postsApi } from './api';
+import type { AuthResponse } from './api';
 
 // Saku Maku Modular Components
 import Header from './components/Header';
@@ -20,14 +19,16 @@ import InteractiveMap from './components/InteractiveMap';
 import AddBusinessForm from './components/AddBusinessForm';
 import AboutSakuMaku from './components/AboutSakuMaku';
 import AdminPanel from './components/AdminPanel';
+import AuthModal from './components/AuthModal';
 
 export default function App() {
   const [currentLang, setCurrentLang] = useState<Language>('ar'); // Default: Arabic
   const [selectedGov, setSelectedGov] = useState<GovernorateCode>('all'); // Default: All Iraq
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   
-  // Real-time Authenticated Firebase User state
-  const [user, setUser] = useState<User | null>(null);
+  // Authenticated User state
+  const [user, setUser] = useState<AuthResponse['user'] | null>(null);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
 
   // Saku Maku core Reactive businesses database
   const [businesses, setBusinesses] = useState<Business[]>([]);
@@ -49,98 +50,61 @@ export default function App() {
   const t = TRANSLATIONS[currentLang];
   const isRtl = currentLang === 'ar' || currentLang === 'ku';
 
-  // Real-time Auth Listening and User creation mapping inside Firestore
+  // Auth state initialization + OAuth callback handler
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      setUser(firebaseUser);
-      if (firebaseUser) {
-        const userRef = doc(db, 'users', firebaseUser.uid);
-        setDoc(userRef, {
-          uid: firebaseUser.uid,
-          displayName: firebaseUser.displayName || 'Authorized User',
-          photoURL: firebaseUser.photoURL || '',
-          email: firebaseUser.email || '',
-          createdAt: new Date().toISOString()
-        }, { merge: true }).catch(err => console.error("Error setting user in Firestore: ", err));
-      }
-    });
-    return () => unsubscribe();
+    // Check for OAuth callback
+    const oauthResult = authApi.handleOAuthCallback();
+    if (oauthResult) {
+      setUser(oauthResult.user);
+      return;
+    }
+    // Check existing session
+    const token = authApi.getToken();
+    const savedUser = authApi.getUser();
+    if (token && savedUser) {
+      setUser(savedUser);
+    }
   }, []);
 
-  // Real-time Firestore synchronization & Auto-seeding for businesses
+  // Fetch businesses from API
   useEffect(() => {
-    const ref = collection(db, 'businesses');
-    const unsubscribe = onSnapshot(ref, (snap) => {
-      if (snap.empty) {
-        // Fallback to local businesses immediately so users never see a blank catalog
+    const fetchBusinesses = async () => {
+      try {
+        const data = await businessesApi.list();
+        if (data && Array.isArray(data) && data.length > 0) {
+          setBusinesses(data);
+        } else {
+          // Fallback to local businesses if API returns empty
+          setBusinesses(INITIAL_BUSINESSES);
+        }
+      } catch (error) {
+        console.error('Error fetching businesses:', error);
+        // Fallback to local businesses on error
         setBusinesses(INITIAL_BUSINESSES);
-
-        // ONLY attempt database seeding if current user is signed-in as administrative operator
-        const isAdminUser = user && user.email === 'safaribosafar@gmail.com';
-        if (isAdminUser) {
-          INITIAL_BUSINESSES.forEach(async (biz) => {
-            try {
-              await setDoc(doc(db, 'businesses', biz.id), {
-                ...biz,
-                ownerUid: 'system-seed'
-              });
-            } catch (e) {
-              console.error("Fails seeding biz: ", e);
-            }
-          });
-        }
-      } else {
-        const list: Business[] = [];
-        snap.forEach((doc) => {
-          list.push(doc.data() as Business);
-        });
-        setBusinesses(list);
       }
-    }, (error) => {
-      console.error("Firestore businesses synced error: ", error);
-      // Fallback on sync/credential error
-      setBusinesses(INITIAL_BUSINESSES);
-    });
-    return () => unsubscribe();
-  }, [user]);
+    };
+    fetchBusinesses();
+  }, []);
 
-  // Real-time Firestore synchronization & Auto-seeding for posts
+  // Fetch posts from API
   useEffect(() => {
-    const ref = collection(db, 'posts');
-    const unsubscribe = onSnapshot(ref, (snap) => {
-      if (snap.empty) {
-        // Fallback to local posts immediately so users never see a blank feed
-        setPosts(INITIAL_POSTS);
-
-        // ONLY attempt database seeding if current user is signed-in as administrative operator
-        const isAdminUser = user && user.email === 'safaribosafar@gmail.com';
-        if (isAdminUser) {
-          INITIAL_POSTS.forEach(async (post) => {
-            try {
-              await setDoc(doc(db, 'posts', post.id), {
-                ...post,
-                authorUid: 'system-seed'
-              });
-            } catch (e) {
-              console.error("Fails seeding post: ", e);
-            }
-          });
+    const fetchPosts = async () => {
+      try {
+        const data = await postsApi.list();
+        if (data && Array.isArray(data) && data.length > 0) {
+          setPosts(data);
+        } else {
+          // Fallback to local posts if API returns empty
+          setPosts(INITIAL_POSTS);
         }
-      } else {
-        const list: SocialPost[] = [];
-        snap.forEach((doc) => {
-          list.push(doc.data() as SocialPost);
-        });
-        list.sort((a, b) => b.id.localeCompare(a.id));
-        setPosts(list);
+      } catch (error) {
+        console.error('Error fetching posts:', error);
+        // Fallback to local posts on error
+        setPosts(INITIAL_POSTS);
       }
-    }, (error) => {
-      console.error("Firestore posts synced error: ", error);
-      // Fallback on sync/credential error
-      setPosts(INITIAL_POSTS);
-    });
-    return () => unsubscribe();
-  }, [user]);
+    };
+    fetchPosts();
+  }, []);
 
   // Filter business array based on search input + governorate matches + category
   const filteredBusinesses = useMemo(() => {
@@ -161,39 +125,43 @@ export default function App() {
     });
   }, [businesses, selectedGov, searchQuery, currentLang]);
 
-  // Handle Likes state toggle in Firestore
+  // Handle Likes state toggle
   const handleToggleLike = async (bizId: string) => {
     const target = businesses.find(b => b.id === bizId);
     if (!target) return;
     const liked = !target.likedByUser;
-    const payload = {
-      likedByUser: liked,
-      likes: liked ? target.likes + 1 : target.likes - 1
-    };
     try {
-      await updateDoc(doc(db, 'businesses', bizId), payload);
+      await businessesApi.like(bizId);
+      // Optimistic update
+      setBusinesses(prev => prev.map(b => 
+        b.id === bizId 
+          ? { ...b, likedByUser: liked, likes: liked ? b.likes + 1 : b.likes - 1 }
+          : b
+      ));
     } catch (err) {
       console.error("Error liking business: ", err);
     }
   };
 
-  // Handle Saves state toggle in Firestore
+  // Handle Saves state toggle
   const handleToggleSave = async (bizId: string) => {
     const target = businesses.find(b => b.id === bizId);
     if (!target) return;
     const saved = !target.savedByUser;
-    const payload = {
-      savedByUser: saved,
-      saves: saved ? target.saves + 1 : target.saves - 1
-    };
     try {
-      await updateDoc(doc(db, 'businesses', bizId), payload);
+      await businessesApi.save(bizId);
+      // Optimistic update
+      setBusinesses(prev => prev.map(b => 
+        b.id === bizId 
+          ? { ...b, savedByUser: saved, saves: saved ? b.saves + 1 : b.saves - 1 }
+          : b
+      ));
     } catch (err) {
       console.error("Error saving business: ", err);
     }
   };
 
-  // Callback to add a new customized business to Firestore from owners claim form
+  // Callback to add a new customized business from owners claim form
   const handleAddLiveBusiness = async (newBiz: Omit<Business, 'rating' | 'reviewsCount' | 'likes' | 'saves'>) => {
     const fullBiz: Business = {
       ...newBiz,
@@ -203,12 +171,17 @@ export default function App() {
       saves: 8,
       likedByUser: false,
       savedByUser: false,
-      ownerUid: user?.uid || 'anonymous'
+      ownerUid: user?.id || 'anonymous'
     };
     try {
-      await setDoc(doc(db, 'businesses', fullBiz.id), fullBiz);
+      await businessesApi.create(fullBiz);
+      // Refresh businesses list
+      const data = await businessesApi.list();
+      if (data && Array.isArray(data)) {
+        setBusinesses(data);
+      }
     } catch (err) {
-      console.error("Error adding live business in Firestore: ", err);
+      console.error("Error adding live business: ", err);
     }
   };
 
@@ -274,8 +247,11 @@ export default function App() {
           setActiveTab('discover');
         }}
         user={user}
-        onSignIn={signInWithGoogle}
-        onSignOut={() => signOut(auth)}
+        onSignIn={() => setAuthModalOpen(true)}
+        onSignOut={() => {
+          authApi.logout();
+          setUser(null);
+        }}
       />
 
       <main className="flex-grow max-w-7xl w-full mx-auto px-4 py-6">
@@ -485,7 +461,7 @@ export default function App() {
                   posts={posts}
                   setPosts={setPosts}
                   user={user}
-                  onSignIn={signInWithGoogle}
+                  onSignIn={() => setAuthModalOpen(true)}
                 />
               </motion.div>
             )}
@@ -519,7 +495,7 @@ export default function App() {
                   currentLang={currentLang}
                   onAddBusiness={handleAddLiveBusiness}
                   user={user}
-                  onSignIn={signInWithGoogle}
+                  onSignIn={() => setAuthModalOpen(true)}
                 />
               </motion.div>
             )}
@@ -749,6 +725,14 @@ export default function App() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        currentLang={currentLang}
+        onAuthSuccess={(userData) => setUser(userData)}
+      />
 
     </div>
   );
