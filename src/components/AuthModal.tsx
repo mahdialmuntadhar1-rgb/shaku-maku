@@ -1,394 +1,582 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Mail, Lock, User, Chrome, Eye, EyeOff, AlertCircle, CheckCircle2 } from 'lucide-react';
-import { Language } from '../types';
-import { TRANSLATIONS } from '../data';
-import { authApi } from '../api';
+import { 
+  X, Lock, Mail, User, Shield, Sparkles, AlertCircle, Key, 
+  Eye, EyeOff, CheckCircle2, Award, ArrowRight, ArrowLeft
+} from 'lucide-react';
+import { Language, UserProfile } from '../types';
+import { auth, db, signInWithGoogle } from '../firebase';
+import { 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword,
+  updateProfile
+} from 'firebase/auth';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
   currentLang: Language;
-  onAuthSuccess: (user: any) => void;
+  onCustomEmailLogin: (email: string) => void;
+  onAuthSuccess?: (userProfile: UserProfile) => void;
 }
 
-export default function AuthModal({ isOpen, onClose, currentLang, onAuthSuccess }: AuthModalProps) {
-  const [mode, setMode] = useState<'login' | 'signup' | 'forgot' | 'reset'>('login');
+export default function AuthModal({
+  isOpen,
+  onClose,
+  currentLang,
+  onCustomEmailLogin,
+  onAuthSuccess
+}: AuthModalProps) {
+  const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
+  const [role, setRole] = useState<'user' | 'owner'>('user');
+  
+  const [errorMsg, setErrorMsg] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const [resetToken, setResetToken] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-
-  // Check for OAuth error and password reset from URL when modal opens
-  useEffect(() => {
-    if (isOpen) {
-      const params = new URLSearchParams(window.location.search);
-      const authError = params.get('auth_error');
-      if (authError) {
-        setError(decodeURIComponent(authError));
-        // Clean URL
-        window.history.replaceState({}, document.title, window.location.pathname);
-      }
-
-      // Check for password reset token
-      const resetData = authApi.handlePasswordReset();
-      if (resetData) {
-        setEmail(resetData.email);
-        setResetToken(resetData.token);
-        setMode('reset');
-        // Clean URL
-        window.history.replaceState({}, document.title, window.location.pathname);
-      }
-    }
-  }, [isOpen]);
-
-  const t = TRANSLATIONS[currentLang];
-  const isRtl = currentLang === 'ar' || currentLang === 'ku';
-
-  const resetForm = () => {
-    setEmail('');
-    setPassword('');
-    setDisplayName('');
-    setError('');
-    setSuccess('');
-    setShowPassword(false);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setSuccess('');
-    setLoading(true);
-
-    try {
-      if (mode === 'login') {
-        const result = await authApi.login({ email, password });
-        if (result.success) {
-          onAuthSuccess(result.user);
-          setSuccess(currentLang === 'en' ? 'Welcome back!' : currentLang === 'ku' ? 'بەخێربێیتەوە!' : 'مرحباً بعودتك!');
-          setTimeout(() => { onClose(); resetForm(); }, 1000);
-        } else {
-          setError(result.error || 'Login failed');
-        }
-      } else if (mode === 'forgot') {
-        const result = await authApi.forgotPassword(email);
-        if (result.success) {
-          setSuccess(result.message);
-          if (result.debug) {
-            console.log('Reset link (testing only):', result.debug);
-          }
-          setTimeout(() => {
-            setMode('login');
-            resetForm();
-          }, 3000);
-        } else {
-          setError(result.error || 'Failed to send reset email');
-        }
-      } else {
-        if (password.length < 6) {
-          setError(currentLang === 'en' ? 'Password must be at least 6 characters' : currentLang === 'ku' ? 'وشەی نهێنی با لای ٦ پیت بێت' : 'كلمة المرور يجب أن تكون 6 أحرف على الأقل');
-          setLoading(false);
-          return;
-        }
-        const result = await authApi.signup({ email, password, displayName: displayName || email.split('@')[0] });
-        if (result.success) {
-          onAuthSuccess(result.user);
-          setSuccess(currentLang === 'en' ? 'Account created!' : currentLang === 'ku' ? 'هەژمار دروستکرا!' : 'تم إنشاء الحساب!');
-          setTimeout(() => { onClose(); resetForm(); }, 1000);
-        } else {
-          setError(result.error || 'Signup failed');
-        }
-      }
-    } catch (err: any) {
-      setError(err.message || 'Network error. Please try again.');
-    }
-
-    setLoading(false);
-  };
-
-  const handleGoogle = () => {
-    authApi.googleSignIn();
-  };
-
-  const handleForgotPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setSuccess('');
-    setLoading(true);
-
-    try {
-      const result = await authApi.forgotPassword(email);
-      if (result.success) {
-        setSuccess(result.message);
-        if (result.debug) {
-          console.log('Reset link (testing only):', result.debug);
-        }
-        setTimeout(() => {
-          setMode('login');
-          resetForm();
-        }, 3000);
-      } else {
-        setError(result.error || 'Failed to send reset email');
-      }
-    } catch (err: any) {
-      setError(err.message || 'Network error. Please try again.');
-    }
-
-    setLoading(false);
-  };
-
-  const handleResetPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setSuccess('');
-    setLoading(true);
-
-    if (newPassword !== confirmPassword) {
-      setError('Passwords do not match');
-      setLoading(false);
-      return;
-    }
-
-    if (newPassword.length < 6) {
-      setError('Password must be at least 6 characters');
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const result = await authApi.resetPassword(resetToken, newPassword);
-      if (result.success) {
-        setSuccess(result.message);
-        setTimeout(() => {
-          setMode('login');
-          resetForm();
-        }, 2000);
-      } else {
-        setError(result.error || 'Failed to reset password');
-      }
-    } catch (err: any) {
-      setError(err.message || 'Network error. Please try again.');
-    }
-
-    setLoading(false);
-  };
+  const [showPassword, setShowPassword] = useState(false);
 
   if (!isOpen) return null;
 
+  const isRtl = currentLang === 'ar' || currentLang === 'ku';
+
+  // Translation Strings
+  const L = {
+    en: {
+      title_login: "Access Saku Maku Portal",
+      title_signup: "Create Saku Maku Account",
+      desc_login: "Log in with your email or social credentials to personalize listings, post updates, and chat with merchants.",
+      desc_signup: "Join Iraq's fastest-growing hyper-local business discovery directory and community index.",
+      email: "Email Address",
+      email_placeholder: "e.g., ali@gmail.com",
+      pwd: "Password",
+      pwd_placeholder: "Minimum 6 characters",
+      name: "Full Name",
+      name_placeholder: "e.g., Ali Al-Baghdadi",
+      role_label: "Register Account As",
+      explorer: "Active Explorer (Visitor)",
+      explorer_desc: "Discover businesses, write reviews, and save spots.",
+      merchant: "Local Merchant (Business Owner)",
+      merchant_desc: "Add your shop, post stories, and receive claims.",
+      google_btn: "Sign In with Gmail / Google",
+      submit_login: "Login to Account",
+      submit_signup: "Register & Onboard",
+      create_prompt: "First time here? Create an account",
+      login_prompt: "Already have an account? Sign in",
+      preset_title: "Quick Sandbox Testing Presets",
+      preset_desc: "Use these preset credentials to test full Admin, Merchant, and Explorer features instantly inside the safe iframe environment:",
+      preset_admin: "Admin Account (Mahdi)",
+      preset_owner: "Specialty Business Owner",
+      preset_explorer: "Standard Client Viewer",
+      or: "or",
+      loading: "Processing secure request...",
+      success_registered: "Account registered successfully! Welcome to Saku Maku.",
+      success_logged: "Welcome back! Login successful."
+    },
+    ar: {
+      title_login: "الدخول لمنصة شكو ماكو",
+      title_signup: "إنشاء حساب جديد",
+      desc_login: "سجّل الدخول ببريدك الإلكتروني لحفظ الأماكن المفضلة ونشر المنشورات والتواصل مع أصحاب المصالح.",
+      desc_signup: "انضم إلى الدليل التجاري العراقي والمنصة الأسرع نمواً للتواصل الاجتماعي والأعمال.",
+      email: "البريد الإلكتروني",
+      email_placeholder: "مثال: ali@gmail.com",
+      pwd: "كلمة المرور",
+      pwd_placeholder: "لا تقل عن 6 أحرف",
+      name: "الاسم الكامل",
+      name_placeholder: "مثال: علي البغدادي",
+      role_label: "التسجيل كـ",
+      explorer: "مستكشف نشط (زائر)",
+      explorer_desc: "تصفح المتاجر، واكتب مراجعات، واحفظ مصلحتك المفضلة.",
+      merchant: "صاحب مصلحة / متجر محلي",
+      merchant_desc: "أضف متجرك الخاص، وانشر عروض الحافلة، ووثّق علامتك.",
+      google_btn: "الدخول باستخدام حساب Google / جوميل",
+      submit_login: "تسجيل الدخول",
+      submit_signup: "إنشاء حساب وبدء الاستخدام",
+      create_prompt: "ليس لديك حساب؟ سجل حساباً مجانياً الآن",
+      login_prompt: "لديك حساب بالفعل؟ سجل دخولك",
+      preset_title: "حسابات تجريبية سريعة ومباشرة",
+      preset_desc: "اضغط لتجربة المنصة فوراً برتب مختلفة من دون الحاجة لإدخال بيانات أو كلمات مرور:",
+      preset_admin: "حساب المدير العام (مهدي المستشار)",
+      preset_owner: "حساب صاحب محل تجاري ومقاهي",
+      preset_explorer: "حساب زائر ومستكشف عراقي",
+      or: "أو",
+      loading: "جاري معالجة الطلب بأمان...",
+      success_registered: "تم إنشاء الحساب بنجاح! أهلاً بك في منصة شكو ماكو.",
+      success_logged: "أهلاً ومرحباً بك مجدداً! تم تسجيل الدخول."
+    },
+    ku: {
+      title_login: "چوونەژوور بۆ شەکو مەکو",
+      title_signup: "تۆمارکردنی ئەکاونتی نوێ",
+      desc_login: "بچۆ ژوورەوە بە ئیمەیڵەکەت یان ئەکاونتەکانت بۆ پاشکۆکردنی شوێنەکان و ڕاوبۆچوونەکانت.",
+      desc_signup: "ببە بە ئەندام لە خێراترین تۆڕی دۆزینەوەی شوێنە بازرگانییەکان و فرۆشگاکانی عێراق.",
+      email: "ناونیشانی ئیمەیڵ",
+      email_placeholder: "بۆ نموونە: ali@gmail.com",
+      pwd: "وشەی تێپەڕ",
+      pwd_placeholder: "کەمتر نەبێت لە 6 پیت",
+      name: "ناوی تەواو",
+      name_placeholder: "بۆ نموونە: عەلی بەغدادی",
+      role_label: "تۆمارکردنی ئەکاونت وەک",
+      explorer: "گەڕیدەی چالاک (سەردانکەر)",
+      explorer_desc: "فرۆشگاکان بدۆزەرەوە، پۆست بکە و شوێنەکان پاشەکەوت بکە.",
+      merchant: "خاوەن کار یان فرۆشگا",
+      merchant_desc: "شوێنەکەت زیاد بکە و پۆستی گرنگ بکە.",
+      google_btn: "چوونەژوورەوە بە حیسابی Google",
+      submit_login: "بچۆ ژوورەوە",
+      submit_signup: "تۆمارکردن و دەستپێکردن",
+      create_prompt: "ئەکاونتت نییە؟ دروستی بکە",
+      login_prompt: "حیسابت هەیە؟ ئێستا بچۆ ژوورەوە",
+      preset_title: "ئەکاونتی خێرا بۆ تاقیکردنەوەی خێرا",
+      preset_desc: "کلیل لەم ئەکاونتانە بکە بۆ تاقیکردنەوەی ڕاستەوخۆ بەبێ وشەی نهێنی:",
+      preset_admin: "ئەکاونتی بەڕێوەبەر (مەهدی)",
+      preset_owner: "بینینی خاوەن کار و فرۆشگا",
+      preset_explorer: "بەکارهێنەری ئاسایی",
+      or: "یان",
+      loading: "خەریکە پرۆسێس دەکرێت...",
+      success_registered: "ئەکاونتەکەت سەرکەوتووانە دروستکرا! بەخێربێیت.",
+      success_logged: "بەخێربێیتەوە! چوونەژوورەوە سەرکەوتوو بوو."
+    }
+  }[currentLang];
+
+  const handleGoogleClick = async () => {
+    setLoading(true);
+    setErrorMsg('');
+    try {
+      const userObj = await signInWithGoogle();
+      if (userObj) {
+        // Create user document in firestore if not exists
+        const userRef = doc(db, 'users', userObj.uid);
+        const docSnap = await getDoc(userRef);
+        
+        let profileDetails: UserProfile;
+        if (!docSnap.exists()) {
+          const isAdmin = userObj.email === 'safaribosafar@gmail.com' || userObj.email === 'mahdialmuntadhar1@gmail.com';
+          profileDetails = {
+            uid: userObj.uid,
+            displayName: userObj.displayName || 'Iraqi Guest',
+            photoURL: userObj.photoURL || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80",
+            email: userObj.email || '',
+            createdAt: new Date().toISOString(),
+            role: isAdmin ? 'admin' : 'user',
+            onboarded: false,
+            businessId: null
+          };
+          await setDoc(userRef, profileDetails);
+        } else {
+          profileDetails = docSnap.data() as UserProfile;
+        }
+
+        setSuccessMsg(L.success_logged);
+        if (onAuthSuccess) {
+          onAuthSuccess(profileDetails);
+        }
+        setTimeout(() => {
+          onClose();
+          setSuccessMsg('');
+        }, 1500);
+      }
+    } catch (err: any) {
+      console.error(err);
+      setErrorMsg(err.message || 'Google Auth Cancelled or Failed.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEmailAuthSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !password) return;
+    if (isSignUp && !displayName) {
+      setErrorMsg(currentLang === 'en' ? 'Full name is required to sign up' : 'الاسم الكامل مطلوب للتسجيل');
+      return;
+    }
+    if (password.length < 6) {
+      setErrorMsg(currentLang === 'en' ? 'Password must be at least 6 characters' : 'يجب أن لا تقل كلمة المرور عن 6 أحرف');
+      return;
+    }
+
+    setLoading(true);
+    setErrorMsg('');
+    setSuccessMsg('');
+
+    try {
+      if (isSignUp) {
+        // 1. Create firebase auth email account
+        const credential = await createUserWithEmailAndPassword(auth, email.trim(), password);
+        await updateProfile(credential.user, {
+          displayName: displayName.trim()
+        });
+
+        // 2. Create the firestore profile
+        const userRef = doc(db, 'users', credential.user.uid);
+        
+        const isAdmin = email.trim().toLowerCase() === 'safaribosafar@gmail.com' || email.trim().toLowerCase() === 'mahdialmuntadhar1@gmail.com';
+        const profileDetails: UserProfile = {
+          uid: credential.user.uid,
+          displayName: displayName.trim(),
+          photoURL: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80",
+          email: email.trim().toLowerCase(),
+          createdAt: new Date().toISOString(),
+          role: isAdmin ? 'admin' : role,
+          onboarded: false,
+          businessId: null
+        };
+
+        await setDoc(userRef, profileDetails);
+        setSuccessMsg(L.success_registered);
+        
+        if (onAuthSuccess) {
+          onAuthSuccess(profileDetails);
+        }
+        
+        setTimeout(() => {
+          onClose();
+          setSuccessMsg('');
+        }, 2000);
+      } else {
+        // Login flow
+        const credential = await signInWithEmailAndPassword(auth, email.trim(), password);
+        
+        // Retrieve firestore profile details
+        const userRef = doc(db, 'users', credential.user.uid);
+        const docSnap = await getDoc(userRef);
+        
+        let profileDetails: UserProfile;
+        if (!docSnap.exists()) {
+          const isAdmin = credential.user.email === 'safaribosafar@gmail.com' || credential.user.email === 'mahdialmuntadhar1@gmail.com';
+          profileDetails = {
+            uid: credential.user.uid,
+            displayName: credential.user.displayName || credential.user.email?.split('@')[0] || 'Explorer User',
+            photoURL: credential.user.photoURL || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80",
+            email: credential.user.email || '',
+            createdAt: new Date().toISOString(),
+            role: isAdmin ? 'admin' : 'user',
+            onboarded: false,
+            businessId: null
+          };
+          await setDoc(userRef, profileDetails);
+        } else {
+          profileDetails = docSnap.data() as UserProfile;
+        }
+
+        setSuccessMsg(L.success_logged);
+        if (onAuthSuccess) {
+          onAuthSuccess(profileDetails);
+        }
+        
+        setTimeout(() => {
+          onClose();
+          setSuccessMsg('');
+        }, 1500);
+      }
+    } catch (err: any) {
+      console.error("Auth Failure details: ", err);
+      let localizedErr = err.message;
+      if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
+        localizedErr = currentLang === 'en' 
+          ? 'Invalid email or incorrect password. Please try again.' 
+          : 'البريد الإلكتروني أو كلمة المرور غير صحيحة. يرجى المحاولة ثانية.';
+      } else if (err.code === 'auth/email-already-in-use') {
+        localizedErr = currentLang === 'en'
+          ? 'This email address is already registered. Please login instead.'
+          : 'هذا البريد الإلكتروني مسجل بالفعل. يرجى اختيار تسجيل الدخول.';
+      } else if (err.code === 'auth/invalid-email') {
+        localizedErr = currentLang === 'en' ? 'Invalid email format' : 'صيغة البريد الإلكتروني غير صالحة';
+      } else if (err.code === 'auth/weak-password') {
+        localizedErr = currentLang === 'en' ? 'Weak password! Use at least 6 characters.' : 'كلمة المرور ضعيفة جداً! يرجى كتابة 6 أحرف على الأقل.';
+      }
+      setErrorMsg(localizedErr);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSandboxPresetClick = (emailPreset: string) => {
+    onCustomEmailLogin(emailPreset);
+    setSuccessMsg(L.success_logged);
+    setTimeout(() => {
+      onClose();
+      setSuccessMsg('');
+    }, 1200);
+  };
+
   return (
-    <AnimatePresence>
-      <motion.div
+    <div className="fixed inset-0 z-[999] flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+      {/* Dark blur glass backdrop */}
+      <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
-        onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+        onClick={onClose}
+        className="fixed inset-0 bg-black/85 backdrop-blur-xl"
+      />
+
+      {/* Auth visual card container */}
+      <motion.div
+        initial={{ scale: 0.95, y: 15, opacity: 0 }}
+        animate={{ scale: 1, y: 0, opacity: 1 }}
+        exit={{ scale: 0.95, y: 15, opacity: 0 }}
+        className="relative bg-[#1A1A1F] border border-luxury-gold/30 rounded-3xl w-full max-w-lg p-5 sm:p-8 overflow-hidden shadow-2xl z-[1000] text-left text-white font-medium"
       >
-        <motion.div
-          initial={{ scale: 0.9, opacity: 0, y: 20 }}
-          animate={{ scale: 1, opacity: 1, y: 0 }}
-          exit={{ scale: 0.9, opacity: 0, y: 20 }}
-          className="w-full max-w-md bg-gradient-to-b from-[#111119] to-[#0a0a0f] border border-white/10 rounded-[28px] p-6 md:p-8 shadow-2xl relative overflow-hidden"
+        {/* Glow visuals */}
+        <div className="absolute top-[-30%] left-[-30%] w-72 h-72 bg-luxury-teal/15 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute bottom-[-30%] right-[-30%] w-72 h-72 bg-luxury-gold/15 rounded-full blur-3xl pointer-events-none"></div>
+
+        {/* Close Button */}
+        <button 
+          onClick={onClose}
+          className={`absolute top-4 ${isRtl ? 'left-4' : 'right-4'} p-2 rounded-full bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition cursor-pointer border border-white/5 z-20`}
         >
-          {/* Decorative glow */}
-          <div className="absolute top-0 right-0 w-44 h-44 bg-gradient-to-tr from-blue-500/10 to-purple-500/5 rounded-full blur-2xl pointer-events-none"></div>
+          <X className="w-4 h-4" />
+        </button>
 
-          {/* Close button */}
-          <button
-            onClick={onClose}
-            className="absolute top-4 right-4 p-2 text-zinc-500 hover:text-white transition cursor-pointer"
-          >
-            <X className="w-5 h-5" />
-          </button>
-
-          <div className="relative z-10 space-y-6">
-            {/* Header */}
-            <div className="text-center space-y-1">
-              <h2 className="text-xl font-black text-white">
-                {mode === 'login'
-                  ? (currentLang === 'en' ? 'Welcome Back' : currentLang === 'ku' ? 'بەخێربێیتەوە' : 'مرحباً بعودتك')
-                  : mode === 'signup'
-                    ? (currentLang === 'en' ? 'Create Account' : currentLang === 'ku' ? 'دروستکردنی هەژمار' : 'إنشاء حساب')
-                    : mode === 'forgot'
-                      ? (currentLang === 'en' ? 'Forgot Password' : currentLang === 'ku' ? 'بیرچوونەوەی وشەی نهێنی' : 'نسيت كلمة المرور')
-                      : (currentLang === 'en' ? 'Reset Password' : currentLang === 'ku' ? 'دابڕستاندنی وشەی نهێنی' : 'إعادة تعيين كلمة المرور')
-                }
-              </h2>
-              <p className="text-xs text-zinc-400">
-                {mode === 'login'
-                  ? (currentLang === 'en' ? 'Sign in to post and interact' : currentLang === 'ku' ? 'بچۆ ژوورەوە بۆ بڵاوکردنەوە' : 'سجل دخولك للنشر والتفاعل')
-                  : mode === 'signup'
-                    ? (currentLang === 'en' ? 'Join the Iraq Business community' : currentLang === 'ku' ? 'بەشداربوون لە کۆمەڵگا' : 'انضم إلى مجتمع الأعمال العراقي')
-                    : mode === 'forgot'
-                      ? (currentLang === 'en' ? 'Enter your email to receive reset link' : currentLang === 'ku' ? 'ئیمەیڵ بنوسە بۆ بەدەست هێنانی بەستەر' : 'أدخل بريدك الإلكتروني لتلقي رابط إعادة التعيين')
-                      : (currentLang === 'en' ? 'Enter your new password' : currentLang === 'ku' ? 'وشەی نهەنی نوێ بنوسە' : 'أدخل كلمة المرور الجديدة')
-                }
-              </p>
+        <div className="relative space-y-6">
+          {/* Header */}
+          <div className="text-center space-y-2">
+            <div className="mx-auto w-12 h-12 rounded-2xl bg-gradient-to-tr from-luxury-teal to-luxury-gold flex items-center justify-center text-white shadow-lg border border-white/10">
+              <Key className="w-5 h-5 text-white" />
             </div>
+            
+            <h2 className="text-lg xs:text-xl font-black bg-gradient-to-r from-luxury-gold to-white bg-clip-text text-transparent mt-3">
+              {isSignUp ? L.title_signup : L.title_login}
+            </h2>
+            <p className="text-[11px] sm:text-xs text-zinc-400 max-w-sm mx-auto leading-relaxed">
+              {isSignUp ? L.desc_signup : L.desc_login}
+            </p>
+          </div>
 
-            {/* Error/Success messages */}
-            {error && (
-              <div className="p-3 bg-red-950/40 border border-red-500/20 rounded-xl flex items-start gap-2 text-xs text-red-300">
-                <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-                <span>{error}</span>
-              </div>
-            )}
-            {success && (
-              <div className="p-3 bg-emerald-950/40 border border-emerald-500/20 rounded-xl flex items-start gap-2 text-xs text-emerald-300">
-                <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" />
-                <span>{success}</span>
-              </div>
-            )}
-
-            {/* Google Sign In */}
-            <button
-              onClick={handleGoogle}
-              className="w-full py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-white text-xs font-bold flex items-center justify-center gap-2 transition cursor-pointer"
+          {/* Feedback messages */}
+          {errorMsg && (
+            <motion.div 
+              initial={{ opacity: 0, y: -5 }} 
+              animate={{ opacity: 1, y: 0 }}
+              className="p-3.5 bg-red-950/40 border border-red-500/20 rounded-xl text-xs text-red-300 flex items-start gap-2.5 text-left"
             >
-              <Chrome className="w-4 h-4 text-blue-400" />
-              <span>{currentLang === 'en' ? 'Continue with Google' : currentLang === 'ku' ? 'بە گووگڵ بەردەوام بە' : 'المتابعة باستخدام Google'}</span>
-            </button>
+              <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+              <span className="leading-normal font-semibold">{errorMsg}</span>
+            </motion.div>
+          )}
 
-            {/* Divider */}
-            <div className="flex items-center gap-3">
-              <div className="flex-1 h-px bg-white/10"></div>
-              <span className="text-[10px] text-zinc-500 font-bold uppercase">{currentLang === 'en' ? 'or' : currentLang === 'ku' ? 'یان' : 'أو'}</span>
-              <div className="flex-1 h-px bg-white/10"></div>
-            </div>
+          {successMsg && (
+            <motion.div 
+              initial={{ opacity: 0, y: -5 }} 
+              animate={{ opacity: 1, y: 0 }}
+              className="p-3.5 bg-emerald-950/40 border border-emerald-500/20 rounded-xl text-xs text-emerald-300 flex items-start gap-2.5 text-left"
+            >
+              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+              <span className="leading-normal font-semibold">{successMsg}</span>
+            </motion.div>
+          )}
 
-            {/* Email/Password Form */}
-            <form onSubmit={handleSubmit} className="space-y-3 text-xs">
-              {mode === 'signup' && (
-                <div className="space-y-1">
-                  <label className="text-zinc-500 font-bold text-[10px] uppercase block">
-                    {currentLang === 'en' ? 'Display Name' : currentLang === 'ku' ? 'ناوی پیشاندراو' : 'الاسم المعروض'}
-                  </label>
-                  <div className="relative">
-                    <User className="w-3.5 h-3.5 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2" />
-                    <input
-                      type="text"
-                      value={displayName}
-                      onChange={(e) => setDisplayName(e.target.value)}
-                      placeholder={currentLang === 'en' ? 'Your name' : currentLang === 'ku' ? 'ناوەکەت' : 'اسمك'}
-                      className="w-full bg-black/40 border border-white/15 text-white p-3 pl-10 rounded-xl focus:outline-none focus:border-blue-400 placeholder-zinc-600"
-                    />
-                  </div>
-                </div>
-              )}
-
+          {/* Real Auth form with email / password */}
+          <form onSubmit={handleEmailAuthSubmit} className="space-y-4">
+            
+            {/* Display Name on Sign Up */}
+            {isSignUp && (
               <div className="space-y-1">
-                <label className="text-zinc-500 font-bold text-[10px] uppercase block">Email</label>
-                <div className="relative">
-                  <Mail className="w-3.5 h-3.5 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                <label className="text-[10px] uppercase font-black text-luxury-gold/80 tracking-wider block font-mono">
+                  {L.name}
+                </label>
+                <div className="relative flex items-center">
+                  <User className="absolute left-3.5 w-4 h-4 text-zinc-500" />
                   <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="you@example.com"
+                    type="text"
                     required
-                    className="w-full bg-black/40 border border-white/15 text-white p-3 pl-10 rounded-xl focus:outline-none focus:border-blue-400 placeholder-zinc-600"
-                    dir="ltr"
+                    placeholder={L.name_placeholder}
+                    value={displayName}
+                    onChange={(e) => setDisplayName(e.target.value)}
+                    className="w-full bg-black/40 border border-white/15 focus:border-luxury-gold/50 text-xs pl-10 pr-4 py-3 rounded-xl text-white placeholder-zinc-500 focus:outline-none transition font-semibold"
                   />
                 </div>
               </div>
+            )}
 
-              {mode !== 'forgot' && (
-                <div className="space-y-1">
-                  <label className="text-zinc-500 font-bold text-[10px] uppercase block">
-                    {currentLang === 'en' ? 'Password' : currentLang === 'ku' ? 'وشەی نهێنی' : 'كلمة المرور'}
-                  </label>
-                  <div className="relative">
-                    <Lock className="w-3.5 h-3.5 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2" />
-                    <input
-                      type={showPassword ? 'text' : 'password'}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder={currentLang === 'en' ? 'Min 6 characters' : currentLang === 'ku' ? 'لای ٦ پیت' : '6 أحرف على الأقل'}
-                      required={mode !== 'forgot'}
-                      minLength={6}
-                      className="w-full bg-black/40 border border-white/15 text-white p-3 pl-10 pr-10 rounded-xl focus:outline-none focus:border-blue-400 placeholder-zinc-600"
-                      dir="ltr"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition cursor-pointer"
-                    >
-                      {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                    </button>
+            {/* Email Address */}
+            <div className="space-y-1">
+              <label className="text-[10px] uppercase font-black text-luxury-gold/80 tracking-wider block font-mono">
+                {L.email}
+              </label>
+              <div className="relative flex items-center">
+                <Mail className="absolute left-3.5 w-4 h-4 text-zinc-500" />
+                <input
+                  type="email"
+                  required
+                  placeholder={L.email_placeholder}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full bg-black/40 border border-white/15 focus:border-luxury-gold/50 text-xs pl-10 pr-4 py-3 rounded-xl text-white placeholder-zinc-500 focus:outline-none transition font-semibold"
+                />
+              </div>
+            </div>
+
+            {/* Password */}
+            <div className="space-y-1">
+              <label className="text-[10px] uppercase font-black text-luxury-gold/80 tracking-wider block font-mono">
+                {L.pwd}
+              </label>
+              <div className="relative flex items-center">
+                <Lock className="absolute left-3.5 w-4 h-4 text-zinc-500" />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  required
+                  placeholder={L.pwd_placeholder}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full bg-black/40 border border-white/15 focus:border-luxury-gold/50 text-xs pl-10 pr-10 py-3 rounded-xl text-white placeholder-zinc-500 focus:outline-none transition font-semibold"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 text-zinc-500 hover:text-white transition cursor-pointer"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
+
+            {/* If Sign Up, let them choose a role context beautifully */}
+            {isSignUp && (
+              <div className="space-y-1.5 pt-1">
+                <label className="text-[10px] uppercase font-black text-luxury-gold/80 tracking-wider block font-mono">
+                  {L.role_label}
+                </label>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  {/* Explorer option */}
+                  <div
+                    onClick={() => setRole('user')}
+                    className={`p-3.5 rounded-xl border transition-all cursor-pointer flex flex-col justify-between text-left relative overflow-hidden ${
+                      role === 'user'
+                        ? 'bg-luxury-teal/15 border-luxury-teal'
+                        : 'bg-black/20 border-white/10 hover:border-white/20'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-sm">🧭</span>
+                      <span className="text-[11px] font-black">{L.explorer}</span>
+                    </div>
+                    <p className="text-[9px] text-zinc-400 font-sans tracking-tight leading-normal">
+                      {L.explorer_desc}
+                    </p>
+                  </div>
+
+                  {/* Merchant Owner Option */}
+                  <div
+                    onClick={() => setRole('owner')}
+                    className={`p-3.5 rounded-xl border transition-all cursor-pointer flex flex-col justify-between text-left relative overflow-hidden ${
+                      role === 'owner'
+                        ? 'bg-amber-500/10 border-amber-500'
+                        : 'bg-black/20 border-white/10 hover:border-white/20'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-sm">🏢</span>
+                      <span className="text-[11px] font-black text-amber-400">{L.merchant}</span>
+                    </div>
+                    <p className="text-[9px] text-zinc-400 font-sans tracking-tight leading-normal">
+                      {L.merchant_desc}
+                    </p>
                   </div>
                 </div>
-              )}
+              </div>
+            )}
 
-              <motion.button
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.98 }}
-                type="submit"
-                disabled={loading}
-                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 hover:from-blue-500 hover:to-violet-500 text-white text-xs font-black uppercase tracking-wider shadow-lg transition disabled:opacity-50 cursor-pointer"
+            {/* Email Submit Button */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-3.5 bg-gradient-to-r from-luxury-teal via-[#1E4143] to-luxury-gold hover:opacity-90 text-white font-black text-xs uppercase tracking-wider rounded-xl transition duration-300 shadow-xl cursor-pointer text-center font-mono border border-white/10 disabled:opacity-50"
+            >
+              {loading ? L.loading : (isSignUp ? L.submit_signup : L.submit_login)}
+            </button>
+          </form>
+
+          {/* OR separator */}
+          <div className="flex items-center gap-3 py-1">
+            <div className="flex-grow h-[1px] bg-white/10"></div>
+            <span className="text-[10px] uppercase font-black tracking-widest text-zinc-500 font-mono">{L.or}</span>
+            <div className="flex-grow h-[1px] bg-white/10"></div>
+          </div>
+
+          {/* Social Google/Gmail Login button */}
+          <button
+            onClick={handleGoogleClick}
+            disabled={loading}
+            className="w-full py-3.5 bg-[#25252C] hover:bg-[#31313A] border border-white/15 hover:border-white/25 rounded-xl text-xs text-white font-black uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-2.5"
+          >
+            <svg className="w-4 h-4" viewBox="0 0 24 24">
+              <path
+                fill="#EA4335"
+                d="M12 5.04c1.66 0 3.2.57 4.38 1.69l3.27-3.27C17.67 1.48 14.97 1 12 1 7.39 1 3.42 3.63 1.42 7.42l3.87 3C6.24 7.62 8.87 5.04 12 5.04z"
+              />
+              <path
+                fill="#4285F4"
+                d="M23.45 12.3c0-.82-.07-1.6-.2-2.3H12v4.4h6.43c-.28 1.44-1.1 2.67-2.33 3.5l3.6 2.8c2.1-1.94 3.75-4.8 3.75-8.4z"
+              />
+              <path
+                fill="#FBBC05"
+                d="M5.29 14.36c-.25-.72-.39-1.5-.39-2.36s.14-1.64.39-2.36L1.42 6.64C.51 8.47 0 10.5 0 12.6s.51 4.13 1.42 5.96l3.87-3.2c-.25-.72-.39-1.5-.39-2.36z"
+              />
+              <path
+                fill="#34A853"
+                d="M12 23c3.24 0 5.97-1.07 7.96-2.9l-3.6-2.8c-1.1.74-2.5 1.18-4.36 1.18-3.13 0-5.76-2.58-6.71-6.38l-3.87 3C3.42 20.37 7.39 23 12 23z"
+              />
+            </svg>
+            <span>{L.google_btn}</span>
+          </button>
+
+          {/* Toggle login vs signup */}
+          <div className="text-center">
+            <button
+              onClick={() => {
+                setIsSignUp(!isSignUp);
+                setErrorMsg('');
+                setSuccessMsg('');
+              }}
+              className="text-[11px] font-black text-luxury-gold hover:underline cursor-pointer tracking-wide uppercase"
+            >
+              {isSignUp ? L.login_prompt : L.create_prompt}
+            </button>
+          </div>
+
+          {/* Safe testing bypass sandbox accounts within iframe */}
+          <div className="p-4 bg-white/5 border border-white/10 rounded-2xl text-left space-y-2 mt-2">
+            <h4 className="text-[10px] font-extrabold text-amber-400 uppercase tracking-widest flex items-center gap-1.5 font-mono">
+              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+              <span>{L.preset_title}</span>
+            </h4>
+            <p className="text-[9px] text-zinc-400 leading-normal">
+              {L.preset_desc}
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 pt-1">
+              <button
+                type="button"
+                onClick={() => handleSandboxPresetClick('mahdialmuntadhar1@gmail.com')}
+                className="px-2 py-1.5 bg-red-950/40 hover:bg-red-900/50 border border-red-500/20 text-red-200 text-[9px] font-black rounded-lg transition-all text-center cursor-pointer font-mono"
               >
-                {loading
-                  ? (currentLang === 'en' ? 'Please wait...' : currentLang === 'ku' ? 'تکایە چاوەڕوان بە...' : 'يرجى الانتظار...')
-                  : mode === 'login'
-                    ? (currentLang === 'en' ? 'Sign In' : currentLang === 'ku' ? 'چوونەژوورەوە' : 'تسجيل الدخول')
-                    : mode === 'forgot'
-                      ? (currentLang === 'en' ? 'Send Reset Link' : currentLang === 'ku' ? 'بەستەرەک بنێرە' : 'إرسال رابط إعادة التعيين')
-                      : (currentLang === 'en' ? 'Create Account' : currentLang === 'ku' ? 'دروستکردنی هەژمار' : 'إنشاء حساب')
-                }
-              </motion.button>
-            </form>
-
-            {/* Toggle mode */}
-            <div className="text-center text-xs text-zinc-500">
-              {mode === 'login' ? (
-                <div className="space-y-2">
-                  <button
-                    onClick={() => { setMode('forgot'); resetForm(); }}
-                    className="text-blue-400 hover:text-blue-300 font-bold cursor-pointer block"
-                  >
-                    {currentLang === 'en' ? 'Forgot password?' : currentLang === 'ku' ? 'وشەی نهێنیت لەبیرچووە؟' : 'نسيت كلمة المرور؟'}
-                  </button>
-                  <span>
-                    {currentLang === 'en' ? "Don't have an account?" : currentLang === 'ku' ? 'هەژمارت نییە؟' : 'ليس لديك حساب؟'}{' '}
-                    <button
-                      onClick={() => { setMode('signup'); resetForm(); }}
-                      className="text-blue-400 hover:text-blue-300 font-bold cursor-pointer"
-                    >
-                      {currentLang === 'en' ? 'Sign Up' : currentLang === 'ku' ? 'تۆمارکردن' : 'التسجيل'}
-                    </button>
-                  </span>
-                </div>
-              ) : mode === 'forgot' ? (
-                <span>
-                  {currentLang === 'en' ? 'Remember your password?' : currentLang === 'ku' ? 'وشەی نهێنیت لەبیرچووە؟' : 'تذكرت كلمة المرور؟'}{' '}
-                  <button
-                    onClick={() => { setMode('login'); resetForm(); }}
-                    className="text-blue-400 hover:text-blue-300 font-bold cursor-pointer"
-                  >
-                    {currentLang === 'en' ? 'Back to login' : currentLang === 'ku' ? 'گەڕانەوە بۆ چوونەژوورەوە' : 'العودة إلى تسجيل الدخول'}
-                  </button>
-                </span>
-              ) : (
-                <span>
-                  {currentLang === 'en' ? 'Already have an account?' : currentLang === 'ku' ? 'پێشتر هەژمارەت هەیە؟' : 'لديك حساب بالفعل؟'}{' '}
-                  <button
-                    onClick={() => { setMode('login'); resetForm(); }}
-                    className="text-blue-400 hover:text-blue-300 font-bold cursor-pointer"
-                  >
-                    {currentLang === 'en' ? 'Sign In' : currentLang === 'ku' ? 'چوونەژوورەوە' : 'تسجيل الدخول'}
-                  </button>
-                </span>
-              )}
+                🛠️ Admin Panel
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSandboxPresetClick('owner@shkomaku.com')}
+                className="px-2 py-1.5 bg-amber-950/40 hover:bg-amber-900/55 border border-amber-500/25 text-amber-200 text-[9px] font-black rounded-lg transition-all text-center cursor-pointer font-mono"
+              >
+                🏢 Shop Owner
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSandboxPresetClick('visitor@shkomaku.com')}
+                className="px-2 py-1.5 bg-blue-950/45 hover:bg-blue-900/50 border border-blue-500/20 text-sky-200 text-[9px] font-black rounded-lg transition-all text-center cursor-pointer font-mono"
+              >
+                🧭 Explorer User
+              </button>
             </div>
           </div>
-        </motion.div>
+
+        </div>
       </motion.div>
-    </AnimatePresence>
+    </div>
   );
 }

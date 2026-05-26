@@ -23,7 +23,7 @@ export const GOVERNORATES: Governorate[] = [
     code: 'erbil',
     name: {
       ar: 'أربيل 🏔️',
-       ku: 'هەولێر 🏔️',
+      ku: 'هەولێر 🏔️',
       en: 'Erbil 🏔️'
     },
     englishLabel: 'Erbil'
@@ -63,6 +63,123 @@ export const GOVERNORATES: Governorate[] = [
       en: 'Najaf ✨'
     },
     englishLabel: 'Najaf'
+  },
+  {
+    code: 'karbala',
+    name: {
+      ar: 'كربلاء 🕌',
+      ku: 'کەربەلا 🕌',
+      en: 'Karbala 🕌'
+    },
+    englishLabel: 'Karbala'
+  },
+  {
+    code: 'kirkuk',
+    name: {
+      ar: 'كركوك 🛢️',
+      ku: 'کەرکووک 🛢️',
+      en: 'Kirkuk 🛢️'
+    },
+    englishLabel: 'Kirkuk'
+  },
+  {
+    code: 'anbar',
+    name: {
+      ar: 'الأنبار 🌵',
+      ku: 'ئەنبار 🌵',
+      en: 'Anbar 🌵'
+    },
+    englishLabel: 'Anbar'
+  },
+  {
+    code: 'duhok',
+    name: {
+      ar: 'دهوك 🏔️',
+      ku: 'دهۆک 🏔️',
+      en: 'Duhok 🏔️'
+    },
+    englishLabel: 'Duhok'
+  },
+  {
+    code: 'babil',
+    name: {
+      ar: 'بابل 🦁',
+      ku: 'بابل 🦁',
+      en: 'Babylon 🦁'
+    },
+    englishLabel: 'Babylon'
+  },
+  {
+    code: 'diyala',
+    name: {
+      ar: 'ديالى 🍊',
+      ku: 'دیالە 🍊',
+      en: 'Diyala 🍊'
+    },
+    englishLabel: 'Diyala'
+  },
+  {
+    code: 'wasit',
+    name: {
+      ar: 'واسط 🌾',
+      ku: 'واسط 🌾',
+      en: 'Wasit 🌾'
+    },
+    englishLabel: 'Wasit'
+  },
+  {
+    code: 'saladin',
+    name: {
+      ar: 'صلاح الدين 🏰',
+      ku: 'سەڵاحەددین 🏰',
+      en: 'Saladin 🏰'
+    },
+    englishLabel: 'Saladin'
+  },
+  {
+    code: 'maysan',
+    name: {
+      ar: 'ميسان 🌊',
+      ku: 'میسان 🌊',
+      en: 'Maysan 🌊'
+    },
+    englishLabel: 'Maysan'
+  },
+  {
+    code: 'dhiqar',
+    name: {
+      ar: 'ذي قار 🏛️',
+      ku: 'زیقار 🏛️',
+      en: 'Dhi Qar 🏛️'
+    },
+    englishLabel: 'Dhi Qar'
+  },
+  {
+    code: 'muthanna',
+    name: {
+      ar: 'المثنى 🏜️',
+      ku: 'موسەنا 🏜️',
+      en: 'Muthanna 🏜️'
+    },
+    englishLabel: 'Muthanna'
+  },
+  {
+    code: 'qadisiya',
+    name: {
+      ar: 'القادسية 🌾',
+      ku: 'قادسیە 🌾',
+      en: 'Qadisiya 🌾'
+    },
+    englishLabel: 'Qadisiya'
+  },
+  {
+    code: 'halabja',
+    name: {
+      ar: 'حلبجة 🍎',
+      ku: 'هەڵەبجە 🍎',
+      en: 'Halabja 🍎'
+    },
+    englishLabel: 'Halabja'
   }
 ];
 
@@ -455,7 +572,7 @@ export const INITIAL_BUSINESSES: Business[] = [
     likes: 290,
     saves: 180,
     featuredDeal: {
-      ar: 'خصم خاص ١٠٪ للمتابعين على منصة ساكو ماكو عند الدفع ببطاقة فيزا 💳',
+      ar: 'خصم خاص ١٠٪ للمتابعين على منصة شكو ماكو عند الدفع ببطاقة فيزا 💳',
       ku: 'داشکاندنی ١٠٪ بۆ پەیڕەوانی ساكۆ ماكۆ لەکاتی پارەدان بە فیزاکارت 💳',
       en: '10% exclusive discount for Saku Maku users paying with credit card 💳'
     },
@@ -744,7 +861,7 @@ export const INITIAL_POSTS: SocialPost[] = [
 
 export const TRANSLATIONS = {
   ar: {
-    appName: 'ساكو ماكو',
+    appName: 'شكو ماكو',
     appSlogan: 'منصة استكشاف الأماكن والشركات في العراق بروح اجتماعية عصرية ✨',
     searchPlaceholder: 'ابحث عن كافيه، مطعم، صالون تجميل...',
     allIraq: 'كل العراق 🇮🇶',
@@ -771,7 +888,7 @@ export const TRANSLATIONS = {
     mapTab: 'خريطة المحليات',
     addBusinessTab: 'أضف عملك مجاناً',
     aboutTab: 'كل شي عنا',
-    addBusinessTitle: 'انضم لـ ساكو ماكو وسوّق لعملك مجاناً! 🚀',
+    addBusinessTitle: 'انضم لـ شكو ماكو وسوّق لعملك مجاناً! 🚀',
     addBusinessSubtitle: 'نوصل عملك لآلاف الشباب ومحبي الاستكشاف في محافظتك وبأجواء تيك توك وإنستغرام',
     formBizName: 'اسم العمل التجاري',
     formCategory: 'فئة العمل',
@@ -780,11 +897,11 @@ export const TRANSLATIONS = {
     formAddress: 'عنوان العمل التفصيلي',
     formDesc: 'صف عملك بطريقة تجذب الشباب والمستكشفين',
     formImage: 'رابط صورة اللاندسكيب (اختياري)',
-    btnSubmit: 'انشر عملك الآن على ساكو ماكو 🎉',
+    btnSubmit: 'انشر عملك الآن على شكو ماكو 🎉',
     successMsg: 'تم نشر مشروعك بنجاح! سيظهر فوراً في الأقسام المحددة.',
     interactiveMapIntro: 'انقر على المحافظة بالخريطة التفاعلية لتصفية واكتشاف الأماكن والتريندات فوراً! 📊📍',
     postTitle: 'منشورات الأنشطة والتريندات',
-    reviewsTitle: 'آراء وتقييمات مجتمع ساكو ماكو',
+    reviewsTitle: 'آراء وتقييمات مجتمع شكو ماكو',
     exploreCount: 'أماكن تم استكشافها',
     addPostPlaceholder: 'اكتب تعليقك بصفتك زائر...',
     ratingLabel: 'التقييم:',
@@ -796,7 +913,7 @@ export const TRANSLATIONS = {
     socialMediaFeelTitle: 'قصص وتريندات حية 🔥',
     storyLineTitle: 'قصص تفاعلية للمحلات',
     karradaPlace: 'حي الكرادة، بغداد',
-    welcomeAlert: 'أهلاً بك في ساكو ماكو! المنصة تم ترقيتها إلى تجربة تفاعلية بالكامل 🦁⚡',
+    welcomeAlert: 'أهلاً بك في شكو ماكو! المنصة تم ترقيتها إلى تجربة تفاعلية بالكامل 🦁⚡',
     dealsCorner: 'ركن العروض الساخنة 🔥'
   },
   ku: {

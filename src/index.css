@@ -4,11 +4,20 @@
 @theme {
   --font-sans: "Cairo", "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  
+  --color-luxury-bg: #1A1A1A;
+  --color-luxury-gold: #C8A95F;
+  --color-luxury-teal: #0F2E2F;
+  --color-luxury-gold-hover: #D8B96F;
+  --color-luxury-neutral: #F9F9F9;
+  --color-luxury-coral: #FF6B4A;
+  --color-luxury-coral-hover: #C8A95F;
+  --color-luxury-violet: #9B5DE5;
 }
 
 body {
-  background-color: #020205; /* Elegant Dark theme background */
-  color: #f4f4f5; /* Zinc-100 */
+  background-color: #F9F9F9; /* Soft Off-white luxury background */
+  color: #1A1A1A; /* Deep Charcoal primary text */
   font-family: var(--font-sans);
   overflow-x: hidden;
 }

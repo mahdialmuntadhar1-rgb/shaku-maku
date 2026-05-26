@@ -18,7 +18,7 @@ export default function AboutSakuMaku({ currentLang }: AboutSakuMakuProps) {
 
       <div className="text-center space-y-3 pb-4 border-b border-white/5">
         <h2 className="text-2xl font-black bg-gradient-to-r from-blue-400 to-violet-500 bg-clip-text text-transparent">
-          {isEn ? 'Iraq’s Pulse • Saku Maku' : isKu ? 'لێدانی دڵی عێراق • ساكۆ ماكۆ' : 'نبض الشارع العراقي • ساكو ماكو'}
+          {isEn ? 'Iraq’s Pulse • Saku Maku' : isKu ? 'لێدانی دڵی عێراق • ساكۆ ماكۆ' : 'نبض الشارع العراقي • شكو ماكو'}
         </h2>
         <p className="text-xs text-white/60 max-w-md mx-auto leading-relaxed">
           {isEn 

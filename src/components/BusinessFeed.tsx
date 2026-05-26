@@ -107,28 +107,28 @@ export default function BusinessFeed({
         const visibleBizs = isExpanded ? categoryBizs : categoryBizs.slice(0, 3);
 
         return (
-          <div key={category.id} className="relative bg-slate-900/10 p-5 rounded-3xl border border-slate-900/40">
+          <div key={category.id} className="relative bg-white/40 p-5 rounded-3xl border border-luxury-teal/15 shadow-sm">
             
             {/* Category Section Header */}
-            <div className="flex items-center justify-between mb-5 border-b border-zinc-800/60 pb-3">
+            <div className="flex items-center justify-between mb-5 border-b border-zinc-200 pb-3">
               <div className="flex items-center gap-2.5">
-                <span className="text-2xl filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)]">{category.icon}</span>
-                <h2 className="text-xl font-extrabold text-white tracking-tight font-sans">
+                <span className="text-2xl filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.15)]">{category.icon}</span>
+                <h2 className="text-xl font-extrabold text-luxury-bg tracking-tight font-sans">
                   {category.name[currentLang]}
                 </h2>
-                <span className="text-[10px] bg-slate-800 text-zinc-400 px-2 py-0.5 rounded-full font-bold">
+                <span className="text-[10px] bg-luxury-bg text-white px-2 py-0.5 rounded-full font-bold">
                   {categoryBizs.length}
                 </span>
               </div>
               
               {/* Saku Maku custom decorative accent */}
-              <div className="hidden sm:block text-[11px] font-mono text-zinc-500">
+              <div className="hidden sm:block text-[11px] font-mono text-zinc-500 font-medium">
                 Saku Maku Discover • {category.id.toUpperCase()}
               </div>
             </div>
 
             {/* Grid of Business Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3.5 sm:gap-6">
               {visibleBizs.map((biz) => {
                 const hasStories = biz.stories && biz.stories.length > 0;
                 
@@ -137,11 +137,11 @@ export default function BusinessFeed({
                     key={biz.id}
                     layoutId={`biz-card-${biz.id}`}
                     whileHover={{ y: -6 }}
-                    className="flex flex-col h-full bg-white/5 border border-white/10 rounded-[28px] overflow-hidden hover:border-blue-400/50 hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-300 group"
+                    className="flex flex-col h-full bg-[#FFFFFF] border border-[#0F2E2F] rounded-2xl overflow-hidden hover:border-luxury-gold hover:shadow-2xl hover:shadow-[#C8A95F]/10 transition-all duration-350 group"
                   >
                     
                     {/* Upper cover photo container */}
-                    <div className="relative h-48 w-full overflow-hidden bg-zinc-900">
+                    <div className="relative h-28 xs:h-36 sm:h-44 md:h-48 w-full overflow-hidden bg-zinc-900">
                       
                       {/* Interactive stories indicator ring */}
                       {hasStories && (
@@ -150,26 +150,25 @@ export default function BusinessFeed({
                             e.stopPropagation();
                             if (biz.stories) onSelectStory(biz.stories);
                           }}
-                          className="absolute top-3 left-3 z-10 flex items-center gap-1.5 cursor-pointer bg-slate-900/80 backdrop-blur-md hover:bg-violet-950/90 text-[10px] text-pink-400 font-extrabold px-2.5 py-1 rounded-full border border-pink-500/50 animate-pulse transition"
+                          className="absolute top-2 left-2 z-10 flex items-center gap-1 cursor-pointer bg-[#1A1A1A]/95 backdrop-blur-sm lg:hover:bg-[#0F2E2F] text-[8px] xs:text-[10px] text-luxury-gold font-black px-1.5 xs:px-2.5 py-0.5 xs:py-1 rounded-full border border-luxury-gold/50 animate-pulse transition"
                         >
-                          <span className="w-2 h-2 rounded-full bg-pink-500"></span>
+                          <span className="w-1.5 h-1.5 rounded-full bg-luxury-gold"></span>
                           <span>{currentLang === 'en' ? 'Live Story' : currentLang === 'ku' ? 'ستۆری' : 'قصة حية'}</span>
                         </div>
                       )}
 
                       {/* Verified Badge */}
                       {biz.isVerified && (
-                        <span className="absolute top-3 right-3 z-10 flex items-center gap-1 bg-gradient-to-r from-cyan-500 to-blue-600 text-[10px] font-extrabold text-white px-2 py-0.5 rounded-md shadow-md">
-                          <CheckCircle2 className="w-3 h-3 text-white fill-none" />
-                          <span>{t.verified}</span>
+                        <span className="absolute top-2 right-2 z-10 flex items-center gap-1 bg-[#C8A95F] text-[8px] xs:text-[10px] font-black text-[#1A1A1A] px-1.5 xs:px-2.5 py-0.5 xs:py-1 rounded-full shadow-md border border-[#0F2E2F]/20">
+                          <span>⭐ PREMIUM</span>
                         </span>
                       )}
 
                       {/* Saku Maku beautiful local price tag if any discount exists */}
                       {biz.featuredDeal && (
-                        <div className="absolute bottom-3 left-3 right-3 z-10 p-2 bg-gradient-to-r from-violet-950/90 to-slate-950/90 backdrop-blur-md rounded-xl border border-violet-500/40 flex items-center gap-1.5 pointer-events-none">
-                          <Gift className="w-3.5 h-3.5 text-pink-400 shrink-0" />
-                          <span className="text-[10px] text-zinc-200 font-bold tracking-tight line-clamp-1">
+                        <div className="absolute bottom-2 left-2 right-2 z-10 p-1.5 bg-[#0F2E2F]/90 backdrop-blur-md rounded-lg border border-luxury-gold/30 flex items-center gap-1 pointer-events-none">
+                          <Gift className="w-3 h-3 text-luxury-gold shrink-0 animate-bounce" />
+                          <span className="text-[8px] xs:text-[10px] text-white font-black tracking-tight line-clamp-1">
                             {biz.featuredDeal[currentLang]}
                           </span>
                         </div>
@@ -185,60 +184,50 @@ export default function BusinessFeed({
                     </div>
 
                     {/* Bottom details pack */}
-                    <div className="p-4 flex flex-col flex-grow justify-between">
+                    <div className="p-2.5 xs:p-4 flex flex-col flex-grow justify-between bg-white text-zinc-900">
                       <div>
                         
                         {/* Title & Category with governorate */}
-                        <div className="flex items-start justify-between gap-1 mb-1.5">
-                          <h3 className="text-sm font-bold text-white group-hover:text-cyan-400 transition-colors line-clamp-1">
+                        <div className="flex flex-col xs:flex-row xs:items-start justify-between gap-1 mb-1 xs:mb-1.5">
+                          <h3 className="text-xs xs:text-sm font-black text-[#1A1A1A] group-hover:text-luxury-gold transition-colors line-clamp-1 font-sans">
                             {biz.name[currentLang]}
                           </h3>
                           
-                          <div className="flex items-center gap-1 text-[11px] text-yellow-500 font-extrabold shrink-0 bg-yellow-500/10 px-1.5 py-0.5 rounded-lg border border-yellow-500/20">
-                            <Star className="w-3 h-3 fill-yellow-500 text-yellow-500" />
+                          <div className="flex items-center gap-0.5 xs:gap-1 text-[9px] xs:text-[11px] text-amber-805 font-black shrink-0 bg-amber-500/10 px-1 xs:px-1.5 py-0.5 rounded-lg border border-amber-500/20 w-fit">
+                            <Star className="w-2.5 h-2.5 xs:w-3.5 xs:h-3.5 fill-amber-600 text-amber-600" />
                             <span>{biz.rating}</span>
                           </div>
                         </div>
 
-                        {/* Governorate & Category Badges */}
-                        <div className="flex items-center gap-1.5 mb-2">
-                          <span className="text-[10px] font-bold bg-blue-500/15 text-blue-400 px-1.5 py-0.5 rounded-md border border-blue-500/20">
-                            {biz.governorate}
-                          </span>
-                          <span className="text-[10px] font-bold bg-purple-500/15 text-purple-400 px-1.5 py-0.5 rounded-md border border-purple-500/20">
-                            {biz.category}
-                          </span>
-                        </div>
-
                         {/* Location Subtext */}
-                        <div className="flex items-center gap-1 text-[11px] text-zinc-400 mb-2">
-                          <MapPin className="w-3.5 h-3.5 text-rose-500" />
+                        <div className="flex items-center gap-0.5 xs:gap-1 text-[9px] xs:text-[11px] text-zinc-500 mb-1 xs:mb-2 font-black">
+                          <MapPin className="w-3 xs:w-3.5 h-3 xs:h-3.5 text-luxury-coral shrink-0" />
                           <span className="truncate">{biz.address[currentLang]}</span>
                         </div>
 
                         {/* Description snippet */}
-                        <p className="text-[11px] text-zinc-400 line-clamp-2 leading-relaxed mb-4">
+                        <p className="text-[9px] xs:text-[11px] text-zinc-500 line-clamp-2 leading-relaxed mb-2 xs:mb-4">
                           {biz.description[currentLang]}
                         </p>
                       </div>
 
                       {/* Interactive engagement Footer Row */}
-                      <div className="border-t border-zinc-900 pt-3 flex items-center justify-between">
+                      <div className="border-t border-zinc-100 pt-2 xs:pt-3 flex flex-col xs:flex-row xs:items-center justify-between gap-2">
                         
                         {/* Profile Owner info snippet */}
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1.5">
                           <img
                             src={biz.avatar}
                             alt="Merchant Owner Avatar"
-                            className="w-6 h-6 rounded-full object-cover border border-zinc-800"
+                            className="w-5 h-5 xs:w-6 xs:h-6 rounded-full object-cover border border-[#0F2E2F]/20"
                             referrerPolicy="no-referrer"
                           />
-                          <span className="text-[10px] font-bold text-zinc-400 group-hover:text-zinc-200 transition-colors line-clamp-1">
+                          <span className="text-[8px] xs:text-[10px] font-black text-zinc-400 group-hover:text-[#1A1A1A] transition-colors line-clamp-1">
                             {t.ownerBadge}
                           </span>
                         </div>
 
-                        <div className="flex items-center gap-1.5">
+                        <div className="flex items-center gap-1 w-full xs:w-auto justify-end">
                           
                           {/* Like Button */}
                           <button
@@ -246,14 +235,14 @@ export default function BusinessFeed({
                               e.stopPropagation();
                               onToggleLike(biz.id);
                             }}
-                            className={`p-1.5 rounded-xl border transition ${
+                            className={`p-1 xs:p-1.5 rounded-lg border transition cursor-pointer ${
                               biz.likedByUser
-                                ? 'bg-pink-950/40 border-pink-500 text-pink-400'
-                                : 'bg-slate-900/60 border-zinc-800 text-zinc-400 hover:text-pink-400 hover:bg-slate-900'
+                                ? 'bg-pink-50 border-pink-500 text-pink-600'
+                                : 'bg-zinc-100 hover:bg-zinc-200 border-zinc-200 text-zinc-600 hover:text-pink-600'
                             }`}
                             title="Like place"
                           >
-                            <Heart className={`w-3.5 h-3.5 ${biz.likedByUser ? 'fill-pink-500' : ''}`} />
+                            <Heart className={`w-3 xs:w-3.5 h-3 xs:h-3.5 ${biz.likedByUser ? 'fill-pink-600' : ''}`} />
                           </button>
 
                           {/* Save Button */}
@@ -262,20 +251,20 @@ export default function BusinessFeed({
                               e.stopPropagation();
                               onToggleSave(biz.id);
                             }}
-                            className={`p-1.5 rounded-xl border transition ${
+                            className={`p-1 xs:p-1.5 rounded-lg border transition cursor-pointer ${
                               biz.savedByUser
-                                ? 'bg-cyan-950/40 border-cyan-500 text-cyan-400'
-                                : 'bg-slate-900/60 border-zinc-800 text-zinc-400 hover:text-cyan-400 hover:bg-slate-900'
+                                ? 'bg-teal-50 border-luxury-teal text-luxury-teal'
+                                : 'bg-zinc-100 hover:bg-zinc-200 border-zinc-200 text-zinc-600 hover:text-luxury-teal'
                             }`}
                             title="Save location"
                           >
-                            <Bookmark className={`w-3.5 h-3.5 ${biz.savedByUser ? 'fill-cyan-500' : ''}`} />
+                            <Bookmark className={`w-3 xs:w-3.5 h-3 xs:h-3.5 ${biz.savedByUser ? 'fill-luxury-teal' : ''}`} />
                           </button>
 
                           {/* Detail pop up opener CTA */}
                           <button
                             onClick={() => setSelectedBiz(biz)}
-                            className="text-[10px] font-black text-white bg-slate-900 hover:bg-slate-800 border border-slate-800 px-2.5 py-1.5 rounded-xl transition"
+                            className="text-[9px] xs:text-[10px] font-black text-white bg-[#1A1A1A] hover:bg-luxury-gold hover:text-[#1A1A1A] border border-[#1A1A1A] px-2 xs:px-2.5 py-1 xs:py-1.5 rounded-lg transition cursor-pointer duration-300"
                           >
                             {t.viewDetails}
                           </button>
@@ -295,7 +284,7 @@ export default function BusinessFeed({
               <div className="flex justify-center mt-5">
                 <button
                   onClick={() => handleToggleCategoryExpand(category.id)}
-                  className="text-[11px] font-bold text-cyan-400 hover:text-white bg-slate-950 px-4 py-1.5 rounded-full border border-slate-800 transition-all cursor-pointer"
+                  className="text-[11px] font-bold text-luxury-teal hover:text-white bg-white hover:bg-luxury-teal px-4 py-1.5 rounded-full border border-luxury-teal/30 transition-all cursor-pointer shadow-sm"
                 >
                   {isExpanded ? t.showLess : `${t.loadMore} (${categoryBizs.length - 3}) +`}
                 </button>

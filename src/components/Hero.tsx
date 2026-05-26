@@ -1,35 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronLeft, ChevronRight, Sparkles, MapPin, Compass } from 'lucide-react';
-import { Language, GovernorateCode } from '../types';
+import { Language, GovernorateCode, HeroSlide } from '../types';
 import { HERO_SLIDES, TRANSLATIONS } from '../data';
 
 interface HeroProps {
   currentLang: Language;
   onExploreClick: () => void;
   onSelectGov: (gov: GovernorateCode) => void;
+  slides?: HeroSlide[];
 }
 
-export default function Hero({ currentLang, onExploreClick, onSelectGov }: HeroProps) {
+export default function Hero({ currentLang, onExploreClick, onSelectGov, slides }: HeroProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  const activeSlidesList = slides && slides.length > 0 ? slides : HERO_SLIDES;
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % HERO_SLIDES.length);
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % activeSlidesList.length);
     }, 6000); // changes every 6s
     return () => clearInterval(timer);
-  }, []);
+  }, [activeSlidesList.length]);
 
   const handleNext = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % HERO_SLIDES.length);
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % activeSlidesList.length);
   };
 
   const handlePrev = () => {
-    setCurrentIndex((prevIndex) => (prevIndex - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
+    setCurrentIndex((prevIndex) => (prevIndex - 1 + activeSlidesList.length) % activeSlidesList.length);
   };
 
   const t = TRANSLATIONS[currentLang];
-  const activeSlide = HERO_SLIDES[currentIndex];
+  const activeSlide = activeSlidesList[currentIndex % activeSlidesList.length] || activeSlidesList[0];
   const isRtl = currentLang === 'ar' || currentLang === 'ku';
 
   return (
@@ -66,7 +69,7 @@ export default function Hero({ currentLang, onExploreClick, onSelectGov }: HeroP
           <div className="flex flex-wrap items-center gap-2 mb-3">
             <span className="flex items-center gap-1 text-[10px] font-black uppercase px-3 py-1 rounded-full bg-orange-500 text-black">
               <Sparkles className="w-3 h-3 text-black animate-pulse" />
-              <span>{activeSlide.badge[currentLang]}</span>
+              <span>{activeSlide.badge[currentLang] || activeSlide.badge.en}</span>
             </span>
             
             <button
@@ -89,7 +92,7 @@ export default function Hero({ currentLang, onExploreClick, onSelectGov }: HeroP
               className="text-2xl md:text-4xl font-extrabold text-white tracking-tight leading-tight mb-4"
               style={{ fontFamily: currentLang === 'en' ? 'Plus Jakarta Sans' : 'Cairo' }}
             >
-              {activeSlide.slogan[currentLang]}
+              {activeSlide.slogan[currentLang] || activeSlide.slogan.en}
             </motion.h1>
           </AnimatePresence>
 
@@ -99,9 +102,9 @@ export default function Hero({ currentLang, onExploreClick, onSelectGov }: HeroP
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={onExploreClick}
-              className="flex items-center gap-2 text-xs md:text-sm font-black text-black bg-white hover:bg-cyan-400 px-6 py-3.5 rounded-full shadow-lg shadow-white/5 transition-all font-mono"
+              className="flex items-center gap-2 text-xs md:text-sm font-black text-[#1A1A1A] bg-[#FF6B4A] hover:bg-[#C8A95F] px-6 py-3.5 rounded-full shadow-lg shadow-[#FF6B4A]/20 transition-all font-sans cursor-pointer duration-300"
             >
-              <Compass className="w-4 h-4 text-black" />
+              <Compass className="w-4 h-4 text-[#1A1A1A]" />
               <span>{t.ctaDiscover}</span>
             </motion.button>
             <span className="text-[11px] text-white/60 hidden md:inline-block font-medium">
@@ -137,7 +140,7 @@ export default function Hero({ currentLang, onExploreClick, onSelectGov }: HeroP
 
       {/* Slider indicators */}
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-10">
-        {HERO_SLIDES.map((slide, idx) => (
+        {activeSlidesList.map((slide, idx) => (
           <button
             key={slide.id}
             onClick={() => setCurrentIndex(idx)}
