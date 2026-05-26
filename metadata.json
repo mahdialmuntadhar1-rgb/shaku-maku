@@ -1,0 +1,6 @@
+{
+  "name": "Saku Maku",
+  "description": "Iraq's premier social business discovery platform for tracking cafés, restaurants, shopping, and more.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

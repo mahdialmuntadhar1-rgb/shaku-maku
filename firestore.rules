@@ -1,0 +1,134 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // 1. Global Catch-All Deny Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Core Security Helpers & Access Layers ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Bootstrapped administrator list
+    function isAdmin() {
+      return isSignedIn() && 
+        (request.auth.token.email == "safaribosafar@gmail.com") &&
+        request.auth.token.email_verified == true;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z4-9_\\-]+$');
+    }
+
+    // --- Entity Specific Validators ---
+
+    function isValidUserProfile(data) {
+      return data.uid is string && data.uid.size() <= 128 &&
+             data.displayName is string && data.displayName.size() <= 128 &&
+             data.photoURL is string && data.photoURL.size() <= 1024 &&
+             data.email is string && data.email.size() <= 256 &&
+             data.createdAt is string && data.createdAt.size() <= 128;
+    }
+
+    function isValidBusiness(data) {
+      return data.id is string && data.id.size() <= 128 &&
+             data.category is string && data.category.size() <= 128 &&
+             data.governorate is string && data.governorate.size() <= 128 &&
+             data.rating is number && data.rating >= 0 && data.rating <= 5 &&
+             data.reviewsCount is number && data.reviewsCount >= 0 &&
+             data.image is string && data.image.size() <= 1024 &&
+             data.avatar is string && data.avatar.size() <= 1024 &&
+             data.likes is number &&
+             data.ownerUid is string && data.ownerUid.size() <= 128;
+    }
+
+    function isValidSocialPost(data) {
+      return data.id is string && data.id.size() <= 128 &&
+             data.businessName is string && data.businessName.size() <= 256 &&
+             data.category is string && data.category.size() <= 128 &&
+             data.governorate is string && data.governorate.size() <= 128 &&
+             data.mediaUrl is string && data.mediaUrl.size() <= 1024 &&
+             data.caption is map &&
+             data.likes is number &&
+             data.commentsCount is number &&
+             data.shares is number &&
+             data.authorUid is string && data.authorUid.size() <= 128;
+    }
+
+    // --- Route Endpoints matching definitions ---
+
+    // USERS COLLECTION
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow create: if isOwner(userId) && isValidUserProfile(incoming());
+      allow update: if isOwner(userId) && isValidUserProfile(incoming()) && 
+                    incoming().uid == existing().uid && 
+                    incoming().email == existing().email;
+      allow delete: if isAdmin();
+    }
+
+    // BUSINESSES COLLECTION
+    match /businesses/{businessId} {
+      allow read: if true;
+      allow create: if isSignedIn() && (
+                    isAdmin() || 
+                    (isValidBusiness(incoming()) && 
+                     incoming().ownerUid == request.auth.uid &&
+                     incoming().isVerified == false)
+                  );
+      allow update: if isSignedIn() && (
+        isAdmin() || 
+        (existing().ownerUid == request.auth.uid && 
+         isValidBusiness(incoming()) &&
+         incoming().ownerUid == existing().ownerUid &&
+         incoming().isVerified == existing().isVerified && // block modifying verification status
+         incoming().diff(existing()).affectedKeys().hasOnly([
+           'name', 'description', 'category', 'governorate', 'phoneNumber', 'address', 'image', 'images', 'avatar', 'mapCoords', 'stories'
+         ])
+        ) ||
+        // Allowing users to increment likes or review counts
+        (incoming().diff(existing()).affectedKeys().hasOnly(['likes', 'saves', 'reviewsCount', 'rating']))
+      );
+      allow delete: if isAdmin() || (isSignedIn() && existing().ownerUid == request.auth.uid);
+    }
+
+    // SOCIAL FEEDS/POSTS COLLECTION
+    match /posts/{postId} {
+      allow read: if true;
+      allow create: if isSignedIn() && (
+                    isAdmin() ||
+                    (isValidSocialPost(incoming()) && 
+                     incoming().authorUid == request.auth.uid)
+                  );
+      allow update: if isSignedIn() && (
+        isAdmin() ||
+        (existing().authorUid == request.auth.uid && 
+         isValidSocialPost(incoming()) &&
+         incoming().authorUid == existing().authorUid &&
+         incoming().diff(existing()).affectedKeys().hasOnly([
+           'caption', 'mediaUrl', 'videoUrl', 'fileAttachment', 'category', 'governorate'
+         ])
+        ) ||
+        // Public interaction like rating, reactions, comments increments
+        (incoming().diff(existing()).affectedKeys().hasOnly(['likes', 'commentsCount', 'shares', 'comments']))
+      );
+      allow delete: if isAdmin() || (isSignedIn() && existing().authorUid == request.auth.uid);
+    }
+
+  }
+}

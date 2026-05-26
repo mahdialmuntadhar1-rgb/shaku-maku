@@ -1,0 +1,54 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Cairo", "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+body {
+  background-color: #020205; /* Elegant Dark theme background */
+  color: #f4f4f5; /* Zinc-100 */
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+}
+
+/* Stunning custom dark-glass scrollbar for smooth scrolling feeds */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(30, 27, 75, 0.1);
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.3);
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 92, 246, 0.6);
+}
+
+/* Aesthetic glowing pulse elements */
+@keyframes pulseGlow {
+  0%, 100% {
+    text-shadow: 0 0 10px rgba(34, 211, 238, 0.3);
+  }
+  50% {
+    text-shadow: 0 0 20px rgba(34, 211, 238, 0.7), 0 0 30px rgba(139, 92, 246, 0.4);
+  }
+}
+
+.glow-title {
+  animation: pulseGlow 4s infinite;
+}
+
+/* Saku Maku custom shake animation for deals */
+@keyframes gentleShake {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-3deg); }
+  75% { transform: rotate(3deg); }
+}
+
+.animate-shake {
+  animation: gentleShake 2s infinite ease-in-out;
+}
