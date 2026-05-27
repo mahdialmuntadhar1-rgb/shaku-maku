@@ -6,8 +6,10 @@ import {
   Edit, Save, Plus, ChevronDown, CheckCircle2, Smartphone, ShieldAlert,
   Award, RefreshCw
 } from 'lucide-react';
-import { Language, GovernorateCode, Business, SocialPost, UserProfile, HeroSlide, Category } from '../types';
+import { Language, GovernorateCode, Business, SocialPost, UserProfile, HeroSlide, BusinessClaim } from '../types';
 import { CATEGORIES, GOVERNORATES, HERO_SLIDES } from '../data';
+import { db } from '../firebase';
+import { collection, doc, setDoc, updateDoc, deleteDoc, onSnapshot } from 'firebase/firestore';
 
 interface AdminPanelProps {
   currentLang: Language;
@@ -16,8 +18,6 @@ interface AdminPanelProps {
   posts: SocialPost[];
   setPosts: React.Dispatch<React.SetStateAction<SocialPost[]>>;
   userProfile?: UserProfile | null;
-  categories?: Category[];
-  setCategories?: React.Dispatch<React.SetStateAction<Category[]>>;
 }
 
 export default function AdminPanel({
@@ -26,11 +26,8 @@ export default function AdminPanel({
   setBusinesses,
   posts,
   setPosts,
-  userProfile,
-  categories: categoriesProp,
-  setCategories
+  userProfile
 }: AdminPanelProps) {
-  const liveCategories = categoriesProp && categoriesProp.length > 0 ? categoriesProp : CATEGORIES;
   // Login auth state
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [username, setUsername] = useState('');
@@ -42,16 +39,7 @@ export default function AdminPanel({
   const isFullyUnlocked = isAuthenticated || isAdminSession;
 
   // Active Admin command hub tab
-  const [adminTab, setAdminTab] = useState<'stats' | 'businesses' | 'posts' | 'hero' | 'categories'>('stats');
-
-  // Category editor state
-  const [editingCatId, setEditingCatId] = useState<string | null>(null);
-  const [catIcon, setCatIcon] = useState('');
-  const [catNameAr, setCatNameAr] = useState('');
-  const [catNameKu, setCatNameKu] = useState('');
-  const [catNameEn, setCatNameEn] = useState('');
-  const [catColor, setCatColor] = useState('');
-  const [catSuccess, setCatSuccess] = useState(false);
+  const [adminTab, setAdminTab] = useState<'stats' | 'businesses' | 'posts' | 'hero' | 'claims'>('stats');
 
   // Real-time Firestore sync of slider segments
   const [heroSlides, setHeroSlides] = useState<HeroSlide[]>([]);
@@ -87,12 +75,28 @@ export default function AdminPanel({
   const [postEditPromo, setPostEditPromo] = useState('');
   const [postEditMedia, setPostEditMedia] = useState('');
 
-  // Load hero slides from local data
+  // Sync slides on admin load
   useEffect(() => {
     if (!isFullyUnlocked) return;
     setLoadingSlides(true);
-    setHeroSlides(HERO_SLIDES);
-    setLoadingSlides(false);
+    const ref = collection(db, 'hero_slides');
+    const unsub = onSnapshot(ref, (snap) => {
+      if (snap.empty) {
+        setHeroSlides(HERO_SLIDES);
+      } else {
+        const list: HeroSlide[] = [];
+        snap.forEach((doc) => {
+          list.push(doc.data() as HeroSlide);
+        });
+        setHeroSlides(list);
+      }
+      setLoadingSlides(false);
+    }, (err) => {
+      console.error("Error fetching slides inside Admin: ", err);
+      setHeroSlides(HERO_SLIDES);
+      setLoadingSlides(false);
+    });
+    return () => unsub();
   }, [isFullyUnlocked]);
 
   // Sync business owner claims on admin load
@@ -129,13 +133,22 @@ export default function AdminPanel({
   };
 
   // Business operations
-  const handleToggleVerify = (biz: Business) => {
-    setBusinesses(prev => prev.map(b => b.id === biz.id ? { ...b, isVerified: !b.isVerified } : b));
+  const handleToggleVerify = async (biz: Business) => {
+    try {
+      const bizRef = doc(db, 'businesses', biz.id);
+      await updateDoc(bizRef, { isVerified: !biz.isVerified });
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  const deleteBiz = (bizId: string) => {
+  const deleteBiz = async (bizId: string) => {
     if (window.confirm('Are you absolute sure you want to remove this local business listing from Saku Maku?')) {
-      setBusinesses(prev => prev.filter(b => b.id !== bizId));
+      try {
+        await deleteDoc(doc(db, 'businesses', bizId));
+      } catch (err) {
+        console.error(err);
+      }
     }
   };
 
@@ -149,26 +162,35 @@ export default function AdminPanel({
     setBizEditCategory(biz.category);
   };
 
-  const saveEditedBiz = () => {
+  const saveEditedBiz = async () => {
     if (!editingBizId) return;
-    const bizObj = businesses.find(b => b.id === editingBizId);
-    if (!bizObj) return;
-    setBusinesses(prev => prev.map(b => b.id === editingBizId ? {
-      ...b,
-      name: { ...b.name, [currentLang]: bizEditName.trim() },
-      description: { ...b.description, [currentLang]: bizEditDesc.trim() },
-      address: { ...b.address, [currentLang]: bizEditAddress.trim() },
-      phoneNumber: bizEditPhone.trim(),
-      image: bizEditCover.trim(),
-      category: bizEditCategory
-    } : b));
-    setEditingBizId(null);
+    try {
+      const bizRef = doc(db, 'businesses', editingBizId);
+      const bizObj = businesses.find(b => b.id === editingBizId);
+      if (!bizObj) return;
+
+      await updateDoc(bizRef, {
+        name: { ...bizObj.name, [currentLang]: bizEditName.trim() },
+        description: { ...bizObj.description, [currentLang]: bizEditDesc.trim() },
+        address: { ...bizObj.address, [currentLang]: bizEditAddress.trim() },
+        phoneNumber: bizEditPhone.trim(),
+        image: bizEditCover.trim(),
+        category: bizEditCategory
+      });
+      setEditingBizId(null);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   // Post operations
-  const deletePost = (postId: string) => {
+  const deletePost = async (postId: string) => {
     if (window.confirm('Delete this user post from the live Social Pulse feed stream immediately?')) {
-      setPosts(prev => prev.filter(p => p.id !== postId));
+      try {
+        await deleteDoc(doc(db, 'posts', postId));
+      } catch (err) {
+        console.error(err);
+      }
     }
   };
 
@@ -179,19 +201,26 @@ export default function AdminPanel({
     setPostEditMedia(post.mediaUrl);
   };
 
-  const saveEditedPost = () => {
+  const saveEditedPost = async () => {
     if (!editingPostId) return;
-    setPosts(prev => prev.map(p => p.id === editingPostId ? {
-      ...p,
-      caption: { ...p.caption, [currentLang]: postEditCaption.trim() },
-      promotionBadge: postEditPromo.trim() ? {
-        ar: postEditPromo.trim(),
-        ku: postEditPromo.trim(),
-        en: postEditPromo.trim()
-      } : p.promotionBadge,
-      mediaUrl: postEditMedia.trim()
-    } : p));
-    setEditingPostId(null);
+    try {
+      const postRef = doc(db, 'posts', editingPostId);
+      const postObj = posts.find(p => p.id === editingPostId);
+      if (!postObj) return;
+
+      await updateDoc(postRef, {
+        caption: { ...postObj.caption, [currentLang]: postEditCaption.trim() },
+        promotionBadge: postEditPromo.trim() ? { 
+          ar: postEditPromo.trim(), 
+          ku: postEditPromo.trim(), 
+          en: postEditPromo.trim() 
+        } : null,
+        mediaUrl: postEditMedia.trim()
+      });
+      setEditingPostId(null);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   // Business claim operations
@@ -276,55 +305,70 @@ export default function AdminPanel({
   };
 
   // Hero operations
-  const saveEditedSlide = (slideId: string) => {
-    setHeroSlides(prev => prev.map(s => s.id === slideId ? {
-      ...s,
-      image: slideImage.trim(),
-      slogan: { ar: slideSloganAr.trim(), ku: slideSloganKu.trim(), en: slideSloganEn.trim() },
-      governorate: slideGov,
-      category: slideCategory,
-      badge: { ar: slideBadgeAr.trim(), ku: slideBadgeKu.trim(), en: slideBadgeEn.trim() }
-    } : s));
-    setEditingSlideId(null);
-    setSlideSuccess(true);
-    setTimeout(() => setSlideSuccess(false), 3000);
-  };
-
-  const deleteSlide = (slideId: string) => {
-    if (window.confirm('Delete this specific banner slider from Saku Maku?')) {
-      setHeroSlides(prev => prev.filter(s => s.id !== slideId));
+  const saveEditedSlide = async (slideId: string) => {
+    try {
+      const slideRef = doc(db, 'hero_slides', slideId);
+      await setDoc(slideRef, {
+        id: slideId,
+        image: slideImage.trim(),
+        slogan: { ar: slideSloganAr.trim(), ku: slideSloganKu.trim(), en: slideSloganEn.trim() },
+        governorate: slideGov,
+        category: slideCategory,
+        badge: { ar: slideBadgeAr.trim(), ku: slideBadgeKu.trim(), en: slideBadgeEn.trim() }
+      }, { merge: true });
+      setEditingSlideId(null);
+      setSlideSuccess(true);
+      setTimeout(() => setSlideSuccess(false), 3000);
+    } catch (err) {
+      console.error("Error saving slide info: ", err);
     }
   };
 
-  const addNewSlide = () => {
-    const newId = `slide-dyn-${Date.now()}`;
-    const sample = {
-      id: newId,
-      image: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=1200&auto=format&fit=crop&q=80',
-      slogan: {
-        ar: 'جديد: الذوق العراقي الأصيل يجمعنا 🍕',
-        ku: 'نوێ: تامی ڕەسەنی عێراقی کۆمان دەکاتەوە 🍕',
-        en: 'New: Authentic Iraqi flavours connect us! 🍕'
-      },
-      governorate: 'baghdad' as GovernorateCode,
-      category: 'dining',
-      badge: {
-        ar: 'بث خاص 🌶️',
-        ku: 'پۆستی تایبەت 🌶️',
-        en: 'Official Spot 🌶️'
+  const deleteSlide = async (slideId: string) => {
+    if (window.confirm('Delete this specific banner slider from Saku Maku?')) {
+      try {
+        await deleteDoc(doc(db, 'hero_slides', slideId));
+      } catch (err) {
+        console.error(err);
       }
-    };
-    setHeroSlides(prev => [...prev, sample]);
-    setEditingSlideId(newId);
-    setSlideImage(sample.image);
-    setSlideSloganAr(sample.slogan.ar);
-    setSlideSloganKu(sample.slogan.ku);
-    setSlideSloganEn(sample.slogan.en);
-    setSlideGov(sample.governorate);
-    setSlideCategory(sample.category);
-    setSlideBadgeAr(sample.badge.ar);
-    setSlideBadgeKu(sample.badge.ku);
-    setSlideBadgeEn(sample.badge.en);
+    }
+  };
+
+  const addNewSlide = async () => {
+    const newId = `slide-dyn-${Date.now()}`;
+    try {
+      const slideRef = doc(db, 'hero_slides', newId);
+      const sample = {
+        id: newId,
+        image: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=1200&auto=format&fit=crop&q=80',
+        slogan: {
+          ar: 'جديد: الذوق العراقي الأصيل يجمعنا 🍕',
+          ku: 'نوێ: تامی ڕەسەنی عێراقی کۆمان دەکاتەوە 🍕',
+          en: 'New: Authentic Iraqi flavours connect us! 🍕'
+        },
+        governorate: 'baghdad' as GovernorateCode,
+        category: 'restaurant',
+        badge: {
+          ar: 'بث خاص 🌶️',
+          ku: 'پۆستی تایبەت 🌶️',
+          en: 'Official Spot 🌶️'
+        }
+      };
+      await setDoc(slideRef, sample);
+      // Automatically open editing mode for the new slide
+      setEditingSlideId(newId);
+      setSlideImage(sample.image);
+      setSlideSloganAr(sample.slogan.ar);
+      setSlideSloganKu(sample.slogan.ku);
+      setSlideSloganEn(sample.slogan.en);
+      setSlideGov(sample.governorate);
+      setSlideCategory(sample.category);
+      setSlideBadgeAr(sample.badge.ar);
+      setSlideBadgeKu(sample.badge.ku);
+      setSlideBadgeEn(sample.badge.en);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const renderSecurityGateway = () => (
@@ -490,15 +534,15 @@ export default function AdminPanel({
         </button>
 
         <button
-          onClick={() => setAdminTab('categories')}
+          onClick={() => setAdminTab('claims')}
           className={`px-4 py-2.5 rounded-xl border text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
-            adminTab === 'categories'
-              ? 'bg-cyan-500/15 border-cyan-500 text-cyan-400 font-black'
+            adminTab === 'claims'
+              ? 'bg-amber-550/15 border-amber-500 text-amber-500 font-black'
               : 'border-transparent text-zinc-400 hover:text-white'
           }`}
         >
-          <Sparkles className="w-4 h-4" />
-          <span>Edit Categories ({liveCategories.length})</span>
+          <Smartphone className="w-4 h-4" />
+          <span>Claims & Verification ({claims.length})</span>
         </button>
       </div>
 
@@ -1051,109 +1095,141 @@ export default function AdminPanel({
           </div>
         )}
 
-        {/* ── CATEGORIES EDITOR ── */}
-        {adminTab === 'categories' && (
-          <div className="space-y-5">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-black text-white uppercase">Category Card Editor</h3>
-              {catSuccess && (
-                <span className="text-xs text-emerald-400 font-bold flex items-center gap-1">
-                  <CheckCircle2 className="w-4 h-4" /> Saved!
+        {adminTab === 'claims' && (
+          <div className="space-y-6">
+            {/* Header statistics grid */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="p-4 bg-white/5 border border-white/5 rounded-2xl text-left">
+                <span className="text-[10px] text-zinc-500 tracking-wider font-extrabold uppercase block font-mono">Total Registry Claims</span>
+                <span className="text-xl font-black text-white block mt-1.5">{claims.length}</span>
+              </div>
+              <div className="p-4 bg-amber-500/5 border border-amber-500/10 rounded-2xl text-left">
+                <span className="text-[10px] text-amber-500 tracking-wider font-extrabold uppercase block font-mono">Pending Verification</span>
+                <span className="text-xl font-black text-amber-500 block mt-1.5 font-sans">
+                  {claims.filter(c => c.status === 'pending').length}
                 </span>
-              )}
+              </div>
+              <div className="p-4 bg-red-505 bg-red-950/20 border border-red-500/10 rounded-2xl text-left font-mono">
+                <span className="text-[10px] text-red-400 tracking-wider font-extrabold uppercase block">Suspicious Flashes</span>
+                <span className="text-xl font-black text-red-400 block mt-1.5">
+                  {claims.filter(c => c.isSuspicious && c.status === 'pending').length}
+                </span>
+              </div>
+              <div className="p-4 bg-emerald-505 bg-emerald-950/20 border border-emerald-500/10 rounded-2xl text-left">
+                <span className="text-[10px] text-emerald-400 tracking-wider font-extrabold uppercase block font-mono">Approved Merchants</span>
+                <span className="text-xl font-black text-emerald-400 block mt-1.5">
+                  {claims.filter(c => c.status === 'approved').length}
+                </span>
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {liveCategories.map((cat) => {
-                const isEditing = editingCatId === cat.id;
-                return (
-                  <div key={cat.id} className="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-3">
-                    {/* Preview row */}
-                    <div className="flex items-center gap-3">
-                      <span className="text-2xl">{isEditing ? catIcon || cat.icon : cat.icon}</span>
-                      <div>
-                        <p className="text-xs font-black text-white">{isEditing ? catNameEn || cat.name.en : cat.name.en}</p>
-                        <p className="text-[10px] text-zinc-500">{cat.id}</p>
-                      </div>
-                      <div className={`ml-auto w-8 h-8 rounded-lg bg-gradient-to-br ${isEditing ? catColor || cat.color : cat.color} opacity-80`} />
-                    </div>
+            {/* List of active highstreet claimant entries */}
+            <div className="p-6 bg-[#141417]/95 border border-white/5 rounded-3xl space-y-4">
+              <h3 className="text-sm font-black text-white uppercase flex items-center gap-2">
+                <Smartphone className="w-4.5 h-4.5 text-luxury-gold" />
+                <span>Live Owner Audits & Claim Campaigns</span>
+              </h3>
 
-                    {isEditing ? (
-                      <div className="space-y-2">
-                        <div className="grid grid-cols-2 gap-2">
-                          <div>
-                            <label className="text-[9px] text-zinc-500 font-bold uppercase block mb-0.5">Icon (emoji)</label>
-                            <input type="text" value={catIcon} onChange={e => setCatIcon(e.target.value)}
-                              className="w-full bg-black/40 border border-white/10 text-xs px-2 py-1.5 rounded-lg text-white focus:outline-none focus:border-cyan-400"
-                              placeholder="e.g. ☕" />
+              <div className="space-y-3 font-sans text-left">
+                {claims.length === 0 ? (
+                  <div className="text-center py-8 text-zinc-500 text-xs">No merchant claims recorded in active platform registry logs.</div>
+                ) : (
+                  claims.map(claim => {
+                    const statusColors = {
+                      pending: claim.isSuspicious ? 'bg-red-500/15 text-red-400 border-red-500/25' : 'bg-amber-500/15 text-amber-400 border-amber-500/25',
+                      approved: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/25',
+                      rejected: 'bg-zinc-800 text-zinc-400 border-white/5'
+                    }[claim.status] || 'bg-zinc-800 text-zinc-400 border-white/5';
+
+                    return (
+                      <div key={claim.id} className="p-4 bg-white/5 border border-white/5 rounded-2xl flex flex-col md:flex-row gap-4 justify-between items-start md:items-center text-xs">
+                        <div className="space-y-1.5 max-w-xl text-left font-medium">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-[10px] font-black text-white font-sans">Claimant: {claim.userPhone}</span>
+                            <span className={`text-[9.5px] font-black px-1.5 py-0.5 rounded border uppercase font-mono ${statusColors}`}>
+                              {claim.status} {claim.isSuspicious && claim.status === 'pending' ? '(Flagged)' : ''}
+                            </span>
                           </div>
-                          <div>
-                            <label className="text-[9px] text-zinc-500 font-bold uppercase block mb-0.5">Gradient CSS class</label>
-                            <input type="text" value={catColor} onChange={e => setCatColor(e.target.value)}
-                              className="w-full bg-black/40 border border-white/10 text-xs px-2 py-1.5 rounded-lg text-white focus:outline-none focus:border-cyan-400"
-                              placeholder="from-amber-600 to-yellow-500" />
-                          </div>
+
+                          <h4 className="text-white font-black leading-tight">
+                            Linked Business: {claim.businessName[currentLang] || claim.businessName.en || 'Unknown spot'}
+                          </h4>
+
+                          <p className="text-[10.5px] text-zinc-450 font-mono">
+                            User UID: <span className="text-zinc-500 font-bold">{claim.userId}</span> | Created: {new Date(claim.createdAt).toLocaleString()}
+                          </p>
+
+                          {claim.isSuspicious && (
+                            <div className="mt-1.5 p-2 bg-red-950/40 border border-red-500/20 rounded-xl text-[10px] text-red-300 flex items-start gap-1.5 font-sans leading-normal">
+                              <ShieldAlert className="w-3.5 h-3.5 mt-0.5 shrink-0 text-red-400" />
+                              <span>Audit Hold Reason: {claim.suspiciousReason}</span>
+                            </div>
+                          )}
                         </div>
-                        <div>
-                          <label className="text-[9px] text-zinc-500 font-bold uppercase block mb-0.5">Name (EN)</label>
-                          <input type="text" value={catNameEn} onChange={e => setCatNameEn(e.target.value)}
-                            className="w-full bg-black/40 border border-white/10 text-xs px-2 py-1.5 rounded-lg text-white focus:outline-none focus:border-cyan-400" />
-                        </div>
-                        <div>
-                          <label className="text-[9px] text-zinc-500 font-bold uppercase block mb-0.5">Name (AR)</label>
-                          <input type="text" value={catNameAr} onChange={e => setCatNameAr(e.target.value)} dir="rtl"
-                            className="w-full bg-black/40 border border-white/10 text-xs px-2 py-1.5 rounded-lg text-white focus:outline-none focus:border-cyan-400" />
-                        </div>
-                        <div>
-                          <label className="text-[9px] text-zinc-500 font-bold uppercase block mb-0.5">Name (KU)</label>
-                          <input type="text" value={catNameKu} onChange={e => setCatNameKu(e.target.value)} dir="rtl"
-                            className="w-full bg-black/40 border border-white/10 text-xs px-2 py-1.5 rounded-lg text-white focus:outline-none focus:border-cyan-400" />
-                        </div>
-                        <div className="flex gap-2 pt-1">
-                          <button
-                            onClick={() => {
-                              if (!setCategories) return;
-                              setCategories(prev => prev.map(c => c.id !== cat.id ? c : {
-                                ...c,
-                                icon: catIcon.trim() || c.icon,
-                                color: catColor.trim() || c.color,
-                                name: {
-                                  en: catNameEn.trim() || c.name.en,
-                                  ar: catNameAr.trim() || c.name.ar,
-                                  ku: catNameKu.trim() || c.name.ku
-                                }
-                              }));
-                              setEditingCatId(null);
-                              setCatSuccess(true);
-                              setTimeout(() => setCatSuccess(false), 2500);
-                            }}
-                            className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-black rounded-lg cursor-pointer transition"
-                          >💾 Save</button>
-                          <button
-                            onClick={() => setEditingCatId(null)}
-                            className="px-3 py-1.5 bg-zinc-800 text-zinc-400 text-[10px] font-black rounded-lg cursor-pointer transition"
-                          >Cancel</button>
+
+                        {/* Action controllers */}
+                        <div className="flex items-center gap-2 pt-2 md:pt-0 shrink-0 w-full md:w-auto justify-end border-t border-white/5 md:border-0 font-sans font-bold">
+                          {claim.status === 'pending' ? (
+                            <>
+                              <button
+                                onClick={() => handleApproveClaim(claim)}
+                                className="px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-black text-[10px] font-black uppercase rounded-lg cursor-pointer transition-all flex items-center gap-1"
+                              >
+                                <span>Approve Claims</span>
+                              </button>
+                              <button
+                                onClick={() => handleRejectClaim(claim.id)}
+                                className="px-3 py-1.5 bg-zinc-850 hover:bg-zinc-800 border border-white/10 text-zinc-350 text-[10px] font-black uppercase rounded-lg cursor-pointer transition-all"
+                              >
+                                Reject
+                              </button>
+                            </>
+                          ) : (
+                            <span className="text-[10px] text-zinc-550 font-mono">Audited Claims Process</span>
+                          )}
                         </div>
                       </div>
-                    ) : (
+                    );
+                  })
+                )}
+              </div>
+            </div>
+
+            {/* Ownership and Revocations Panel */}
+            <div className="p-6 bg-[#141417]/95 border border-white/5 rounded-3xl space-y-4">
+              <h3 className="text-sm font-black text-white uppercase flex items-center gap-2">
+                <Award className="w-4.5 h-4.5 text-luxury-gold" />
+                <span>Registry Verified Merchants & Revocations ({businesses.filter(b => b.ownerUid).length})</span>
+              </h3>
+
+              <div className="space-y-2 text-left font-sans">
+                {businesses.filter(b => b.ownerUid).length === 0 ? (
+                  <div className="text-center py-6 text-zinc-450 text-xs font-semibold">No active verified owner associations in current listings database.</div>
+                ) : (
+                  businesses.filter(b => b.ownerUid).map(biz => (
+                    <div key={biz.id} className="p-3 bg-white/5 border border-white/5 rounded-xl flex items-center justify-between text-xs font-semibold">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded overflow-hidden">
+                          <img src={biz.avatar} alt="Logo" className="w-full h-full object-cover" />
+                        </div>
+                        <div className="text-left font-sans">
+                          <h4 className="font-extrabold text-white">{biz.name[currentLang] || biz.name.en}</h4>
+                          <p className="text-[10px] text-zinc-450 font-mono">Owner UID: {biz.ownerUid}</p>
+                        </div>
+                      </div>
+
                       <button
-                        onClick={() => {
-                          setEditingCatId(cat.id);
-                          setCatIcon(cat.icon);
-                          setCatNameEn(cat.name.en);
-                          setCatNameAr(cat.name.ar);
-                          setCatNameKu(cat.name.ku);
-                          setCatColor(cat.color);
-                        }}
-                        className="flex items-center gap-1.5 text-[10px] text-cyan-400 hover:text-white transition cursor-pointer font-bold"
+                        onClick={() => handleRevokeClaim(biz.id, biz.ownerUid!)}
+                        className="px-3 py-1 bg-red-950/30 hover:bg-red-900 border border-red-500/20 text-red-200 text-[10px] font-bold rounded-lg cursor-pointer transition"
                       >
-                        <Edit className="w-3 h-3" /> Edit
+                        Revoke Ownership
                       </button>
-                    )}
-                  </div>
-                );
-              })}
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
+
           </div>
         )}
       </div>

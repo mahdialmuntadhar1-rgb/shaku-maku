@@ -1,11 +1,17 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
-  X, Lock, Mail, User, Shield, Sparkles, AlertCircle, Key,
+  X, Lock, Mail, User, Shield, Sparkles, AlertCircle, Key, 
   Eye, EyeOff, CheckCircle2, Award, ArrowRight, ArrowLeft
 } from 'lucide-react';
 import { Language, UserProfile } from '../types';
-import { authApi } from '../api';
+import { auth, db, signInWithGoogle } from '../firebase';
+import { 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword,
+  updateProfile
+} from 'firebase/auth';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -23,25 +29,15 @@ export default function AuthModal({
   onAuthSuccess
 }: AuthModalProps) {
   const [isSignUp, setIsSignUp] = useState(false);
-  const [isForgotPwd, setIsForgotPwd] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [deletePassword, setDeletePassword] = useState('');
-  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [role, setRole] = useState<'user' | 'owner'>('user');
   
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-
-  // Check for reset token in URL
-  const urlParams = new URLSearchParams(window.location.search);
-  const resetToken = urlParams.get('reset_token');
-  const resetEmail = urlParams.get('email') || '';
-  const isResetMode = !!resetToken;
 
   if (!isOpen) return null;
 
@@ -60,6 +56,11 @@ export default function AuthModal({
       pwd_placeholder: "Minimum 6 characters",
       name: "Full Name",
       name_placeholder: "e.g., Ali Al-Baghdadi",
+      role_label: "Register Account As",
+      explorer: "Active Explorer (Visitor)",
+      explorer_desc: "Discover businesses, write reviews, and save spots.",
+      merchant: "Local Merchant (Business Owner)",
+      merchant_desc: "Add your shop, post stories, and receive claims.",
       google_btn: "Sign In with Gmail / Google",
       submit_login: "Login to Account",
       submit_signup: "Register & Onboard",
@@ -86,6 +87,11 @@ export default function AuthModal({
       pwd_placeholder: "لا تقل عن 6 أحرف",
       name: "الاسم الكامل",
       name_placeholder: "مثال: علي البغدادي",
+      role_label: "التسجيل كـ",
+      explorer: "مستكشف نشط (زائر)",
+      explorer_desc: "تصفح المتاجر، واكتب مراجعات، واحفظ مصلحتك المفضلة.",
+      merchant: "صاحب مصلحة / متجر محلي",
+      merchant_desc: "أضف متجرك الخاص، وانشر عروض الحافلة، ووثّق علامتك.",
       google_btn: "الدخول باستخدام حساب Google / جوميل",
       submit_login: "تسجيل الدخول",
       submit_signup: "إنشاء حساب وبدء الاستخدام",
@@ -112,6 +118,11 @@ export default function AuthModal({
       pwd_placeholder: "کەمتر نەبێت لە 6 پیت",
       name: "ناوی تەواو",
       name_placeholder: "بۆ نموونە: عەلی بەغدادی",
+      role_label: "تۆمارکردنی ئەکاونت وەک",
+      explorer: "گەڕیدەی چالاک (سەردانکەر)",
+      explorer_desc: "فرۆشگاکان بدۆزەرەوە، پۆست بکە و شوێنەکان پاشەکەوت بکە.",
+      merchant: "خاوەن کار یان فرۆشگا",
+      merchant_desc: "شوێنەکەت زیاد بکە و پۆستی گرنگ بکە.",
       google_btn: "چوونەژوورەوە بە حیسابی Google",
       submit_login: "بچۆ ژوورەوە",
       submit_signup: "تۆمارکردن و دەستپێکردن",
@@ -129,55 +140,49 @@ export default function AuthModal({
     }
   }[currentLang];
 
-  const handleForgotPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) return;
+  const handleGoogleClick = async () => {
     setLoading(true);
     setErrorMsg('');
     try {
-      await authApi.forgotPassword(email.trim());
-      setSuccessMsg(
-        currentLang === 'en' ? 'Reset link sent! Check your inbox (and spam folder).'
-        : currentLang === 'ku' ? 'لینکی گۆڕینی پاسوۆرد نێردرا! ئیمەیڵەکەت بپشکنە.'
-        : 'تم إرسال رابط الاسترداد! تحقق من بريدك الوارد أو مجلد الرسائل غير المرغوب بها.'
-      );
+      const userObj = await signInWithGoogle();
+      if (userObj) {
+        // Create user document in firestore if not exists
+        const userRef = doc(db, 'users', userObj.uid);
+        const docSnap = await getDoc(userRef);
+        
+        let profileDetails: UserProfile;
+        if (!docSnap.exists()) {
+          const isAdmin = userObj.email === 'safaribosafar@gmail.com' || userObj.email === 'mahdialmuntadhar1@gmail.com';
+          profileDetails = {
+            uid: userObj.uid,
+            displayName: userObj.displayName || 'Iraqi Guest',
+            photoURL: userObj.photoURL || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80",
+            email: userObj.email || '',
+            createdAt: new Date().toISOString(),
+            role: isAdmin ? 'admin' : 'user',
+            onboarded: false,
+            businessId: null
+          };
+          await setDoc(userRef, profileDetails);
+        } else {
+          profileDetails = docSnap.data() as UserProfile;
+        }
+
+        setSuccessMsg(L.success_logged);
+        if (onAuthSuccess) {
+          onAuthSuccess(profileDetails);
+        }
+        setTimeout(() => {
+          onClose();
+          setSuccessMsg('');
+        }, 1500);
+      }
     } catch (err: any) {
-      setErrorMsg(err.message);
+      console.error(err);
+      setErrorMsg(err.message || 'Google Auth Cancelled or Failed.');
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleResetPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newPassword || newPassword.length < 6 || !resetToken) return;
-    setLoading(true);
-    setErrorMsg('');
-    try {
-      await authApi.resetPassword(resetToken, newPassword);
-      setSuccessMsg(
-        currentLang === 'en' ? 'Password reset! You can now log in with your new password.'
-        : currentLang === 'ku' ? 'پاسوۆردەکەت گۆڕدرا! ئێستا بچۆ ژوورەوە.'
-        : 'تم إعادة تعيين كلمة المرور! يمكنك الآن تسجيل الدخول.'
-      );
-      // Clear URL params
-      window.history.replaceState({}, '', window.location.pathname);
-      setTimeout(() => { setSuccessMsg(''); setIsForgotPwd(false); }, 2500);
-    } catch (err: any) {
-      setErrorMsg(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleGoogleClick = () => {
-    setErrorMsg(
-      currentLang === 'en'
-        ? 'Google Sign-In is not available in this environment. Please use email/password or a sandbox preset below.'
-        : currentLang === 'ku'
-        ? 'چوونەژوورەوە بە Google ئێستا بەردەست نییە. تکایە ئیمەیل و پاسوۆرد بەکاربێنە.'
-        : 'تسجيل الدخول بـ Google غير متاح حالياً. يرجى استخدام البريد الإلكتروني أو الحسابات التجريبية أدناه.'
-    );
   };
 
   const handleEmailAuthSubmit = async (e: React.FormEvent) => {
@@ -198,36 +203,28 @@ export default function AuthModal({
 
     try {
       if (isSignUp) {
-        // Create account with custom API
-        const response = await authApi.signup({
-          email: email.trim(),
-          password: password,
-          name: displayName.trim()
+        // 1. Create firebase auth email account
+        const credential = await createUserWithEmailAndPassword(auth, email.trim(), password);
+        await updateProfile(credential.user, {
+          displayName: displayName.trim()
         });
-        console.log('Signup response:', response);
 
-        const user = (response as any).data?.user || (response as any).user;
-        const token = (response as any).data?.token || (response as any).token;
-        if (!user || !user.id) {
-          throw new Error('Invalid response from server: missing user data');
-        }
-
+        // 2. Create the firestore profile
+        const userRef = doc(db, 'users', credential.user.uid);
+        
         const isAdmin = email.trim().toLowerCase() === 'safaribosafar@gmail.com' || email.trim().toLowerCase() === 'mahdialmuntadhar1@gmail.com';
         const profileDetails: UserProfile = {
-          uid: user.id,
-          displayName: user.name || displayName.trim(),
-          photoURL: user.photoURL || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80",
-          email: user.email,
+          uid: credential.user.uid,
+          displayName: displayName.trim(),
+          photoURL: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80",
+          email: email.trim().toLowerCase(),
           createdAt: new Date().toISOString(),
-          role: isAdmin ? 'admin' : 'user',
-          onboarded: true,
+          role: isAdmin ? 'admin' : role,
+          onboarded: false,
           businessId: null
         };
 
-        // Store token
-        localStorage.setItem('auth_token', token);
-        localStorage.setItem('user_profile', JSON.stringify(profileDetails));
-
+        await setDoc(userRef, profileDetails);
         setSuccessMsg(L.success_registered);
         
         if (onAuthSuccess) {
@@ -239,34 +236,30 @@ export default function AuthModal({
           setSuccessMsg('');
         }, 2000);
       } else {
-        // Login flow with custom API
-        const response = await authApi.login({
-          email: email.trim(),
-          password: password
-        });
-        console.log('Login response:', response);
-
-        const user = (response as any).data?.user || (response as any).user;
-        const token = (response as any).data?.token || (response as any).token;
-        if (!user || !user.id) {
-          throw new Error('Invalid response from server: missing user data');
+        // Login flow
+        const credential = await signInWithEmailAndPassword(auth, email.trim(), password);
+        
+        // Retrieve firestore profile details
+        const userRef = doc(db, 'users', credential.user.uid);
+        const docSnap = await getDoc(userRef);
+        
+        let profileDetails: UserProfile;
+        if (!docSnap.exists()) {
+          const isAdmin = credential.user.email === 'safaribosafar@gmail.com' || credential.user.email === 'mahdialmuntadhar1@gmail.com';
+          profileDetails = {
+            uid: credential.user.uid,
+            displayName: credential.user.displayName || credential.user.email?.split('@')[0] || 'Explorer User',
+            photoURL: credential.user.photoURL || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80",
+            email: credential.user.email || '',
+            createdAt: new Date().toISOString(),
+            role: isAdmin ? 'admin' : 'user',
+            onboarded: false,
+            businessId: null
+          };
+          await setDoc(userRef, profileDetails);
+        } else {
+          profileDetails = docSnap.data() as UserProfile;
         }
-
-        const isAdmin = user.email === 'safaribosafar@gmail.com' || user.email === 'mahdialmuntadhar1@gmail.com';
-        const profileDetails: UserProfile = {
-          uid: user.id,
-          displayName: user.name || user.email?.split('@')[0] || 'Explorer User',
-          photoURL: user.photoURL || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80",
-          email: user.email,
-          createdAt: new Date().toISOString(),
-          role: isAdmin ? 'admin' : 'user',
-          onboarded: false,
-          businessId: null
-        };
-
-        // Store token
-        localStorage.setItem('auth_token', token);
-        localStorage.setItem('user_profile', JSON.stringify(profileDetails));
 
         setSuccessMsg(L.success_logged);
         if (onAuthSuccess) {
@@ -443,16 +436,50 @@ export default function AuthModal({
               </div>
             </div>
 
-            {/* Forgot Password link (login mode only) */}
-            {!isSignUp && (
-              <div className="flex justify-end">
-                <button
-                  type="button"
-                  onClick={() => { setIsForgotPwd(true); setErrorMsg(''); setSuccessMsg(''); }}
-                  className="text-[10px] text-luxury-gold/70 hover:text-luxury-gold transition cursor-pointer font-semibold"
-                >
-                  {currentLang === 'en' ? 'Forgot password?' : currentLang === 'ku' ? 'پاسوۆردت بیرچووەتەوە؟' : 'نسيت كلمة المرور؟'}
-                </button>
+            {/* If Sign Up, let them choose a role context beautifully */}
+            {isSignUp && (
+              <div className="space-y-1.5 pt-1">
+                <label className="text-[10px] uppercase font-black text-luxury-gold/80 tracking-wider block font-mono">
+                  {L.role_label}
+                </label>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  {/* Explorer option */}
+                  <div
+                    onClick={() => setRole('user')}
+                    className={`p-3.5 rounded-xl border transition-all cursor-pointer flex flex-col justify-between text-left relative overflow-hidden ${
+                      role === 'user'
+                        ? 'bg-luxury-teal/15 border-luxury-teal'
+                        : 'bg-black/20 border-white/10 hover:border-white/20'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-sm">🧭</span>
+                      <span className="text-[11px] font-black">{L.explorer}</span>
+                    </div>
+                    <p className="text-[9px] text-zinc-400 font-sans tracking-tight leading-normal">
+                      {L.explorer_desc}
+                    </p>
+                  </div>
+
+                  {/* Merchant Owner Option */}
+                  <div
+                    onClick={() => setRole('owner')}
+                    className={`p-3.5 rounded-xl border transition-all cursor-pointer flex flex-col justify-between text-left relative overflow-hidden ${
+                      role === 'owner'
+                        ? 'bg-amber-500/10 border-amber-500'
+                        : 'bg-black/20 border-white/10 hover:border-white/20'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-sm">🏢</span>
+                      <span className="text-[11px] font-black text-amber-400">{L.merchant}</span>
+                    </div>
+                    <p className="text-[9px] text-zinc-400 font-sans tracking-tight leading-normal">
+                      {L.merchant_desc}
+                    </p>
+                  </div>
+                </div>
               </div>
             )}
 
@@ -465,129 +492,6 @@ export default function AuthModal({
               {loading ? L.loading : (isSignUp ? L.submit_signup : L.submit_login)}
             </button>
           </form>
-
-          {/* Forgot Password form */}
-          {isForgotPwd && !isResetMode && (
-            <div className="mt-4 p-4 bg-black/30 border border-luxury-gold/20 rounded-2xl space-y-3">
-              <p className="text-xs font-bold text-luxury-gold">
-                {currentLang === 'en' ? 'Reset your password' : currentLang === 'ku' ? 'پاسوۆردەکەت بگوهێزە' : 'استعادة كلمة المرور'}
-              </p>
-              <form onSubmit={handleForgotPassword} className="flex gap-2">
-                <input
-                  type="email"
-                  required
-                  placeholder={currentLang === 'en' ? 'Your email address' : currentLang === 'ku' ? 'ئیمەیڵەکەت' : 'بريدك الإلكتروني'}
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="flex-1 bg-black/40 border border-white/15 focus:border-luxury-gold/50 text-xs px-3 py-2.5 rounded-xl text-white placeholder-zinc-500 focus:outline-none font-semibold"
-                />
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="px-4 py-2.5 bg-luxury-gold text-black text-xs font-black rounded-xl disabled:opacity-50 cursor-pointer shrink-0"
-                >
-                  {loading ? '...' : (currentLang === 'en' ? 'Send' : currentLang === 'ku' ? 'بنێرە' : 'أرسل')}
-                </button>
-              </form>
-              <button onClick={() => setIsForgotPwd(false)} className="text-[10px] text-zinc-500 hover:text-white transition cursor-pointer">
-                {currentLang === 'en' ? 'Back to login' : currentLang === 'ku' ? 'گەڕانەوە بۆ چوونەژوور' : 'العودة لتسجيل الدخول'}
-              </button>
-            </div>
-          )}
-
-          {/* Reset Password form (when reset_token in URL) */}
-          {isResetMode && (
-            <div className="mt-4 p-4 bg-black/30 border border-luxury-gold/20 rounded-2xl space-y-3">
-              <p className="text-xs font-bold text-luxury-gold">
-                {currentLang === 'en' ? 'Enter your new password' : currentLang === 'ku' ? 'پاسوۆردی نوێت بنووسە' : 'أدخل كلمة المرور الجديدة'}
-              </p>
-              <form onSubmit={handleResetPassword} className="space-y-3">
-                <input
-                  type="password"
-                  required
-                  minLength={6}
-                  placeholder={currentLang === 'en' ? 'New password (min 6 chars)' : currentLang === 'ku' ? 'پاسوۆردی نوێ (لانیکەم 6 پیت)' : 'كلمة المرور الجديدة (6 أحرف على الأقل)'}
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full bg-black/40 border border-white/15 focus:border-luxury-gold/50 text-xs px-3 py-2.5 rounded-xl text-white placeholder-zinc-500 focus:outline-none font-semibold"
-                />
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full py-2.5 bg-luxury-gold text-black text-xs font-black rounded-xl disabled:opacity-50 cursor-pointer"
-                >
-                  {loading ? '...' : (currentLang === 'en' ? 'Set New Password' : currentLang === 'ku' ? 'پاسوۆردی نوێ دابنێ' : 'تعيين كلمة المرور الجديدة')}
-                </button>
-              </form>
-            </div>
-          )}
-
-          {/* Delete account — login mode only */}
-          {!isSignUp && !isForgotPwd && !isResetMode && (
-            <div className="mt-1">
-              {!showDeleteConfirm ? (
-                <button
-                  type="button"
-                  onClick={() => setShowDeleteConfirm(true)}
-                  className="text-[10px] text-red-500/50 hover:text-red-400 transition cursor-pointer font-semibold w-full text-center"
-                >
-                  {currentLang === 'en' ? 'Delete my account' : currentLang === 'ar' ? 'حذف حسابي' : 'ئەکاونتەکەم بسڕەوە'}
-                </button>
-              ) : (
-                <div className="p-3 bg-red-950/30 border border-red-500/20 rounded-xl space-y-2.5">
-                  <p className="text-[11px] font-bold text-red-400">
-                    {currentLang === 'en' ? '⚠️ This permanently deletes your account.' : currentLang === 'ar' ? '⚠️ سيتم حذف حسابك نهائياً.' : '⚠️ ئەمە بە تەواوی ئەکاونتەکەت دەسڕێتەوە.'}
-                  </p>
-                  <input
-                    type="password"
-                    placeholder={currentLang === 'en' ? 'Confirm password to delete' : currentLang === 'ar' ? 'تأكيد كلمة المرور للحذف' : 'پاسوۆرد دڵنیا بکەرەوە'}
-                    value={deletePassword}
-                    onChange={e => setDeletePassword(e.target.value)}
-                    className="w-full bg-black/40 border border-red-500/30 text-xs px-3 py-2 rounded-lg text-white placeholder-zinc-600 focus:outline-none"
-                  />
-                  <div className="flex gap-2">
-                    <button
-                      type="button"
-                      onClick={() => { setShowDeleteConfirm(false); setDeletePassword(''); }}
-                      className="flex-1 py-2 bg-white/5 hover:bg-white/10 text-zinc-400 text-xs font-bold rounded-lg transition cursor-pointer"
-                    >
-                      {currentLang === 'en' ? 'Cancel' : currentLang === 'ar' ? 'إلغاء' : 'پاشگەزبوونەوە'}
-                    </button>
-                    <button
-                      type="button"
-                      disabled={deleteLoading || !deletePassword}
-                      onClick={async () => {
-                        if (!email || !deletePassword) return;
-                        setDeleteLoading(true);
-                        setErrorMsg('');
-                        try {
-                          const API_BASE = import.meta.env.VITE_API_URL || 'https://iraq-businesses-dashboard.mahdialmuntadhar1.workers.dev';
-                          const res = await fetch(`${API_BASE}/api/auth/account`, {
-                            method: 'DELETE',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ email: email.trim(), password: deletePassword })
-                          });
-                          const data = await res.json();
-                          if (data.success) {
-                            localStorage.removeItem('auth_token');
-                            localStorage.removeItem('user_profile');
-                            setSuccessMsg(currentLang === 'en' ? 'Account deleted. You can register again.' : currentLang === 'ar' ? 'تم حذف الحساب. يمكنك التسجيل من جديد.' : 'ئەکاونتەکەت سڕایەوە. دەتوانیت دووبارە تۆمار بکەیت.');
-                            setTimeout(() => { onClose(); window.location.reload(); }, 2000);
-                          } else {
-                            setErrorMsg(data.error || 'Delete failed');
-                          }
-                        } catch { setErrorMsg('Connection error'); }
-                        finally { setDeleteLoading(false); }
-                      }}
-                      className="flex-1 py-2 bg-red-600 hover:bg-red-500 disabled:opacity-50 text-white text-xs font-black rounded-lg transition cursor-pointer"
-                    >
-                      {deleteLoading ? '...' : (currentLang === 'en' ? 'Delete' : currentLang === 'ar' ? 'حذف' : 'سڕینەوە')}
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
 
           {/* OR separator */}
           <div className="flex items-center gap-3 py-1">

@@ -7,7 +7,9 @@ import {
 } from 'lucide-react';
 import { Language, GovernorateCode, Business, SocialPost, UserProfile, HeroSlide } from './types';
 import { INITIAL_BUSINESSES, TRANSLATIONS, CATEGORIES, INITIAL_POSTS, GOVERNORATES, HERO_SLIDES } from './data';
-import { authApi, businessesApi, postsApi } from './api';
+import { auth, db, signInWithGoogle } from './firebase';
+import { onAuthStateChanged, signOut, User, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { collection, onSnapshot, setDoc, doc, updateDoc } from 'firebase/firestore';
 
 // Saku Maku Modular Components
 import Header from './components/Header';
@@ -25,7 +27,6 @@ export default function App() {
   const [currentLang, setCurrentLang] = useState<Language>('ar'); // Default: Arabic
   const [selectedGov, setSelectedGov] = useState<GovernorateCode>('all'); // Default: All Iraq
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [categories, setCategories] = useState(CATEGORIES);
   
   // Real-time Authenticated Firebase User state
   const [user, setUser] = useState<User | null>(null);
@@ -64,127 +65,188 @@ export default function App() {
   // Real-time Hero Slides synced from Firestore with auto-seeding
   const [heroSlides, setHeroSlides] = useState<HeroSlide[]>([]);
 
-  // Load user profile from localStorage on mount
+  // Sync Hero Slides in Real Time!
   useEffect(() => {
-    const savedProfile = localStorage.getItem('user_profile');
-    if (savedProfile) {
-      try {
-        const profile = JSON.parse(savedProfile);
-        setUserProfile(profile);
-        setUser(profile);
-      } catch (e) {
-        console.error("Profile parse error: ", e);
+    const ref = collection(db, 'hero_slides');
+    const unsubscribe = onSnapshot(ref, (snap) => {
+      if (snap.empty) {
+        setHeroSlides(HERO_SLIDES);
+        const isAdminUser = userProfile?.role === 'admin';
+        if (isAdminUser) {
+          HERO_SLIDES.forEach(async (slide) => {
+            try {
+              await setDoc(doc(db, 'hero_slides', slide.id), slide);
+            } catch (err) {
+              console.error("Fails seeding hero slide: ", err);
+            }
+          });
+        }
+      } else {
+        const list: HeroSlide[] = [];
+        snap.forEach((doc) => {
+          list.push(doc.data() as HeroSlide);
+        });
+        setHeroSlides(list);
       }
-    }
-  }, []);
-
-  // Set hero slides from local data
-  useEffect(() => {
-    setHeroSlides(HERO_SLIDES);
-  }, []);
+    }, (error) => {
+      console.error("Error syncing hero slides in Firestore: ", error);
+      setHeroSlides(HERO_SLIDES);
+    });
+    return () => unsubscribe();
+  }, [userProfile]);
 
   const handleCustomEmailLogin = async (customEmail: string) => {
     const cleanEmail = customEmail.trim().toLowerCase();
     if (!cleanEmail) return;
 
-    const mockUid = 'cust-' + btoa(cleanEmail).replace(/=/g, '').slice(0, 16);
-    const customUserMock = {
-      uid: mockUid,
-      email: cleanEmail,
-      displayName: cleanEmail.split('@')[0],
-      photoURL: cleanEmail === 'mahdialmuntadhar1@gmail.com' || cleanEmail === 'safaribosafar@gmail.com' 
-        ? "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" 
-        : "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80",
-      emailVerified: true
-    } as any;
+    const dummyPassword = "SandboxPassword123!";
 
-    const isAdmin = cleanEmail === 'mahdialmuntadhar1@gmail.com' || cleanEmail === 'safaribosafar@gmail.com';
-    const isOwner = cleanEmail.includes('owner');
-    
-    const newProfile: UserProfile = {
-      uid: mockUid,
-      displayName: customUserMock.displayName,
-      photoURL: customUserMock.photoURL,
-      email: cleanEmail,
-      createdAt: new Date().toISOString(),
-      role: isAdmin ? 'admin' : (isOwner ? 'owner' : 'user'),
-      onboarded: isOwner, 
-      businessId: isOwner ? 'b-onboard-demo' : null,
-      businessOnboarding: isOwner ? {
-        name: 'Classic Baghdadi Café',
-        category: 'coffee',
-        governorate: 'baghdad',
-        address: 'Arasat Street, Karrada District',
-        phone: '+9647701234567',
-        whatsApp: '+9647701234567',
-        logo: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=120&auto=format&fit=crop&q=80',
-        coverImage: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&auto=format&fit=crop&q=80',
-        description: 'Elite cozy spot for specialty brews.'
-      } : undefined
-    };
+    try {
+      let credential;
+      try {
+        credential = await signInWithEmailAndPassword(auth, cleanEmail, dummyPassword);
+      } catch (signInErr: any) {
+        if (signInErr.code === 'auth/user-not-found' || signInErr.code === 'auth/invalid-credential' || signInErr.code === 'auth/invalid-login-credentials') {
+          credential = await createUserWithEmailAndPassword(auth, cleanEmail, dummyPassword);
+        } else {
+          throw signInErr;
+        }
+      }
 
-    // Store in localStorage instead of Firestore
-    localStorage.setItem('user_profile', JSON.stringify(newProfile));
-    localStorage.setItem('auth_token', mockUid);
-    setUser(customUserMock);
-    setUserProfile(newProfile);
+      const firebaseUser = credential.user;
 
-    if (isOwner) {
-      const demoBiz = {
-        id: 'b-onboard-demo',
-        name: { ar: 'مقهى البغدادي الكلاسيكي ☕', ku: 'کافێی کلاسیکی بەغدادی ☕', en: 'Classic Baghdadi Café ☕' },
-        description: { ar: 'أرقى أنواع القهوة الفلتر والحلويات الشرقية في الكرادة.', ku: 'باشترین جۆرەکانی قاوە و شیرینییەکان.', en: 'Cozy traditional Iraqi roaster in Karada.' },
-        category: 'coffee',
-        governorate: 'baghdad',
-        rating: 4.9,
-        reviewsCount: 42,
-        image: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&auto=format&fit=crop&q=80',
-        images: ['https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&auto=format&fit=crop&q=80'],
-        avatar: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=120&auto=format&fit=crop&q=80',
-        isVerified: true,
-        phoneNumber: '+9647701234567',
-        address: { ar: 'شارع العرصات، الكرادة', ku: 'جادەی عەرەسات، بەغداد', en: 'Arasat Street, Karrada' },
-        likes: 35,
-        saves: 18,
-        mapCoords: { x: 48, y: 58 },
-        ownerUid: mockUid
+      if (!firebaseUser.displayName) {
+        await updateProfile(firebaseUser, {
+          displayName: cleanEmail.split('@')[0]
+        });
+      }
+
+      const isAdmin = cleanEmail === 'mahdialmuntadhar1@gmail.com' || cleanEmail === 'safaribosafar@gmail.com';
+      const isOwner = cleanEmail.includes('owner');
+
+      const userRef = doc(db, 'users', firebaseUser.uid);
+      const newProfile: UserProfile = {
+        uid: firebaseUser.uid,
+        displayName: firebaseUser.displayName || cleanEmail.split('@')[0],
+        photoURL: cleanEmail === 'mahdialmuntadhar1@gmail.com' || cleanEmail === 'safaribosafar@gmail.com' 
+          ? "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" 
+          : "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80",
+        email: cleanEmail,
+        createdAt: new Date().toISOString(),
+        role: isAdmin ? 'admin' : (isOwner ? 'owner' : 'user'),
+        onboarded: isOwner, 
+        businessId: isOwner ? 'b-onboard-demo' : null,
+        businessOnboarding: isOwner ? {
+          name: 'Classic Baghdadi Café',
+          category: 'cafe_bakery',
+          governorate: 'baghdad',
+          address: 'Arasat Street, Karrada District',
+          phone: '+9647701234567',
+          whatsApp: '+9647701234567',
+          logo: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=120&auto=format&fit=crop&q=80',
+          coverImage: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&auto=format&fit=crop&q=80',
+          description: 'Elite cozy spot for specialty brews.'
+        } : undefined
       };
-      // Store demo business in localStorage for demo purposes
-      localStorage.setItem('demo_business', JSON.stringify(demoBiz));
-    }
 
-    console.log("Custom auth session set representing: ", cleanEmail);
+      if (isOwner) {
+        const demoBiz = {
+          id: 'b-onboard-demo',
+          name: { ar: 'مقهى البغدادي الكلاسيكي ☕', ku: 'کافێی کلاسیکی بەغدادی ☕', en: 'Classic Baghdadi Café ☕' },
+          description: { ar: 'أرقى أنواع القهوة الفلتر والحلويات الشرقية في الكرادة.', ku: 'باشترین جۆرەکانی قاوە و شیرینییەکان.', en: 'Cozy traditional Iraqi roaster in Karada.' },
+          category: 'cafe_bakery',
+          governorate: 'baghdad',
+          rating: 4.9,
+          reviewsCount: 42,
+          image: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&auto=format&fit=crop&q=80',
+          images: ['https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&auto=format&fit=crop&q=80'],
+          avatar: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=120&auto=format&fit=crop&q=80',
+          isVerified: true,
+          phoneNumber: '+9647701234567',
+          address: { ar: 'شارع العرصات، الكرادة', ku: 'جادەی عەرەسات، بەغداد', en: 'Arasat Street, Karrada' },
+          likes: 35,
+          saves: 18,
+          mapCoords: { x: 48, y: 58 },
+          ownerUid: firebaseUser.uid
+        };
+        await setDoc(doc(db, 'businesses', 'b-onboard-demo'), demoBiz, { merge: true });
+      }
+
+      await setDoc(userRef, newProfile, { merge: true });
+      setUser(firebaseUser);
+      setUserProfile(newProfile);
+      console.log("Firebase Auth sandbox preset session authenticated successfully for: ", cleanEmail);
+    } catch (err) {
+      console.error("Error setting custom user in Firebase Auth / Firestore: ", err);
+    }
   };
 
-  // Handle password reset token in URL params on load
+  // Real-time Auth Listening and User creation mapping inside Firestore
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const resetToken = params.get('reset_token');
-    if (resetToken) {
-      setAuthModalOpen(true);
-    }
+    let unsubProfile: (() => void) | null = null;
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      setUser(firebaseUser);
+      if (firebaseUser) {
+        const userRef = doc(db, 'users', firebaseUser.uid);
+        unsubProfile = onSnapshot(userRef, (docSnap) => {
+          if (docSnap.exists()) {
+            setUserProfile(docSnap.data() as UserProfile);
+          } else {
+            const isAdmin = firebaseUser.email === 'safaribosafar@gmail.com' || firebaseUser.email === 'mahdialmuntadhar1@gmail.com';
+            const newProfile: UserProfile = {
+              uid: firebaseUser.uid,
+              displayName: firebaseUser.displayName || 'Authorized User',
+              photoURL: firebaseUser.photoURL || '',
+              email: firebaseUser.email || '',
+              createdAt: new Date().toISOString(),
+              role: isAdmin ? 'admin' : 'user',
+              onboarded: false,
+              businessId: null
+            };
+            setDoc(userRef, newProfile).catch(err => console.error("Error seeding profile: ", err));
+            setUserProfile(newProfile);
+          }
+        }, (error) => {
+          console.error("Profile listen error: ", error);
+        });
+      } else {
+        if (unsubProfile) {
+          unsubProfile();
+          unsubProfile = null;
+        }
+        setUserProfile(null);
+      }
+    });
+    return () => {
+      unsubscribe();
+      if (unsubProfile) unsubProfile();
+    };
   }, []);
 
   // Secure fully responsive terminations of session
   const handleSecureLogout = async () => {
     try {
-      localStorage.removeItem('user_profile');
-      localStorage.removeItem('auth_token');
+      await signOut(auth);
+      localStorage.removeItem('shkomaku_custom_user');
       setUser(null);
       setUserProfile(null);
       setActiveTab('discover');
+      localStorage.removeItem('firebase:authUser:' + auth.app.options.apiKey + ':[DEFAULT]');
       sessionStorage.clear();
-      console.log("Session terminated.");
+      console.log("Stale sessions eradicated. Standard non-interactive guests initialized.");
     } catch (err) {
       console.error("Logout error: ", err);
     }
   };
 
-  const handleUpdateRole = (newRole: 'user' | 'owner' | 'admin') => {
+  const handleUpdateRole = async (newRole: 'user' | 'owner' | 'admin') => {
     if (!user) return;
-    const updated = { ...userProfile, role: newRole } as UserProfile;
-    setUserProfile(updated);
-    localStorage.setItem('user_profile', JSON.stringify(updated));
+    try {
+      const userRef = doc(db, 'users', user.uid);
+      await setDoc(userRef, { role: newRole }, { merge: true });
+    } catch (err) {
+      console.error("Error setting role: ", err);
+    }
   };
 
   const handleUpdateProfile = async (updatedFields: Partial<UserProfile>) => {
@@ -300,37 +362,139 @@ export default function App() {
     if (selectedCategory) {
       list = list.filter(b => b.category === selectedCategory);
     }
-    if (!searchQuery.trim()) return list;
-    const keyword = searchQuery.toLowerCase().trim();
-    return list.filter(b =>
-      b.name[currentLang].toLowerCase().includes(keyword) ||
-      b.name.en.toLowerCase().includes(keyword) ||
-      b.description[currentLang].toLowerCase().includes(keyword) ||
-      b.address[currentLang].toLowerCase().includes(keyword) ||
-      b.category.toLowerCase().includes(keyword)
-    );
-  }, [businesses, searchQuery, currentLang, selectedCategory]);
-
-  // Handle Likes state toggle (local state only)
-  const handleToggleLike = (bizId: string) => {
-    setBusinesses(prev => prev.map(b => {
-      if (b.id !== bizId) return b;
-      const liked = !b.likedByUser;
-      return { ...b, likedByUser: liked, likes: liked ? b.likes + 1 : b.likes - 1 };
-    }));
   };
 
-  // Handle Saves state toggle (local state only)
-  const handleToggleSave = (bizId: string) => {
-    setBusinesses(prev => prev.map(b => {
-      if (b.id !== bizId) return b;
-      const saved = !b.savedByUser;
-      return { ...b, savedByUser: saved, saves: saved ? b.saves + 1 : b.saves - 1 };
-    }));
+  // Real-time Firestore synchronization & Auto-seeding for businesses
+  useEffect(() => {
+    const ref = collection(db, 'businesses');
+    const unsubscribe = onSnapshot(ref, (snap) => {
+      if (snap.empty) {
+        // Fallback to local businesses immediately so users never see a blank catalog
+        setBusinesses(INITIAL_BUSINESSES);
+
+        // ONLY attempt database seeding if current user is signed-in as administrative operator
+        const isAdminUser = user && user.email === 'safaribosafar@gmail.com';
+        if (isAdminUser) {
+          INITIAL_BUSINESSES.forEach(async (biz) => {
+            try {
+              await setDoc(doc(db, 'businesses', biz.id), {
+                ...biz,
+                ownerUid: 'system-seed'
+              });
+            } catch (e) {
+              console.error("Fails seeding biz: ", e);
+            }
+          });
+        }
+      } else {
+        const list: Business[] = [];
+        snap.forEach((doc) => {
+          list.push(doc.data() as Business);
+        });
+        setBusinesses(list);
+      }
+    }, (error) => {
+      console.error("Firestore businesses synced error: ", error);
+      // Fallback on sync/credential error
+      setBusinesses(INITIAL_BUSINESSES);
+    });
+    return () => unsubscribe();
+  }, [user]);
+
+  // Real-time Firestore synchronization & Auto-seeding for posts
+  useEffect(() => {
+    const ref = collection(db, 'posts');
+    const unsubscribe = onSnapshot(ref, (snap) => {
+      if (snap.empty) {
+        // Fallback to local posts immediately so users never see a blank feed
+        setPosts(INITIAL_POSTS);
+
+        // ONLY attempt database seeding if current user is signed-in as administrative operator
+        const isAdminUser = user && user.email === 'safaribosafar@gmail.com';
+        if (isAdminUser) {
+          INITIAL_POSTS.forEach(async (post) => {
+            try {
+              await setDoc(doc(db, 'posts', post.id), {
+                ...post,
+                authorUid: 'system-seed'
+              });
+            } catch (e) {
+              console.error("Fails seeding post: ", e);
+            }
+          });
+        }
+      } else {
+        const list: SocialPost[] = [];
+        snap.forEach((doc) => {
+          list.push(doc.data() as SocialPost);
+        });
+        list.sort((a, b) => b.id.localeCompare(a.id));
+        setPosts(list);
+      }
+    }, (error) => {
+      console.error("Firestore posts synced error: ", error);
+      // Fallback on sync/credential error
+      setPosts(INITIAL_POSTS);
+    });
+    return () => unsubscribe();
+  }, [user]);
+
+  // Filter business array based on search input + governorate matches + category
+  const filteredBusinesses = useMemo(() => {
+    return businesses.filter(b => {
+      // Governorate Match
+      const govMatch = selectedGov === 'all' || b.governorate === selectedGov;
+
+      // Category Match
+      const catMatch = !selectedCategory || b.category === selectedCategory;
+      
+      // Keyword Match (case-insensitive across translated fields)
+      const keyword = searchQuery.toLowerCase().trim();
+      const keywordMatch = !keyword || 
+        b.name[currentLang].toLowerCase().includes(keyword) ||
+        b.name.en.toLowerCase().includes(keyword) ||
+        b.description[currentLang].toLowerCase().includes(keyword) ||
+        b.address[currentLang].toLowerCase().includes(keyword) ||
+        b.category.toLowerCase().includes(keyword);
+        
+      return govMatch && catMatch && keywordMatch;
+    });
+  }, [businesses, selectedGov, selectedCategory, searchQuery, currentLang]);
+
+  // Handle Likes state toggle in Firestore
+  const handleToggleLike = async (bizId: string) => {
+    const target = businesses.find(b => b.id === bizId);
+    if (!target) return;
+    const liked = !target.likedByUser;
+    const payload = {
+      likedByUser: liked,
+      likes: liked ? target.likes + 1 : target.likes - 1
+    };
+    try {
+      await updateDoc(doc(db, 'businesses', bizId), payload);
+    } catch (err) {
+      console.error("Error liking business: ", err);
+    }
   };
 
-  // Callback to add a new business to local state
-  const handleAddLiveBusiness = (newBiz: Omit<Business, 'rating' | 'reviewsCount' | 'likes' | 'saves'>) => {
+  // Handle Saves state toggle in Firestore
+  const handleToggleSave = async (bizId: string) => {
+    const target = businesses.find(b => b.id === bizId);
+    if (!target) return;
+    const saved = !target.savedByUser;
+    const payload = {
+      savedByUser: saved,
+      saves: saved ? target.saves + 1 : target.saves - 1
+    };
+    try {
+      await updateDoc(doc(db, 'businesses', bizId), payload);
+    } catch (err) {
+      console.error("Error saving business: ", err);
+    }
+  };
+
+  // Callback to add a new customized business to Firestore from owners claim form
+  const handleAddLiveBusiness = async (newBiz: Omit<Business, 'rating' | 'reviewsCount' | 'likes' | 'saves'>) => {
     const fullBiz: Business = {
       ...newBiz,
       rating: 4.8,
@@ -341,7 +505,11 @@ export default function App() {
       savedByUser: false,
       ownerUid: user?.uid || 'anonymous'
     };
-    setBusinesses(prev => [fullBiz, ...prev]);
+    try {
+      await setDoc(doc(db, 'businesses', fullBiz.id), fullBiz);
+    } catch (err) {
+      console.error("Error adding live business in Firestore: ", err);
+    }
   };
 
   // Stories auto advancing timer handler
@@ -673,39 +841,11 @@ export default function App() {
                 exit={{ opacity: 0, y: -15 }}
                 className="space-y-6"
               >
-                {/* Register Business CTA for logged-in users */}
-                {userProfile && userProfile.role !== 'owner' && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="relative overflow-hidden rounded-2xl border border-amber-500/30 bg-gradient-to-r from-amber-950/40 via-black/60 to-amber-950/40 p-4 sm:p-5"
-                  >
-                    <div className="absolute inset-0 bg-amber-500/5 animate-pulse" />
-                    <div className="relative flex flex-col sm:flex-row items-center justify-between gap-3">
-                      <div className="text-center sm:text-left">
-                        <h3 className="text-sm font-black text-amber-300 uppercase tracking-wider">
-                          {currentLang === 'en' ? 'Own a Business?' : currentLang === 'ar' ? 'تمتلك نشاطاً تجارياً؟' : 'خاوەنی بزنسێکی هەیە؟'}
-                        </h3>
-                        <p className="text-[11px] text-zinc-400 mt-1">
-                          {currentLang === 'en' ? 'List your business and reach thousands of customers.' : currentLang === 'ar' ? 'سجّل نشاطك التجاري ووصل لآلاف الزبائن.' : 'بزنسەکەت تۆمار بکە و بگە بە هەزاران کڕیار.'}
-                        </p>
-                      </div>
-                      <button
-                        onClick={() => setActiveTab('add')}
-                        className="shrink-0 px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-black text-xs font-black rounded-xl transition shadow-lg shadow-amber-500/20 cursor-pointer whitespace-nowrap"
-                      >
-                        ⭐ {currentLang === 'en' ? 'Register your Business' : currentLang === 'ar' ? 'سجّل نشاطك التجاري' : 'بزنسەکەت تۆمار بکە'}
-                      </button>
-                    </div>
-                  </motion.div>
-                )}
-
                 {/* Category Square discovery grid */}
                 <CategorySwiper
                   currentLang={currentLang}
                   selectedCategory={selectedCategory}
                   onSelectCategory={setSelectedCategory}
-                  categories={categories}
                 />
 
                 {/* Saku Maku Dynamic Grouped Businesses section catalog */}
@@ -714,7 +854,6 @@ export default function App() {
                   selectedGov={selectedGov}
                   selectedCategory={selectedCategory}
                   businesses={filteredBusinesses}
-                  categories={categories}
                   onToggleLike={handleToggleLike}
                   onToggleSave={handleToggleSave}
                   onSelectStory={(stories) => {
@@ -722,10 +861,6 @@ export default function App() {
                     setActiveStoryIdx(0);
                     setStoryProgress(0);
                   }}
-                  isLoading={bizLoading}
-                  hasMore={bizHasMore}
-                  isLoadingMore={bizLoadingMore}
-                  onLoadMore={handleLoadMoreBiz}
                 />
               </motion.div>
             )}
@@ -773,6 +908,7 @@ export default function App() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -15 }}
               >
+                {/* Submitting claim form for local owners OR active Owner Campaign Dashboard */}
                 <AddBusinessForm
                   currentLang={currentLang}
                   onAddBusiness={handleAddLiveBusiness}
@@ -782,7 +918,6 @@ export default function App() {
                   onSignIn={() => setAuthModalOpen(true)}
                   businesses={businesses}
                   posts={posts}
-                  setPosts={setPosts}
                 />
               </motion.div>
             )}
@@ -814,8 +949,6 @@ export default function App() {
                   posts={posts}
                   setPosts={setPosts}
                   userProfile={userProfile}
-                  categories={categories}
-                  setCategories={setCategories}
                 />
               </motion.div>
             )}

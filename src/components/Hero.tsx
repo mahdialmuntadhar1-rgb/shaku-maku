@@ -36,7 +36,7 @@ export default function Hero({ currentLang, onExploreClick, onSelectGov, slides 
   const isRtl = currentLang === 'ar' || currentLang === 'ku';
 
   return (
-    <div className="relative w-full aspect-square md:aspect-auto md:h-[420px] overflow-hidden rounded-2xl md:rounded-3xl group mb-6 bg-slate-950">
+    <div className="relative w-full h-[320px] md:h-[420px] overflow-hidden rounded-3xl group mb-6 bg-slate-950">
       
       {/* Background Slides with AnimatePresence */}
       <AnimatePresence mode="wait">
@@ -62,7 +62,7 @@ export default function Hero({ currentLang, onExploreClick, onSelectGov, slides 
       </AnimatePresence>
 
       {/* Floating Sparkle Elements & Active Content Overlay */}
-      <div className="absolute inset-0 flex flex-col justify-end p-4 sm:p-6 md:p-10 z-10">
+      <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-10 z-10">
         <div className="max-w-2xl">
           
           {/* Active Badges */}
@@ -89,7 +89,7 @@ export default function Hero({ currentLang, onExploreClick, onSelectGov, slides 
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -20, opacity: 0 }}
               transition={{ delay: 0.2, duration: 0.5 }}
-              className="text-lg sm:text-2xl md:text-4xl font-extrabold text-white tracking-tight leading-tight mb-3 md:mb-4"
+              className="text-2xl md:text-4xl font-extrabold text-white tracking-tight leading-tight mb-4"
               style={{ fontFamily: currentLang === 'en' ? 'Plus Jakarta Sans' : 'Cairo' }}
             >
               {activeSlide.slogan[currentLang] || activeSlide.slogan.en}
@@ -102,7 +102,7 @@ export default function Hero({ currentLang, onExploreClick, onSelectGov, slides 
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={onExploreClick}
-              className="flex items-center gap-2 text-xs font-black text-[#1A1A1A] bg-[#FF6B4A] hover:bg-[#C8A95F] px-4 py-2.5 md:px-6 md:py-3.5 rounded-full shadow-lg shadow-[#FF6B4A]/20 transition-all font-sans cursor-pointer duration-300"
+              className="flex items-center gap-2 text-xs md:text-sm font-black text-[#1A1A1A] bg-[#FF6B4A] hover:bg-[#C8A95F] px-6 py-3.5 rounded-full shadow-lg shadow-[#FF6B4A]/20 transition-all font-sans cursor-pointer duration-300"
             >
               <Compass className="w-4 h-4 text-[#1A1A1A]" />
               <span>{t.ctaDiscover}</span>
