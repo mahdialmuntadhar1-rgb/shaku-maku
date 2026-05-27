@@ -148,8 +148,9 @@ export const CATEGORY_DB_MAP: Record<string, string> = {
 
 // Businesses API
 export const businessesApi = {
-  async list(params?: { page?: number; limit?: number; governorate?: string; category?: string; search?: string }): Promise<any> {
+  async list(params?: { cursor?: string; page?: number; limit?: number; governorate?: string; category?: string; search?: string }): Promise<any> {
     const queryParams = new URLSearchParams();
+    if (params?.cursor) queryParams.append('cursor', params.cursor);
     if (params?.page) queryParams.append('page', params.page.toString());
     if (params?.limit) queryParams.append('limit', params.limit.toString());
     if (params?.governorate) queryParams.append('governorate', params.governorate);
@@ -159,10 +160,10 @@ export const businessesApi = {
       queryParams.append('category', dbCat);
     }
     if (params?.search) queryParams.append('search', params.search);
-    
+
     const queryString = queryParams.toString();
     const endpoint = `/api/businesses${queryString ? `?${queryString}` : ''}`;
-    
+
     return apiRequest<any>(endpoint, {}, true);
   },
 

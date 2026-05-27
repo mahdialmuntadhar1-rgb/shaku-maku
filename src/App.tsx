@@ -40,9 +40,9 @@ export default function App() {
   // Navigation active tab
   const [activeTab, setActiveTab] = useState<'discover' | 'feed' | 'map' | 'add' | 'about' | 'admin'>('discover');
 
-  // Pagination state
-  const PAGE_SIZE = 50;
-  const [bizPage, setBizPage] = useState(1);
+  // Pagination state — cursor-based for O(1) performance at 8000+ rows
+  const PAGE_SIZE = 20;
+  const [bizCursor, setBizCursor] = useState<string | null>(null);
   const [bizHasMore, setBizHasMore] = useState(false);
   const [bizLoadingMore, setBizLoadingMore] = useState(false);
   const [bizLoading, setBizLoading] = useState(true);
@@ -218,8 +218,8 @@ export default function App() {
     governorate: (b.governorate || 'baghdad').toLowerCase().replace(/\s+/g, '').replace(/[^a-z]/g, '') as any,
     rating: b.rating || 4.5,
     reviewsCount: b.views || b.reviews_count || 0,
-    image: b.cover_image_url || b.logo_url || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&auto=format&fit=crop&q=80',
-    images: [b.cover_image_url || b.logo_url || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&auto=format&fit=crop&q=80'],
+    image: b.coverImageUrl || b.cover_image_url || b.logo_url || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&auto=format&fit=crop&q=80',
+    images: [b.coverImageUrl || b.cover_image_url || b.logo_url || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&auto=format&fit=crop&q=80'],
     avatar: b.logo_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80',
     isVerified: !!b.verified,
     phoneNumber: b.mobile || b.phone || '',
@@ -229,45 +229,46 @@ export default function App() {
     mapCoords: { x: 48, y: 55 },
   });
 
-  // Load page 1 whenever governorate OR category changes — resets list + pagination
+  // Load first batch whenever governorate OR category changes — resets list + cursor
   useEffect(() => {
     let cancelled = false;
     setBizLoading(true);
-    setBizPage(1);
+    setBizCursor(null);
     setBusinesses([]);
     const gov = selectedGov === 'all' ? undefined : selectedGov;
     const cat = selectedCategory || undefined;
-    businessesApi.list({ page: 1, limit: PAGE_SIZE, governorate: gov, category: cat })
+    businessesApi.list({ limit: PAGE_SIZE, governorate: gov, category: cat })
       .then((res: any) => {
         if (cancelled) return;
         const list: Business[] = (res.data || []).map(mapApiBiz);
         setBusinesses(list.length > 0 ? list : []);
-        setBizHasMore(res.pagination?.hasNext ?? false);
+        setBizCursor(res.next_cursor ?? null);
+        setBizHasMore(res.has_more ?? false);
       })
       .catch((err: any) => {
         console.error('API businesses load error, using local data:', err);
         if (!cancelled) {
           setBusinesses(INITIAL_BUSINESSES);
           setBizHasMore(false);
+          setBizCursor(null);
         }
       })
       .finally(() => { if (!cancelled) setBizLoading(false); });
     return () => { cancelled = true; };
   }, [selectedGov, selectedCategory]);
 
-  // Load next page and append
+  // Load next cursor batch and append
   const handleLoadMoreBiz = () => {
-    if (bizLoadingMore || !bizHasMore) return;
-    const nextPage = bizPage + 1;
+    if (bizLoadingMore || !bizHasMore || !bizCursor) return;
     setBizLoadingMore(true);
     const gov = selectedGov === 'all' ? undefined : selectedGov;
     const cat = selectedCategory || undefined;
-    businessesApi.list({ page: nextPage, limit: PAGE_SIZE, governorate: gov, category: cat })
+    businessesApi.list({ cursor: bizCursor, limit: PAGE_SIZE, governorate: gov, category: cat })
       .then((res: any) => {
         const list: Business[] = (res.data || []).map(mapApiBiz);
         setBusinesses(prev => [...prev, ...list]);
-        setBizPage(nextPage);
-        setBizHasMore(res.pagination?.hasNext ?? false);
+        setBizCursor(res.next_cursor ?? null);
+        setBizHasMore(res.has_more ?? false);
       })
       .catch((err: any) => console.error('Load more error:', err))
       .finally(() => setBizLoadingMore(false));
