@@ -30,6 +30,11 @@ export default function BusinessFeed({
   
   // Keep track of counts of displayed items per category
   const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({});
+
+  // Reset pagination/expanded categories when selectedCategory changes
+  React.useEffect(() => {
+    setExpandedCategories({});
+  }, [selectedCategory]);
   
   // Real-time custom comments added to specific business IDs
   const [localReviews, setLocalReviews] = useState<Record<string, { reviewer: string, rating: number, comment: string, date: string }[]>>({});

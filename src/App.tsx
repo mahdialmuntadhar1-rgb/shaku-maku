@@ -7,7 +7,9 @@ import {
 } from 'lucide-react';
 import { Language, GovernorateCode, Business, SocialPost, UserProfile, HeroSlide } from './types';
 import { INITIAL_BUSINESSES, TRANSLATIONS, CATEGORIES, INITIAL_POSTS, GOVERNORATES, HERO_SLIDES } from './data';
-import { authApi, businessesApi } from './api';
+import { auth, db, signInWithGoogle } from './firebase';
+import { onAuthStateChanged, signOut, User } from 'firebase/auth';
+import { collection, onSnapshot, setDoc, doc, updateDoc } from 'firebase/firestore';
 
 // Saku Maku Modular Components
 import Header from './components/Header';
@@ -26,8 +28,8 @@ export default function App() {
   const [selectedGov, setSelectedGov] = useState<GovernorateCode>('all'); // Default: All Iraq
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   
-  // Custom Auth User state
-  const [user, setUser] = useState<any>(null);
+  // Real-time Authenticated Firebase User state
+  const [user, setUser] = useState<User | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 
   // Saku Maku core Reactive businesses database
@@ -135,7 +137,7 @@ export default function App() {
       businessId: isOwner ? 'b-onboard-demo' : null,
       businessOnboarding: isOwner ? {
         name: 'Classic Baghdadi Café',
-        category: 'coffee',
+        category: 'cafe_bakery',
         governorate: 'baghdad',
         address: 'Arasat Street, Karrada District',
         phone: '+9647701234567',
@@ -151,7 +153,7 @@ export default function App() {
         id: 'b-onboard-demo',
         name: { ar: 'مقهى البغدادي الكلاسيكي ☕', ku: 'کافێی کلاسیکی بەغدادی ☕', en: 'Classic Baghdadi Café ☕' },
         description: { ar: 'أرقى أنواع القهوة الفلتر والحلويات الشرقية في الكرادة.', ku: 'باشترین جۆرەکانی قاوە و شیرینییەکان.', en: 'Cozy traditional Iraqi roaster in Karada.' },
-        category: 'coffee',
+        category: 'cafe_bakery',
         governorate: 'baghdad',
         rating: 4.9,
         reviewsCount: 42,

@@ -244,7 +244,7 @@ export default function AdminPanel({
           en: 'New: Authentic Iraqi flavours connect us! 🍕'
         },
         governorate: 'baghdad' as GovernorateCode,
-        category: 'dining',
+        category: 'restaurant',
         badge: {
           ar: 'بث خاص 🌶️',
           ku: 'پۆستی تایبەت 🌶️',

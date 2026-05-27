@@ -43,7 +43,7 @@ export default function AddBusinessForm({
   // State for Claim / standard add spot form
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [category, setCategory] = useState('coffee');
+  const [category, setCategory] = useState('restaurant');
   const [governorate, setGovernorate] = useState<GovernorateCode>('baghdad');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');

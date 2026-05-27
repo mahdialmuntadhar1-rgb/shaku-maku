@@ -185,17 +185,7 @@ export const GOVERNORATES: Governorate[] = [
 
 export const CATEGORIES: Category[] = [
   {
-    id: 'coffee',
-    icon: '☕',
-    name: {
-      ar: 'كافيهات',
-      ku: 'کافێکان',
-      en: 'Cafés'
-    },
-    color: 'from-amber-600 to-yellow-500'
-  },
-  {
-    id: 'dining',
+    id: 'restaurant',
     icon: '🍔',
     name: {
       ar: 'مطاعم',
@@ -205,47 +195,37 @@ export const CATEGORIES: Category[] = [
     color: 'from-orange-600 to-red-500'
   },
   {
-    id: 'shopping',
+    id: 'cafe_bakery',
+    icon: '☕',
+    name: {
+      ar: 'كافيهات ومخابز',
+      ku: 'کافێ و نانەواخانەکان',
+      en: 'Cafés & Bakeries'
+    },
+    color: 'from-amber-600 to-yellow-500'
+  },
+  {
+    id: 'supermarket',
+    icon: '🛒',
+    name: {
+      ar: 'سوبرماركت',
+      ku: 'سۆپەرمارکێتەکان',
+      en: 'Supermarkets'
+    },
+    color: 'from-green-600 to-emerald-500'
+  },
+  {
+    id: 'mall',
     icon: '🛍️',
     name: {
-      ar: 'تسوق وبوتيكات',
-      ku: 'بازاڕکردن',
-      en: 'Shopping'
+      ar: 'مولات ومراكز تسوق',
+      ku: 'مۆڵەکان',
+      en: 'Malls & Shopping'
     },
     color: 'from-pink-600 to-rose-500'
   },
   {
-    id: 'hotels',
-    icon: '🏨',
-    name: {
-      ar: 'فنادق ومنتجعات',
-      ku: 'هۆتێلەکان',
-      en: 'Hotels'
-    },
-    color: 'from-indigo-600 to-blue-500'
-  },
-  {
-    id: 'salons',
-    icon: '💈',
-    name: {
-      ar: 'صالونات ومراكز تجميل',
-      ku: 'ساڵۆنەکان',
-      en: 'Salons & Spas'
-    },
-    color: 'from-purple-600 to-pink-500'
-  },
-  {
-    id: 'gyms',
-    icon: '🏋️',
-    name: {
-      ar: 'رياضة ورشاقة',
-      ku: 'وەرزش و ڕاهێنان',
-      en: 'Gyms & Sports'
-    },
-    color: 'from-emerald-600 to-teal-500'
-  },
-  {
-    id: 'pharmacies',
+    id: 'pharmacy',
     icon: '💊',
     name: {
       ar: 'صيدليات',
@@ -255,7 +235,97 @@ export const CATEGORIES: Category[] = [
     color: 'from-cyan-600 to-sky-500'
   },
   {
-    id: 'universities',
+    id: 'hospital',
+    icon: '🏥',
+    name: {
+      ar: 'مستشفيات',
+      ku: 'نەخۆشخانەکان',
+      en: 'Hospitals'
+    },
+    color: 'from-red-600 to-rose-500'
+  },
+  {
+    id: 'clinic',
+    icon: '🩺',
+    name: {
+      ar: 'عيادات طبية',
+      ku: 'کلینیکەکان',
+      en: 'Clinics'
+    },
+    color: 'from-teal-600 to-emerald-500'
+  },
+  {
+    id: 'doctor',
+    icon: '👨‍⚕️',
+    name: {
+      ar: 'أطباء وعيادات خاصة',
+      ku: 'دکتۆرەکان',
+      en: 'Doctors'
+    },
+    color: 'from-blue-600 to-sky-500'
+  },
+  {
+    id: 'dentist',
+    icon: '🦷',
+    name: {
+      ar: 'أطباء أسنان',
+      ku: 'پزیشکی ددان',
+      en: 'Dentists'
+    },
+    color: 'from-cyan-500 to-indigo-500'
+  },
+  {
+    id: 'salon',
+    icon: '💈',
+    name: {
+      ar: 'صالونات ومراكز تجميل',
+      ku: 'ساڵۆنی جوانکاری',
+      en: 'Beauty Salons'
+    },
+    color: 'from-purple-600 to-pink-500'
+  },
+  {
+    id: 'spa',
+    icon: '💆‍♀️',
+    name: {
+      ar: 'مراكز سبا واستجمام',
+      ku: 'سێنتەری سپا',
+      en: 'Spas & Wellness'
+    },
+    color: 'from-fuchsia-600 to-pink-500'
+  },
+  {
+    id: 'gym',
+    icon: '🏋️',
+    name: {
+      ar: 'صالات رياضية ورشاقة',
+      ku: 'هۆڵەکانی وەرزش',
+      en: 'Gyms & Fitness'
+    },
+    color: 'from-emerald-600 to-teal-500'
+  },
+  {
+    id: 'hotel',
+    icon: '🏨',
+    name: {
+      ar: 'فنادق ومنتجعات',
+      ku: 'هۆتێلەکان',
+      en: 'Hotels & Resorts'
+    },
+    color: 'from-indigo-600 to-blue-500'
+  },
+  {
+    id: 'travel_agency',
+    icon: '✈️',
+    name: {
+      ar: 'وكالات سفر وسياحة',
+      ku: 'بریکاری گەشتوگوزار',
+      en: 'Travel Agencies'
+    },
+    color: 'from-sky-500 to-blue-600'
+  },
+  {
+    id: 'university',
     icon: '🎓',
     name: {
       ar: 'جامعات ومعاهد',
@@ -265,14 +335,174 @@ export const CATEGORIES: Category[] = [
     color: 'from-violet-600 to-purple-500'
   },
   {
-    id: 'entertainment',
-    icon: '🎡',
+    id: 'bank',
+    icon: '🏦',
     name: {
-      ar: 'ترفيه وملاهي',
-      ku: 'کات بەسەربردن',
-      en: 'Entertainment'
+      ar: 'بنوك ومصارف',
+      ku: 'بانکەکان',
+      en: 'Banks & Finance'
     },
-    color: 'from-fuchsia-600 to-pink-500'
+    color: 'from-green-600 to-teal-600'
+  },
+  {
+    id: 'real_estate',
+    icon: '🏢',
+    name: {
+      ar: 'عقارات ومكاتب دلالية',
+      ku: 'عەقارات',
+      en: 'Real Estate'
+    },
+    color: 'from-rose-500 to-amber-600'
+  },
+  {
+    id: 'lawyer',
+    icon: '⚖️',
+    name: {
+      ar: 'محامون واستشارات قانونية',
+      ku: 'پارێزەران',
+      en: 'Lawyers & Legal'
+    },
+    color: 'from-amber-700 to-orange-600'
+  },
+  {
+    id: 'car_dealer',
+    icon: '🚗',
+    name: {
+      ar: 'معارض سيارات',
+      ku: 'پیتاکی ئۆتۆمبێل',
+      en: 'Car Dealers'
+    },
+    color: 'from-yellow-500 to-orange-500'
+  },
+  {
+    id: 'car_rental',
+    icon: '🔑',
+    name: {
+      ar: 'تأجير سيارات',
+      ku: 'کرێی ئۆتۆمبێل',
+      en: 'Car Rental'
+    },
+    color: 'from-teal-500 to-cyan-500'
+  },
+  {
+    id: 'mobile_shop',
+    icon: '📱',
+    name: {
+      ar: 'متاجر هواتف وإلكترونيات',
+      ku: 'مۆبایل و ئەلیکترۆنیات',
+      en: 'Mobile Shops'
+    },
+    color: 'from-violet-500 to-indigo-500'
+  },
+  {
+    id: 'furniture',
+    icon: '🛋️',
+    name: {
+      ar: 'مفروشات وأثاث منزلي',
+      ku: 'کەلەپوور و مۆبایلەکان',
+      en: 'Furniture'
+    },
+    color: 'from-amber-800 to-amber-600'
+  },
+  {
+    id: 'clothing_store',
+    icon: '👔',
+    name: {
+      ar: 'متاجر ألبسة وأزياء',
+      ku: 'فرۆشگاکانی جلوبەرگ',
+      en: 'Clothing Stores'
+    },
+    color: 'from-pink-500 to-purple-500'
+  },
+  {
+    id: 'software_company',
+    icon: '💻',
+    name: {
+      ar: 'شركات برمجيات وتقنية',
+      ku: 'کۆمپانیاکانی تەکنەلۆجیا',
+      en: 'Tech & Software'
+    },
+    color: 'from-blue-700 to-indigo-600'
+  },
+  {
+    id: 'marketing_agency',
+    icon: '📣',
+    name: {
+      ar: 'وكالات تسويق وإعلان',
+      ku: 'ڕیکلام و مارکێتینگ',
+      en: 'Marketing Agencies'
+    },
+    color: 'from-purple-500 to-fuchsia-500'
+  },
+  {
+    id: 'construction_company',
+    icon: '🏗️',
+    name: {
+      ar: 'شركات مقاولات وإنشاءات',
+      ku: 'کۆمپانیاکانی بیناسازی',
+      en: 'Construction'
+    },
+    color: 'from-yellow-600 to-amber-700'
+  },
+  {
+    id: 'architecture',
+    icon: '📐',
+    name: {
+      ar: 'مكاتب هندسية وتصميم',
+      ku: 'ئەندازیاری و نەخشەسازی',
+      en: 'Architecture & Design'
+    },
+    color: 'from-teal-500 to-blue-500'
+  },
+  {
+    id: 'photography',
+    icon: '📷',
+    name: {
+      ar: 'استوديوهات تصوير',
+      ku: 'ستۆدیۆکانی وێنەگرتن',
+      en: 'Photography'
+    },
+    color: 'from-pink-600 to-purple-500'
+  },
+  {
+    id: 'cinema',
+    icon: '🎬',
+    name: {
+      ar: 'سينما وعروض أفلام',
+      ku: 'سینەماکان',
+      en: 'Cinema & Theatres'
+    },
+    color: 'from-red-600 to-amber-500'
+  },
+  {
+    id: 'gaming_center',
+    icon: '🎮',
+    name: {
+      ar: 'مراكز ألعاب كومبيوتر',
+      ku: 'سەنتەری یارییەکان',
+      en: 'Gaming Centers'
+    },
+    color: 'from-indigo-600 to-purple-600'
+  },
+  {
+    id: 'sports_club',
+    icon: '⚽',
+    name: {
+      ar: 'نوادي رياضية وملاعب',
+      ku: 'یانە وەرزشییەکان',
+      en: 'Sports Clubs'
+    },
+    color: 'from-emerald-500 to-green-600'
+  },
+  {
+    id: 'pet_shop',
+    icon: '🐱',
+    name: {
+      ar: 'متاجر وعيادات حيوانات أليفة',
+      ku: 'ئاژەڵە ماڵییەکان',
+      en: 'Pet Shops'
+    },
+    color: 'from-orange-500 to-amber-500'
   }
 ];
 
@@ -286,7 +516,7 @@ export const HERO_SLIDES: HeroSlide[] = [
       en: 'Discover Iraq Differently ⚡'
     },
     governorate: 'baghdad',
-    category: 'coffee',
+    category: 'cafe_bakery',
     badge: {
       ar: 'تريند الأسبوع 🔥',
       ku: 'ترێندی هەفتە 🔥',
@@ -302,7 +532,7 @@ export const HERO_SLIDES: HeroSlide[] = [
       en: "Baghdad’s Trending Places 🏰"
     },
     governorate: 'baghdad',
-    category: 'hotels',
+    category: 'hotel',
     badge: {
       ar: 'تقييم عالي ⭐',
       ku: 'نمرەی بەرز ⭐',
@@ -318,7 +548,7 @@ export const HERO_SLIDES: HeroSlide[] = [
       en: 'Your City is Alive 🌟'
     },
     governorate: 'erbil',
-    category: 'dining',
+    category: 'restaurant',
     badge: {
       ar: 'مطاعم عصرية 🍔',
       ku: 'چێشتخانەی سەردەمیانە 🍔',
@@ -334,7 +564,7 @@ export const HERO_SLIDES: HeroSlide[] = [
       en: 'Shop Best Local Boutiques 🛍'
     },
     governorate: 'erbil',
-    category: 'shopping',
+    category: 'mall',
     badge: {
       ar: 'خصومات مميزة 🏷️',
       ku: 'داشکاندنی تایبەت 🏷️',
@@ -343,7 +573,7 @@ export const HERO_SLIDES: HeroSlide[] = [
   }
 ];
 
-export const INITIAL_BUSINESSES: Business[] = [
+const RAW_INITIAL_BUSINESSES: Business[] = [
   // COFFEE SECTION
   {
     id: 'b-1',
@@ -731,7 +961,7 @@ export const INITIAL_BUSINESSES: Business[] = [
   }
 ];
 
-export const INITIAL_POSTS: SocialPost[] = [
+const RAW_INITIAL_POSTS: SocialPost[] = [
   {
     id: 'post-1',
     businessId: 'b-1',
@@ -858,6 +1088,28 @@ export const INITIAL_POSTS: SocialPost[] = [
     }
   }
 ];
+
+const CATEGORY_COMPAT_MAP: Record<string, string> = {
+  coffee: 'cafe_bakery',
+  dining: 'restaurant',
+  shopping: 'mall',
+  hotels: 'hotel',
+  salons: 'salon',
+  gyms: 'gym',
+  pharmacies: 'pharmacy',
+  entertainment: 'cinema',
+  universities: 'university'
+};
+
+export const INITIAL_BUSINESSES: Business[] = RAW_INITIAL_BUSINESSES.map(biz => ({
+  ...biz,
+  category: CATEGORY_COMPAT_MAP[biz.category] || biz.category
+}));
+
+export const INITIAL_POSTS: SocialPost[] = RAW_INITIAL_POSTS.map(post => ({
+  ...post,
+  category: CATEGORY_COMPAT_MAP[post.category] || post.category
+}));
 
 export const TRANSLATIONS = {
   ar: {
