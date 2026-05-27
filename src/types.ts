@@ -149,3 +149,30 @@ export interface HeroSlide {
     en: string;
   };
 }
+
+export interface BusinessClaim {
+  id: string;
+  businessId: string;
+  businessName: {
+    ar: string;
+    ku: string;
+    en: string;
+  };
+  userId: string;
+  userPhone: string;
+  status: 'pending' | 'approved' | 'rejected';
+  isSuspicious: boolean;
+  suspiciousReason?: string;
+  createdAt: string;
+  reviewedAt?: string;
+  reviewedBy?: string;
+}
+
+export interface BusinessOwnerRecord {
+  id: string;
+  userId: string;
+  businessId: string;
+  role: 'owner' | 'manager' | 'staff';
+  verified: boolean;
+  createdAt: string;
+}

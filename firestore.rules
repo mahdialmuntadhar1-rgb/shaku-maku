@@ -151,5 +151,18 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // BUSINESS CLAIMS COLLECTION
+    match /business_claims/{claimId} {
+      allow read: if isSignedIn() && (isAdmin() || resource.data.userId == request.auth.uid);
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isAdmin();
+    }
+
+    // BUSINESS OWNERS COLLECTION
+    match /business_owners/{ownerId} {
+      allow read: if isSignedIn() && (isAdmin() || resource.data.userId == request.auth.uid);
+      allow create, update, delete: if isAdmin();
+    }
+
   }
 }
