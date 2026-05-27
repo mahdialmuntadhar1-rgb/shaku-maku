@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
+import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { getFirestore, doc, getDocFromServer } from 'firebase/firestore';
 import firebaseConfig from '../firebase-applet-config.json';
 
@@ -12,6 +12,9 @@ export const auth = getAuth(app);
 
 // Google Sign-In Provider
 export const googleProvider = new GoogleAuthProvider();
+
+// NOTE: Phone OTP auth is implemented client-side via Firebase Phone Auth
+// (requires proper Firebase Auth configuration + reCAPTCHA on web).
 
 // Error Handling Infrastructure conforming to FirestoreErrorInfo
 export enum OperationType {

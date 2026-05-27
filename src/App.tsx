@@ -9,7 +9,7 @@ import { Language, GovernorateCode, Business, SocialPost, UserProfile, HeroSlide
 import { INITIAL_BUSINESSES, TRANSLATIONS, CATEGORIES, INITIAL_POSTS, GOVERNORATES, HERO_SLIDES } from './data';
 import { auth, db, signInWithGoogle } from './firebase';
 import { onAuthStateChanged, signOut, User, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
-import { collection, onSnapshot, setDoc, doc, updateDoc } from 'firebase/firestore';
+import { collection, onSnapshot, setDoc, doc, updateDoc, query, where } from 'firebase/firestore';
 
 // Saku Maku Modular Components
 import Header from './components/Header';
@@ -19,6 +19,7 @@ import BusinessFeed from './components/BusinessFeed';
 import SocialFeed from './components/SocialFeed';
 import InteractiveMap from './components/InteractiveMap';
 import AddBusinessForm from './components/AddBusinessForm';
+import OwnerClaimModal from './components/OwnerClaimModal';
 import AboutSakuMaku from './components/AboutSakuMaku';
 import AdminPanel from './components/AdminPanel';
 import AuthModal from './components/AuthModal';
@@ -34,6 +35,9 @@ export default function App() {
 
   // Saku Maku core Reactive businesses database
   const [businesses, setBusinesses] = useState<Business[]>([]);
+
+  // Owned business resolved via business_owners links (new claim system)
+  const [ownedBusinessId, setOwnedBusinessId] = useState<string | null>(null);
   
   // Saku Maku elevated Live Social posts stream
   const [posts, setPosts] = useState<SocialPost[]>([]);
@@ -51,6 +55,7 @@ export default function App() {
   const [govDropdownOpen, setGovDropdownOpen] = useState(false);
   const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [ownerClaimOpen, setOwnerClaimOpen] = useState(false);
 
   const t = TRANSLATIONS[currentLang];
   const isRtl = currentLang === 'ar' || currentLang === 'ku';
@@ -215,6 +220,26 @@ export default function App() {
       if (unsubProfile) unsubProfile();
     };
   }, []);
+
+  // Resolve owned business via business_owners table
+  useEffect(() => {
+    if (!user) {
+      setOwnedBusinessId(null);
+      return;
+    }
+    const ref = collection(db, 'business_owners');
+    const qref = query(ref, where('user_id', '==', user.uid), where('verified', '==', true));
+    const unsub = onSnapshot(qref, (snap) => {
+      if (snap.empty) {
+        setOwnedBusinessId(null);
+        return;
+      }
+      // v1: pick first verified owned business (supports multi-owner later)
+      const first = snap.docs[0]?.data() as any;
+      setOwnedBusinessId(first?.business_id || null);
+    });
+    return () => unsub();
+  }, [user]);
 
   // Secure fully responsive terminations of session
   const handleSecureLogout = async () => {
@@ -468,6 +493,7 @@ export default function App() {
         user={user}
         userProfile={userProfile}
         onSignIn={() => setAuthModalOpen(true)}
+        onOwnerClaim={() => setOwnerClaimOpen(true)}
         onSignOut={handleSecureLogout}
         onUpdateRole={handleUpdateRole}
         activeTab={activeTab}
@@ -482,6 +508,20 @@ export default function App() {
         onCustomEmailLogin={handleCustomEmailLogin}
         onAuthSuccess={(profileObj) => {
           setUserProfile(profileObj);
+        }}
+      />
+
+      <OwnerClaimModal
+        isOpen={ownerClaimOpen}
+        onClose={() => setOwnerClaimOpen(false)}
+        currentLang={currentLang}
+        allBusinesses={businesses}
+        onClaimSuccess={(businessId) => {
+          // Immediately send user to owner dashboard tab
+          setActiveTab('add');
+          // Ensure profile is refreshed by onAuthStateChanged listener; keep UX fast anyway
+          setOwnerClaimOpen(false);
+          console.log('Owner claim success for business:', businessId);
         }}
       />
 
@@ -806,6 +846,8 @@ export default function App() {
                   onSignIn={() => setAuthModalOpen(true)}
                   businesses={businesses}
                   posts={posts}
+                  ownedBusinessId={ownedBusinessId}
+                  onOpenOwnerClaim={() => setOwnerClaimOpen(true)}
                 />
               </motion.div>
             )}
