@@ -68,6 +68,7 @@ export default function SocialFeed({
   const [showBrandInput, setShowBrandInput] = useState(false);
   const [showCategoryInput, setShowCategoryInput] = useState(false);
   const [showPresetGallery, setShowPresetGallery] = useState(false);
+  const [showMediaUploadArea, setShowMediaUploadArea] = useState(true);
 
   const t = TRANSLATIONS[currentLang];
   const isRtl = currentLang === 'ar' || currentLang === 'ku';
@@ -331,80 +332,96 @@ export default function SocialFeed({
       </div>
 
       {/* Immersive Refined Social Composer */}
-      <div className="bg-gradient-to-b from-[#12121e]/90 to-[#07070d]/95 border border-white/10 rounded-[24px] p-5 space-y-4.5 shadow-2xl relative overflow-hidden backdrop-blur-md">
+      <div className="bg-[#18191a] border border-[#2f3031]/80 rounded-[20px] p-5 space-y-4.5 shadow-2xl relative overflow-hidden font-sans">
+        
+        {/* Dynamic Guest Tip Banner instead of restrictive modal lock */}
         {!user && (
-          <div className="absolute inset-0 bg-black/85 backdrop-blur-md z-30 flex flex-col items-center justify-center p-6 text-center space-y-4">
-            <Sparkles className="w-9 h-9 text-blue-400 animate-pulse" />
-            <div>
-              <p className="text-sm font-black text-white">
-                {currentLang === 'en' ? 'Sign In to Post Campaigns' : currentLang === 'ku' ? 'چوونەژوورەوە پێویستە بۆ بڵاوکردنەوە' : 'سجل دخولك لنشر العروض الاستثنائية'}
-              </p>
-              <p className="text-xs text-zinc-400 mt-1 max-w-xs mx-auto leading-relaxed">
-                {currentLang === 'en' ? 'Connect via Google to publish real-time marketing stories on Saku Maku.' : currentLang === 'ku' ? 'لە ڕێگەی لۆگینی گووگڵەوە دەتوانیت عەرزەکانت بڵاوبکەیتەوە.' : 'سجل دخولك السريع لمشاركة المنيو والعروض الحية مع الآخرين.'}
-              </p>
+          <div 
+            onClick={onSignIn}
+            className="p-3 bg-blue-500/10 hover:bg-blue-500/15 border border-blue-500/20 rounded-xl text-xs text-blue-400 flex items-center justify-between gap-2 transition cursor-pointer active:scale-[0.99] font-sans"
+          >
+            <div className="flex items-center gap-2">
+              <span className="text-sm">📝</span>
+              <span className="font-semibold text-left">
+                {currentLang === 'en' 
+                  ? 'Posting as Saku Maku Guest. Click to log in.' 
+                  : currentLang === 'ku' 
+                  ? 'بڵاوکردنەوە وەک میوان. کلیک بکە بۆ چوونەژوورەوە.' 
+                  : 'أنت تنشر كضيف الآن. انقر لتسجيل الدخول السريع.'}
+              </span>
             </div>
-            <button
-              onClick={onSignIn}
-              className="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-400 hover:to-indigo-500 text-white font-black text-xs uppercase tracking-wider rounded-xl cursor-pointer shadow-lg active:scale-95 transition"
-            >
-              🔑 {currentLang === 'en' ? 'Google Login' : currentLang === 'ku' ? 'چوونەژوورەوە' : 'تسجيل دخول سريع'}
-            </button>
+            <span className="text-[10px] bg-blue-500 text-white px-2 py-0.5 rounded font-black uppercase tracking-wider shrink-0">
+              {currentLang === 'en' ? 'Google Login' : currentLang === 'ku' ? 'گووگڵ' : 'دخول'}
+            </span>
           </div>
         )}
 
         <div className="space-y-3.5">
-          {/* Facebook style header: Avatar & Name side-by-side */}
+          {/* User Row Option */}
           <div className="flex items-center gap-3">
-            <div className="relative w-10 h-10 rounded-full bg-gradient-to-tr from-cyan-400 via-purple-500 to-pink-500 p-[1.5px] shrink-0">
+            <div className="relative w-10 h-10 rounded-full bg-[#242526] p-[1.5px] shrink-0 border border-[#3e4042]">
               <div className="w-full h-full rounded-full bg-[#0a0a0f] overflow-hidden flex items-center justify-center">
                 <img
                   src={user?.photoURL || "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&auto=format&fit=crop&q=80"}
-                  alt={user?.displayName || "Active owner avatar"}
+                  alt={user?.displayName || "Guest user avatar"}
                   className="w-full h-full object-cover"
                   referrerPolicy="no-referrer"
                 />
               </div>
               {user && <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border border-slate-950 rounded-full animate-pulse"></span>}
             </div>
+
             <div>
-              <span className="text-xs font-bold text-white block">
-                {user?.displayName || (currentLang === 'en' ? 'Saku Maku Guest' : currentLang === 'ku' ? 'میوانی ساكۆ ماكۆ' : 'ضيف شكو ماكو')}
-              </span>
-              <span className="text-[10px] text-zinc-500 block">
-                {currentLang === 'en' ? 'Posting to Online Feed' : currentLang === 'ku' ? 'بڵاوکردنەوە لە فیدی گشتی' : 'نشر على الفيد العام'}
-              </span>
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs font-bold text-white block">
+                  {user?.displayName || (currentLang === 'en' ? 'Saku Maku Guest' : currentLang === 'ku' ? 'میوانی ساكۆ ماكۆ' : 'ضيف شكو ماكو')}
+                </span>
+                {user && <CheckCircle2 className="w-3 h-3 text-blue-400" />}
+              </div>
+              
+              {/* Facebook-style quick privacy/governorate selector badge */}
+              <button 
+                type="button"
+                onClick={() => setShowGovInput(g => !g)}
+                className="mt-0.5 flex items-center gap-1 bg-[#242526] hover:bg-[#3a3b3c] border border-[#2f3031] text-[10px] text-zinc-300 px-2 py-0.5 rounded-full cursor-pointer transition font-sans"
+              >
+                <span>📍 {newGov.toUpperCase()}</span>
+                <span className="text-[8px] opacity-75">▼</span>
+              </button>
             </div>
           </div>
 
-          {/* Facebook style What's on your mind textarea input */}
-          <textarea
-            rows={3}
-            placeholder={
-              currentLang === 'en'
-                ? `What's on your mind, ${user?.displayName?.split(' ')[0] || 'Friend'}? share updates, photos or discount flyers...`
-                : currentLang === 'ku'
-                ? `چی لە مێشکتدایە، ${user?.displayName?.split(' ')[0] || 'هاوڕێم'}؟ بابەتێکی نوێ، وێنە یان مەکئاپ بڵاوبکەرەوە...`
-                : `بمَ تفكّر، ${user?.displayName?.split(' ')[0] || 'يا صديقنا'}؟ أنشر أحدث الصور، فيديوهات أو منشورات لشركتك...`
-            }
-            value={newCaption}
-            onChange={(e) => setNewCaption(e.target.value)}
-            className="w-full bg-black/40 hover:bg-black/55 focus:bg-black/70 text-sm px-4 py-3 rounded-[18px] border border-white/10 focus:border-cyan-500 text-white placeholder-zinc-500 focus:outline-none transition leading-relaxed resize-none"
-            required
-          />
+          {/* Facebook style Main input Area */}
+          <div className="space-y-1">
+            <textarea
+              rows={3}
+              placeholder={
+                currentLang === 'en'
+                  ? `What's on your mind, ${user?.displayName?.split(' ')[0] || 'Friend'}? Share updates, photos or video trailers...`
+                  : currentLang === 'ku'
+                  ? `چی لە مێشکتدایە، ${user?.displayName?.split(' ')[0] || 'هاوڕێم'}؟ بابەتێکی نوێ، وێنە یان کەلێن بڵاوبکەرەوە...`
+                  : `بمَ تفكّر، ${user?.displayName?.split(' ')[0] || 'يا صديقنا'}؟ أنشر أحدث الصور، عروض كراسات أو فيديوهات ترويجية...`
+              }
+              value={newCaption}
+              onChange={(e) => setNewCaption(e.target.value)}
+              className="w-full bg-transparent text-sm text-white placeholder-[#8a8d91] focus:outline-none transition leading-relaxed resize-none border-0 p-0 focus:ring-0"
+              required
+            />
+          </div>
         </div>
 
         {videoError && (
-          <div className="p-3 bg-red-950/20 border border-red-500/35 rounded-2xl text-xs text-red-400 font-extrabold flex items-center gap-2 animate-fade-in font-sans">
+          <div className="p-3 bg-red-950/20 border border-red-500/30 rounded-xl text-xs text-red-400 font-semibold flex items-center gap-2 animate-fade-in font-sans">
             <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse shrink-0"></span>
             <span>⚠️ {videoError}</span>
           </div>
         )}
 
-        {/* Visual Multi-Upload Active Previews in a clean box */}
-        {(uploadedImage || newPhotoUrl || uploadedVideo || uploadedFile) && (
-          <div className="relative border border-white/10 rounded-2xl overflow-hidden bg-black/50 p-2 group transition-all">
+        {/* Unified Facebook-style Media Attachment Area */}
+        {(showMediaUploadArea || uploadedImage || newPhotoUrl || uploadedVideo || uploadedFile) && (
+          <div className="relative border border-[#3e4042] rounded-xl overflow-hidden bg-[#242526]/50 p-2 group transition-all">
             
-            {/* Unified circular close button in the top right corner */}
+            {/* Circular close button in the top right corner */}
             <button
               type="button"
               onClick={() => {
@@ -412,50 +429,56 @@ export default function SocialFeed({
                 setUploadedVideo(null);
                 setUploadedFile(null);
                 setNewPhotoUrl('');
+                setShowMediaUploadArea(false);
               }}
-              className="absolute top-2.5 right-2.5 z-10 w-6 h-6 rounded-full bg-black/75 hover:bg-black/95 text-white flex items-center justify-center transition active:scale-95 cursor-pointer border border-white/10 text-xs font-bold"
-              title="Remove attachment"
+              className="absolute top-4 right-4 z-30 w-7 h-7 rounded-full bg-zinc-900/90 hover:bg-black text-[#e4e6eb] flex items-center justify-center transition active:scale-95 cursor-pointer border border-white/10 text-xs font-bold"
+              title="Remove media area"
             >
               ✕
             </button>
 
-            {/* Video preview render if video is selected */}
+            {/* Render Preview IF active media is selected */}
             {uploadedVideo ? (
-              <div className="relative w-full rounded-xl overflow-hidden bg-black/45 flex flex-col items-center justify-center p-1.5 min-h-[140px]">
-                <video src={uploadedVideo} style={{ maxHeight: '160px' }} controls className="w-full h-auto rounded-lg object-contain" />
-                <div className="absolute bottom-2.5 left-2.5 flex items-center gap-1 bg-black/85 backdrop-blur-md px-2.5 py-1 rounded-full border border-pink-500/20 text-[10px] text-pink-400 font-extrabold shadow-md">
-                  <Video className="w-3.5 h-3.5" />
-                  <span>VIDEO ATTACHED</span>
-                </div>
+              <div className="relative w-full rounded-lg overflow-hidden bg-black flex items-center justify-center min-h-[160px]">
+                <video src={uploadedVideo} style={{ maxHeight: '300px' }} controls className="w-full h-auto rounded-lg object-contain" />
               </div>
             ) : uploadedImage || newPhotoUrl ? (
-              /* Photo preview render */
-              <div className="relative w-full rounded-xl overflow-hidden bg-black/30 flex items-center justify-center p-1.5 min-h-[140px]">
+              <div className="relative w-full rounded-lg overflow-hidden bg-zinc-900 flex items-center justify-center min-h-[160px]">
                 <img
                   src={uploadedImage || newPhotoUrl}
-                  alt="Story attachment"
-                  className="max-h-[160px] w-auto max-w-full rounded-lg object-contain"
+                  alt="Attached item"
+                  className="max-h-[300px] w-full rounded-lg object-contain text-white text-xs text-center"
                   referrerPolicy="no-referrer"
                 />
-                <div className="absolute bottom-2.5 left-2.5 flex items-center gap-1 bg-black/85 backdrop-blur-md px-2.5 py-1 rounded-full border border-cyan-500/20 text-[10px] text-cyan-400 font-extrabold shadow-md">
-                  <ImageIcon className="w-3.5 h-3.5" />
-                  <span>IMAGE ATTACHED</span>
-                </div>
               </div>
-            ) : null}
-
-            {/* General document attachment preview */}
-            {uploadedFile && (
-              <div className="p-3 bg-indigo-950/20 border border-indigo-500/20 rounded-xl flex items-center justify-between gap-3 font-sans">
+            ) : uploadedFile ? (
+              /* General document/flyer booklet preview */
+              <div className="p-4 bg-[#18191a] border border-[#2f3031] rounded-lg flex items-center justify-between gap-3 font-sans mt-8 mr-10">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400 border border-indigo-500/10 shadow-md">
-                    <FileText className="w-4.5 h-4.5" />
+                  <div className="w-10 h-10 rounded-lg bg-[#242526] flex items-center justify-center text-zinc-400 border border-[#3e4042] shadow-md">
+                    <FileText className="w-5 h-5 text-red-500" />
                   </div>
                   <div>
-                    <span className="text-xs font-black text-white block truncate max-w-[190px]">{uploadedFile.name}</span>
-                    <span className="text-[10px] text-zinc-400 block font-mono font-medium">{uploadedFile.size} • Menu Booklet PDF</span>
+                    <span className="text-xs font-bold text-white block truncate max-w-[190px]">{uploadedFile.name}</span>
+                    <span className="text-[10px] text-zinc-400 block font-mono">{uploadedFile.size} • PDF Attachment</span>
                   </div>
                 </div>
+              </div>
+            ) : (
+              /* Facebook empty state "Add Photos/Videos" dropzone box */
+              <div 
+                onClick={() => document.getElementById('social-photo-loader-input')?.click()}
+                className="border border-dashed border-[#505152] hover:border-[#8a8d91] bg-[#18191a]/50 hover:bg-[#242526]/40 rounded-lg p-10 flex flex-col items-center justify-center text-center cursor-pointer transition min-h-[160px]"
+              >
+                <div className="w-11 h-11 rounded-full bg-[#3a3b3c] flex items-center justify-center text-[#e4e6eb] transition text-xl shadow mb-2.5">
+                  🖼️
+                </div>
+                <span className="text-xs font-bold text-[#e4e6eb] block">
+                  {currentLang === 'en' ? 'Add Photos/Videos' : currentLang === 'ku' ? 'زیادکردنی وێنە و ڤیدیۆ' : 'إضافة صور / مقاطع فيديو'}
+                </span>
+                <span className="text-[10px] text-[#b0b3b8] block mt-1">
+                  {currentLang === 'en' ? 'or drag and drop here' : currentLang === 'ku' ? 'یان بیهێنە بۆ ئێرە' : 'أو اسحبها وأفلتها هنا'}
+                </span>
               </div>
             )}
           </div>
@@ -489,14 +512,14 @@ export default function SocialFeed({
           
           {/* Preset templates panel */}
           {showPresetGallery && (
-            <div className="p-3 bg-white/5 border border-white/5 rounded-2xl animate-fade-in space-y-2">
-              <span className="text-[9px] text-cyan-400 font-extrabold uppercase tracking-widest block">Choose Quick mockup media or upload custom:</span>
+            <div className="p-3 bg-[#242526] border border-[#2f3031] rounded-xl animate-fade-in space-y-2">
+              <span className="text-[9px] text-[#e4e6eb] font-extrabold uppercase tracking-widest block">Choose Quick mockup media or upload custom:</span>
               <div className="flex items-center gap-2 flex-wrap">
                 {/* Custom upload button inside preset list */}
                 <button
                   type="button"
                   onClick={() => document.getElementById('social-photo-loader-input')?.click()}
-                  className="w-12 h-12 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-cyan-400 rounded-lg flex flex-col items-center justify-center text-zinc-400 hover:text-white transition duration-200 cursor-pointer"
+                  className="w-12 h-12 bg-[#18191a] hover:bg-zinc-800 border border-[#3e4042] rounded-lg flex flex-col items-center justify-center text-zinc-400 hover:text-white transition duration-200 cursor-pointer"
                   title="Upload Custom Image File"
                 >
                   <span className="text-xs font-bold font-mono">+ Add</span>
@@ -511,8 +534,8 @@ export default function SocialFeed({
                       setUploadedVideo(null);
                       setNewPhotoUrl('');
                     }}
-                    className={`w-12 h-12 rounded-lg border overflow-hidden transition relative ${
-                      uploadedImage === photo.url ? 'border-cyan-500 scale-105 shadow-md shadow-cyan-500/10' : 'border-white/10 opacity-70 hover:opacity-100'
+                    className={`w-12 h-12 rounded-lg border overflow-hidden transition relative cursor-pointer ${
+                      uploadedImage === photo.url ? 'border-amber-500 scale-105 shadow-md shadow-amber-500/10' : 'border-[#2f3031] opacity-70 hover:opacity-100'
                     }`}
                     title={photo.name}
                   >
@@ -529,13 +552,13 @@ export default function SocialFeed({
                       setUploadedImage(null);
                       setNewPhotoUrl('');
                     }}
-                    className={`w-12 h-12 rounded-lg border bg-[#170a25] flex flex-col items-center justify-center text-[11px] transition relative ${
-                      uploadedVideo === vid.url ? 'border-pink-500 scale-105' : 'border-white/10 opacity-70 hover:opacity-100'
+                    className={`w-12 h-12 rounded-lg border bg-[#18191a] flex flex-col items-center justify-center text-[11px] transition relative cursor-pointer ${
+                      uploadedVideo === vid.url ? 'border-amber-500 scale-105' : 'border-[#2f3031] opacity-70 hover:opacity-100'
                     }`}
                     title={vid.name}
                   >
                     <span>🎥</span>
-                    <span className="text-[6px] text-white/40 uppercase font-black">Video</span>
+                    <span className="text-[6px] text-white/40 uppercase font-[#2f3031] font-black">Video</span>
                   </button>
                 ))}
               </div>
@@ -547,62 +570,62 @@ export default function SocialFeed({
             
             {/* Publisher Brand Input */}
             {showBrandInput && (
-              <div className="p-3 bg-white/5 rounded-xl border border-white/5 space-y-1.5 transition">
-                <span className="text-[10px] text-zinc-400 font-bold block">🏛️ Cafe / Brand Name</span>
+              <div className="p-3 bg-[#242526] rounded-lg border border-[#2f3031] space-y-1.5 transition">
+                <span className="text-[10px] text-[#e4e6eb] font-bold block">🏛️ Cafe / Brand Name</span>
                 <input
                   type="text"
                   placeholder="e.g. Costa Cafe Baghdad"
                   value={newBizName}
                   onChange={(e) => setNewBizName(e.target.value)}
-                  className="w-full bg-black/40 border border-white/10 text-xs px-3 py-2 rounded-lg text-white placeholder-zinc-700 focus:outline-none focus:border-cyan-400"
+                  className="w-full bg-[#18191a] border border-[#3e4042] text-xs px-3 py-2 rounded text-white placeholder-zinc-700 focus:outline-[#1877f2] focus:outline-none"
                 />
               </div>
             )}
 
             {/* Promo Badge Input */}
             {showPromoInput && (
-              <div className="p-3 bg-white/5 rounded-xl border border-white/5 space-y-1.5 transition">
-                <span className="text-[10px] text-zinc-400 font-bold block">🎟️ Promotion Badge (Discount)</span>
+              <div className="p-3 bg-[#242526] rounded-lg border border-[#2f3031] space-y-1.5 transition">
+                <span className="text-[10px] text-[#e4e6eb] font-bold block">🎟️ Promotion Badge (Discount)</span>
                 <input
                   type="text"
                   placeholder="e.g. Free Dessert • 20% Off"
                   value={newPromo}
                   onChange={(e) => setNewPromo(e.target.value)}
-                  className="w-full bg-black/40 border border-white/10 text-xs px-3 py-2 rounded-lg text-white placeholder-zinc-700 focus:outline-none focus:border-cyan-400"
+                  className="w-full bg-[#18191a] border border-[#3e4042] text-xs px-3 py-2 rounded text-white placeholder-zinc-700 focus:outline-[#1877f2] focus:outline-none"
                 />
               </div>
             )}
 
             {/* Governorate dropdown selection menu */}
             {showGovInput && (
-              <div className="p-3 bg-white/5 rounded-xl border border-white/5 space-y-1.5 transition">
-                <span className="text-[10px] text-zinc-400 font-bold block">📍 Target Governorate</span>
+              <div className="p-3 bg-[#242526] rounded-lg border border-[#2f3031] space-y-1.5 transition">
+                <span className="text-[10px] text-[#e4e6eb] font-bold block">📍 Target Governorate</span>
                 <select
                   value={newGov}
                   onChange={(e) => setNewGov(e.target.value as GovernorateCode)}
-                  className="w-full bg-black/40 border border-white/10 text-xs px-2.5 py-2 rounded-lg text-white focus:outline-none focus:border-cyan-450 tracking-wide cursor-pointer text-zinc-350"
+                  className="w-full bg-[#18191a] border border-[#3e4042] text-xs px-2.5 py-2 rounded text-white focus:outline-none cursor-pointer"
                 >
-                  <option value="baghdad" className="bg-[#111] text-white">Baghdad 🏰</option>
-                  <option value="erbil" className="bg-[#111] text-white">Erbil 🏔️</option>
-                  <option value="basra" className="bg-[#111] text-white">Basra 🌴</option>
-                  <option value="sulaymaniyah" className="bg-[#111] text-white">Sulaymaniyah 🌸</option>
-                  <option value="mosul" className="bg-[#111] text-white">Mosul 🍏</option>
-                  <option value="najaf" className="bg-[#111] text-white">Najaf ✨</option>
+                  <option value="baghdad" className="bg-[#18191a] text-white">Baghdad 🏰</option>
+                  <option value="erbil" className="bg-[#18191a] text-white">Erbil 🏔️</option>
+                  <option value="basra" className="bg-[#18191a] text-white">Basra 🌴</option>
+                  <option value="sulaymaniyah" className="bg-[#18191a] text-white">Sulaymaniyah 🌸</option>
+                  <option value="mosul" className="bg-[#18191a] text-white">Mosul 🍏</option>
+                  <option value="najaf" className="bg-[#18191a] text-white">Najaf ✨</option>
                 </select>
               </div>
             )}
 
             {/* Category selection menu dropdown */}
             {showCategoryInput && (
-              <div className="p-3 bg-white/5 rounded-xl border border-white/5 space-y-1.5 transition">
-                <span className="text-[10px] text-zinc-400 font-bold block">📂 Culinary/Retail Category</span>
+              <div className="p-3 bg-[#242526] rounded-lg border border-[#2f3031] space-y-1.5 transition">
+                <span className="text-[10px] text-[#e4e6eb] font-bold block">📂 Culinary/Retail Category</span>
                 <select
                   value={newCategory}
                   onChange={(e) => setNewCategory(e.target.value)}
-                  className="w-full bg-black/40 border border-white/10 text-xs px-2.5 py-2 rounded-lg text-white focus:outline-none focus:border-cyan-450 tracking-wide cursor-pointer text-zinc-350"
+                  className="w-full bg-[#18191a] border border-[#3e4042] text-xs px-2.5 py-2 rounded text-white focus:outline-none cursor-pointer"
                 >
                   {CATEGORIES.map(c => (
-                    <option key={c.id} value={c.id} className="bg-[#111] text-white">{c.icon} {c.name[currentLang]}</option>
+                    <option key={c.id} value={c.id} className="bg-[#18191a] text-white">{c.icon} {c.name[currentLang]}</option>
                   ))}
                 </select>
               </div>
@@ -612,125 +635,130 @@ export default function SocialFeed({
 
         </div>
 
-        {/* Facebook-style 'Add to your post' container with attachment icon controls only */}
-        <div className="border border-white/5 rounded-2xl p-3 bg-black/25 flex items-center justify-between gap-3 flex-wrap">
-          <span className="text-xs font-bold text-zinc-400">
-            {currentLang === 'en' ? 'Add to your post' : currentLang === 'ku' ? 'زیاد بکە بۆ بڵاوکراوەکە' : 'إضافة إلى منشورك'}
+        {/* Facebook-style 'Add to your post' footer bar with interactive controls */}
+        <div className="border border-[#2f3031] rounded-xl p-3 bg-[#18191a] flex items-center justify-between gap-3 flex-wrap">
+          <span className="text-xs font-bold text-zinc-350">
+            {currentLang === 'en' ? 'Add to your post' : currentLang === 'ku' ? 'زیاد بکە بۆ بابەت' : 'إضافة إلى منشورك'}
           </span>
           
-          <div className="flex items-center gap-1">
-            {/* Quick-picker Images triggers */}
+          <div className="flex items-center gap-1.5">
+            {/* Gallery Picker Mode (Presets) */}
             <button
               type="button"
-              onClick={() => setShowPresetGallery(p => !p)}
-              className={`p-2 rounded-xl transition cursor-pointer flex items-center justify-center border hover:scale-105 active:scale-95 ${
-                showPresetGallery || uploadedImage 
-                  ? 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30' 
-                  : 'bg-white/5 text-zinc-400 hover:bg-white/10 hover:text-white border-transparent'
+              onClick={() => {
+                setShowMediaUploadArea(true);
+                setShowPresetGallery(p => !p);
+              }}
+              className={`p-2 rounded-full transition cursor-pointer flex items-center justify-center border hover:bg-[#242526] active:scale-90 ${
+                showPresetGallery 
+                  ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' 
+                  : 'bg-transparent text-[#45bd62] border-transparent'
               }`}
               title="Add Image or Preset Photos"
             >
-              <ImageIcon className="w-4 h-4" />
+              <ImageIcon className="w-4.5 h-4.5" />
             </button>
 
-            {/* Video attachment button */}
+            {/* Video file loader trigger button */}
             <button
               type="button"
               onClick={() => {
+                setShowMediaUploadArea(true);
                 document.getElementById('social-video-loader-input')?.click();
               }}
-              className={`p-2 rounded-xl transition cursor-pointer flex items-center justify-center border hover:scale-105 active:scale-95 ${
+              className={`p-2 rounded-full transition cursor-pointer flex items-center justify-center border hover:bg-[#242526] active:scale-90 ${
                 uploadedVideo 
-                  ? 'bg-pink-500/15 text-pink-400 border-pink-500/30' 
-                  : 'bg-white/5 text-zinc-400 hover:bg-white/10 hover:text-white border-transparent'
+                  ? 'bg-red-500/10 text-red-400 border-red-500/20' 
+                  : 'bg-transparent text-[#f02849] border-transparent'
               }`}
-              title="Add Video Trailer"
+              title="Upload Custom Video"
             >
-              <Video className="w-4 h-4" />
+              <Video className="w-4.5 h-4.5" />
             </button>
 
-            {/* PDF booklet Menu attachment button */}
+            {/* Document booklet attachment trigger button */}
             <button
               type="button"
               onClick={() => {
+                setShowMediaUploadArea(true);
                 document.getElementById('social-doc-loader-input')?.click();
               }}
-              className={`p-2 rounded-xl transition cursor-pointer flex items-center justify-center border hover:scale-105 active:scale-95 ${
+              className={`p-2 rounded-full transition cursor-pointer flex items-center justify-center border hover:bg-[#242526] active:scale-90 ${
                 uploadedFile 
-                  ? 'bg-indigo-500/15 text-indigo-400 border-indigo-500/30' 
-                  : 'bg-white/5 text-zinc-400 hover:bg-white/10 hover:text-white border-transparent'
+                  ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' 
+                  : 'bg-transparent text-zinc-400 border-transparent'
               }`}
-              title="Attach PDF Catalog / Menu File"
+              title="Attach Campaign PDF/Flyer"
             >
-              <File className="w-4 h-4" />
+              <File className="w-4.5 h-4.5" />
             </button>
 
-            {/* Toggle Promo input */}
+            {/* Discount Code Input Toggle button */}
             <button
               type="button"
               onClick={() => setShowPromoInput(!showPromoInput)}
-              className={`p-2 rounded-xl transition cursor-pointer flex items-center justify-center border hover:scale-105 active:scale-95 ${
+              className={`p-2 rounded-full transition cursor-pointer flex items-center justify-center border hover:bg-[#242526] active:scale-90 ${
                 showPromoInput || newPromo 
-                  ? 'bg-orange-500/15 text-orange-400 border-orange-500/30' 
-                  : 'bg-white/5 text-zinc-400 hover:bg-white/10 hover:text-white border-transparent'
+                  ? 'bg-orange-500/10 text-orange-400 border-orange-500/20' 
+                  : 'bg-transparent text-[#f7b928] border-transparent'
               }`}
               title="Add campaign discount badge"
             >
-              <Sparkles className="w-4 h-4" />
+              <Sparkles className="w-4.5 h-4.5" />
             </button>
 
-            {/* Toggle Governorate dropdown */}
+            {/* Toggle Governorate dropdown selector */}
             <button
               type="button"
               onClick={() => setShowGovInput(!showGovInput)}
-              className={`p-2 rounded-xl transition cursor-pointer flex items-center justify-center border hover:scale-105 active:scale-95 ${
+              className={`p-2 rounded-full transition cursor-pointer flex items-center justify-center border hover:bg-[#242526] active:scale-90 ${
                 showGovInput 
-                  ? 'bg-green-500/15 text-green-400 border-green-500/30' 
-                  : 'bg-white/5 text-zinc-400 hover:bg-white/10 hover:text-white border-transparent'
+                  ? 'bg-green-500/10 text-green-400 border-green-500/20' 
+                  : 'bg-transparent text-[#45bd62] border-transparent'
               }`}
               title="Target Iraqi Governorate"
             >
-              <SlidersHorizontal className="w-4 h-4" />
+              <SlidersHorizontal className="w-4.5 h-4.5" />
             </button>
 
             {/* Toggle category tag dropdown */}
             <button
               type="button"
               onClick={() => setShowCategoryInput(!showCategoryInput)}
-              className={`p-2 rounded-xl transition cursor-pointer flex items-center justify-center border hover:scale-105 active:scale-95 ${
+              className={`p-2 rounded-full transition cursor-pointer flex items-center justify-center border hover:bg-[#242526] active:scale-90 ${
                 showCategoryInput 
-                  ? 'bg-indigo-500/15 text-indigo-400 border-indigo-500/30' 
-                  : 'bg-white/5 text-zinc-400 hover:bg-white/10 hover:text-white border-transparent'
+                  ? 'bg-purple-500/10 text-purple-400 border-purple-500/20' 
+                  : 'bg-transparent text-purple-400 border-transparent'
               }`}
               title="Categorize spot location"
             >
-              <ShoppingBag className="w-4 h-4" />
+              <ShoppingBag className="w-4.5 h-4.5" />
             </button>
 
-            {/* Toggle Brand Name custom publisher override */}
+            {/* Interactive signature brand creator toggle */}
             <button
               type="button"
               onClick={() => setShowBrandInput(!showBrandInput)}
-              className={`p-2 rounded-xl transition cursor-pointer flex items-center justify-center border hover:scale-105 active:scale-95 ${
+              className={`p-2 rounded-full transition cursor-pointer flex items-center justify-center border hover:bg-[#242526] active:scale-90 ${
                 showBrandInput || newBizName 
-                  ? 'bg-purple-500/15 text-purple-400 border-purple-500/30' 
-                  : 'bg-white/5 text-zinc-400 hover:bg-white/10 hover:text-white border-transparent'
+                  ? 'bg-pink-500/10 text-pink-400 border-pink-500/20' 
+                  : 'bg-transparent text-pink-500 border-transparent'
               }`}
               title="Override brand signature name"
             >
-              <CheckCircle2 className="w-4 h-4" />
+              <CheckCircle2 className="w-4.5 h-4.5" />
             </button>
           </div>
         </div>
 
-        {/* Post Button directly beneath inside the composer */}
+        {/* Post Submit Button - Styled exactly like Facebook's prominent rectangular blue button */}
         <button
+          type="button"
           onClick={handleCreatePost}
           disabled={!newCaption.trim()}
-          className="w-full py-3.5 bg-gradient-to-r from-cyan-500 via-indigo-600 to-pink-500 hover:opacity-90 disabled:opacity-45 text-white font-black text-xs uppercase tracking-wider rounded-2xl transition duration-250 shadow-xl shadow-cyan-500/5 cursor-pointer flex items-center justify-center gap-1.5"
+          className="w-full py-2.5 bg-[#1877f2] hover:bg-[#166fe5] disabled:bg-[#505151]/55 disabled:text-zinc-500 text-white font-bold text-sm tracking-wide rounded-md transition duration-150 cursor-pointer flex items-center justify-center gap-2 shadow-md"
         >
-          <span>🚀</span>
-          <span>{currentLang === 'en' ? 'Post Live Story' : currentLang === 'ku' ? 'بڵاوکردنەوەی نوێترین بابەتان' : 'أنشر القصة فوراً'}</span>
+          <span>{currentLang === 'en' ? 'Post' : currentLang === 'ku' ? 'بلاوکردنەوە' : 'نشر'}</span>
         </button>
 
       </div>
