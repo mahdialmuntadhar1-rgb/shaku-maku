@@ -19,8 +19,7 @@ service cloud.firestore {
     // Bootstrapped administrator list
     function isAdmin() {
       return isSignedIn() && 
-        (request.auth.token.email == "safaribosafar@gmail.com" || request.auth.token.email == "mahdialmuntadhar1@gmail.com") &&
-        request.auth.token.email_verified == true;
+        (request.auth.token.email == "safaribosafar@gmail.com" || request.auth.token.email == "mahdialmuntadhar1@gmail.com");
     }
 
     function incoming() {
@@ -38,48 +37,52 @@ service cloud.firestore {
     // --- Entity Specific Validators ---
 
     function isValidUserProfile(data) {
-      return data.uid is string && data.uid.size() <= 128 &&
-             data.displayName is string && data.displayName.size() <= 128 &&
-             data.photoURL is string && data.photoURL.size() <= 1024 &&
-             data.email is string && data.email.size() <= 256 &&
-             data.createdAt is string && data.createdAt.size() <= 128;
+      return (!('uid' in data) || (data.uid is string && data.uid.size() <= 128)) &&
+             (!('displayName' in data) || (data.displayName is string && data.displayName.size() <= 128)) &&
+             (!('photoURL' in data) || (data.photoURL is string && data.photoURL.size() <= 1024)) &&
+             (!('email' in data) || (data.email is string && data.email.size() <= 256)) &&
+             (!('createdAt' in data) || (data.createdAt is string && data.createdAt.size() <= 128)) &&
+             (!('role' in data) || (data.role is string && (data.role == 'user' || data.role == 'owner' || data.role == 'admin'))) &&
+             (!('onboarded' in data) || (data.onboarded is bool)) &&
+             (!('businessId' in data) || (data.businessId == null || (data.businessId is string && data.businessId.size() <= 128))) &&
+             (!('businessOnboarding' in data) || (data.businessOnboarding is map));
     }
 
     function isValidBusiness(data) {
-      return data.id is string && data.id.size() <= 128 &&
-             data.category is string && data.category.size() <= 128 &&
-             data.governorate is string && data.governorate.size() <= 128 &&
-             data.rating is number && data.rating >= 0 && data.rating <= 5 &&
-             data.reviewsCount is number && data.reviewsCount >= 0 &&
-             data.image is string && data.image.size() <= 2097152 &&
-             data.avatar is string && data.avatar.size() <= 2097152 &&
-             data.likes is number &&
-             data.ownerUid is string && data.ownerUid.size() <= 128;
+      return (!('id' in data) || (data.id is string && data.id.size() <= 128)) &&
+             (!('category' in data) || (data.category is string && data.category.size() <= 128)) &&
+             (!('governorate' in data) || (data.governorate is string && data.governorate.size() <= 128)) &&
+             (!('rating' in data) || (data.rating is number && data.rating >= 0 && data.rating <= 5)) &&
+             (!('reviewsCount' in data) || (data.reviewsCount is number && data.reviewsCount >= 0)) &&
+             (!('image' in data) || (data.image is string && data.image.size() <= 2097152)) &&
+             (!('avatar' in data) || (data.avatar is string && data.avatar.size() <= 2097152)) &&
+             (!('likes' in data) || (data.likes is number)) &&
+             (!('ownerUid' in data) || (data.ownerUid is string && data.ownerUid.size() <= 128));
     }
 
     function isValidSocialPost(data) {
-      return data.id is string && data.id.size() <= 128 &&
-             data.businessName is string && data.businessName.size() <= 256 &&
-             data.category is string && data.category.size() <= 128 &&
-             data.governorate is string && data.governorate.size() <= 128 &&
-             data.mediaUrl is string && data.mediaUrl.size() <= 2097152 &&
-             data.caption is map &&
-             data.likes is number &&
-             data.commentsCount is number &&
-             data.shares is number &&
-             data.authorUid is string && data.authorUid.size() <= 128 &&
+      return (!('id' in data) || (data.id is string && data.id.size() <= 128)) &&
+             (!('businessName' in data) || (data.businessName is string && data.businessName.size() <= 256)) &&
+             (!('category' in data) || (data.category is string && data.category.size() <= 128)) &&
+             (!('governorate' in data) || (data.governorate is string && data.governorate.size() <= 128)) &&
+             (!('mediaUrl' in data) || (data.mediaUrl is string && data.mediaUrl.size() <= 2097152)) &&
+             (!('caption' in data) || (data.caption is map)) &&
+             (!('likes' in data) || (data.likes is number)) &&
+             (!('commentsCount' in data) || (data.commentsCount is number)) &&
+             (!('shares' in data) || (data.shares is number)) &&
+             (!('authorUid' in data) || (data.authorUid is string && data.authorUid.size() <= 128)) &&
              (!('videoUrl' in data) || (data.videoUrl is string && data.videoUrl.size() <= 2097152)) &&
              (!('businessId' in data) || (data.businessId is string && data.businessId.size() <= 128)) &&
              (!('businessAvatar' in data) || (data.businessAvatar is string && data.businessAvatar.size() <= 2048));
     }
 
     function isValidHeroSlide(data) {
-      return data.id is string && data.id.size() <= 128 &&
-             data.image is string && data.image.size() <= 2097152 &&
-             data.slogan is map &&
-             data.governorate is string && data.governorate.size() <= 128 &&
-             data.category is string && data.category.size() <= 128 &&
-             data.badge is map;
+      return (!('id' in data) || (data.id is string && data.id.size() <= 128)) &&
+             (!('image' in data) || (data.image is string && data.image.size() <= 2097152)) &&
+             (!('slogan' in data) || (data.slogan is map)) &&
+             (!('governorate' in data) || (data.governorate is string && data.governorate.size() <= 128)) &&
+             (!('category' in data) || (data.category is string && data.category.size() <= 128)) &&
+             (!('badge' in data) || (data.badge is map));
     }
 
     // --- Route Endpoints matching definitions ---
@@ -87,10 +90,10 @@ service cloud.firestore {
     // USERS COLLECTION
     match /users/{userId} {
       allow read: if isSignedIn();
-      allow create: if isOwner(userId) && isValidUserProfile(incoming());
+      allow create: if isOwner(userId) && isValidUserProfile(incoming()) && incoming().keys().hasAll(['uid', 'displayName', 'photoURL', 'email', 'createdAt']);
       allow update: if isOwner(userId) && isValidUserProfile(incoming()) && 
-                    incoming().uid == existing().uid && 
-                    incoming().email == existing().email;
+                    (!('uid' in incoming()) || incoming().uid == existing().uid) && 
+                    (!('email' in incoming()) || incoming().email == existing().email);
       allow delete: if isAdmin();
     }
 
@@ -146,6 +149,19 @@ service cloud.firestore {
     match /hero_slides/{slideId} {
       allow read: if true;
       allow write: if isAdmin();
+    }
+
+    // BUSINESS CLAIMS COLLECTION
+    match /business_claims/{claimId} {
+      allow read: if isSignedIn() && (isAdmin() || resource.data.userId == request.auth.uid);
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isAdmin();
+    }
+
+    // BUSINESS OWNERS COLLECTION
+    match /business_owners/{ownerId} {
+      allow read: if isSignedIn() && (isAdmin() || resource.data.userId == request.auth.uid);
+      allow create, update, delete: if isAdmin();
     }
 
   }

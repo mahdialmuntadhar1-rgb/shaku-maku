@@ -60,7 +60,7 @@ export interface Business {
   };
   mapCoords: { x: number; y: number }; // percentage on interactive canvas map
   stories?: string[]; // short active stories
-  ownerUid?: string; // Authentication owner ID
+  ownerUid?: string; // Firebase Authentication owner ID
 }
 
 export interface SocialPost {
@@ -98,7 +98,7 @@ export interface SocialPost {
     size: string;
     type?: string;
   };
-  authorUid?: string; // Authentication author ID
+  authorUid?: string; // Firebase Authentication author ID
 }
 
 export interface UserProfile {
@@ -148,4 +148,31 @@ export interface HeroSlide {
     ku: string;
     en: string;
   };
+}
+
+export interface BusinessClaim {
+  id: string;
+  businessId: string;
+  businessName: {
+    ar: string;
+    ku: string;
+    en: string;
+  };
+  userId: string;
+  userPhone: string;
+  status: 'pending' | 'approved' | 'rejected';
+  isSuspicious: boolean;
+  suspiciousReason?: string;
+  createdAt: string;
+  reviewedAt?: string;
+  reviewedBy?: string;
+}
+
+export interface BusinessOwnerRecord {
+  id: string;
+  userId: string;
+  businessId: string;
+  role: 'owner' | 'manager' | 'staff';
+  verified: boolean;
+  createdAt: string;
 }

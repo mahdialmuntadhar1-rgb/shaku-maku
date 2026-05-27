@@ -5,7 +5,13 @@ import {
   Eye, EyeOff, CheckCircle2, Award, ArrowRight, ArrowLeft
 } from 'lucide-react';
 import { Language, UserProfile } from '../types';
-import { authApi } from '../api';
+import { auth, db, signInWithGoogle } from '../firebase';
+import { 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword,
+  updateProfile
+} from 'firebase/auth';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -212,6 +218,9 @@ export default function AuthModal({
           throw new Error('Invalid response from server: missing user data');
         }
 
+        // 2. Create the firestore profile
+        const userRef = doc(db, 'users', credential.user.uid);
+        
         const isAdmin = email.trim().toLowerCase() === 'safaribosafar@gmail.com' || email.trim().toLowerCase() === 'mahdialmuntadhar1@gmail.com';
         const profileDetails: UserProfile = {
           uid: user.id,
@@ -281,14 +290,18 @@ export default function AuthModal({
     } catch (err: any) {
       console.error("Auth Failure details: ", err);
       let localizedErr = err.message;
-      if (err.message?.includes('Invalid') || err.message?.includes('credentials')) {
+      if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
         localizedErr = currentLang === 'en' 
           ? 'Invalid email or incorrect password. Please try again.' 
           : 'البريد الإلكتروني أو كلمة المرور غير صحيحة. يرجى المحاولة ثانية.';
-      } else if (err.message?.includes('already exists')) {
+      } else if (err.code === 'auth/email-already-in-use') {
         localizedErr = currentLang === 'en'
           ? 'This email address is already registered. Please login instead.'
           : 'هذا البريد الإلكتروني مسجل بالفعل. يرجى اختيار تسجيل الدخول.';
+      } else if (err.code === 'auth/invalid-email') {
+        localizedErr = currentLang === 'en' ? 'Invalid email format' : 'صيغة البريد الإلكتروني غير صالحة';
+      } else if (err.code === 'auth/weak-password') {
+        localizedErr = currentLang === 'en' ? 'Weak password! Use at least 6 characters.' : 'كلمة المرور ضعيفة جداً! يرجى كتابة 6 أحرف على الأقل.';
       }
       setErrorMsg(localizedErr);
     } finally {

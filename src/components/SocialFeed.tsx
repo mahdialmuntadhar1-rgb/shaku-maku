@@ -27,6 +27,24 @@ export default function SocialFeed({
 }: SocialFeedProps) {
   const [commentInputs, setCommentInputs] = useState<Record<string, string>>({});
   
+  // Custom Pagination States for Social Feed
+  const [visibleCount, setVisibleCount] = useState(3);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+
+  // Reset page pagination state when governorate/filters change
+  React.useEffect(() => {
+    setVisibleCount(3);
+  }, [selectedGov]);
+
+  const handleLoadMorePosts = () => {
+    if (isLoadingMore) return;
+    setIsLoadingMore(true);
+    setTimeout(() => {
+      setVisibleCount(prev => prev + 3);
+      setIsLoadingMore(false);
+    }, 700); // simulated loading with skeletons
+  };
+
   // Create state form variables for new post
   const [newBizName, setNewBizName] = useState('');
   const [newCaption, setNewCaption] = useState('');
@@ -48,6 +66,7 @@ export default function SocialFeed({
   const [showBrandInput, setShowBrandInput] = useState(false);
   const [showCategoryInput, setShowCategoryInput] = useState(false);
   const [showPresetGallery, setShowPresetGallery] = useState(false);
+  const [showMediaUploadArea, setShowMediaUploadArea] = useState(true);
 
   const t = TRANSLATIONS[currentLang];
   const isRtl = currentLang === 'ar' || currentLang === 'ku';
@@ -346,7 +365,7 @@ export default function SocialFeed({
               className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition cursor-pointer"
               title={currentLang === 'en' ? 'Add photo' : 'أضف صورة'}
             >
-              <ImageIcon className="w-4 h-4" />
+              <ImageIcon className="w-4.5 h-4.5" />
             </button>
             <button
               type="button"
@@ -354,7 +373,7 @@ export default function SocialFeed({
               className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition cursor-pointer"
               title={currentLang === 'en' ? 'Add video' : 'أضف فيديو'}
             >
-              <Video className="w-4 h-4" />
+              <Video className="w-4.5 h-4.5" />
             </button>
           </div>
           <button
@@ -371,7 +390,7 @@ export default function SocialFeed({
       </div>
 
       {/* Main post stream list */}
-      {filteredPosts.map((post) => {
+      {filteredPosts.slice(0, visibleCount).map((post) => {
         const categoryDetails = CATEGORIES.find(c => c.id === post.category);
         return (
           <motion.div
@@ -575,6 +594,41 @@ export default function SocialFeed({
           </motion.div>
         );
       })}
+
+      {/* Skeletons loader */}
+      {isLoadingMore && (
+        <div className="space-y-6">
+          {[1, 2].map((num) => (
+            <div key={num} className="bg-white/5 border border-white/10 rounded-3xl overflow-hidden p-6 space-y-4 animate-pulse">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-zinc-800"></div>
+                <div className="space-y-2 flex-1">
+                  <div className="h-3 w-1/3 bg-zinc-800 rounded"></div>
+                  <div className="h-2.5 w-1/4 bg-zinc-800 rounded"></div>
+                </div>
+              </div>
+              <div className="h-44 w-full bg-zinc-800/40 rounded-2xl"></div>
+              <div className="space-y-2">
+                <div className="h-3 w-5/6 bg-zinc-800 rounded"></div>
+                <div className="h-3 w-1/2 bg-zinc-800 rounded"></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Load More Trigger Button */}
+      {filteredPosts.length > visibleCount && !isLoadingMore && (
+        <div className="flex justify-center pt-2">
+          <button
+            onClick={handleLoadMorePosts}
+            className="text-xs font-black text-white bg-slate-900/80 hover:bg-slate-800 border border-zinc-800 px-6 py-3 rounded-xl transition cursor-pointer flex items-center gap-2 hover:border-luxury-gold/50"
+          >
+            <span>🔄</span>
+            <span>{currentLang === 'en' ? 'Load More Stories' : currentLang === 'ku' ? 'پاکەتی چیرۆکی زیاتر' : 'تحميل المزيد من القصص'}</span>
+          </button>
+        </div>
+      )}
 
       {/* If absolutely no post fits governorate */}
       {filteredPosts.length === 0 && (

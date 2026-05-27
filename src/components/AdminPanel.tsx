@@ -3,7 +3,8 @@ import { motion, AnimatePresence } from 'motion/react';
 import { 
   ShieldCheck, Lock, LogOut, CheckCircle, Trash2, 
   Sparkles, Layers, Eye, Users, FileText, BarChart3, Star, AlertCircle,
-  Edit, Save, Plus, ChevronDown, CheckCircle2
+  Edit, Save, Plus, ChevronDown, CheckCircle2, Smartphone, ShieldAlert,
+  Award, RefreshCw
 } from 'lucide-react';
 import { Language, GovernorateCode, Business, SocialPost, UserProfile, HeroSlide, Category } from '../types';
 import { CATEGORIES, GOVERNORATES, HERO_SLIDES } from '../data';
@@ -55,6 +56,8 @@ export default function AdminPanel({
   // Real-time Firestore sync of slider segments
   const [heroSlides, setHeroSlides] = useState<HeroSlide[]>([]);
   const [loadingSlides, setLoadingSlides] = useState(false);
+  const [claims, setClaims] = useState<BusinessClaim[]>([]);
+  const [loadingClaims, setLoadingClaims] = useState(false);
 
   // Edit / Add Slide parameters
   const [editingSlideId, setEditingSlideId] = useState<string | null>(null);
@@ -90,6 +93,25 @@ export default function AdminPanel({
     setLoadingSlides(true);
     setHeroSlides(HERO_SLIDES);
     setLoadingSlides(false);
+  }, [isFullyUnlocked]);
+
+  // Sync business owner claims on admin load
+  useEffect(() => {
+    if (!isFullyUnlocked) return;
+    setLoadingClaims(true);
+    const ref = collection(db, 'business_claims');
+    const unsub = onSnapshot(ref, (snap) => {
+      const list: BusinessClaim[] = [];
+      snap.forEach((doc) => {
+        list.push(doc.data() as BusinessClaim);
+      });
+      setClaims(list);
+      setLoadingClaims(false);
+    }, (err) => {
+      console.error("Error fetching claims inside Admin: ", err);
+      setLoadingClaims(false);
+    });
+    return () => unsub();
   }, [isFullyUnlocked]);
 
   const handleLoginSubmit = (e: React.FormEvent) => {
@@ -170,6 +192,87 @@ export default function AdminPanel({
       mediaUrl: postEditMedia.trim()
     } : p));
     setEditingPostId(null);
+  };
+
+  // Business claim operations
+  const handleApproveClaim = async (claim: BusinessClaim) => {
+    try {
+      // 1) Update claim status to 'approved'
+      await updateDoc(doc(db, 'business_claims', claim.id), { status: 'approved' });
+      
+      // 2) Update direct business document to link the owner and verify it
+      await updateDoc(doc(db, 'businesses', claim.businessId), {
+        ownerUid: claim.userId,
+        isVerified: true,
+        phoneNumber: claim.userPhone
+      });
+
+      // 3) Create verified business_owners document
+      const ownerRecordId = `owner-${claim.userId}-${claim.businessId}`;
+      await setDoc(doc(db, 'business_owners', ownerRecordId), {
+        id: ownerRecordId,
+        userId: claim.userId,
+        businessId: claim.businessId,
+        role: 'owner',
+        verified: true,
+        createdAt: new Date().toISOString()
+      });
+
+      // 4) Update user profile representation to 'owner'
+      const userRef = doc(db, 'users', claim.userId);
+      await updateDoc(userRef, {
+        role: 'owner',
+        onboarded: true,
+        businessId: claim.businessId
+      });
+
+      alert("Claim successfully approved! Ownership verified and dashboard unlocked.");
+    } catch (e) {
+      console.error("fault approving claim: ", e);
+      alert("Error approving claim.");
+    }
+  };
+
+  const handleRejectClaim = async (claimId: string) => {
+    try {
+      await updateDoc(doc(db, 'business_claims', claimId), { status: 'rejected' });
+      alert("Claim successfully rejected.");
+    } catch (e) {
+      console.error(e);
+      alert("Error rejecting claim.");
+    }
+  };
+
+  const handleRevokeClaim = async (businessId: string, ownerUid: string) => {
+    if (!window.confirm("Are you absolutely sure you want to revoke ownership? This will unlink the merchant and lock their dashboard.")) return;
+    try {
+      // 1) Disassociate standard ownerUid in business listing
+      await updateDoc(doc(db, 'businesses', businessId), {
+        ownerUid: '',
+        isVerified: false
+      });
+
+      // 2) Disassociate owner profile in user collection
+      const userRef = doc(db, 'users', ownerUid);
+      await updateDoc(userRef, {
+        role: 'user',
+        businessId: null,
+        onboarded: false
+      });
+
+      // 3) Wipe audit history claims
+      const claimId = `claim-${businessId}-${ownerUid}`;
+      await deleteDoc(doc(db, 'business_claims', claimId));
+
+      // 4) Wipe owner record
+      const ownerRecordId = `owner-${ownerUid}-${businessId}`;
+      await deleteDoc(doc(db, 'business_owners', ownerRecordId));
+
+      alert("Ownership revoked successfully. Profile returned to default guest status.");
+    } catch (e) {
+      console.error("revoke ownership err: ", e);
+      alert("Error revoking ownership.");
+    }
   };
 
   // Hero operations
