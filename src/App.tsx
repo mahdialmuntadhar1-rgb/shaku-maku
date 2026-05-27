@@ -49,6 +49,7 @@ export default function App() {
   const [activeStoryIdx, setActiveStoryIdx] = useState(0);
   const [storyProgress, setStoryProgress] = useState(0);
   const [govDropdownOpen, setGovDropdownOpen] = useState(false);
+  const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
 
   const t = TRANSLATIONS[currentLang];
@@ -344,6 +345,9 @@ export default function App() {
     return businesses.filter(b => {
       // Governorate Match
       const govMatch = selectedGov === 'all' || b.governorate === selectedGov;
+
+      // Category Match
+      const catMatch = !selectedCategory || b.category === selectedCategory;
       
       // Keyword Match (case-insensitive across translated fields)
       const keyword = searchQuery.toLowerCase().trim();
@@ -354,9 +358,9 @@ export default function App() {
         b.address[currentLang].toLowerCase().includes(keyword) ||
         b.category.toLowerCase().includes(keyword);
         
-      return govMatch && keywordMatch;
+      return govMatch && catMatch && keywordMatch;
     });
-  }, [businesses, selectedGov, searchQuery, currentLang]);
+  }, [businesses, selectedGov, selectedCategory, searchQuery, currentLang]);
 
   // Handle Likes state toggle in Firestore
   const handleToggleLike = async (bizId: string) => {
@@ -542,47 +546,119 @@ export default function App() {
           }}
         />
 
-        {/* Custom Premium Governorate Filtering Dropdown (Directly beneath Hero Banner) */}
-        <div className="mb-6 max-w-md mx-auto px-2 relative z-30">
-          <div className="text-[11px] font-black text-luxury-gold uppercase tracking-wider mb-2 text-center flex items-center justify-center gap-2">
-            <MapPin className="w-4 h-4 text-luxury-gold shrink-0 animate-bounce" />
-            <span>{currentLang === 'en' ? 'Select Iraqi Governorate / Region' : currentLang === 'ku' ? 'پارێزگایەک دەستنیشان بکە' : 'اختر المحافظة العراقية لتصفح المتاجر'}</span>
-          </div>
-          
-          <div className="relative">
-            <button
-              onClick={() => setGovDropdownOpen(!govDropdownOpen)}
-              className="w-full flex items-center justify-between text-xs font-black bg-[#16161a] hover:bg-[#1f1f26] text-white px-5 py-3.5 rounded-2xl border border-luxury-gold/30 hover:border-luxury-gold/60 transition-all shadow-xl shadow-black/40 cursor-pointer"
-            >
-              <div className="flex items-center gap-2">
-                <span className="text-base">📍</span>
-                <span>{GOVERNORATES.find(g => g.code === selectedGov)?.name[currentLang]}</span>
-              </div>
-              <ChevronDown className={`w-4.5 h-4.5 text-luxury-gold transition-transform duration-300 ${govDropdownOpen ? 'rotate-180' : ''}`} />
-            </button>
+        {/* Custom Premium Governorate & Category Filtering Dropdowns (Directly beneath Hero Banner) */}
+        <div className="mb-6 max-w-sm mx-auto px-2 space-y-4 relative z-30">
+          <div>
+            <div className="text-[10px] font-black text-luxury-gold uppercase tracking-wider mb-1.5 text-center flex items-center justify-center gap-1.5">
+              <MapPin className="w-3.5 h-3.5 text-luxury-gold shrink-0" />
+              <span>{currentLang === 'en' ? 'Select Iraqi Governorate / Region' : currentLang === 'ku' ? 'پارێزگایەک دەستنیشان بکە' : 'اختر المحافظة العراقية لتصفح المتاجر'}</span>
+            </div>
+            
+            <div className="relative">
+              <button
+                onClick={() => {
+                  setGovDropdownOpen(!govDropdownOpen);
+                  setCategoryDropdownOpen(false);
+                }}
+                className="w-full flex items-center justify-between text-xs font-bold bg-[#16161a] hover:bg-[#1f1f26] text-white px-4 py-3 rounded-xl border border-luxury-gold/30 hover:border-luxury-gold/60 transition-all shadow-xl shadow-black/40 cursor-pointer"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-base">📍</span>
+                  <span>{GOVERNORATES.find(g => g.code === selectedGov)?.name[currentLang]}</span>
+                </div>
+                <ChevronDown className={`w-4 h-4 text-luxury-gold transition-transform duration-300 ${govDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
 
-            {govDropdownOpen && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-[#121215] border border-luxury-gold/20 rounded-2xl shadow-2xl p-2 z-50 grid grid-cols-2 gap-1 animate-fade-in max-h-[280px] overflow-y-auto custom-scrollbar">
-                {GOVERNORATES.map((gov) => (
+              {govDropdownOpen && (
+                <div className="absolute top-full left-0 right-0 mt-1.5 bg-[#121215] border border-luxury-gold/20 rounded-xl shadow-2xl p-1 z-50 grid grid-cols-2 gap-1 animate-fade-in max-h-[220px] overflow-y-auto custom-scrollbar font-sans">
+                  {GOVERNORATES.map((gov) => (
+                    <button
+                      key={gov.code}
+                      onClick={() => {
+                        setSelectedGov(gov.code);
+                        setGovDropdownOpen(false);
+                        setActiveTab('discover');
+                      }}
+                      className={`text-left px-2.5 py-1.5 text-[11px] rounded-lg flex items-center justify-between transition-all cursor-pointer ${
+                        selectedGov === gov.code
+                          ? 'bg-gradient-to-r from-luxury-teal to-luxury-gold/85 text-white font-extrabold shadow'
+                          : 'text-zinc-300 hover:bg-white/5 font-semibold'
+                      }`}
+                    >
+                      <span className="truncate">{gov.name[currentLang]}</span>
+                      {selectedGov === gov.code && <span className="text-[9px]">✨</span>}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div>
+            <div className="text-[10px] font-black text-luxury-gold uppercase tracking-wider mb-1.5 text-center flex items-center justify-center gap-1.5">
+              <span>{currentLang === 'en' ? '🔍 Filter by Category' : currentLang === 'ku' ? '🔍 بەپێی پۆل دەستنیشان بکە' : '🔍 تصفية حسب الفئة'}</span>
+            </div>
+            
+            <div className="relative">
+              <button
+                onClick={() => {
+                  setCategoryDropdownOpen(!categoryDropdownOpen);
+                  setGovDropdownOpen(false);
+                }}
+                className="w-full flex items-center justify-between text-xs font-bold bg-[#16161a] hover:bg-[#1f1f26] text-white px-4 py-3 rounded-xl border border-luxury-gold/30 hover:border-luxury-gold/60 transition-all shadow-xl shadow-black/40 cursor-pointer"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-base">
+                    {selectedCategory ? CATEGORIES.find(c => c.id === selectedCategory)?.icon || '🏢' : '🏢'}
+                  </span>
+                  <span>
+                    {selectedCategory 
+                      ? CATEGORIES.find(c => c.id === selectedCategory)?.name[currentLang] 
+                      : (currentLang === 'en' ? 'All Categories' : currentLang === 'ku' ? 'هەموو پۆلەکان' : 'جميع الفئات')}
+                  </span>
+                </div>
+                <ChevronDown className={`w-4 h-4 text-luxury-gold transition-transform duration-300 ${categoryDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {categoryDropdownOpen && (
+                <div className="absolute top-full left-0 right-0 mt-1.5 bg-[#121215] border border-luxury-gold/20 rounded-xl shadow-2xl p-1 z-50 grid grid-cols-2 gap-1 animate-fade-in max-h-[220px] overflow-y-auto custom-scrollbar font-sans animate-fade-in">
                   <button
-                    key={gov.code}
                     onClick={() => {
-                      setSelectedGov(gov.code);
-                      setGovDropdownOpen(false);
+                      setSelectedCategory(null);
+                      setCategoryDropdownOpen(false);
                       setActiveTab('discover');
                     }}
-                    className={`text-left px-3 py-2 text-xs rounded-xl flex items-center justify-between transition-all cursor-pointer ${
-                      selectedGov === gov.code
+                    className={`text-left px-2.5 py-1.5 text-[11px] rounded-lg flex items-center justify-between transition-all cursor-pointer ${
+                      selectedCategory === null
                         ? 'bg-gradient-to-r from-luxury-teal to-luxury-gold/85 text-white font-extrabold shadow'
                         : 'text-zinc-300 hover:bg-white/5 font-semibold'
                     }`}
                   >
-                    <span className="truncate">{gov.name[currentLang]}</span>
-                    {selectedGov === gov.code && <span className="text-[10px]">✨</span>}
+                    <span>🍔 {currentLang === 'en' ? 'All Categories' : currentLang === 'ku' ? 'هەموو پۆلەکان' : 'جميع الفئات'}</span>
+                    {selectedCategory === null && <span className="text-[9px]">✨</span>}
                   </button>
-                ))}
-              </div>
-            )}
+
+                  {CATEGORIES.map((cat) => (
+                    <button
+                      key={cat.id}
+                      onClick={() => {
+                        setSelectedCategory(cat.id);
+                        setCategoryDropdownOpen(false);
+                        setActiveTab('discover');
+                      }}
+                      className={`text-left px-2.5 py-1.5 text-[11px] rounded-lg flex items-center justify-between transition-all cursor-pointer ${
+                        selectedCategory === cat.id
+                          ? 'bg-gradient-to-r from-luxury-teal to-luxury-gold/85 text-white font-extrabold shadow'
+                          : 'text-zinc-300 hover:bg-white/5 font-semibold'
+                      }`}
+                    >
+                      <span className="truncate">{cat.icon} {cat.name[currentLang]}</span>
+                      {selectedCategory === cat.id && <span className="text-[9px]">✨</span>}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 

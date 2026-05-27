@@ -30,10 +30,12 @@ export default function BusinessFeed({
   
   // Keep track of counts of displayed items per category
   const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({});
+  const [loadingCategories, setLoadingCategories] = useState<Record<string, boolean>>({});
 
   // Reset pagination/expanded categories when selectedCategory changes
   React.useEffect(() => {
     setExpandedCategories({});
+    setLoadingCategories({});
   }, [selectedCategory]);
   
   // Real-time custom comments added to specific business IDs
@@ -56,10 +58,18 @@ export default function BusinessFeed({
     : CATEGORIES;
 
   const handleToggleCategoryExpand = (catId: string) => {
-    setExpandedCategories(prev => ({
-      ...prev,
-      [catId]: !prev[catId]
-    }));
+    const isCurrentlyExpanded = expandedCategories[catId] || false;
+    
+    if (isCurrentlyExpanded) {
+      setExpandedCategories(prev => ({ ...prev, [catId]: false }));
+    } else {
+      if (loadingCategories[catId]) return;
+      setLoadingCategories(prev => ({ ...prev, [catId]: true }));
+      setTimeout(() => {
+        setExpandedCategories(prev => ({ ...prev, [catId]: true }));
+        setLoadingCategories(prev => ({ ...prev, [catId]: false }));
+      }, 750);
+    }
   };
 
   const handleShare = (biz: Business) => {
@@ -284,14 +294,33 @@ export default function BusinessFeed({
               })}
             </div>
 
+            {/* Skeletons load indicator */}
+            {loadingCategories[category.id] && (
+              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3.5 sm:gap-6 mt-4">
+                {[1, 2, 3].slice(0, Math.min(3, categoryBizs.length - 3)).map((n) => (
+                  <div key={n} className="flex flex-col h-full bg-slate-100/50 border border-zinc-200/50 rounded-2xl overflow-hidden animate-pulse min-h-[180px] xs:min-h-[220px]">
+                    <div className="h-28 xs:h-36 sm:h-44 md:h-48 w-full bg-zinc-200/80"></div>
+                    <div className="p-4 space-y-2 flex-1 flex flex-col justify-between">
+                      <div className="space-y-2">
+                        <div className="h-3 w-3/4 bg-zinc-250 rounded"></div>
+                        <div className="h-2.5 w-1/2 bg-zinc-250 rounded"></div>
+                      </div>
+                      <div className="h-7 w-full bg-zinc-250 rounded-lg"></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
             {/* Load More Button for current Category block */}
             {categoryBizs.length > 3 && (
               <div className="flex justify-center mt-5">
                 <button
                   onClick={() => handleToggleCategoryExpand(category.id)}
-                  className="text-[11px] font-bold text-luxury-teal hover:text-white bg-white hover:bg-luxury-teal px-4 py-1.5 rounded-full border border-luxury-teal/30 transition-all cursor-pointer shadow-sm"
+                  disabled={loadingCategories[category.id]}
+                  className="text-[11px] font-bold text-luxury-teal hover:text-white bg-white hover:bg-luxury-teal px-4 py-1.5 rounded-full border border-luxury-teal/30 transition-all cursor-pointer shadow-sm disabled:opacity-50"
                 >
-                  {isExpanded ? t.showLess : `${t.loadMore} (${categoryBizs.length - 3}) +`}
+                  {loadingCategories[category.id] ? (currentLang === 'en' ? 'Fetching...' : currentLang === 'ku' ? 'تۆمارکردن...' : 'جاري التحميل...') : (isExpanded ? t.showLess : `${t.loadMore} (${categoryBizs.length - 3}) +`)}
                 </button>
               </div>
             )}
