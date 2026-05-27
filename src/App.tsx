@@ -8,7 +8,7 @@ import {
 import { Language, GovernorateCode, Business, SocialPost, UserProfile, HeroSlide } from './types';
 import { INITIAL_BUSINESSES, TRANSLATIONS, CATEGORIES, INITIAL_POSTS, GOVERNORATES, HERO_SLIDES } from './data';
 import { auth, db, signInWithGoogle } from './firebase';
-import { onAuthStateChanged, signOut, User } from 'firebase/auth';
+import { onAuthStateChanged, signOut, User, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { collection, onSnapshot, setDoc, doc, updateDoc } from 'firebase/firestore';
 
 // Saku Maku Modular Components
@@ -58,26 +58,6 @@ export default function App() {
   // Real-time Hero Slides synced from Firestore with auto-seeding
   const [heroSlides, setHeroSlides] = useState<HeroSlide[]>([]);
 
-  // Local storage quick recovery helper for iframe sessions
-  useEffect(() => {
-    const saved = localStorage.getItem('shkomaku_custom_user');
-    if (saved) {
-      try {
-        const customUser = JSON.parse(saved);
-        setUser(customUser);
-        const userRef = doc(db, 'users', customUser.uid);
-        const unsub = onSnapshot(userRef, (docSnap) => {
-          if (docSnap.exists()) {
-            setUserProfile(docSnap.data() as UserProfile);
-          }
-        }, (err) => console.error("Saved profile listen err: ", err));
-        return () => unsub();
-      } catch (e) {
-        console.error("Local recovery error: ", e);
-      }
-    }
-  }, []);
-
   // Sync Hero Slides in Real Time!
   useEffect(() => {
     const ref = collection(db, 'hero_slides');
@@ -112,74 +92,85 @@ export default function App() {
     const cleanEmail = customEmail.trim().toLowerCase();
     if (!cleanEmail) return;
 
-    const mockUid = 'cust-' + btoa(cleanEmail).replace(/=/g, '').slice(0, 16);
-    const customUserMock = {
-      uid: mockUid,
-      email: cleanEmail,
-      displayName: cleanEmail.split('@')[0],
-      photoURL: cleanEmail === 'mahdialmuntadhar1@gmail.com' || cleanEmail === 'safaribosafar@gmail.com' 
-        ? "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" 
-        : "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80",
-      emailVerified: true
-    } as any;
-
-    const isAdmin = cleanEmail === 'mahdialmuntadhar1@gmail.com' || cleanEmail === 'safaribosafar@gmail.com';
-    const isOwner = cleanEmail.includes('owner');
-    
-    const userRef = doc(db, 'users', mockUid);
-    const newProfile: UserProfile = {
-      uid: mockUid,
-      displayName: customUserMock.displayName,
-      photoURL: customUserMock.photoURL,
-      email: cleanEmail,
-      createdAt: new Date().toISOString(),
-      role: isAdmin ? 'admin' : (isOwner ? 'owner' : 'user'),
-      onboarded: isOwner, 
-      businessId: isOwner ? 'b-onboard-demo' : null,
-      businessOnboarding: isOwner ? {
-        name: 'Classic Baghdadi Café',
-        category: 'cafe_bakery',
-        governorate: 'baghdad',
-        address: 'Arasat Street, Karrada District',
-        phone: '+9647701234567',
-        whatsApp: '+9647701234567',
-        logo: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=120&auto=format&fit=crop&q=80',
-        coverImage: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&auto=format&fit=crop&q=80',
-        description: 'Elite cozy spot for specialty brews.'
-      } : undefined
-    };
-
-    if (isOwner) {
-      const demoBiz = {
-        id: 'b-onboard-demo',
-        name: { ar: 'مقهى البغدادي الكلاسيكي ☕', ku: 'کافێی کلاسیکی بەغدادی ☕', en: 'Classic Baghdadi Café ☕' },
-        description: { ar: 'أرقى أنواع القهوة الفلتر والحلويات الشرقية في الكرادة.', ku: 'باشترین جۆرەکانی قاوە و شیرینییەکان.', en: 'Cozy traditional Iraqi roaster in Karada.' },
-        category: 'cafe_bakery',
-        governorate: 'baghdad',
-        rating: 4.9,
-        reviewsCount: 42,
-        image: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&auto=format&fit=crop&q=80',
-        images: ['https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&auto=format&fit=crop&q=80'],
-        avatar: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=120&auto=format&fit=crop&q=80',
-        isVerified: true,
-        phoneNumber: '+9647701234567',
-        address: { ar: 'شارع العرصات، الكرادة', ku: 'جادەی عەرەسات، بەغداد', en: 'Arasat Street, Karrada' },
-        likes: 35,
-        saves: 18,
-        mapCoords: { x: 48, y: 58 },
-        ownerUid: mockUid
-      };
-      await setDoc(doc(db, 'businesses', 'b-onboard-demo'), demoBiz, { merge: true });
-    }
+    const dummyPassword = "SandboxPassword123!";
 
     try {
+      let credential;
+      try {
+        credential = await signInWithEmailAndPassword(auth, cleanEmail, dummyPassword);
+      } catch (signInErr: any) {
+        if (signInErr.code === 'auth/user-not-found' || signInErr.code === 'auth/invalid-credential' || signInErr.code === 'auth/invalid-login-credentials') {
+          credential = await createUserWithEmailAndPassword(auth, cleanEmail, dummyPassword);
+        } else {
+          throw signInErr;
+        }
+      }
+
+      const firebaseUser = credential.user;
+
+      if (!firebaseUser.displayName) {
+        await updateProfile(firebaseUser, {
+          displayName: cleanEmail.split('@')[0]
+        });
+      }
+
+      const isAdmin = cleanEmail === 'mahdialmuntadhar1@gmail.com' || cleanEmail === 'safaribosafar@gmail.com';
+      const isOwner = cleanEmail.includes('owner');
+
+      const userRef = doc(db, 'users', firebaseUser.uid);
+      const newProfile: UserProfile = {
+        uid: firebaseUser.uid,
+        displayName: firebaseUser.displayName || cleanEmail.split('@')[0],
+        photoURL: cleanEmail === 'mahdialmuntadhar1@gmail.com' || cleanEmail === 'safaribosafar@gmail.com' 
+          ? "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" 
+          : "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80",
+        email: cleanEmail,
+        createdAt: new Date().toISOString(),
+        role: isAdmin ? 'admin' : (isOwner ? 'owner' : 'user'),
+        onboarded: isOwner, 
+        businessId: isOwner ? 'b-onboard-demo' : null,
+        businessOnboarding: isOwner ? {
+          name: 'Classic Baghdadi Café',
+          category: 'cafe_bakery',
+          governorate: 'baghdad',
+          address: 'Arasat Street, Karrada District',
+          phone: '+9647701234567',
+          whatsApp: '+9647701234567',
+          logo: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=120&auto=format&fit=crop&q=80',
+          coverImage: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&auto=format&fit=crop&q=80',
+          description: 'Elite cozy spot for specialty brews.'
+        } : undefined
+      };
+
+      if (isOwner) {
+        const demoBiz = {
+          id: 'b-onboard-demo',
+          name: { ar: 'مقهى البغدادي الكلاسيكي ☕', ku: 'کافێی کلاسیکی بەغدادی ☕', en: 'Classic Baghdadi Café ☕' },
+          description: { ar: 'أرقى أنواع القهوة الفلتر والحلويات الشرقية في الكرادة.', ku: 'باشترین جۆرەکانی قاوە و شیرینییەکان.', en: 'Cozy traditional Iraqi roaster in Karada.' },
+          category: 'cafe_bakery',
+          governorate: 'baghdad',
+          rating: 4.9,
+          reviewsCount: 42,
+          image: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&auto=format&fit=crop&q=80',
+          images: ['https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&auto=format&fit=crop&q=80'],
+          avatar: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=120&auto=format&fit=crop&q=80',
+          isVerified: true,
+          phoneNumber: '+9647701234567',
+          address: { ar: 'شارع العرصات، الكرادة', ku: 'جادەی عەرەسات، بەغداد', en: 'Arasat Street, Karrada' },
+          likes: 35,
+          saves: 18,
+          mapCoords: { x: 48, y: 58 },
+          ownerUid: firebaseUser.uid
+        };
+        await setDoc(doc(db, 'businesses', 'b-onboard-demo'), demoBiz, { merge: true });
+      }
+
       await setDoc(userRef, newProfile, { merge: true });
-      localStorage.setItem('shkomaku_custom_user', JSON.stringify(customUserMock));
-      setUser(customUserMock);
+      setUser(firebaseUser);
       setUserProfile(newProfile);
-      console.log("Custom auth session set representing: ", cleanEmail);
+      console.log("Firebase Auth sandbox preset session authenticated successfully for: ", cleanEmail);
     } catch (err) {
-      console.error("Error setting custom user in Firestore: ", err);
+      console.error("Error setting custom user in Firebase Auth / Firestore: ", err);
     }
   };
 
@@ -187,10 +178,6 @@ export default function App() {
   useEffect(() => {
     let unsubProfile: (() => void) | null = null;
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      // If a custom local storage user already exists, let it take precedence
-      if (localStorage.getItem('shkomaku_custom_user')) {
-        return;
-      }
       setUser(firebaseUser);
       if (firebaseUser) {
         const userRef = doc(db, 'users', firebaseUser.uid);
