@@ -7,8 +7,6 @@ import {
 } from 'lucide-react';
 import { SocialPost, Language, GovernorateCode } from '../types';
 import { TRANSLATIONS, CATEGORIES } from '../data';
-import { setDoc, doc, updateDoc } from 'firebase/firestore';
-import { db, handleFirestoreError, OperationType } from '../firebase';
 
 interface SocialFeedProps {
   currentLang: Language;
@@ -199,58 +197,39 @@ export default function SocialFeed({
       };
     }
 
-    try {
-      await setDoc(doc(db, 'posts', newPostItem.id), newPostItem);
+    setPosts(prev => [newPostItem, ...prev]);
 
-      // Reset fields & collapse
-      setNewBizName('');
-      setNewCaption('');
-      setNewPromo('');
-      setCustomPhotoInput('');
-      setUploadedImage(null);
-      setUploadedVideo(null);
-      setUploadedFile(null);
-      setVideoError(null);
-      
-      setShowPromoInput(false);
-      setShowGovInput(false);
-      setShowBrandInput(false);
-      setShowCategoryInput(false);
-      setShowPresetGallery(false);
-    } catch (err) {
-      console.error("Error creating post in Firestore: ", err);
-      handleFirestoreError(err, OperationType.CREATE, `posts/${newPostItem.id}`);
-    }
+    // Reset fields & collapse
+    setNewBizName('');
+    setNewCaption('');
+    setNewPromo('');
+    setCustomPhotoInput('');
+    setUploadedImage(null);
+    setUploadedVideo(null);
+    setUploadedFile(null);
+    setVideoError(null);
+    
+    setShowPromoInput(false);
+    setShowGovInput(false);
+    setShowBrandInput(false);
+    setShowCategoryInput(false);
+    setShowPresetGallery(false);
   };
 
-  const handleLike = async (postId: string) => {
-    const post = posts.find(p => p.id === postId);
-    if (!post) return;
-    const liked = !post.likedByUser;
-    const payload = {
-      likedByUser: liked,
-      likes: liked ? post.likes + 1 : post.likes - 1
-    };
-    try {
-      await updateDoc(doc(db, 'posts', postId), payload);
-    } catch (err) {
-      console.error("Error liking post in Firestore: ", err);
-    }
+  const handleLike = (postId: string) => {
+    setPosts(prev => prev.map(p => {
+      if (p.id !== postId) return p;
+      const liked = !p.likedByUser;
+      return { ...p, likedByUser: liked, likes: liked ? p.likes + 1 : p.likes - 1 };
+    }));
   };
 
-  const handleSave = async (postId: string) => {
-    const post = posts.find(p => p.id === postId);
-    if (!post) return;
-    const saved = !post.savedByUser;
-    const payload = {
-      savedByUser: saved,
-      shares: saved ? post.shares + 1 : post.shares
-    };
-    try {
-      await updateDoc(doc(db, 'posts', postId), payload);
-    } catch (err) {
-      console.error("Error saving post in Firestore: ", err);
-    }
+  const handleSave = (postId: string) => {
+    setPosts(prev => prev.map(p => {
+      if (p.id !== postId) return p;
+      const saved = !p.savedByUser;
+      return { ...p, savedByUser: saved, shares: saved ? p.shares + 1 : p.shares };
+    }));
   };
 
   const handlePostComment = async (e: React.FormEvent, postId: string) => {
@@ -274,12 +253,8 @@ export default function SocialFeed({
       commentsCount: post.commentsCount + 1
     };
 
-    try {
-      await updateDoc(doc(db, 'posts', postId), payload);
-      setCommentInputs(prev => ({ ...prev, [postId]: '' }));
-    } catch (err) {
-      console.error("Error adding post comment in Firestore: ", err);
-    }
+    setPosts(prev => prev.map(p => p.id === postId ? { ...p, comments: payload.comments, commentsCount: payload.commentsCount } : p));
+    setCommentInputs(prev => ({ ...prev, [postId]: '' }));
   };
 
   const handleShare = (post: SocialPost) => {
@@ -312,409 +287,87 @@ export default function SocialFeed({
         </span>
       </div>
 
-      {/* Immersive Refined Social Composer */}
-      <div className="bg-gradient-to-b from-[#12121e]/90 to-[#07070d]/95 border border-white/10 rounded-[24px] p-5 space-y-4.5 shadow-2xl relative overflow-hidden backdrop-blur-md">
-        {!user && (
-          <div className="absolute inset-0 bg-black/85 backdrop-blur-md z-30 flex flex-col items-center justify-center p-6 text-center space-y-4">
-            <Sparkles className="w-9 h-9 text-blue-400 animate-pulse" />
-            <div>
-              <p className="text-sm font-black text-white">
-                {currentLang === 'en' ? 'Sign In to Post Campaigns' : currentLang === 'ku' ? 'چوونەژوورەوە پێویستە بۆ بڵاوکردنەوە' : 'سجل دخولك لنشر العروض الاستثنائية'}
-              </p>
-              <p className="text-xs text-zinc-400 mt-1 max-w-xs mx-auto leading-relaxed">
-                {currentLang === 'en' ? 'Connect via Google to publish real-time marketing stories on Saku Maku.' : currentLang === 'ku' ? 'لە ڕێگەی لۆگینی گووگڵەوە دەتوانیت عەرزەکانت بڵاوبکەیتەوە.' : 'سجل دخولك السريع لمشاركة المنيو والعروض الحية مع الآخرين.'}
-              </p>
-            </div>
+      {/* Clean Facebook-style Post Composer */}
+      <div className="bg-[#12121e] border border-white/10 rounded-2xl p-4 space-y-3 shadow-xl">
+        {/* Header row: avatar + name */}
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-full overflow-hidden shrink-0 border border-white/10">
+            <img
+              src={user?.photoURL || 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&auto=format&fit=crop&q=80'}
+              alt={user?.displayName || 'Guest'}
+              className="w-full h-full object-cover"
+              referrerPolicy="no-referrer"
+            />
+          </div>
+          <div>
+            <span className="text-xs font-bold text-white">{user?.displayName || (currentLang === 'en' ? 'Guest' : currentLang === 'ku' ? 'میوان' : 'ضيف')}</span>
+            {!user && (
+              <button onClick={onSignIn} className="block text-[10px] text-luxury-gold hover:underline cursor-pointer">
+                {currentLang === 'en' ? 'Sign in for a verified badge' : currentLang === 'ku' ? 'بچۆ ژوورەوە بۆ بەجی دروست' : 'سجّل للحصول على شارة موثوق'}
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* What's on your mind textarea */}
+        <textarea
+          rows={3}
+          placeholder={
+            currentLang === 'en' ? "What's on your mind?"
+            : currentLang === 'ku' ? 'چی لە مێشکتدایە؟'
+            : 'بم تفكر؟'
+          }
+          value={newCaption}
+          onChange={(e) => setNewCaption(e.target.value)}
+          className="w-full bg-black/30 border border-white/10 focus:border-cyan-500/50 text-sm px-4 py-3 rounded-xl text-white placeholder-zinc-500 focus:outline-none transition resize-none leading-relaxed"
+        />
+
+        {/* Media preview */}
+        {(uploadedImage || uploadedVideo) && (
+          <div className="relative rounded-xl overflow-hidden bg-black/40 border border-white/10">
             <button
-              onClick={onSignIn}
-              className="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-400 hover:to-indigo-500 text-white font-black text-xs uppercase tracking-wider rounded-xl cursor-pointer shadow-lg active:scale-95 transition"
-            >
-              🔑 {currentLang === 'en' ? 'Google Login' : currentLang === 'ku' ? 'چوونەژوورەوە' : 'تسجيل دخول سريع'}
-            </button>
-          </div>
-        )}
-
-        <div className="space-y-3.5">
-          {/* Facebook style header: Avatar & Name side-by-side */}
-          <div className="flex items-center gap-3">
-            <div className="relative w-10 h-10 rounded-full bg-gradient-to-tr from-cyan-400 via-purple-500 to-pink-500 p-[1.5px] shrink-0">
-              <div className="w-full h-full rounded-full bg-[#0a0a0f] overflow-hidden flex items-center justify-center">
-                <img
-                  src={user?.photoURL || "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&auto=format&fit=crop&q=80"}
-                  alt={user?.displayName || "Active owner avatar"}
-                  className="w-full h-full object-cover"
-                  referrerPolicy="no-referrer"
-                />
-              </div>
-              {user && <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border border-slate-950 rounded-full animate-pulse"></span>}
-            </div>
-            <div>
-              <span className="text-xs font-bold text-white block">
-                {user?.displayName || (currentLang === 'en' ? 'Saku Maku Guest' : currentLang === 'ku' ? 'میوانی ساكۆ ماكۆ' : 'ضيف شكو ماكو')}
-              </span>
-              <span className="text-[10px] text-zinc-500 block">
-                {currentLang === 'en' ? 'Posting to Online Feed' : currentLang === 'ku' ? 'بڵاوکردنەوە لە فیدی گشتی' : 'نشر على الفيد العام'}
-              </span>
-            </div>
-          </div>
-
-          {/* Facebook style What's on your mind textarea input */}
-          <textarea
-            rows={3}
-            placeholder={
-              currentLang === 'en'
-                ? `What's on your mind, ${user?.displayName?.split(' ')[0] || 'Friend'}? share updates, photos or discount flyers...`
-                : currentLang === 'ku'
-                ? `چی لە مێشکتدایە، ${user?.displayName?.split(' ')[0] || 'هاوڕێم'}؟ بابەتێکی نوێ، وێنە یان مەکئاپ بڵاوبکەرەوە...`
-                : `بمَ تفكّر، ${user?.displayName?.split(' ')[0] || 'يا صديقنا'}؟ أنشر أحدث الصور، فيديوهات أو منشورات لشركتك...`
+              type="button"
+              onClick={() => { setUploadedImage(null); setUploadedVideo(null); }}
+              className="absolute top-2 right-2 z-10 w-6 h-6 rounded-full bg-black/70 text-white text-xs flex items-center justify-center cursor-pointer"
+            >×</button>
+            {uploadedVideo
+              ? <video src={uploadedVideo} controls className="w-full max-h-48 object-contain" />
+              : <img src={uploadedImage!} alt="preview" className="w-full max-h-48 object-contain" />
             }
-            value={newCaption}
-            onChange={(e) => setNewCaption(e.target.value)}
-            className="w-full bg-black/40 hover:bg-black/55 focus:bg-black/70 text-sm px-4 py-3 rounded-[18px] border border-white/10 focus:border-cyan-500 text-white placeholder-zinc-500 focus:outline-none transition leading-relaxed resize-none"
-            required
-          />
-        </div>
-
-        {videoError && (
-          <div className="p-3 bg-red-950/20 border border-red-500/35 rounded-2xl text-xs text-red-400 font-extrabold flex items-center gap-2 animate-fade-in font-sans">
-            <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse shrink-0"></span>
-            <span>⚠️ {videoError}</span>
           </div>
         )}
 
-        {/* Visual Multi-Upload Active Previews in a clean box */}
-        {(uploadedImage || newPhotoUrl || uploadedVideo || uploadedFile) && (
-          <div className="relative border border-white/10 rounded-2xl overflow-hidden bg-black/50 p-2 group transition-all">
-            
-            {/* Unified circular close button in the top right corner */}
-            <button
-              type="button"
-              onClick={() => {
-                setUploadedImage(null);
-                setUploadedVideo(null);
-                setUploadedFile(null);
-                setNewPhotoUrl('');
-              }}
-              className="absolute top-2.5 right-2.5 z-10 w-6 h-6 rounded-full bg-black/75 hover:bg-black/95 text-white flex items-center justify-center transition active:scale-95 cursor-pointer border border-white/10 text-xs font-bold"
-              title="Remove attachment"
-            >
-              ✕
-            </button>
-
-            {/* Video preview render if video is selected */}
-            {uploadedVideo ? (
-              <div className="relative w-full rounded-xl overflow-hidden bg-black/45 flex flex-col items-center justify-center p-1.5 min-h-[140px]">
-                <video src={uploadedVideo} style={{ maxHeight: '160px' }} controls className="w-full h-auto rounded-lg object-contain" />
-                <div className="absolute bottom-2.5 left-2.5 flex items-center gap-1 bg-black/85 backdrop-blur-md px-2.5 py-1 rounded-full border border-pink-500/20 text-[10px] text-pink-400 font-extrabold shadow-md">
-                  <Video className="w-3.5 h-3.5" />
-                  <span>VIDEO ATTACHED</span>
-                </div>
-              </div>
-            ) : uploadedImage || newPhotoUrl ? (
-              /* Photo preview render */
-              <div className="relative w-full rounded-xl overflow-hidden bg-black/30 flex items-center justify-center p-1.5 min-h-[140px]">
-                <img
-                  src={uploadedImage || newPhotoUrl}
-                  alt="Story attachment"
-                  className="max-h-[160px] w-auto max-w-full rounded-lg object-contain"
-                  referrerPolicy="no-referrer"
-                />
-                <div className="absolute bottom-2.5 left-2.5 flex items-center gap-1 bg-black/85 backdrop-blur-md px-2.5 py-1 rounded-full border border-cyan-500/20 text-[10px] text-cyan-400 font-extrabold shadow-md">
-                  <ImageIcon className="w-3.5 h-3.5" />
-                  <span>IMAGE ATTACHED</span>
-                </div>
-              </div>
-            ) : null}
-
-            {/* General document attachment preview */}
-            {uploadedFile && (
-              <div className="p-3 bg-indigo-950/20 border border-indigo-500/20 rounded-xl flex items-center justify-between gap-3 font-sans">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400 border border-indigo-500/10 shadow-md">
-                    <FileText className="w-4.5 h-4.5" />
-                  </div>
-                  <div>
-                    <span className="text-xs font-black text-white block truncate max-w-[190px]">{uploadedFile.name}</span>
-                    <span className="text-[10px] text-zinc-400 block font-mono font-medium">{uploadedFile.size} • Menu Booklet PDF</span>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Hidden inputs to trigger actual native file select browser prompts */}
-        <input
-          type="file"
-          id="social-photo-loader-input"
-          accept="image/*"
-          onChange={handleImageFileChange}
-          className="hidden"
-        />
-        <input
-          type="file"
-          id="social-video-loader-input"
-          accept="video/*"
-          onChange={handleVideoFileChange}
-          className="hidden"
-        />
-        <input
-          type="file"
-          id="social-doc-loader-input"
-          accept=".pdf,.doc,.docx,.png,.txt,.xlsx"
-          onChange={handleAttachedFileChange}
-          className="hidden"
-        />
-
-        {/* Collapsible Panels Container */}
-        <div className="space-y-2">
-          
-          {/* Preset templates panel */}
-          {showPresetGallery && (
-            <div className="p-3 bg-white/5 border border-white/5 rounded-2xl animate-fade-in space-y-2">
-              <span className="text-[9px] text-cyan-400 font-extrabold uppercase tracking-widest block">Choose Quick mockup media or upload custom:</span>
-              <div className="flex items-center gap-2 flex-wrap">
-                {/* Custom upload button inside preset list */}
-                <button
-                  type="button"
-                  onClick={() => document.getElementById('social-photo-loader-input')?.click()}
-                  className="w-12 h-12 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-cyan-400 rounded-lg flex flex-col items-center justify-center text-zinc-400 hover:text-white transition duration-200 cursor-pointer"
-                  title="Upload Custom Image File"
-                >
-                  <span className="text-xs font-bold font-mono">+ Add</span>
-                </button>
-
-                {PRESET_PHOTOS.map((photo) => (
-                  <button
-                    type="button"
-                    key={photo.url}
-                    onClick={() => {
-                      setUploadedImage(photo.url);
-                      setUploadedVideo(null);
-                      setNewPhotoUrl('');
-                    }}
-                    className={`w-12 h-12 rounded-lg border overflow-hidden transition relative ${
-                      uploadedImage === photo.url ? 'border-cyan-500 scale-105 shadow-md shadow-cyan-500/10' : 'border-white/10 opacity-70 hover:opacity-100'
-                    }`}
-                    title={photo.name}
-                  >
-                    <img src={photo.url} alt={photo.name} className="w-full h-full object-cover" />
-                  </button>
-                ))}
-
-                {PRESET_VIDEOS.map((vid) => (
-                  <button
-                    type="button"
-                    key={vid.url}
-                    onClick={() => {
-                      setUploadedVideo(vid.url);
-                      setUploadedImage(null);
-                      setNewPhotoUrl('');
-                    }}
-                    className={`w-12 h-12 rounded-lg border bg-[#170a25] flex flex-col items-center justify-center text-[11px] transition relative ${
-                      uploadedVideo === vid.url ? 'border-pink-500 scale-105' : 'border-white/10 opacity-70 hover:opacity-100'
-                    }`}
-                    title={vid.name}
-                  >
-                    <span>🎥</span>
-                    <span className="text-[6px] text-white/40 uppercase font-black">Video</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Dynamic input fields depending on chosen control toggles */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-w-full font-sans">
-            
-            {/* Publisher Brand Input */}
-            {showBrandInput && (
-              <div className="p-3 bg-white/5 rounded-xl border border-white/5 space-y-1.5 transition">
-                <span className="text-[10px] text-zinc-400 font-bold block">🏛️ Cafe / Brand Name</span>
-                <input
-                  type="text"
-                  placeholder="e.g. Costa Cafe Baghdad"
-                  value={newBizName}
-                  onChange={(e) => setNewBizName(e.target.value)}
-                  className="w-full bg-black/40 border border-white/10 text-xs px-3 py-2 rounded-lg text-white placeholder-zinc-700 focus:outline-none focus:border-cyan-400"
-                />
-              </div>
-            )}
-
-            {/* Promo Badge Input */}
-            {showPromoInput && (
-              <div className="p-3 bg-white/5 rounded-xl border border-white/5 space-y-1.5 transition">
-                <span className="text-[10px] text-zinc-400 font-bold block">🎟️ Promotion Badge (Discount)</span>
-                <input
-                  type="text"
-                  placeholder="e.g. Free Dessert • 20% Off"
-                  value={newPromo}
-                  onChange={(e) => setNewPromo(e.target.value)}
-                  className="w-full bg-black/40 border border-white/10 text-xs px-3 py-2 rounded-lg text-white placeholder-zinc-700 focus:outline-none focus:border-cyan-400"
-                />
-              </div>
-            )}
-
-            {/* Governorate dropdown selection menu */}
-            {showGovInput && (
-              <div className="p-3 bg-white/5 rounded-xl border border-white/5 space-y-1.5 transition">
-                <span className="text-[10px] text-zinc-400 font-bold block">📍 Target Governorate</span>
-                <select
-                  value={newGov}
-                  onChange={(e) => setNewGov(e.target.value as GovernorateCode)}
-                  className="w-full bg-black/40 border border-white/10 text-xs px-2.5 py-2 rounded-lg text-white focus:outline-none focus:border-cyan-450 tracking-wide cursor-pointer text-zinc-350"
-                >
-                  <option value="baghdad" className="bg-[#111] text-white">Baghdad 🏰</option>
-                  <option value="erbil" className="bg-[#111] text-white">Erbil 🏔️</option>
-                  <option value="basra" className="bg-[#111] text-white">Basra 🌴</option>
-                  <option value="sulaymaniyah" className="bg-[#111] text-white">Sulaymaniyah 🌸</option>
-                  <option value="mosul" className="bg-[#111] text-white">Mosul 🍏</option>
-                  <option value="najaf" className="bg-[#111] text-white">Najaf ✨</option>
-                </select>
-              </div>
-            )}
-
-            {/* Category selection menu dropdown */}
-            {showCategoryInput && (
-              <div className="p-3 bg-white/5 rounded-xl border border-white/5 space-y-1.5 transition">
-                <span className="text-[10px] text-zinc-400 font-bold block">📂 Culinary/Retail Category</span>
-                <select
-                  value={newCategory}
-                  onChange={(e) => setNewCategory(e.target.value)}
-                  className="w-full bg-black/40 border border-white/10 text-xs px-2.5 py-2 rounded-lg text-white focus:outline-none focus:border-cyan-450 tracking-wide cursor-pointer text-zinc-350"
-                >
-                  {CATEGORIES.map(c => (
-                    <option key={c.id} value={c.id} className="bg-[#111] text-white">{c.icon} {c.name[currentLang]}</option>
-                  ))}
-                </select>
-              </div>
-            )}
-
-          </div>
-
-        </div>
-
-        {/* Facebook-style 'Add to your post' container with attachment icon controls only */}
-        <div className="border border-white/5 rounded-2xl p-3 bg-black/25 flex items-center justify-between gap-3 flex-wrap">
-          <span className="text-xs font-bold text-zinc-400">
-            {currentLang === 'en' ? 'Add to your post' : currentLang === 'ku' ? 'زیاد بکە بۆ بڵاوکراوەکە' : 'إضافة إلى منشورك'}
-          </span>
-          
+        {/* Bottom bar: media buttons + post button */}
+        <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-1">
-            {/* Quick-picker Images triggers */}
             <button
               type="button"
-              onClick={() => setShowPresetGallery(p => !p)}
-              className={`p-2 rounded-xl transition cursor-pointer flex items-center justify-center border hover:scale-105 active:scale-95 ${
-                showPresetGallery || uploadedImage 
-                  ? 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30' 
-                  : 'bg-white/5 text-zinc-400 hover:bg-white/10 hover:text-white border-transparent'
-              }`}
-              title="Add Image or Preset Photos"
+              onClick={() => document.getElementById('sf-img-input')?.click()}
+              className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition cursor-pointer"
+              title={currentLang === 'en' ? 'Add photo' : 'أضف صورة'}
             >
               <ImageIcon className="w-4 h-4" />
             </button>
-
-            {/* Video attachment button */}
             <button
               type="button"
-              onClick={() => {
-                document.getElementById('social-video-loader-input')?.click();
-              }}
-              className={`p-2 rounded-xl transition cursor-pointer flex items-center justify-center border hover:scale-105 active:scale-95 ${
-                uploadedVideo 
-                  ? 'bg-pink-500/15 text-pink-400 border-pink-500/30' 
-                  : 'bg-white/5 text-zinc-400 hover:bg-white/10 hover:text-white border-transparent'
-              }`}
-              title="Add Video Trailer"
+              onClick={() => document.getElementById('sf-vid-input')?.click()}
+              className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition cursor-pointer"
+              title={currentLang === 'en' ? 'Add video' : 'أضف فيديو'}
             >
               <Video className="w-4 h-4" />
             </button>
-
-            {/* PDF booklet Menu attachment button */}
-            <button
-              type="button"
-              onClick={() => {
-                document.getElementById('social-doc-loader-input')?.click();
-              }}
-              className={`p-2 rounded-xl transition cursor-pointer flex items-center justify-center border hover:scale-105 active:scale-95 ${
-                uploadedFile 
-                  ? 'bg-indigo-500/15 text-indigo-400 border-indigo-500/30' 
-                  : 'bg-white/5 text-zinc-400 hover:bg-white/10 hover:text-white border-transparent'
-              }`}
-              title="Attach PDF Catalog / Menu File"
-            >
-              <File className="w-4 h-4" />
-            </button>
-
-            {/* Toggle Promo input */}
-            <button
-              type="button"
-              onClick={() => setShowPromoInput(!showPromoInput)}
-              className={`p-2 rounded-xl transition cursor-pointer flex items-center justify-center border hover:scale-105 active:scale-95 ${
-                showPromoInput || newPromo 
-                  ? 'bg-orange-500/15 text-orange-400 border-orange-500/30' 
-                  : 'bg-white/5 text-zinc-400 hover:bg-white/10 hover:text-white border-transparent'
-              }`}
-              title="Add campaign discount badge"
-            >
-              <Sparkles className="w-4 h-4" />
-            </button>
-
-            {/* Toggle Governorate dropdown */}
-            <button
-              type="button"
-              onClick={() => setShowGovInput(!showGovInput)}
-              className={`p-2 rounded-xl transition cursor-pointer flex items-center justify-center border hover:scale-105 active:scale-95 ${
-                showGovInput 
-                  ? 'bg-green-500/15 text-green-400 border-green-500/30' 
-                  : 'bg-white/5 text-zinc-400 hover:bg-white/10 hover:text-white border-transparent'
-              }`}
-              title="Target Iraqi Governorate"
-            >
-              <SlidersHorizontal className="w-4 h-4" />
-            </button>
-
-            {/* Toggle category tag dropdown */}
-            <button
-              type="button"
-              onClick={() => setShowCategoryInput(!showCategoryInput)}
-              className={`p-2 rounded-xl transition cursor-pointer flex items-center justify-center border hover:scale-105 active:scale-95 ${
-                showCategoryInput 
-                  ? 'bg-indigo-500/15 text-indigo-400 border-indigo-500/30' 
-                  : 'bg-white/5 text-zinc-400 hover:bg-white/10 hover:text-white border-transparent'
-              }`}
-              title="Categorize spot location"
-            >
-              <ShoppingBag className="w-4 h-4" />
-            </button>
-
-            {/* Toggle Brand Name custom publisher override */}
-            <button
-              type="button"
-              onClick={() => setShowBrandInput(!showBrandInput)}
-              className={`p-2 rounded-xl transition cursor-pointer flex items-center justify-center border hover:scale-105 active:scale-95 ${
-                showBrandInput || newBizName 
-                  ? 'bg-purple-500/15 text-purple-400 border-purple-500/30' 
-                  : 'bg-white/5 text-zinc-400 hover:bg-white/10 hover:text-white border-transparent'
-              }`}
-              title="Override brand signature name"
-            >
-              <CheckCircle2 className="w-4 h-4" />
-            </button>
           </div>
+          <button
+            onClick={handleCreatePost}
+            disabled={!newCaption.trim()}
+            className="px-5 py-2 bg-cyan-600 hover:bg-cyan-500 disabled:opacity-40 text-white font-bold text-xs rounded-xl transition cursor-pointer"
+          >
+            {currentLang === 'en' ? 'Post' : currentLang === 'ku' ? 'بڵاوبکەرەوە' : 'نشر'}
+          </button>
         </div>
 
-        {/* Post Button directly beneath inside the composer */}
-        <button
-          onClick={handleCreatePost}
-          disabled={!newCaption.trim()}
-          className="w-full py-3.5 bg-gradient-to-r from-cyan-500 via-indigo-600 to-pink-500 hover:opacity-90 disabled:opacity-45 text-white font-black text-xs uppercase tracking-wider rounded-2xl transition duration-250 shadow-xl shadow-cyan-500/5 cursor-pointer flex items-center justify-center gap-1.5"
-        >
-          <span>🚀</span>
-          <span>{currentLang === 'en' ? 'Post Live Story' : currentLang === 'ku' ? 'بڵاوکردنەوەی نوێترین بابەتان' : 'أنشر القصة فوراً'}</span>
-        </button>
-
+        <input type="file" id="sf-img-input" accept="image/*" onChange={handleImageFileChange} className="hidden" />
+        <input type="file" id="sf-vid-input" accept="video/*" onChange={handleVideoFileChange} className="hidden" />
       </div>
 
       {/* Main post stream list */}

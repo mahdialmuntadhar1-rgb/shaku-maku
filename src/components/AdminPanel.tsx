@@ -5,10 +5,8 @@ import {
   Sparkles, Layers, Eye, Users, FileText, BarChart3, Star, AlertCircle,
   Edit, Save, Plus, ChevronDown, CheckCircle2
 } from 'lucide-react';
-import { Language, GovernorateCode, Business, SocialPost, UserProfile, HeroSlide } from '../types';
+import { Language, GovernorateCode, Business, SocialPost, UserProfile, HeroSlide, Category } from '../types';
 import { CATEGORIES, GOVERNORATES, HERO_SLIDES } from '../data';
-import { db } from '../firebase';
-import { collection, doc, setDoc, updateDoc, deleteDoc, onSnapshot } from 'firebase/firestore';
 
 interface AdminPanelProps {
   currentLang: Language;
@@ -17,6 +15,8 @@ interface AdminPanelProps {
   posts: SocialPost[];
   setPosts: React.Dispatch<React.SetStateAction<SocialPost[]>>;
   userProfile?: UserProfile | null;
+  categories?: Category[];
+  setCategories?: React.Dispatch<React.SetStateAction<Category[]>>;
 }
 
 export default function AdminPanel({
@@ -25,8 +25,11 @@ export default function AdminPanel({
   setBusinesses,
   posts,
   setPosts,
-  userProfile
+  userProfile,
+  categories: categoriesProp,
+  setCategories
 }: AdminPanelProps) {
+  const liveCategories = categoriesProp && categoriesProp.length > 0 ? categoriesProp : CATEGORIES;
   // Login auth state
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [username, setUsername] = useState('');
@@ -38,7 +41,16 @@ export default function AdminPanel({
   const isFullyUnlocked = isAuthenticated || isAdminSession;
 
   // Active Admin command hub tab
-  const [adminTab, setAdminTab] = useState<'stats' | 'businesses' | 'posts' | 'hero'>('stats');
+  const [adminTab, setAdminTab] = useState<'stats' | 'businesses' | 'posts' | 'hero' | 'categories'>('stats');
+
+  // Category editor state
+  const [editingCatId, setEditingCatId] = useState<string | null>(null);
+  const [catIcon, setCatIcon] = useState('');
+  const [catNameAr, setCatNameAr] = useState('');
+  const [catNameKu, setCatNameKu] = useState('');
+  const [catNameEn, setCatNameEn] = useState('');
+  const [catColor, setCatColor] = useState('');
+  const [catSuccess, setCatSuccess] = useState(false);
 
   // Real-time Firestore sync of slider segments
   const [heroSlides, setHeroSlides] = useState<HeroSlide[]>([]);
@@ -72,28 +84,12 @@ export default function AdminPanel({
   const [postEditPromo, setPostEditPromo] = useState('');
   const [postEditMedia, setPostEditMedia] = useState('');
 
-  // Sync slides on admin load
+  // Load hero slides from local data
   useEffect(() => {
     if (!isFullyUnlocked) return;
     setLoadingSlides(true);
-    const ref = collection(db, 'hero_slides');
-    const unsub = onSnapshot(ref, (snap) => {
-      if (snap.empty) {
-        setHeroSlides(HERO_SLIDES);
-      } else {
-        const list: HeroSlide[] = [];
-        snap.forEach((doc) => {
-          list.push(doc.data() as HeroSlide);
-        });
-        setHeroSlides(list);
-      }
-      setLoadingSlides(false);
-    }, (err) => {
-      console.error("Error fetching slides inside Admin: ", err);
-      setHeroSlides(HERO_SLIDES);
-      setLoadingSlides(false);
-    });
-    return () => unsub();
+    setHeroSlides(HERO_SLIDES);
+    setLoadingSlides(false);
   }, [isFullyUnlocked]);
 
   const handleLoginSubmit = (e: React.FormEvent) => {
@@ -111,22 +107,13 @@ export default function AdminPanel({
   };
 
   // Business operations
-  const handleToggleVerify = async (biz: Business) => {
-    try {
-      const bizRef = doc(db, 'businesses', biz.id);
-      await updateDoc(bizRef, { isVerified: !biz.isVerified });
-    } catch (err) {
-      console.error(err);
-    }
+  const handleToggleVerify = (biz: Business) => {
+    setBusinesses(prev => prev.map(b => b.id === biz.id ? { ...b, isVerified: !b.isVerified } : b));
   };
 
-  const deleteBiz = async (bizId: string) => {
+  const deleteBiz = (bizId: string) => {
     if (window.confirm('Are you absolute sure you want to remove this local business listing from Saku Maku?')) {
-      try {
-        await deleteDoc(doc(db, 'businesses', bizId));
-      } catch (err) {
-        console.error(err);
-      }
+      setBusinesses(prev => prev.filter(b => b.id !== bizId));
     }
   };
 
@@ -140,35 +127,26 @@ export default function AdminPanel({
     setBizEditCategory(biz.category);
   };
 
-  const saveEditedBiz = async () => {
+  const saveEditedBiz = () => {
     if (!editingBizId) return;
-    try {
-      const bizRef = doc(db, 'businesses', editingBizId);
-      const bizObj = businesses.find(b => b.id === editingBizId);
-      if (!bizObj) return;
-
-      await updateDoc(bizRef, {
-        name: { ...bizObj.name, [currentLang]: bizEditName.trim() },
-        description: { ...bizObj.description, [currentLang]: bizEditDesc.trim() },
-        address: { ...bizObj.address, [currentLang]: bizEditAddress.trim() },
-        phoneNumber: bizEditPhone.trim(),
-        image: bizEditCover.trim(),
-        category: bizEditCategory
-      });
-      setEditingBizId(null);
-    } catch (err) {
-      console.error(err);
-    }
+    const bizObj = businesses.find(b => b.id === editingBizId);
+    if (!bizObj) return;
+    setBusinesses(prev => prev.map(b => b.id === editingBizId ? {
+      ...b,
+      name: { ...b.name, [currentLang]: bizEditName.trim() },
+      description: { ...b.description, [currentLang]: bizEditDesc.trim() },
+      address: { ...b.address, [currentLang]: bizEditAddress.trim() },
+      phoneNumber: bizEditPhone.trim(),
+      image: bizEditCover.trim(),
+      category: bizEditCategory
+    } : b));
+    setEditingBizId(null);
   };
 
   // Post operations
-  const deletePost = async (postId: string) => {
+  const deletePost = (postId: string) => {
     if (window.confirm('Delete this user post from the live Social Pulse feed stream immediately?')) {
-      try {
-        await deleteDoc(doc(db, 'posts', postId));
-      } catch (err) {
-        console.error(err);
-      }
+      setPosts(prev => prev.filter(p => p.id !== postId));
     }
   };
 
@@ -179,93 +157,71 @@ export default function AdminPanel({
     setPostEditMedia(post.mediaUrl);
   };
 
-  const saveEditedPost = async () => {
+  const saveEditedPost = () => {
     if (!editingPostId) return;
-    try {
-      const postRef = doc(db, 'posts', editingPostId);
-      const postObj = posts.find(p => p.id === editingPostId);
-      if (!postObj) return;
-
-      await updateDoc(postRef, {
-        caption: { ...postObj.caption, [currentLang]: postEditCaption.trim() },
-        promotionBadge: postEditPromo.trim() ? { 
-          ar: postEditPromo.trim(), 
-          ku: postEditPromo.trim(), 
-          en: postEditPromo.trim() 
-        } : null,
-        mediaUrl: postEditMedia.trim()
-      });
-      setEditingPostId(null);
-    } catch (err) {
-      console.error(err);
-    }
+    setPosts(prev => prev.map(p => p.id === editingPostId ? {
+      ...p,
+      caption: { ...p.caption, [currentLang]: postEditCaption.trim() },
+      promotionBadge: postEditPromo.trim() ? {
+        ar: postEditPromo.trim(),
+        ku: postEditPromo.trim(),
+        en: postEditPromo.trim()
+      } : p.promotionBadge,
+      mediaUrl: postEditMedia.trim()
+    } : p));
+    setEditingPostId(null);
   };
 
   // Hero operations
-  const saveEditedSlide = async (slideId: string) => {
-    try {
-      const slideRef = doc(db, 'hero_slides', slideId);
-      await setDoc(slideRef, {
-        id: slideId,
-        image: slideImage.trim(),
-        slogan: { ar: slideSloganAr.trim(), ku: slideSloganKu.trim(), en: slideSloganEn.trim() },
-        governorate: slideGov,
-        category: slideCategory,
-        badge: { ar: slideBadgeAr.trim(), ku: slideBadgeKu.trim(), en: slideBadgeEn.trim() }
-      }, { merge: true });
-      setEditingSlideId(null);
-      setSlideSuccess(true);
-      setTimeout(() => setSlideSuccess(false), 3000);
-    } catch (err) {
-      console.error("Error saving slide info: ", err);
-    }
+  const saveEditedSlide = (slideId: string) => {
+    setHeroSlides(prev => prev.map(s => s.id === slideId ? {
+      ...s,
+      image: slideImage.trim(),
+      slogan: { ar: slideSloganAr.trim(), ku: slideSloganKu.trim(), en: slideSloganEn.trim() },
+      governorate: slideGov,
+      category: slideCategory,
+      badge: { ar: slideBadgeAr.trim(), ku: slideBadgeKu.trim(), en: slideBadgeEn.trim() }
+    } : s));
+    setEditingSlideId(null);
+    setSlideSuccess(true);
+    setTimeout(() => setSlideSuccess(false), 3000);
   };
 
-  const deleteSlide = async (slideId: string) => {
+  const deleteSlide = (slideId: string) => {
     if (window.confirm('Delete this specific banner slider from Saku Maku?')) {
-      try {
-        await deleteDoc(doc(db, 'hero_slides', slideId));
-      } catch (err) {
-        console.error(err);
-      }
+      setHeroSlides(prev => prev.filter(s => s.id !== slideId));
     }
   };
 
-  const addNewSlide = async () => {
+  const addNewSlide = () => {
     const newId = `slide-dyn-${Date.now()}`;
-    try {
-      const slideRef = doc(db, 'hero_slides', newId);
-      const sample = {
-        id: newId,
-        image: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=1200&auto=format&fit=crop&q=80',
-        slogan: {
-          ar: 'جديد: الذوق العراقي الأصيل يجمعنا 🍕',
-          ku: 'نوێ: تامی ڕەسەنی عێراقی کۆمان دەکاتەوە 🍕',
-          en: 'New: Authentic Iraqi flavours connect us! 🍕'
-        },
-        governorate: 'baghdad' as GovernorateCode,
-        category: 'dining',
-        badge: {
-          ar: 'بث خاص 🌶️',
-          ku: 'پۆستی تایبەت 🌶️',
-          en: 'Official Spot 🌶️'
-        }
-      };
-      await setDoc(slideRef, sample);
-      // Automatically open editing mode for the new slide
-      setEditingSlideId(newId);
-      setSlideImage(sample.image);
-      setSlideSloganAr(sample.slogan.ar);
-      setSlideSloganKu(sample.slogan.ku);
-      setSlideSloganEn(sample.slogan.en);
-      setSlideGov(sample.governorate);
-      setSlideCategory(sample.category);
-      setSlideBadgeAr(sample.badge.ar);
-      setSlideBadgeKu(sample.badge.ku);
-      setSlideBadgeEn(sample.badge.en);
-    } catch (err) {
-      console.error(err);
-    }
+    const sample = {
+      id: newId,
+      image: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=1200&auto=format&fit=crop&q=80',
+      slogan: {
+        ar: 'جديد: الذوق العراقي الأصيل يجمعنا 🍕',
+        ku: 'نوێ: تامی ڕەسەنی عێراقی کۆمان دەکاتەوە 🍕',
+        en: 'New: Authentic Iraqi flavours connect us! 🍕'
+      },
+      governorate: 'baghdad' as GovernorateCode,
+      category: 'dining',
+      badge: {
+        ar: 'بث خاص 🌶️',
+        ku: 'پۆستی تایبەت 🌶️',
+        en: 'Official Spot 🌶️'
+      }
+    };
+    setHeroSlides(prev => [...prev, sample]);
+    setEditingSlideId(newId);
+    setSlideImage(sample.image);
+    setSlideSloganAr(sample.slogan.ar);
+    setSlideSloganKu(sample.slogan.ku);
+    setSlideSloganEn(sample.slogan.en);
+    setSlideGov(sample.governorate);
+    setSlideCategory(sample.category);
+    setSlideBadgeAr(sample.badge.ar);
+    setSlideBadgeKu(sample.badge.ku);
+    setSlideBadgeEn(sample.badge.en);
   };
 
   const renderSecurityGateway = () => (
@@ -428,6 +384,18 @@ export default function AdminPanel({
         >
           <FileText className="w-4 h-4" />
           <span>Moderate Social Feeds ({posts.length})</span>
+        </button>
+
+        <button
+          onClick={() => setAdminTab('categories')}
+          className={`px-4 py-2.5 rounded-xl border text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+            adminTab === 'categories'
+              ? 'bg-cyan-500/15 border-cyan-500 text-cyan-400 font-black'
+              : 'border-transparent text-zinc-400 hover:text-white'
+          }`}
+        >
+          <Sparkles className="w-4 h-4" />
+          <span>Edit Categories ({liveCategories.length})</span>
         </button>
       </div>
 
@@ -973,6 +941,112 @@ export default function AdminPanel({
                         </>
                       )}
                     </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* ── CATEGORIES EDITOR ── */}
+        {adminTab === 'categories' && (
+          <div className="space-y-5">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-black text-white uppercase">Category Card Editor</h3>
+              {catSuccess && (
+                <span className="text-xs text-emerald-400 font-bold flex items-center gap-1">
+                  <CheckCircle2 className="w-4 h-4" /> Saved!
+                </span>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {liveCategories.map((cat) => {
+                const isEditing = editingCatId === cat.id;
+                return (
+                  <div key={cat.id} className="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-3">
+                    {/* Preview row */}
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">{isEditing ? catIcon || cat.icon : cat.icon}</span>
+                      <div>
+                        <p className="text-xs font-black text-white">{isEditing ? catNameEn || cat.name.en : cat.name.en}</p>
+                        <p className="text-[10px] text-zinc-500">{cat.id}</p>
+                      </div>
+                      <div className={`ml-auto w-8 h-8 rounded-lg bg-gradient-to-br ${isEditing ? catColor || cat.color : cat.color} opacity-80`} />
+                    </div>
+
+                    {isEditing ? (
+                      <div className="space-y-2">
+                        <div className="grid grid-cols-2 gap-2">
+                          <div>
+                            <label className="text-[9px] text-zinc-500 font-bold uppercase block mb-0.5">Icon (emoji)</label>
+                            <input type="text" value={catIcon} onChange={e => setCatIcon(e.target.value)}
+                              className="w-full bg-black/40 border border-white/10 text-xs px-2 py-1.5 rounded-lg text-white focus:outline-none focus:border-cyan-400"
+                              placeholder="e.g. ☕" />
+                          </div>
+                          <div>
+                            <label className="text-[9px] text-zinc-500 font-bold uppercase block mb-0.5">Gradient CSS class</label>
+                            <input type="text" value={catColor} onChange={e => setCatColor(e.target.value)}
+                              className="w-full bg-black/40 border border-white/10 text-xs px-2 py-1.5 rounded-lg text-white focus:outline-none focus:border-cyan-400"
+                              placeholder="from-amber-600 to-yellow-500" />
+                          </div>
+                        </div>
+                        <div>
+                          <label className="text-[9px] text-zinc-500 font-bold uppercase block mb-0.5">Name (EN)</label>
+                          <input type="text" value={catNameEn} onChange={e => setCatNameEn(e.target.value)}
+                            className="w-full bg-black/40 border border-white/10 text-xs px-2 py-1.5 rounded-lg text-white focus:outline-none focus:border-cyan-400" />
+                        </div>
+                        <div>
+                          <label className="text-[9px] text-zinc-500 font-bold uppercase block mb-0.5">Name (AR)</label>
+                          <input type="text" value={catNameAr} onChange={e => setCatNameAr(e.target.value)} dir="rtl"
+                            className="w-full bg-black/40 border border-white/10 text-xs px-2 py-1.5 rounded-lg text-white focus:outline-none focus:border-cyan-400" />
+                        </div>
+                        <div>
+                          <label className="text-[9px] text-zinc-500 font-bold uppercase block mb-0.5">Name (KU)</label>
+                          <input type="text" value={catNameKu} onChange={e => setCatNameKu(e.target.value)} dir="rtl"
+                            className="w-full bg-black/40 border border-white/10 text-xs px-2 py-1.5 rounded-lg text-white focus:outline-none focus:border-cyan-400" />
+                        </div>
+                        <div className="flex gap-2 pt-1">
+                          <button
+                            onClick={() => {
+                              if (!setCategories) return;
+                              setCategories(prev => prev.map(c => c.id !== cat.id ? c : {
+                                ...c,
+                                icon: catIcon.trim() || c.icon,
+                                color: catColor.trim() || c.color,
+                                name: {
+                                  en: catNameEn.trim() || c.name.en,
+                                  ar: catNameAr.trim() || c.name.ar,
+                                  ku: catNameKu.trim() || c.name.ku
+                                }
+                              }));
+                              setEditingCatId(null);
+                              setCatSuccess(true);
+                              setTimeout(() => setCatSuccess(false), 2500);
+                            }}
+                            className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-black rounded-lg cursor-pointer transition"
+                          >💾 Save</button>
+                          <button
+                            onClick={() => setEditingCatId(null)}
+                            className="px-3 py-1.5 bg-zinc-800 text-zinc-400 text-[10px] font-black rounded-lg cursor-pointer transition"
+                          >Cancel</button>
+                        </div>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          setEditingCatId(cat.id);
+                          setCatIcon(cat.icon);
+                          setCatNameEn(cat.name.en);
+                          setCatNameAr(cat.name.ar);
+                          setCatNameKu(cat.name.ku);
+                          setCatColor(cat.color);
+                        }}
+                        className="flex items-center gap-1.5 text-[10px] text-cyan-400 hover:text-white transition cursor-pointer font-bold"
+                      >
+                        <Edit className="w-3 h-3" /> Edit
+                      </button>
+                    )}
                   </div>
                 );
               })}

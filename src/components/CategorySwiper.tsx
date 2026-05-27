@@ -1,113 +1,144 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
-import { Language } from '../types';
+import React, { useRef, useEffect, useCallback } from 'react';
+import { Language, Category } from '../types';
 import { CATEGORIES, TRANSLATIONS } from '../data';
 
 interface CategorySwiperProps {
   currentLang: Language;
   selectedCategory: string | null;
   onSelectCategory: (catId: string | null) => void;
+  categories?: Category[];
 }
 
 export default function CategorySwiper({
   currentLang,
   selectedCategory,
-  onSelectCategory
+  onSelectCategory,
+  categories,
 }: CategorySwiperProps) {
-  const [showAll, setShowAll] = useState(false);
-
+  const cats = categories && categories.length > 0 ? categories : CATEGORIES;
   const t = TRANSLATIONS[currentLang];
-  const itemsToDisplay = showAll ? CATEGORIES : CATEGORIES.slice(0, 6);
+
+  const trackRef = useRef<HTMLDivElement>(null);
+  const animRef = useRef<number | null>(null);
+  const pausedRef = useRef(false);
+  const isDraggingRef = useRef(false);
+  const dragStartXRef = useRef(0);
+  const scrollStartRef = useRef(0);
+
+  // Auto-scroll speed (px per frame ~60fps → ~1px/frame = 60px/s)
+  const SPEED = 0.6;
+
+  const startAutoScroll = useCallback(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    const step = () => {
+      if (!pausedRef.current && !isDraggingRef.current && track) {
+        track.scrollLeft += SPEED;
+        // Seamless loop: when scrolled past half (duplicated list), reset to start
+        if (track.scrollLeft >= track.scrollWidth / 2) {
+          track.scrollLeft = 0;
+        }
+      }
+      animRef.current = requestAnimationFrame(step);
+    };
+    animRef.current = requestAnimationFrame(step);
+  }, []);
+
+  useEffect(() => {
+    startAutoScroll();
+    return () => { if (animRef.current) cancelAnimationFrame(animRef.current); };
+  }, [startAutoScroll]);
+
+  // Drag handlers for mouse
+  const onMouseDown = (e: React.MouseEvent) => {
+    isDraggingRef.current = true;
+    dragStartXRef.current = e.pageX;
+    scrollStartRef.current = trackRef.current?.scrollLeft ?? 0;
+  };
+  const onMouseMove = (e: React.MouseEvent) => {
+    if (!isDraggingRef.current || !trackRef.current) return;
+    const delta = dragStartXRef.current - e.pageX;
+    trackRef.current.scrollLeft = scrollStartRef.current + delta;
+  };
+  const onMouseUp = () => { isDraggingRef.current = false; };
+
+  // Touch handlers
+  const onTouchStart = (e: React.TouchEvent) => {
+    isDraggingRef.current = true;
+    dragStartXRef.current = e.touches[0].pageX;
+    scrollStartRef.current = trackRef.current?.scrollLeft ?? 0;
+  };
+  const onTouchMove = (e: React.TouchEvent) => {
+    if (!isDraggingRef.current || !trackRef.current) return;
+    const delta = dragStartXRef.current - e.touches[0].pageX;
+    trackRef.current.scrollLeft = scrollStartRef.current + delta;
+  };
+  const onTouchEnd = () => { isDraggingRef.current = false; };
+
+  // Doubled cats list for seamless loop
+  const doubled = [...cats, ...cats];
 
   return (
-    <div className="w-full mb-8 relative">
-      <div className="flex items-center justify-between mb-4">
-        <div>
-          <h2 className="text-lg md:text-xl font-extrabold text-white flex items-center gap-2">
-            <span className="w-1.5 h-6 rounded-full bg-gradient-to-t from-violet-600 to-cyan-400"></span>
-            <span>{t.categoryHeader}</span>
-          </h2>
-          <p className="text-[11px] text-zinc-500 mt-0.5">Explore by specific local industry</p>
-        </div>
-
-        {/* Clear Filter if category is selected */}
+    <div className="w-full mb-6">
+      {/* Header row */}
+      <div className="flex items-center justify-between mb-3 px-0.5">
+        <h2 className="text-sm font-extrabold text-white flex items-center gap-2">
+          <span className="w-1 h-4 rounded-full bg-gradient-to-t from-violet-500 to-cyan-400 shrink-0" />
+          <span>{t.categoryHeader}</span>
+        </h2>
         {selectedCategory && (
           <button
             onClick={() => onSelectCategory(null)}
-            className="text-[11px] font-bold text-pink-400 hover:text-white bg-pink-950/30 px-3 py-1 rounded-full border border-pink-500/20 transition-all cursor-pointer"
+            className="text-[10px] font-bold text-pink-400 hover:text-white bg-pink-950/30 px-2.5 py-1 rounded-full border border-pink-500/20 transition cursor-pointer shrink-0"
           >
-            {currentLang === 'en' ? 'Show All Sections ↺' : currentLang === 'ku' ? 'هەموو نیشان بدە ↺' : 'إظهار كل الأقسام ↺'}
+            {currentLang === 'en' ? 'All ↺' : currentLang === 'ku' ? 'هەموو ↺' : 'الكل ↺'}
           </button>
         )}
       </div>
 
-      {/* Grid of rounded-square category cards */}
-      <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-6 gap-3">
-        {itemsToDisplay.map((cat, idx) => {
+      {/* Scrollable chip track */}
+      <div
+        ref={trackRef}
+        className="flex gap-2.5 overflow-x-auto scrollbar-none select-none cursor-grab active:cursor-grabbing"
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        onMouseEnter={() => { pausedRef.current = true; }}
+        onMouseLeave={() => { pausedRef.current = false; isDraggingRef.current = false; }}
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onMouseUp={onMouseUp}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+      >
+        {doubled.map((cat, idx) => {
           const isSelected = selectedCategory === cat.id;
           return (
-            <motion.button
-              key={cat.id}
-              onClick={() => onSelectCategory(isSelected ? null : cat.id)}
-              whileHover={{ scale: 1.05, y: -2 }}
-              whileTap={{ scale: 0.95 }}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.04, type: 'spring', stiffness: 200 }}
-              className={`relative flex flex-col items-center justify-center p-3 h-24 rounded-2xl cursor-pointer overflow-hidden border transition-all duration-300 ${
+            <button
+              key={`${cat.id}-${idx}`}
+              onClick={() => {
+                if (!isDraggingRef.current) onSelectCategory(isSelected ? null : cat.id);
+              }}
+              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full border whitespace-nowrap shrink-0 text-xs font-bold transition-all duration-200 cursor-pointer ${
                 isSelected
-                  ? 'bg-gradient-to-br from-violet-600/20 to-blue-600/20 border-blue-400/80 shadow-[0_4px_20px_rgba(59,130,246,0.35)] text-blue-400'
-                  : 'bg-white/5 hover:bg-white/10 border-white/10 hover:border-blue-400/50 text-zinc-200'
+                  ? 'bg-cyan-500/20 border-cyan-400 text-cyan-300 shadow-[0_0_12px_rgba(34,211,238,0.25)]'
+                  : 'bg-white/5 border-white/10 text-zinc-300 hover:bg-white/10 hover:border-white/20 hover:text-white'
               }`}
             >
-              {/* Colored Glow effect in background */}
-              <div className={`absolute -bottom-8 -right-8 w-16 h-16 rounded-full bg-gradient-to-tr ${cat.color} opacity-20 blur-xl transition-all group-hover:scale-150`}></div>
-              
-              {/* Hover highlight border */}
-              {isSelected && (
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-400 via-violet-400 to-pink-500"></div>
-              )}
-
-              {/* Floating Large Icon */}
-              <span className="text-2xl mb-1.5 filter drop-shadow-[0_4px_6px_rgba(0,0,0,0.3)] select-none">
-                {cat.icon}
-              </span>
-
-              {/* Translation Name */}
-              <span className="text-[11px] font-black tracking-tight text-center truncate w-full px-1">
-                {cat.name[currentLang]}
-              </span>
-            </motion.button>
+              <span className="text-sm leading-none">{cat.icon}</span>
+              <span>{cat.name[currentLang]}</span>
+            </button>
           );
         })}
       </div>
 
-      {/* Expand/Collapse Toggle Controller with Cairo, Plus Jakarta Sans Support */}
-      <div className="flex justify-center mt-3">
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => setShowAll(!showAll)}
-          className="flex items-center gap-1.5 text-[11px] font-bold text-zinc-400 hover:text-white bg-slate-900/60 hover:bg-slate-900 px-4 py-1.5 rounded-full border border-zinc-800 transition-all cursor-pointer"
-        >
-          <span>{showAll ? t.showLess : t.loadMore}</span>
-          {showAll ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-        </motion.button>
-      </div>
-
-      {/* Interactive Floating Sparkle if selected */}
+      {/* Active filter label */}
       {selectedCategory && (
-        <div className="mt-3 text-center text-xs text-zinc-500 font-medium">
-          {currentLang === 'en' 
-            ? 'Only showing places matching ' 
-            : currentLang === 'ku' 
-              ? 'تەنها ئەو شوێنانە نیشان دەدەین کە دەگونجێن لەگەڵ ' 
-              : 'نعرض فقط الأماكن التي تنتمي لـ '} 
-          <span className="text-cyan-400 font-extrabold">
-            {CATEGORIES.find(c => c.id === selectedCategory)?.name[currentLang]}
+        <p className="mt-2 text-[10px] text-zinc-500 px-0.5">
+          {currentLang === 'en' ? 'Showing: ' : currentLang === 'ku' ? 'نیشاندان: ' : 'عرض: '}
+          <span className="text-cyan-400 font-bold">
+            {cats.find(c => c.id === selectedCategory)?.name[currentLang]}
           </span>
-        </div>
+        </p>
       )}
     </div>
   );

@@ -1,6 +1,5 @@
 // API Client for Cloudflare Workers Backend
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://iraq-businesses-dashboard.mahdialmuntadhar1.workers.dev';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://billboard3d-api.mahdialmuntadhar1.workers.dev';
 
 interface ApiResponse<T> {
   success?: boolean;
@@ -23,14 +22,14 @@ interface LoginCredentials {
 interface SignupCredentials {
   email: string;
   password: string;
-  displayName?: string;
+  name?: string;
 }
 
 export interface AuthResponse {
   user: {
     id: string;
     email: string;
-    displayName?: string;
+    name?: string;
     photoURL?: string;
   };
   token: string;
@@ -60,8 +59,18 @@ async function apiRequest<T>(
   const response = await fetch(url, { ...defaultOptions, ...options });
   
   if (!response.ok) {
-    const error = await response.text();
-    throw new Error(error || `HTTP error! status: ${response.status}`);
+    const text = await response.text();
+    let message = `HTTP error! status: ${response.status}`;
+    try {
+      const json = JSON.parse(text);
+      const errorText = typeof json.error === 'object' && json.error !== null
+        ? json.error.message || JSON.stringify(json.error)
+        : json.error;
+      message = errorText || json.message || message;
+    } catch {
+      if (text) message = text;
+    }
+    throw new Error(message);
   }
 
   const data = await response.json();
@@ -79,36 +88,37 @@ export const authApi = {
     return apiRequest<AuthResponse>('/api/auth/login', {
       method: 'POST',
       body: JSON.stringify(credentials),
-    });
+    }, true);
   },
 
   async signup(credentials: SignupCredentials): Promise<AuthResponse> {
+    console.log('Signup payload:', credentials);
     return apiRequest<AuthResponse>('/api/auth/register', {
       method: 'POST',
       body: JSON.stringify(credentials),
-    });
+    }, true);
   },
 
   async logout(): Promise<void> {
-    return apiRequest<void>('/api/auth/logout', { method: 'POST' });
+    return apiRequest<void>('/api/auth/logout', { method: 'POST' }, true);
   },
 
   async getMe(): Promise<AuthResponse['user']> {
-    return apiRequest<AuthResponse['user']>('/api/auth/me');
+    return apiRequest<AuthResponse['user']>('/api/auth/me', {}, true);
   },
 
   async forgotPassword(email: string): Promise<{ message: string }> {
     return apiRequest<{ message: string }>('/api/auth/forgot-password', {
       method: 'POST',
       body: JSON.stringify({ email }),
-    });
+    }, true);
   },
 
   async resetPassword(token: string, newPassword: string): Promise<{ message: string }> {
     return apiRequest<{ message: string }>('/api/auth/reset-password', {
       method: 'POST',
       body: JSON.stringify({ token, newPassword }),
-    });
+    }, true);
   },
 
   handlePasswordReset(): { email: string; token: string } | null {
@@ -123,13 +133,31 @@ export const authApi = {
   }
 };
 
+// Maps frontend category chip IDs → DB category strings (exact DB values)
+export const CATEGORY_DB_MAP: Record<string, string> = {
+  coffee:        'Food & Beverage',
+  dining:        'Restaurants & Cafes',
+  shopping:      'Retail Stores',
+  hotels:        'Hotels & Hospitality',
+  salons:        'Beauty & Salons',
+  gyms:          'Fitness & Gyms',
+  pharmacies:    'Health & Medical Services',
+  universities:  'Education & Training Centers',
+  entertainment: 'Entertainment & Events',
+};
+
 // Businesses API
 export const businessesApi = {
-  async list(params?: { page?: number; limit?: number; governorate?: string; search?: string }): Promise<any> {
+  async list(params?: { page?: number; limit?: number; governorate?: string; category?: string; search?: string }): Promise<any> {
     const queryParams = new URLSearchParams();
     if (params?.page) queryParams.append('page', params.page.toString());
     if (params?.limit) queryParams.append('limit', params.limit.toString());
     if (params?.governorate) queryParams.append('governorate', params.governorate);
+    // Translate frontend chip ID to exact DB category string
+    if (params?.category) {
+      const dbCat = CATEGORY_DB_MAP[params.category] || params.category;
+      queryParams.append('category', dbCat);
+    }
     if (params?.search) queryParams.append('search', params.search);
     
     const queryString = queryParams.toString();
@@ -157,14 +185,14 @@ export const postsApi = {
   },
 
   async create(post: any): Promise<any> {
-    return apiRequest<any>('/api/posts', {
+    return apiRequest<any>('/api/feed/posts', {
       method: 'POST',
       body: JSON.stringify(post),
     });
   },
 
   async like(postId: string): Promise<any> {
-    return apiRequest<any>('/api/posts/like', {
+    return apiRequest<any>('/api/feed/posts/like', {
       method: 'POST',
       body: JSON.stringify({ postId }),
     });

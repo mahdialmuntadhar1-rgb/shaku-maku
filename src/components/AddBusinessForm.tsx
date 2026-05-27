@@ -7,8 +7,6 @@ import {
 } from 'lucide-react';
 import { Business, Language, GovernorateCode, UserProfile, SocialPost } from '../types';
 import { GOVERNORATES, CATEGORIES, TRANSLATIONS } from '../data';
-import { doc, updateDoc, setDoc } from 'firebase/firestore';
-import { db } from '../firebase';
 import BusinessOnboarding from './BusinessOnboarding';
 
 interface AddBusinessFormProps {
@@ -20,6 +18,7 @@ interface AddBusinessFormProps {
   onSignIn: () => void;
   businesses: Business[];
   posts?: SocialPost[];
+  setPosts?: React.Dispatch<React.SetStateAction<SocialPost[]>>;
 }
 
 export default function AddBusinessForm({ 
@@ -30,7 +29,8 @@ export default function AddBusinessForm({
   onUpdateProfile, 
   onSignIn,
   businesses,
-  posts = []
+  posts = [],
+  setPosts
 }: AddBusinessFormProps) {
   
   // Dashboard vs List spot layout state
@@ -162,22 +162,17 @@ export default function AddBusinessForm({
     setSubmittingUpdate(true);
     setUpdateSuccess(false);
 
-    try {
-      const bizRef = doc(db, 'businesses', myBusiness.id);
-      await updateDoc(bizRef, {
-        name: { ...myBusiness.name, [currentLang]: editName.trim() },
-        description: { ...myBusiness.description, [currentLang]: editDesc.trim() },
-        phoneNumber: editPhone.trim(),
-        address: { ...myBusiness.address, [currentLang]: editAddress.trim() },
-        image: editCover.trim()
-      });
-      setUpdateSuccess(true);
-      setTimeout(() => setUpdateSuccess(false), 4000);
-    } catch (err) {
-      console.error("Error updating business doc: ", err);
-    } finally {
-      setSubmittingUpdate(false);
-    }
+    onAddBusiness({
+      ...myBusiness,
+      name: { ...myBusiness.name, [currentLang]: editName.trim() },
+      description: { ...myBusiness.description, [currentLang]: editDesc.trim() },
+      phoneNumber: editPhone.trim(),
+      address: { ...myBusiness.address, [currentLang]: editAddress.trim() },
+      image: editCover.trim()
+    });
+    setUpdateSuccess(true);
+    setTimeout(() => setUpdateSuccess(false), 4000);
+    setSubmittingUpdate(false);
   };
 
   // Handle Owner Broadcasting a live Story/Post
@@ -229,18 +224,13 @@ export default function AddBusinessForm({
       authorUid: user.uid
     };
 
-    try {
-      await setDoc(doc(db, 'posts', newPostId), newPostItem);
-      setPostCaption('');
-      setPostPromo('');
-      setPostImage('');
-      setPostSuccess(true);
-      setTimeout(() => setPostSuccess(false), 4000);
-    } catch (err) {
-      console.error("Error publishing story: ", err);
-    } finally {
-      setSubmittingPost(false);
-    }
+    if (setPosts) setPosts(prev => [newPostItem, ...prev]);
+    setPostCaption('');
+    setPostPromo('');
+    setPostImage('');
+    setPostSuccess(true);
+    setTimeout(() => setPostSuccess(false), 4000);
+    setSubmittingPost(false);
   };
 
   // Helper Onboarding Completion Callback
@@ -266,18 +256,12 @@ export default function AddBusinessForm({
       ownerUid: user.uid
     };
 
-    try {
-      // Create business list and update profile
-      await setDoc(doc(db, 'businesses', bizId), newBiz);
-      await onUpdateProfile({
-        onboarded: true,
-        businessId: bizId,
-        businessOnboarding: formData
-      });
-    } catch (err) {
-      console.error("Error writing onboard: ", err);
-      throw err;
-    }
+    onAddBusiness(newBiz);
+    await onUpdateProfile({
+      onboarded: true,
+      businessId: bizId,
+      businessOnboarding: formData
+    });
   };
 
   // Not Signed In
@@ -625,35 +609,28 @@ export default function AddBusinessForm({
               return searchedPosts.map((post) => {
                 const isEditingThis = editingPostId === post.id;
                 
-                const handleSaveClick = async () => {
-                  try {
-                    const docRef = doc(db, 'posts', post.id);
-                    await updateDoc(docRef, {
-                      caption: { ...post.caption, [currentLang]: editPostCaption.trim() },
-                      promotionBadge: editPostPromo.trim() ? { 
-                        ar: editPostPromo.trim(), 
-                        ku: editPostPromo.trim(), 
-                        en: editPostPromo.trim() 
-                      } : null
-                    });
-                    setEditingPostId(null);
-                  } catch (err) {
-                    console.error("Error saving post modifications: ", err);
+                const handleSaveClick = () => {
+                  if (posts && setPosts) {
+                    (setPosts as any)(prev => prev.map((p: any) => p.id !== post.id ? p : {
+                      ...p,
+                      caption: { ...p.caption, [currentLang]: editPostCaption.trim() },
+                      promotionBadge: editPostPromo.trim() ? {
+                        ar: editPostPromo.trim(),
+                        ku: editPostPromo.trim(),
+                        en: editPostPromo.trim()
+                      } : p.promotionBadge
+                    }));
                   }
+                  setEditingPostId(null);
                 };
 
-                const handleDeleteClick = async () => {
+                const handleDeleteClick = () => {
                   if (window.confirm(currentLang === 'en' ? 'Permanently delete this specific broadcast from Saku Maku?' : 'هل أنت متأكد من حذف هذا المنشور نهائياً من شكو ماكو؟')) {
-                    try {
-                      setIsDeletingPostId(post.id);
-                      // Use clean setDoc / deleteDoc actions
-                      const { deleteDoc, doc } = await import('firebase/firestore');
-                      await deleteDoc(doc(db, 'posts', post.id));
-                    } catch (err) {
-                      console.error("Error removing post: ", err);
-                    } finally {
-                      setIsDeletingPostId(null);
+                    setIsDeletingPostId(post.id);
+                    if (posts && setPosts) {
+                      (setPosts as any)(prev => prev.filter((p: any) => p.id !== post.id));
                     }
+                    setIsDeletingPostId(null);
                   }
                 };
 

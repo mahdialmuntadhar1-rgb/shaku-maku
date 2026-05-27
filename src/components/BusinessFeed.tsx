@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Heart, Bookmark, Star, MapPin, Phone, Share2, 
-  CheckCircle2, FolderHeart, Award, Eye, MessageCircle, X, Send, Gift 
+  CheckCircle2, FolderHeart, Award, Eye, MessageCircle, X, Send, Gift, Loader2
 } from 'lucide-react';
-import { Business, Language, GovernorateCode } from '../types';
+import { Business, Language, GovernorateCode, Category } from '../types';
 import { CATEGORIES, TRANSLATIONS } from '../data';
 
 interface BusinessFeedProps {
@@ -12,9 +12,14 @@ interface BusinessFeedProps {
   selectedGov: GovernorateCode;
   selectedCategory: string | null;
   businesses: Business[];
+  categories?: Category[];
   onToggleLike: (bizId: string) => void;
   onToggleSave: (bizId: string) => void;
   onSelectStory: (stories: string[]) => void;
+  isLoading?: boolean;
+  hasMore?: boolean;
+  isLoadingMore?: boolean;
+  onLoadMore?: () => void;
 }
 
 export default function BusinessFeed({
@@ -22,9 +27,14 @@ export default function BusinessFeed({
   selectedGov,
   selectedCategory,
   businesses,
+  categories: categoriesProp,
   onToggleLike,
   onToggleSave,
-  onSelectStory
+  onSelectStory,
+  isLoading = false,
+  hasMore = false,
+  isLoadingMore = false,
+  onLoadMore
 }: BusinessFeedProps) {
   const [selectedBiz, setSelectedBiz] = useState<Business | null>(null);
   
@@ -40,15 +50,14 @@ export default function BusinessFeed({
   const t = TRANSLATIONS[currentLang];
   const isRtl = currentLang === 'ar' || currentLang === 'ku';
 
-  // Filter businesses by Governorate (if not 'all')
-  const govFiltered = selectedGov === 'all' 
-    ? businesses 
-    : businesses.filter(b => b.governorate === selectedGov);
+  // API handles governorate filtering — use businesses directly
+  const govFiltered = businesses;
 
-  // If a specific category chip is active on the header selector, prioritize that category. Otherwise, group by all categories.
-  const categoriesToGroup = selectedCategory 
-    ? CATEGORIES.filter(c => c.id === selectedCategory) 
-    : CATEGORIES;
+  const allCategories = categoriesProp && categoriesProp.length > 0 ? categoriesProp : CATEGORIES;
+  // If a specific category chip is active, only show that group; else show all
+  const categoriesToGroup = selectedCategory
+    ? allCategories.filter((c: Category) => c.id === selectedCategory)
+    : allCategories;
 
   const handleToggleCategoryExpand = (catId: string) => {
     setExpandedCategories(prev => ({
@@ -91,6 +100,28 @@ export default function BusinessFeed({
     setNewReviewerName('');
     setNewReviewRating(5);
   };
+
+  // Loading skeleton
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        {[...Array(4)].map((_, i) => (
+          <div key={i} className="bg-white/20 rounded-3xl border border-white/10 p-5 animate-pulse h-32" />
+        ))}
+      </div>
+    );
+  }
+
+  // Empty state
+  if (!isLoading && businesses.length === 0) {
+    return (
+      <div className="text-center py-16 text-zinc-400">
+        <p className="text-sm font-semibold">
+          {currentLang === 'en' ? 'No businesses found for this selection.' : currentLang === 'ku' ? 'هیچ کار و بارێک نەدۆزرایەوە.' : 'لا توجد محلات لهذا الاختيار.'}
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-12">
@@ -607,6 +638,23 @@ export default function BusinessFeed({
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Load More button */}
+      {(hasMore || isLoadingMore) && (
+        <div className="flex justify-end pt-2 pb-4">
+          <button
+            onClick={onLoadMore}
+            disabled={isLoadingMore}
+            className="flex items-center gap-2 px-5 py-2.5 bg-[#1A1A1A] hover:bg-[#252525] border border-luxury-gold/30 hover:border-luxury-gold/60 text-white text-xs font-black rounded-2xl transition-all duration-300 disabled:opacity-50 cursor-pointer shadow-lg"
+          >
+            {isLoadingMore ? (
+              <><Loader2 className="w-3.5 h-3.5 animate-spin" /><span>{currentLang === 'en' ? 'Loading...' : currentLang === 'ku' ? 'بارکردن...' : 'جارٍ التحميل...'}</span></>
+            ) : (
+              <span>{currentLang === 'en' ? 'Load More' : currentLang === 'ku' ? 'زیاتر بخەرەوە' : 'تحميل المزيد'}</span>
+            )}
+          </button>
+        </div>
+      )}
 
     </div>
   );
