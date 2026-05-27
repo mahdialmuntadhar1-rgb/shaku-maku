@@ -8,9 +8,20 @@ import {
   CheckCircle2, PlusCircle, Users, BarChart3, ArrowRight, MapPin, Share2, Compass, CheckSquare,
   LayoutDashboard
 } from 'lucide-react';
-import { Business, Language, GovernorateCode, UserProfile, SocialPost } from '../types';
-import { GOVERNORATES, CATEGORIES, TRANSLATIONS } from '../data';
-import BusinessOnboarding from './BusinessOnboarding';
+import { Business, Language, GovernorateCode, UserProfile, SocialPost, BusinessClaim } from '../types';
+import { GOVERNORATES, CATEGORIES } from '../data';
+import { doc, updateDoc, setDoc, collection, addDoc, getDocs, query, where } from 'firebase/firestore';
+import { db } from '../firebase';
+
+// Import newly created modular components
+import BusinessCard from './BusinessCard';
+import OTPInput from './OTPInput';
+import ClaimFlowLayout from './ClaimFlowLayout';
+import EmptyState from './EmptyState';
+import MediaUploader from './MediaUploader';
+import DashboardSidebar, { DashboardTab } from './DashboardSidebar';
+import StatsCard from './StatsCard';
+import LoadingSkeletons from './LoadingSkeletons';
 
 interface AddBusinessFormProps {
   currentLang: Language;
@@ -21,7 +32,6 @@ interface AddBusinessFormProps {
   onSignIn: () => void;
   businesses: Business[];
   posts?: SocialPost[];
-  setPosts?: React.Dispatch<React.SetStateAction<SocialPost[]>>;
 }
 
 export default function AddBusinessForm({ 
@@ -32,8 +42,7 @@ export default function AddBusinessForm({
   onUpdateProfile, 
   onSignIn,
   businesses,
-  posts = [],
-  setPosts
+  posts = []
 }: AddBusinessFormProps) {
   
   const isRtl = currentLang === 'ar' || currentLang === 'ku';
@@ -365,17 +374,48 @@ export default function AddBusinessForm({
     setSubmittingUpdate(true);
     setUpdateSuccess(false);
 
-    onAddBusiness({
-      ...myBusiness,
-      name: { ...myBusiness.name, [currentLang]: editName.trim() },
-      description: { ...myBusiness.description, [currentLang]: editDesc.trim() },
-      phoneNumber: editPhone.trim(),
-      address: { ...myBusiness.address, [currentLang]: editAddress.trim() },
-      image: editCover.trim()
-    });
-    setUpdateSuccess(true);
-    setTimeout(() => setUpdateSuccess(false), 4000);
-    setSubmittingUpdate(false);
+    try {
+      const bizRef = doc(db, 'businesses', myBusiness.id);
+      const details = (userProfile?.businessOnboarding as any) || {};
+      
+      const updatedOnboarding = {
+        ...details,
+        name: editName.trim(),
+        category: editCategory,
+        governorate: editGov,
+        address: editAddress.trim(),
+        phone: editPhone.trim(),
+        whatsApp: editWhatsApp.trim(),
+        facebook: editFacebook.trim(),
+        instagram: editInstagram.trim(),
+        coverImage: editCover.trim(),
+        description: editDesc.trim(),
+        openingHours
+      };
+
+      await updateDoc(bizRef, {
+        name: { ...myBusiness.name, [currentLang]: editName.trim() },
+        description: { ...myBusiness.description, [currentLang]: editDesc.trim() },
+        phoneNumber: editPhone.trim(),
+        address: { ...myBusiness.address, [currentLang]: editAddress.trim() },
+        image: editCover.trim(),
+        images: uploadingGallery,
+        category: editCategory,
+        governorate: editGov
+      });
+
+      await onUpdateProfile({
+        businessOnboarding: updatedOnboarding
+      });
+
+      setUpdateSuccess(true);
+      setTimeout(() => setUpdateSuccess(false), 3500);
+    } catch (err) {
+      console.error("Failed spot update: ", err);
+      alert("Error saving dashboard edits to firestore.");
+    } finally {
+      setSubmittingUpdate(false);
+    }
   };
 
   // Gallery modification syncing
@@ -449,47 +489,21 @@ export default function AddBusinessForm({
       authorUid: user.uid
     };
 
-    if (setPosts) setPosts(prev => [newPostItem, ...prev]);
-    setPostCaption('');
-    setPostPromo('');
-    setPostImage('');
-    setPostSuccess(true);
-    setTimeout(() => setPostSuccess(false), 4000);
-    setSubmittingPost(false);
+    try {
+      await setDoc(doc(db, 'posts', newPostId), newPostItem);
+      setPostCaption('');
+      setPostPromo('');
+      setPostImage('');
+      setPostSuccess(true);
+      setTimeout(() => setPostSuccess(false), 3500);
+    } catch (err) {
+      console.error("Story publish fault: ", err);
+    } finally {
+      setSubmittingPost(false);
+    }
   };
 
-  // Helper Onboarding Completion Callback
-  const handleOnboardingFinish = async (formData: any) => {
-    const bizId = `b-onboard-${Date.now()}`;
-    const newBiz: Business = {
-      id: bizId,
-      name: { ar: formData.name, ku: formData.name, en: formData.name },
-      description: { ar: formData.description, ku: formData.description, en: formData.description },
-      category: formData.category,
-      governorate: formData.governorate,
-      rating: 4.9,
-      reviewsCount: 1,
-      image: formData.coverImage,
-      images: [formData.coverImage],
-      avatar: formData.logo,
-      isVerified: true,
-      phoneNumber: formData.phone,
-      address: { ar: formData.address, ku: formData.address, en: formData.address },
-      likes: 12,
-      saves: 6,
-      mapCoords: { x: Math.floor(Math.random() * 30) + 30, y: Math.floor(Math.random() * 30) + 30 },
-      ownerUid: user.uid
-    };
-
-    onAddBusiness(newBiz);
-    await onUpdateProfile({
-      onboarded: true,
-      businessId: bizId,
-      businessOnboarding: formData
-    });
-  };
-
-  // Not Signed In
+  // GUEST SIGN IN LOCK SCREEN
   if (!user) {
     return (
       <div className="w-full max-w-xl mx-auto text-center" dir={isRtl ? 'rtl' : 'ltr'}>
@@ -994,8 +1008,11 @@ export default function AddBusinessForm({
                             <button
                               onClick={async () => {
                                 if (window.confirm("Permanently delete this Saku Maku directory post?")) {
-                                  if (setPosts) {
-                                    setPosts(prev => prev.filter(p => p.id !== post.id));
+                                  try {
+                                    const { deleteDoc, doc } = await import('firebase/firestore');
+                                    await deleteDoc(doc(db, 'posts', post.id));
+                                  } catch (e) {
+                                    console.error(e);
                                   }
                                 }
                               }}
@@ -1300,186 +1317,6 @@ export default function AddBusinessForm({
           </button>
 
         </div>
-
-        {/* Brand New Dashboard Segment: Search & Manage My Posts Archive */}
-        <div className="bg-[#141417] border border-white/5 rounded-3xl p-6 space-y-5 relative">
-          <div className="absolute top-0 left-0 w-36 h-36 bg-[#0F2E2F]/10 rounded-full blur-[80px] pointer-events-none"></div>
-
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/5 pb-4">
-            <div>
-              <h3 className="text-sm font-black text-white uppercase flex items-center gap-2">
-                <FileText className="w-4.5 h-4.5 text-luxury-gold" />
-                <span>{currentLang === 'en' ? 'Manage My Published Stories & Updates' : 'أرشيف منشوراتي وعروضي النشطة'}</span>
-              </h3>
-              <p className="text-[11px] text-zinc-400 mt-1">
-                {currentLang === 'en' 
-                  ? 'Real-time look up, quick inline content corrections, or deletions of your brand campaigns.'
-                  : 'تتبع حملاتك، عدّل النصوص والخصومات أو احذف الإعلانات المنتهية الصلاحية فوراً.'}
-              </p>
-            </div>
-
-            {/* Past Posts Search Field */}
-            <div className="w-full sm:w-64">
-              <input
-                type="text"
-                value={ownerSearch}
-                onChange={(e) => setOwnerSearch(e.target.value)}
-                placeholder={currentLang === 'en' ? 'Search past broadcasts...' : 'ابحث في منشوراتي...'}
-                className="w-full bg-[#020205]/65 text-white/95 px-3.5 py-2 text-[11px] rounded-xl border border-white/10 focus:outline-none focus:border-luxury-gold"
-              />
-            </div>
-          </div>
-
-          {/* List of matching Owner Posts */}
-          <div className="space-y-4">
-            {(() => {
-              const myPastPosts = posts.filter(p => p.businessId === myBusiness?.id || p.authorUid === user?.uid);
-              const searchedPosts = myPastPosts.filter(p => {
-                const query = ownerSearch.toLowerCase().trim();
-                if (!query) return true;
-                const caption = (p.caption[currentLang] || p.caption.en || '').toLowerCase();
-                const promo = (p.promotionBadge?.[currentLang] || p.promotionBadge?.en || '').toLowerCase();
-                return caption.includes(query) || promo.includes(query);
-              });
-
-              if (searchedPosts.length === 0) {
-                return (
-                  <div className="text-center py-8 bg-[#020205]/20 border border-white/5 rounded-2xl">
-                    <p className="text-xs text-zinc-500">
-                      {currentLang === 'en' 
-                        ? 'No active campaign broadcasts found matching your search. Try posting above!' 
-                        : 'لم يتم العثور على أي منشورات تطابق البحث. ابدأ ببث قصتك الأولى الآن!'}
-                    </p>
-                  </div>
-                );
-              }
-
-              return searchedPosts.map((post) => {
-                const isEditingThis = editingPostId === post.id;
-                
-                const handleSaveClick = () => {
-                  if (posts && setPosts) {
-                    (setPosts as any)(prev => prev.map((p: any) => p.id !== post.id ? p : {
-                      ...p,
-                      caption: { ...p.caption, [currentLang]: editPostCaption.trim() },
-                      promotionBadge: editPostPromo.trim() ? {
-                        ar: editPostPromo.trim(),
-                        ku: editPostPromo.trim(),
-                        en: editPostPromo.trim()
-                      } : p.promotionBadge
-                    }));
-                  }
-                  setEditingPostId(null);
-                };
-
-                const handleDeleteClick = () => {
-                  if (window.confirm(currentLang === 'en' ? 'Permanently delete this specific broadcast from Saku Maku?' : 'هل أنت متأكد من حذف هذا المنشور نهائياً من شكو ماكو؟')) {
-                    setIsDeletingPostId(post.id);
-                    if (posts && setPosts) {
-                      (setPosts as any)(prev => prev.filter((p: any) => p.id !== post.id));
-                    }
-                    setIsDeletingPostId(null);
-                  }
-                };
-
-                const startEditingThis = () => {
-                  setEditingPostId(post.id);
-                  setEditPostCaption(post.caption[currentLang] || post.caption.en || '');
-                  setEditPostPromo(post.promotionBadge?.[currentLang] || post.promotionBadge?.en || '');
-                };
-
-                return (
-                  <div key={post.id} className="p-4 bg-white/5 border border-white/5 rounded-2xl flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
-                    <div className="flex gap-3 items-start w-full md:max-w-xl">
-                      <div className="w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-white/10 bg-[#020205]">
-                        <img 
-                          src={post.mediaUrl || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=100&auto=format&fit=crop&q=80'} 
-                          alt="post media"
-                          className="w-full h-full object-cover"
-                          referrerPolicy="no-referrer"
-                        />
-                      </div>
-
-                      <div className="space-y-1.5 w-full text-left">
-                        {/* Status elements */}
-                        <div className="flex items-center gap-2">
-                          <span className="text-[9px] font-mono font-bold text-zinc-500">
-                            ⏳ {post.timeAgo[currentLang] || post.timeAgo.en}
-                          </span>
-                          {post.promotionBadge && !isEditingThis && (
-                            <span className="text-[9px] bg-amber-500/15 text-amber-500 font-extrabold px-1.5 py-0.5 rounded border border-amber-500/25">
-                              🏷️ {post.promotionBadge[currentLang] || post.promotionBadge.en}
-                            </span>
-                          )}
-                        </div>
-
-                        {isEditingThis ? (
-                          <div className="space-y-2 mt-1 w-full">
-                            <input
-                              type="text"
-                              value={editPostCaption}
-                              onChange={(e) => setEditPostCaption(e.target.value)}
-                              placeholder="Edit caption..."
-                              className="w-full text-xs text-white bg-black/50 p-2 rounded-lg border border-white/10 focus:outline-none focus:border-luxury-gold font-medium"
-                            />
-                            <input
-                              type="text"
-                              value={editPostPromo}
-                              onChange={(e) => setEditPostPromo(e.target.value)}
-                              placeholder="Edit promotion text (option)..."
-                              className="w-full text-[11px] text-amber-400 bg-black/50 p-2 rounded-lg border border-white/10 focus:outline-none focus:border-luxury-gold"
-                            />
-                          </div>
-                        ) : (
-                          <p className="text-xs text-white leading-relaxed font-medium line-clamp-2">
-                            {post.caption[currentLang] || post.caption.en}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Dashboard Action panel */}
-                    <div className="flex items-center gap-2 w-full md:w-auto shrink-0 justify-end mt-2 md:mt-0 pt-2 md:pt-0 border-t border-white/5 md:border-0">
-                      {isEditingThis ? (
-                        <>
-                          <button
-                            onClick={handleSaveClick}
-                            className="px-3.5 py-1.5 rounded-lg bg-green-500 hover:bg-green-600 text-[#1A1A1A] text-[10px] uppercase font-black cursor-pointer transition"
-                          >
-                            💾 {currentLang === 'en' ? 'Save' : 'حفظ'}
-                          </button>
-                          <button
-                            onClick={() => setEditingPostId(null)}
-                            className="px-3.5 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-[10px] uppercase font-black cursor-pointer transition"
-                          >
-                            {currentLang === 'en' ? 'Cancel' : 'ملغي'}
-                          </button>
-                        </>
-                      ) : (
-                        <>
-                          <button
-                            onClick={startEditingThis}
-                            className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-300 text-[10px] uppercase font-bold cursor-pointer transition flex items-center gap-1"
-                          >
-                            ✏️ {currentLang === 'en' ? 'Edit' : 'تعديل'}
-                          </button>
-                          <button
-                            disabled={isDeletingPostId === post.id}
-                            onClick={handleDeleteClick}
-                            className="px-3 py-1.5 rounded-lg bg-red-950/40 hover:bg-red-900 border border-red-500/30 text-red-300 text-[10px] uppercase font-bold cursor-pointer transition flex items-center gap-1 disabled:opacity-45"
-                          >
-                            🗑️ {isDeletingPostId === post.id ? 'Deleting...' : (currentLang === 'en' ? 'Delete' : 'حذف')}
-                          </button>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                );
-              });
-            })()}
-          </div>
-        </div>
-
       </div>
     );
   }
