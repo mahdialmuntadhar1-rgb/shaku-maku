@@ -994,11 +994,8 @@ export default function AddBusinessForm({
                             <button
                               onClick={async () => {
                                 if (window.confirm("Permanently delete this Saku Maku directory post?")) {
-                                  try {
-                                    const { deleteDoc, doc } = await import('firebase/firestore');
-                                    await deleteDoc(doc(db, 'posts', post.id));
-                                  } catch (e) {
-                                    console.error(e);
+                                  if (setPosts) {
+                                    setPosts(prev => prev.filter(p => p.id !== post.id));
                                   }
                                 }
                               }}

@@ -5,13 +5,7 @@ import {
   Eye, EyeOff, CheckCircle2, Award, ArrowRight, ArrowLeft
 } from 'lucide-react';
 import { Language, UserProfile } from '../types';
-import { auth, db, signInWithGoogle } from '../firebase';
-import { 
-  signInWithEmailAndPassword, 
-  createUserWithEmailAndPassword,
-  updateProfile
-} from 'firebase/auth';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { authApi } from '../api';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -218,9 +212,6 @@ export default function AuthModal({
           throw new Error('Invalid response from server: missing user data');
         }
 
-        // 2. Create the firestore profile
-        const userRef = doc(db, 'users', credential.user.uid);
-        
         const isAdmin = email.trim().toLowerCase() === 'safaribosafar@gmail.com' || email.trim().toLowerCase() === 'mahdialmuntadhar1@gmail.com';
         const profileDetails: UserProfile = {
           uid: user.id,
