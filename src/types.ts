@@ -43,22 +43,7 @@ export interface Business {
   images: string[];
   avatar: string;
   isVerified: boolean;
-  /**
-   * Legacy single phone field used by the current demo dataset.
-   * Production businesses may use `primary_phone` / `secondary_phone` / `whatsapp_number`.
-   */
   phoneNumber?: string;
-
-  // Production-oriented fields (optional for backward compatibility)
-  primary_phone?: string;
-  secondary_phone?: string;
-  whatsapp_number?: string;
-
-  /**
-   * Normalized digits tokens used for fast phone matching.
-   * Example tokens: ["9647712345678","7712345678","07712345678","7712345678"]
-   */
-  phoneSearchTokens?: string[];
   address: {
     ar: string;
     ku: string;
@@ -76,32 +61,6 @@ export interface Business {
   mapCoords: { x: number; y: number }; // percentage on interactive canvas map
   stories?: string[]; // short active stories
   ownerUid?: string; // Firebase Authentication owner ID
-}
-
-export interface BusinessOwner {
-  id: string;
-  user_id: string; // Firebase Auth uid
-  business_id: string;
-  role: 'owner' | 'manager' | 'staff';
-  verified: boolean;
-  created_at: string; // ISO
-}
-
-export type OwnershipClaimStatus = 'pending' | 'approved' | 'rejected';
-
-export interface OwnershipClaim {
-  id: string;
-  user_id: string; // Firebase Auth uid (after OTP)
-  business_id: string;
-  phone_e164: string;
-  status: OwnershipClaimStatus;
-  suspicious: boolean;
-  reason?: string;
-  created_at: string; // ISO (legacy)
-  created_at_ts?: any; // Firestore Timestamp (preferred)
-  decided_at?: string; // ISO (legacy)
-  decided_at_ts?: any; // Firestore Timestamp (preferred)
-  decided_by?: string; // admin uid/email
 }
 
 export interface SocialPost {
@@ -147,7 +106,6 @@ export interface UserProfile {
   displayName: string;
   photoURL: string;
   email: string;
-  phone?: string; // E.164
   createdAt: string;
   role?: 'user' | 'owner' | 'admin';
   onboarded?: boolean;

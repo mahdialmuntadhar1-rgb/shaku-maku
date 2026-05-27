@@ -12,7 +12,6 @@ interface HeaderProps {
   user: any;
   userProfile: UserProfile | null;
   onSignIn: () => void;
-  onOwnerClaim: () => void;
   onSignOut: () => void;
   onUpdateRole: (role: 'user' | 'owner' | 'admin') => void;
   activeTab: string;
@@ -28,7 +27,6 @@ export default function Header({
   user,
   userProfile,
   onSignIn,
-  onOwnerClaim,
   onSignOut,
   onUpdateRole,
   activeTab,
@@ -203,15 +201,6 @@ export default function Header({
 
         {/* Action Controls & User Identity */}
         <div className="flex items-center gap-2 w-full md:w-auto justify-end">
-          
-          {/* Business Owner Claim CTA (fast onboarding, not registration) */}
-          <button
-            onClick={onOwnerClaim}
-            className="hidden sm:flex items-center gap-2 px-4 py-2.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-luxury-gold/40 text-xs font-black uppercase tracking-wider text-white transition cursor-pointer"
-          >
-            <span>🏢</span>
-            <span>{currentLang === 'en' ? 'I am a Business Owner' : currentLang === 'ku' ? 'خاوەن کارم' : 'أنا صاحب عمل'}</span>
-          </button>
           
           {/* Real-time Google Sign-In with Firebase Auth */}
           {user ? (

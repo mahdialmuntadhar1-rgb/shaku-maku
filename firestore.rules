@@ -22,31 +22,6 @@ service cloud.firestore {
         (request.auth.token.email == "safaribosafar@gmail.com" || request.auth.token.email == "mahdialmuntadhar1@gmail.com");
     }
 
-    function isVerifiedBusinessOwner(businessId) {
-      return isSignedIn() &&
-        exists(/databases/$(database)/documents/business_owners/$(request.auth.uid + "_" + businessId)) &&
-        get(/databases/$(database)/documents/business_owners/$(request.auth.uid + "_" + businessId)).data.verified == true;
-    }
-
-    // Rate limit docs are simple cooldown locks
-    match /rate_limits/{limitId} {
-      // nobody should read these from clients
-      allow read: if false;
-      // allow creation/updates for signed-in users only; must always move nextAllowedAt forward.
-      allow create, update: if isSignedIn() &&
-        request.resource.data.nextAllowedAt is timestamp &&
-        request.resource.data.updatedAt is timestamp &&
-        // Must always set updatedAt to current request time
-        request.resource.data.updatedAt == request.time &&
-        // nextAllowedAt must be in the future (cooldown)
-        request.resource.data.nextAllowedAt > request.time &&
-        // If exists: cannot shorten cooldown
-        (!exists(/databases/$(database)/documents/rate_limits/$(limitId)) ||
-          request.resource.data.nextAllowedAt >= get(/databases/$(database)/documents/rate_limits/$(limitId)).data.nextAllowedAt
-        );
-      allow delete: if isAdmin();
-    }
-
     function incoming() {
       return request.resource.data;
     }
@@ -133,43 +108,18 @@ service cloud.firestore {
                   );
       allow update: if isSignedIn() && (
         isAdmin() || 
-        ((existing().ownerUid == request.auth.uid || isVerifiedBusinessOwner(businessId)) && 
+        (existing().ownerUid == request.auth.uid && 
          isValidBusiness(incoming()) &&
-         // block modifying verification status
-         incoming().isVerified == existing().isVerified &&
-         // do not allow writing ownerUid from client in the new system
-         (!('ownerUid' in incoming()) || incoming().ownerUid == existing().ownerUid) &&
+         incoming().ownerUid == existing().ownerUid &&
+         incoming().isVerified == existing().isVerified && // block modifying verification status
          incoming().diff(existing()).affectedKeys().hasOnly([
-           'name', 'description', 'category', 'governorate',
-           'phoneNumber', 'primary_phone', 'secondary_phone', 'whatsapp_number', 'phoneSearchTokens',
-           'address', 'image', 'images', 'avatar', 'mapCoords', 'stories'
+           'name', 'description', 'category', 'governorate', 'phoneNumber', 'address', 'image', 'images', 'avatar', 'mapCoords', 'stories'
          ])
         ) ||
         // Allowing users to increment likes or review counts
         (incoming().diff(existing()).affectedKeys().hasOnly(['likes', 'saves', 'reviewsCount', 'rating']))
       );
       allow delete: if isAdmin() || (isSignedIn() && existing().ownerUid == request.auth.uid);
-    }
-
-    // BUSINESS OWNERSHIP LINKS
-    match /business_owners/{ownerId} {
-      allow read: if isSignedIn();
-      // Create is allowed only for admins (or server-side) in production; for v1 we also allow the
-      // authenticated claimant to create their own verified link after OTP.
-      allow create: if isSignedIn() &&
-        (isAdmin() || (incoming().user_id == request.auth.uid && incoming().verified == true));
-      allow update: if isAdmin();
-      allow delete: if isAdmin();
-    }
-
-    // OWNERSHIP CLAIMS (admin moderation)
-    match /ownership_claims/{claimId} {
-      allow read: if isAdmin();
-      // Claim stub can be created by signed-in users only (after OTP) but we also allow pending-auth stubs.
-      // In production you’d lock this behind a backend; this is a pragmatic v1.
-      allow create: if true;
-      allow update: if isAdmin();
-      allow delete: if isAdmin();
     }
 
     // SOCIAL FEEDS/POSTS COLLECTION

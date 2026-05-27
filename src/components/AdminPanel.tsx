@@ -3,13 +3,13 @@ import { motion, AnimatePresence } from 'motion/react';
 import { 
   ShieldCheck, Lock, LogOut, CheckCircle, Trash2, 
   Sparkles, Layers, Eye, Users, FileText, BarChart3, Star, AlertCircle,
-  Edit, Save, Plus, ChevronDown, CheckCircle2
+  Edit, Save, Plus, ChevronDown, CheckCircle2, Smartphone, ShieldAlert,
+  Award, RefreshCw
 } from 'lucide-react';
-import { Language, GovernorateCode, Business, SocialPost, UserProfile, HeroSlide } from '../types';
+import { Language, GovernorateCode, Business, SocialPost, UserProfile, HeroSlide, BusinessClaim } from '../types';
 import { CATEGORIES, GOVERNORATES, HERO_SLIDES } from '../data';
 import { db } from '../firebase';
-import { collection, doc, setDoc, updateDoc, deleteDoc, onSnapshot, query, where, getDocs } from 'firebase/firestore';
-import { normalizePhoneForSearch } from '../utils/phone';
+import { collection, doc, setDoc, updateDoc, deleteDoc, onSnapshot } from 'firebase/firestore';
 
 interface AdminPanelProps {
   currentLang: Language;
@@ -44,6 +44,8 @@ export default function AdminPanel({
   // Real-time Firestore sync of slider segments
   const [heroSlides, setHeroSlides] = useState<HeroSlide[]>([]);
   const [loadingSlides, setLoadingSlides] = useState(false);
+  const [claims, setClaims] = useState<BusinessClaim[]>([]);
+  const [loadingClaims, setLoadingClaims] = useState(false);
 
   // Edit / Add Slide parameters
   const [editingSlideId, setEditingSlideId] = useState<string | null>(null);
@@ -73,25 +75,6 @@ export default function AdminPanel({
   const [postEditPromo, setPostEditPromo] = useState('');
   const [postEditMedia, setPostEditMedia] = useState('');
 
-  // Claims moderation (owner claim system)
-  const [claimItems, setClaimItems] = useState<any[]>([]);
-  const [loadingClaims, setLoadingClaims] = useState(false);
-
-  useEffect(() => {
-    if (!isFullyUnlocked) return;
-    if (adminTab !== 'claims') return;
-    setLoadingClaims(true);
-    const ref = collection(db, 'ownership_claims');
-    const unsub = onSnapshot(ref, (snap) => {
-      const list: any[] = [];
-      snap.forEach((d) => list.push(d.data()));
-      list.sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''));
-      setClaimItems(list);
-      setLoadingClaims(false);
-    }, () => setLoadingClaims(false));
-    return () => unsub();
-  }, [adminTab, isFullyUnlocked]);
-
   // Sync slides on admin load
   useEffect(() => {
     if (!isFullyUnlocked) return;
@@ -112,6 +95,25 @@ export default function AdminPanel({
       console.error("Error fetching slides inside Admin: ", err);
       setHeroSlides(HERO_SLIDES);
       setLoadingSlides(false);
+    });
+    return () => unsub();
+  }, [isFullyUnlocked]);
+
+  // Sync business owner claims on admin load
+  useEffect(() => {
+    if (!isFullyUnlocked) return;
+    setLoadingClaims(true);
+    const ref = collection(db, 'business_claims');
+    const unsub = onSnapshot(ref, (snap) => {
+      const list: BusinessClaim[] = [];
+      snap.forEach((doc) => {
+        list.push(doc.data() as BusinessClaim);
+      });
+      setClaims(list);
+      setLoadingClaims(false);
+    }, (err) => {
+      console.error("Error fetching claims inside Admin: ", err);
+      setLoadingClaims(false);
     });
     return () => unsub();
   }, [isFullyUnlocked]);
@@ -167,14 +169,11 @@ export default function AdminPanel({
       const bizObj = businesses.find(b => b.id === editingBizId);
       if (!bizObj) return;
 
-      const phoneTokens = normalizePhoneForSearch(bizEditPhone.trim()).tokens;
       await updateDoc(bizRef, {
         name: { ...bizObj.name, [currentLang]: bizEditName.trim() },
         description: { ...bizObj.description, [currentLang]: bizEditDesc.trim() },
         address: { ...bizObj.address, [currentLang]: bizEditAddress.trim() },
         phoneNumber: bizEditPhone.trim(),
-        primary_phone: bizEditPhone.trim(),
-        phoneSearchTokens: phoneTokens,
         image: bizEditCover.trim(),
         category: bizEditCategory
       });
@@ -221,6 +220,87 @@ export default function AdminPanel({
       setEditingPostId(null);
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  // Business claim operations
+  const handleApproveClaim = async (claim: BusinessClaim) => {
+    try {
+      // 1) Update claim status to 'approved'
+      await updateDoc(doc(db, 'business_claims', claim.id), { status: 'approved' });
+      
+      // 2) Update direct business document to link the owner and verify it
+      await updateDoc(doc(db, 'businesses', claim.businessId), {
+        ownerUid: claim.userId,
+        isVerified: true,
+        phoneNumber: claim.userPhone
+      });
+
+      // 3) Create verified business_owners document
+      const ownerRecordId = `owner-${claim.userId}-${claim.businessId}`;
+      await setDoc(doc(db, 'business_owners', ownerRecordId), {
+        id: ownerRecordId,
+        userId: claim.userId,
+        businessId: claim.businessId,
+        role: 'owner',
+        verified: true,
+        createdAt: new Date().toISOString()
+      });
+
+      // 4) Update user profile representation to 'owner'
+      const userRef = doc(db, 'users', claim.userId);
+      await updateDoc(userRef, {
+        role: 'owner',
+        onboarded: true,
+        businessId: claim.businessId
+      });
+
+      alert("Claim successfully approved! Ownership verified and dashboard unlocked.");
+    } catch (e) {
+      console.error("fault approving claim: ", e);
+      alert("Error approving claim.");
+    }
+  };
+
+  const handleRejectClaim = async (claimId: string) => {
+    try {
+      await updateDoc(doc(db, 'business_claims', claimId), { status: 'rejected' });
+      alert("Claim successfully rejected.");
+    } catch (e) {
+      console.error(e);
+      alert("Error rejecting claim.");
+    }
+  };
+
+  const handleRevokeClaim = async (businessId: string, ownerUid: string) => {
+    if (!window.confirm("Are you absolutely sure you want to revoke ownership? This will unlink the merchant and lock their dashboard.")) return;
+    try {
+      // 1) Disassociate standard ownerUid in business listing
+      await updateDoc(doc(db, 'businesses', businessId), {
+        ownerUid: '',
+        isVerified: false
+      });
+
+      // 2) Disassociate owner profile in user collection
+      const userRef = doc(db, 'users', ownerUid);
+      await updateDoc(userRef, {
+        role: 'user',
+        businessId: null,
+        onboarded: false
+      });
+
+      // 3) Wipe audit history claims
+      const claimId = `claim-${businessId}-${ownerUid}`;
+      await deleteDoc(doc(db, 'business_claims', claimId));
+
+      // 4) Wipe owner record
+      const ownerRecordId = `owner-${ownerUid}-${businessId}`;
+      await deleteDoc(doc(db, 'business_owners', ownerRecordId));
+
+      alert("Ownership revoked successfully. Profile returned to default guest status.");
+    } catch (e) {
+      console.error("revoke ownership err: ", e);
+      alert("Error revoking ownership.");
     }
   };
 
@@ -457,12 +537,12 @@ export default function AdminPanel({
           onClick={() => setAdminTab('claims')}
           className={`px-4 py-2.5 rounded-xl border text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
             adminTab === 'claims'
-              ? 'bg-emerald-500/15 border-emerald-500 text-emerald-400 font-black'
+              ? 'bg-amber-550/15 border-amber-500 text-amber-500 font-black'
               : 'border-transparent text-zinc-400 hover:text-white'
           }`}
         >
-          <Users className="w-4 h-4" />
-          <span>Owner Claims</span>
+          <Smartphone className="w-4 h-4" />
+          <span>Claims & Verification ({claims.length})</span>
         </button>
       </div>
 
@@ -1017,141 +1097,139 @@ export default function AdminPanel({
 
         {adminTab === 'claims' && (
           <div className="space-y-6">
-            <div className="flex items-center justify-between gap-3">
-              <h3 className="text-sm font-black text-white uppercase">Business Owner Claims Management</h3>
-              <span className="text-[10px] text-zinc-500 font-mono font-bold">
-                {claimItems.length} total
-              </span>
+            {/* Header statistics grid */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="p-4 bg-white/5 border border-white/5 rounded-2xl text-left">
+                <span className="text-[10px] text-zinc-500 tracking-wider font-extrabold uppercase block font-mono">Total Registry Claims</span>
+                <span className="text-xl font-black text-white block mt-1.5">{claims.length}</span>
+              </div>
+              <div className="p-4 bg-amber-500/5 border border-amber-500/10 rounded-2xl text-left">
+                <span className="text-[10px] text-amber-500 tracking-wider font-extrabold uppercase block font-mono">Pending Verification</span>
+                <span className="text-xl font-black text-amber-500 block mt-1.5 font-sans">
+                  {claims.filter(c => c.status === 'pending').length}
+                </span>
+              </div>
+              <div className="p-4 bg-red-505 bg-red-950/20 border border-red-500/10 rounded-2xl text-left font-mono">
+                <span className="text-[10px] text-red-400 tracking-wider font-extrabold uppercase block">Suspicious Flashes</span>
+                <span className="text-xl font-black text-red-400 block mt-1.5">
+                  {claims.filter(c => c.isSuspicious && c.status === 'pending').length}
+                </span>
+              </div>
+              <div className="p-4 bg-emerald-505 bg-emerald-950/20 border border-emerald-500/10 rounded-2xl text-left">
+                <span className="text-[10px] text-emerald-400 tracking-wider font-extrabold uppercase block font-mono">Approved Merchants</span>
+                <span className="text-xl font-black text-emerald-400 block mt-1.5">
+                  {claims.filter(c => c.status === 'approved').length}
+                </span>
+              </div>
             </div>
 
-            {loadingClaims ? (
-              <div className="text-center py-10 text-zinc-500 text-xs font-mono animate-pulse">Loading claims…</div>
-            ) : (
-              <div className="space-y-3">
-                {claimItems.length === 0 && (
-                  <div className="p-5 bg-white/5 border border-white/10 rounded-2xl text-xs text-zinc-400">
-                    No claims yet.
-                  </div>
-                )}
+            {/* List of active highstreet claimant entries */}
+            <div className="p-6 bg-[#141417]/95 border border-white/5 rounded-3xl space-y-4">
+              <h3 className="text-sm font-black text-white uppercase flex items-center gap-2">
+                <Smartphone className="w-4.5 h-4.5 text-luxury-gold" />
+                <span>Live Owner Audits & Claim Campaigns</span>
+              </h3>
 
-                {claimItems.map((c) => {
-                  const status = c.status || 'pending';
-                  const isPending = status === 'pending';
+              <div className="space-y-3 font-sans text-left">
+                {claims.length === 0 ? (
+                  <div className="text-center py-8 text-zinc-500 text-xs">No merchant claims recorded in active platform registry logs.</div>
+                ) : (
+                  claims.map(claim => {
+                    const statusColors = {
+                      pending: claim.isSuspicious ? 'bg-red-500/15 text-red-400 border-red-500/25' : 'bg-amber-500/15 text-amber-400 border-amber-500/25',
+                      approved: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/25',
+                      rejected: 'bg-zinc-800 text-zinc-400 border-white/5'
+                    }[claim.status] || 'bg-zinc-800 text-zinc-400 border-white/5';
 
-                  const approve = async () => {
-                    try {
-                      const claimRef = doc(db, 'ownership_claims', c.id);
-                      await updateDoc(claimRef, {
-                        status: 'approved',
-                        decided_at: new Date().toISOString(),
-                        decided_at_ts: new Date(),
-                        decided_by: userProfile?.email || 'admin',
-                      });
-                      if (c.user_id && c.business_id) {
-                        const ownerId = `${c.user_id}_${c.business_id}`;
-                        await setDoc(doc(db, 'business_owners', ownerId), {
-                          id: ownerId,
-                          user_id: c.user_id,
-                          business_id: c.business_id,
-                          role: 'owner',
-                          verified: true,
-                          created_at: new Date().toISOString(),
-                        }, { merge: true });
-                      }
-                    } catch (e) {
-                      console.error(e);
-                    }
-                  };
-
-                  const reject = async () => {
-                    try {
-                      const claimRef = doc(db, 'ownership_claims', c.id);
-                      await updateDoc(claimRef, {
-                        status: 'rejected',
-                        decided_at: new Date().toISOString(),
-                        decided_at_ts: new Date(),
-                        decided_by: userProfile?.email || 'admin',
-                      });
-                    } catch (e) {
-                      console.error(e);
-                    }
-                  };
-
-                  const revoke = async () => {
-                    try {
-                      if (!c.user_id || !c.business_id) return;
-                      const ownerId = `${c.user_id}_${c.business_id}`;
-                      await updateDoc(doc(db, 'business_owners', ownerId), { verified: false });
-                    } catch (e) {
-                      console.error(e);
-                    }
-                  };
-
-                  return (
-                    <div key={c.id} className="p-5 bg-[#141417] border border-white/5 rounded-3xl space-y-3">
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="space-y-1">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <span className={`text-[9px] font-black px-2 py-1 rounded uppercase tracking-wider border ${
-                              status === 'approved'
-                                ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-                                : status === 'rejected'
-                                ? 'bg-red-500/10 text-red-400 border-red-500/20'
-                                : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
-                            }`}>
-                              {status}
-                            </span>
-                            {c.suspicious && (
-                              <span className="text-[9px] font-black px-2 py-1 rounded uppercase tracking-wider bg-orange-500/10 text-orange-400 border border-orange-500/20">
-                                suspicious
-                              </span>
-                            )}
-                            <span className="text-[9px] text-zinc-500 font-mono font-bold">
-                              {c.created_at || ''}
+                    return (
+                      <div key={claim.id} className="p-4 bg-white/5 border border-white/5 rounded-2xl flex flex-col md:flex-row gap-4 justify-between items-start md:items-center text-xs">
+                        <div className="space-y-1.5 max-w-xl text-left font-medium">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-[10px] font-black text-white font-sans">Claimant: {claim.userPhone}</span>
+                            <span className={`text-[9.5px] font-black px-1.5 py-0.5 rounded border uppercase font-mono ${statusColors}`}>
+                              {claim.status} {claim.isSuspicious && claim.status === 'pending' ? '(Flagged)' : ''}
                             </span>
                           </div>
-                          <div className="text-xs text-white font-bold">
-                            business: <span className="text-zinc-300 font-mono">{c.business_id}</span>
-                          </div>
-                          <div className="text-[11px] text-zinc-400">
-                            user: <span className="font-mono">{c.user_id}</span> • phone: <span className="font-mono">{c.phone_e164}</span>
-                          </div>
-                          {c.reason && (
-                            <div className="text-[11px] text-zinc-500">reason: {c.reason}</div>
+
+                          <h4 className="text-white font-black leading-tight">
+                            Linked Business: {claim.businessName[currentLang] || claim.businessName.en || 'Unknown spot'}
+                          </h4>
+
+                          <p className="text-[10.5px] text-zinc-450 font-mono">
+                            User UID: <span className="text-zinc-500 font-bold">{claim.userId}</span> | Created: {new Date(claim.createdAt).toLocaleString()}
+                          </p>
+
+                          {claim.isSuspicious && (
+                            <div className="mt-1.5 p-2 bg-red-950/40 border border-red-500/20 rounded-xl text-[10px] text-red-300 flex items-start gap-1.5 font-sans leading-normal">
+                              <ShieldAlert className="w-3.5 h-3.5 mt-0.5 shrink-0 text-red-400" />
+                              <span>Audit Hold Reason: {claim.suspiciousReason}</span>
+                            </div>
                           )}
                         </div>
 
-                        <div className="flex flex-wrap items-center justify-end gap-2">
-                          {isPending ? (
+                        {/* Action controllers */}
+                        <div className="flex items-center gap-2 pt-2 md:pt-0 shrink-0 w-full md:w-auto justify-end border-t border-white/5 md:border-0 font-sans font-bold">
+                          {claim.status === 'pending' ? (
                             <>
                               <button
-                                onClick={approve}
-                                className="px-3 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-black text-[10px] font-black uppercase tracking-wider"
+                                onClick={() => handleApproveClaim(claim)}
+                                className="px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-black text-[10px] font-black uppercase rounded-lg cursor-pointer transition-all flex items-center gap-1"
                               >
-                                Approve
+                                <span>Approve Claims</span>
                               </button>
                               <button
-                                onClick={reject}
-                                className="px-3 py-2 rounded-xl bg-red-950/40 hover:bg-red-900 border border-red-500/20 text-red-200 text-[10px] font-black uppercase tracking-wider"
+                                onClick={() => handleRejectClaim(claim.id)}
+                                className="px-3 py-1.5 bg-zinc-850 hover:bg-zinc-800 border border-white/10 text-zinc-350 text-[10px] font-black uppercase rounded-lg cursor-pointer transition-all"
                               >
                                 Reject
                               </button>
                             </>
                           ) : (
-                            <button
-                              onClick={revoke}
-                              className="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-200 text-[10px] font-black uppercase tracking-wider"
-                            >
-                              Revoke ownership
-                            </button>
+                            <span className="text-[10px] text-zinc-550 font-mono">Audited Claims Process</span>
                           )}
                         </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })
+                )}
               </div>
-            )}
+            </div>
+
+            {/* Ownership and Revocations Panel */}
+            <div className="p-6 bg-[#141417]/95 border border-white/5 rounded-3xl space-y-4">
+              <h3 className="text-sm font-black text-white uppercase flex items-center gap-2">
+                <Award className="w-4.5 h-4.5 text-luxury-gold" />
+                <span>Registry Verified Merchants & Revocations ({businesses.filter(b => b.ownerUid).length})</span>
+              </h3>
+
+              <div className="space-y-2 text-left font-sans">
+                {businesses.filter(b => b.ownerUid).length === 0 ? (
+                  <div className="text-center py-6 text-zinc-450 text-xs font-semibold">No active verified owner associations in current listings database.</div>
+                ) : (
+                  businesses.filter(b => b.ownerUid).map(biz => (
+                    <div key={biz.id} className="p-3 bg-white/5 border border-white/5 rounded-xl flex items-center justify-between text-xs font-semibold">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded overflow-hidden">
+                          <img src={biz.avatar} alt="Logo" className="w-full h-full object-cover" />
+                        </div>
+                        <div className="text-left font-sans">
+                          <h4 className="font-extrabold text-white">{biz.name[currentLang] || biz.name.en}</h4>
+                          <p className="text-[10px] text-zinc-450 font-mono">Owner UID: {biz.ownerUid}</p>
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => handleRevokeClaim(biz.id, biz.ownerUid!)}
+                        className="px-3 py-1 bg-red-950/30 hover:bg-red-900 border border-red-500/20 text-red-200 text-[10px] font-bold rounded-lg cursor-pointer transition"
+                      >
+                        Revoke Ownership
+                      </button>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+
           </div>
         )}
       </div>
