@@ -60,7 +60,7 @@ export interface Business {
   };
   mapCoords: { x: number; y: number }; // percentage on interactive canvas map
   stories?: string[]; // short active stories
-  ownerUid?: string; // Firebase Authentication owner ID
+  ownerUid?: string; // Authentication owner ID
 }
 
 export interface SocialPost {
@@ -98,7 +98,7 @@ export interface SocialPost {
     size: string;
     type?: string;
   };
-  authorUid?: string; // Firebase Authentication author ID
+  authorUid?: string; // Authentication author ID
 }
 
 export interface UserProfile {

@@ -7,9 +7,7 @@ import {
 } from 'lucide-react';
 import { Language, GovernorateCode, Business, SocialPost, UserProfile, HeroSlide } from './types';
 import { INITIAL_BUSINESSES, TRANSLATIONS, CATEGORIES, INITIAL_POSTS, GOVERNORATES, HERO_SLIDES } from './data';
-import { auth, db, signInWithGoogle } from './firebase';
-import { onAuthStateChanged, signOut, User } from 'firebase/auth';
-import { collection, onSnapshot, setDoc, doc, updateDoc } from 'firebase/firestore';
+import { authApi, businessesApi } from './api';
 
 // Saku Maku Modular Components
 import Header from './components/Header';
@@ -28,8 +26,8 @@ export default function App() {
   const [selectedGov, setSelectedGov] = useState<GovernorateCode>('all'); // Default: All Iraq
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   
-  // Real-time Authenticated Firebase User state
-  const [user, setUser] = useState<User | null>(null);
+  // Custom Auth User state
+  const [user, setUser] = useState<any>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 
   // Saku Maku core Reactive businesses database

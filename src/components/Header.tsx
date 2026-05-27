@@ -202,7 +202,7 @@ export default function Header({
         {/* Action Controls & User Identity */}
         <div className="flex items-center gap-2 w-full md:w-auto justify-end">
           
-          {/* Real-time Google Sign-In with Firebase Auth */}
+          {/* Google Sign-In with Custom Auth */}
           {user ? (
             <div className="relative" ref={dropdownRef}>
               <button
