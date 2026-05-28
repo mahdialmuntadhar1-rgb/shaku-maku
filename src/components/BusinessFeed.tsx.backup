@@ -48,17 +48,61 @@ const getBusinessDescription = (biz: Business, lang: Language): string => {
   const category = CATEGORIES.find(c => c.id === biz.category);
   
   const descriptions = {
-    restaurant: lang === 'en' ? 'Premium restaurant with excellent service and authentic cuisine.' : lang === 'ku' ? 'چێشتخانەی لوکس بە خزمەتگوزاری باش.' : 'مطعم ممتاز بخدمة ممتازة.',
-    cafe: lang === 'en' ? 'Artisan cafe serving premium coffee and fresh pastries.' : lang === 'ku' ? 'کافێی ھونەری بە قاوەی لوکس.' : 'مقهى فني يقدم قهوة مميزة.',
-    hotel: lang === 'en' ? 'Luxury hotel with premium amenities and exceptional hospitality.' : lang === 'ku' ? 'هوتەلی لوکس بە ئاسایشی بەرز.' : 'فندق فاخر بمرافق ممتازة.',
-    shopping: lang === 'en' ? 'Modern shopping center with diverse retail options.' : lang === 'ku' ? 'ناوەندی کڕینی مۆدێرن.' : 'مركز تسوق حديث.',
-    entertainment: lang === 'en' ? 'Exciting entertainment venue with live performances.' : lang === 'ku' ? 'شوێنی سەرگەرمی سەرەخۆش.' : 'مكان ترفيهي مثير.',
-    services: lang === 'en' ? 'Professional services with expert staff and reliable solutions.' : lang === 'ku' ? 'خزمەتگوزاری پیشەیی بە ستافی پسپۆڕ.' : 'خدمات احترافية مع فريق خبراء.',
-    health: lang === 'en' ? 'Modern health facility with advanced equipment.' : lang === 'ku' ? 'تەندروستیی مۆدێرن بە ئامێری پێشکەوتوو.' : 'منشأة صحية حديثة.',
-    education: lang === 'en' ? 'Leading educational institution with expert instructors.' : lang === 'ku' ? 'ناوەندی خوێندنی سەرەتایی.' : 'مؤسسة تعليمية رائدة.',
-    automotive: lang === 'en' ? 'Expert automotive services with certified technicians.' : lang === 'ku' ? 'خزمەتگوزاری ئۆتۆمبێلی پسپۆڕانە.' : 'خدمات السيارات الخبراء.',
-    beauty: lang === 'en' ? 'Premium beauty services with skilled professionals.' : lang === 'ku' ? 'خزمەتگوزاری جوانی لوکس.' : 'خدمات تجميل مميزة.',
-    it_software_services: lang === 'en' ? 'Advanced technology solutions and IT services.' : lang === 'ku' ? 'چارەسەری تەکنەلۆژیی پێشکەوتوو.' : 'حلول تقنية متقدمة.'
+    restaurant: lang === 'en' 
+      ? `Premium ${category?.name[lang] || 'Restaurant'} with ${biz.rating}-star service. Authentic cuisine and exceptional dining experience.`
+      : lang === 'ku'
+      ? `${category?.name[lang] || 'چێشتخانە'}ی لوکس بە خزمەتگوزاری ${biz.rating}-ئەستێرە. خواردنی ڕەسەن و ئەزموونی ناهێنی نانخواردن.`
+      : `${category?.name[lang] || 'مطعم'} ممتاز بخدمة ${biz.rating} نجوم. مطبخ أصيل وتجربة طعام استثنائية.`,
+    cafe: lang === 'en'
+      ? `Artisan ${category?.name[lang] || 'Cafe'} serving premium coffee and fresh pastries. Perfect for meetings and relaxation.`
+      : lang === 'ku'
+      ? `${category?.name[lang] || 'کافێ'}ی ھونەری بە قاوەی لوکس و شیرینیی تازا. باشە بۆ کۆبوونەوە و حەسانەوە.`
+      : `${category?.name[lang] || 'مقهى'} فني يقدم قهوة مميزة وحلويات طازة. مثالي للاجتماعات والاسترخاء.`,
+    hotel: lang === 'en'
+      ? `Luxury ${category?.name[lang] || 'Hotel'} with ${biz.rating}-star accommodation. Premium amenities and exceptional hospitality.`
+      : lang === 'ku'
+      ? `${category?.name[lang] || 'هوتەل'}ی لوکس بە لەبەرگرتنەوەی ${biz.rating}-ئەستێرە. ئاسایشی بەرز و میواندۆستی نائیران.`
+      : `${category?.name[lang] || 'فندق'} فاخر بتقييم ${biz.rating} نجوم. مرافق فاخرة وضيافة استثنائية.`,
+    shopping: lang === 'en'
+      ? `Modern ${category?.name[lang] || 'Shopping Center'} with diverse retail options. Latest trends and premium brands.`
+      : lang === 'ku'
+      ? `${category?.name[lang] || 'ناوەندی کڕین'}ی مۆدێرن بە بژاردەی Retailی جیاواز. دایەزترین مۆدێل و براندە لوکسەکان.`
+      : `${category?.name[lang] || 'مركز تسوق'} حديث مع خيارات تجزئة متنوعة. أحدث الاتجاهات والعلامات التجارية المميزة.`,
+    entertainment: lang === 'en'
+      ? `Exciting ${category?.name[lang] || 'Entertainment Venue'} with live performances and events. Unforgettable experiences.`
+      : lang === 'ku'
+      ? `${category?.name[lang] || 'شوێنی سەرگەرمی'}ی سەرەخۆش بە نمایشی ڕاستەقینە و بۆنەکان. ئەزموونە لەبیرنەچوونەکان.`
+      : `${category?.name[lang] || 'مكان ترفيهي'} مثير مع عروض حية ومناسبات. تجارب لا تُنسى.`,
+    services: lang === 'en'
+      ? `Professional ${category?.name[lang] || 'Services'} with expert staff. Reliable and efficient solutions.`
+      : lang === 'ku'
+      ? `${category?.name[lang] || 'خزمەتگوزاری'}ی پیشەیی بە ستافی پسپۆڕ. چارەسەری دڵنیا و کاریگەر.`
+      : `${category?.name[lang] || 'خدمات'} احترافية مع فريق خبراء. حلول موثوقة وفعالة.`,
+    health: lang === 'en'
+      ? `Modern ${category?.name[lang] || 'Health'} facility with advanced equipment. Professional care and wellness programs.`
+      : lang === 'ku'
+      ? `${category?.name[lang] || 'تەندروستی'}ی مۆدێرن بە ئامێری پێشکەوتوو. چاودێری پیشەیی و بەرنامەکانی تەندروستی.`
+      : `${category?.name[lang] || 'الصحة'} مجهز بأحدث المعدات. رعاية احترافية وبرامج العافية.`,
+    education: lang === 'en'
+      ? `Leading ${category?.name[lang] || 'Educational'} institution with expert instructors. Quality learning environment.`
+      : lang === 'ku'
+      ? `${category?.name[lang] || 'خوێندن'}ی سەرەتایی بە مامۆستای پسپۆڕ. ژینگەی خوێندنی باڵای.`
+      : `${category?.name[lang] || 'تعليمي`} رائد مع مدربين خبراء. بيئة تعليمية عالية الجودة.`,
+    automotive: lang === 'en'
+      ? `Expert ${category?.name[lang] || 'Automotive'} services with certified technicians. Quality maintenance and repairs.`
+      : lang === 'ku'
+      ? `${category?.name[lang] || 'ئۆتۆمبێل'}ی پسپۆڕانە بە تەکنیکی پێسەندراو. چاککردنی باڵا و پاراستن.`
+      : `${category?.name[lang] || 'السيارات'} خدمات خبراء مع فنيين معتمدين. صيانة وإصلاح عالي الجودة.`,
+    beauty: lang === 'en'
+      ? `Premium ${category?.name[lang] || 'Beauty'} services with skilled professionals. Latest treatments and products.`
+      : lang === 'ku'
+      ? `${category?.name[lang] || 'جوانی'}ی لوکس بە پسپۆڕانی شارەزا. دوایین چارەسەر و بەرهەمەکان.`
+      : `${category?.name[lang] || 'التجميل'} خدمات مميزة مع محترفين مهرة. أحدث العلاجات والمنتجات.`,
+    it_software_services: lang === 'en'
+      ? `Advanced ${category?.name[lang] || 'Technology'} solutions and IT services. Cutting-edge digital innovation.`
+      : lang === 'ku'
+      ? `${category?.name[lang] || 'تەکنەلۆژی'}ی پێشکەوتوو و خزمەتگوزاری IT. داهێنانی دیجیتاڵی سەرەتایی.`
+      : `${category?.name[lang] || 'التقنية'} حلول متقدمة وخدمات تكنولوجيا المعلومات. ابتكار رقمي متطور.`
   };
   
   return descriptions[biz.category as keyof typeof descriptions] || 

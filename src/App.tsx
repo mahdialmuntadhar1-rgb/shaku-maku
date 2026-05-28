@@ -143,22 +143,26 @@ export default function App() {
   // Password reset functionality
   const handlePasswordReset = async (email: string) => {
     try {
-      await sendPasswordResetEmail(auth, email);
+      const actionCodeSettings = {
+        url: window.location.origin + '/',
+        handleCodeInApp: false,
+      };
+      await sendPasswordResetEmail(auth, email, actionCodeSettings);
       alert(
         currentLang === 'en' 
-          ? 'Password reset email sent! Please check your inbox.'
+          ? 'Password reset email sent! Please check your inbox and spam folder.'
           : currentLang === 'ku'
-          ? 'ئیمەیڵی ڕێستکردنی تێپەڕەواژێ نێررا! تکایە سندووقی پۆستەکەت بپشکنە.'
-          : 'تم إرسال بريد إعادة تعيين كلمة المرور! يرجى التحقق من صندوق الوارد.'
+          ? 'ئیمەیڵی ڕێستکردنی تێپەڕەواژێ نێررا! تکایە سندووقی پۆستەکەت و سپامەکەت بپشکنە.'
+          : 'تم إرسال بريد إعادة تعيين كلمة المرور! يرجى التحقق من صندوق الوارد والرسائل غير المرغوب فيها.'
       );
     } catch (error: any) {
       console.error('Password reset error:', error);
       alert(
         currentLang === 'en'
-          ? 'Failed to send password reset email. Please try again.'
+          ? 'Failed to send password reset email. Please check your email address and try again.'
           : currentLang === 'ku'
-          ? 'نەیتوانی ئیمەیڵی ڕێستکردنی تێپەڕەواژێ بنێرێت. تکایە دووبارە هەوڵبەرەوە.'
-          : 'فشل في إرسال بريد إعادة تعيين كلمة المرور. يرجى المحاولة مرة أخرى.'
+          ? 'نەیتوانی ئیمەیڵی ڕێستکردنی تێپەڕەواژێ بنێرێت. تکایە ئیمەیڵەکەت بپشکنە و دووبارە هەوڵبەرەوە.'
+          : 'فشل في إرسال بريد إعادة تعيين كلمة المرور. يرجى التحقق من عنوان البريد الإلكتروني والمحاولة مرة أخرى.'
       );
     }
   };

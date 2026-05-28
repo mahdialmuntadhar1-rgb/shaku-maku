@@ -2,7 +2,7 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-sans: "Plus Jakarta Sans", "Cairo", "Noto Sans Arabic", "Noto Sans Kurdish", ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
   
   --color-luxury-bg: #1A1A1A;
@@ -18,8 +18,11 @@
 body {
   background-color: #F9F9F9; /* Soft Off-white luxury background */
   color: #1A1A1A; /* Deep Charcoal primary text */
-  font-family: var(--font-sans);
+  font-family: "Plus Jakarta Sans", "Cairo", "Noto Sans Arabic", "Noto Sans Kurdish", ui-sans-serif, system-ui, -apple-system, sans-serif;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 /* Language-specific text rendering */
@@ -95,11 +98,27 @@ body {
   font-family: "Cairo", "Noto Sans Arabic", "Noto Sans Kurdish", sans-serif;
 }
 
-/* Fix text rendering issues */
+/* Universal text rendering fixes */
 * {
+  font-family: inherit;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+}
+
+/* Force proper font inheritance for all elements */
+h1, h2, h3, h4, h5, h6, p, span, div, button, input, textarea, select, option, label, a, li, td, th {
+  font-family: inherit;
+}
+
+/* Specific fixes for common text distortion issues */
+.font-sans, .text-xs, .text-sm, .text-base, .text-lg, .text-xl, .text-2xl, .text-3xl {
+  font-family: "Plus Jakarta Sans", "Cairo", "Noto Sans Arabic", "Noto Sans Kurdish", ui-sans-serif, system-ui, -apple-system, sans-serif !important;
+}
+
+/* Override any conflicting font settings */
+body, html {
+  font-family: "Plus Jakarta Sans", "Cairo", "Noto Sans Arabic", "Noto Sans Kurdish", ui-sans-serif, system-ui, -apple-system, sans-serif !important;
 }
 
 /* Stunning custom dark-glass scrollbar for smooth scrolling feeds */
