@@ -15,59 +15,7 @@ interface BusinessFeedProps {
   onToggleLike: (bizId: string) => void;
   onToggleSave: (bizId: string) => void;
   onSelectStory: (stories: string[]) => void;
-  onLoadMore?: () => void;
-  loadingMore?: boolean;
-  hasMore?: boolean;
 }
-
-// Helper function to generate business display names
-const getBusinessDisplayName = (biz: Business, lang: Language): string => {
-  const category = CATEGORIES.find(c => c.id === biz.category);
-  const categoryName = category?.name[lang] || 'Business';
-  
-  // Generate a realistic business name based on category
-  const businessNames = {
-    restaurant: lang === 'en' ? 'Premium Restaurant' : lang === 'ku' ? 'چێشتخانەی لوکس' : 'مطعم ممتاز',
-    cafe: lang === 'en' ? 'Artisan Cafe' : lang === 'ku' ? 'کافێی ھونەری' : 'مقهى فني',
-    hotel: lang === 'en' ? 'Luxury Hotel' : lang === 'ku' ? 'هوتەلی لوکس' : 'فندق فاخر',
-    shopping: lang === 'en' ? 'Shopping Center' : lang === 'ku' ? 'ناوەندی کڕین' : 'مركز تسوق',
-    entertainment: lang === 'en' ? 'Entertainment Venue' : lang === 'ku' ? 'شوێنی سەرگەرمی' : 'مكان ترفيهي',
-    services: lang === 'en' ? 'Professional Services' : lang === 'ku' ? 'خزمەتگوزاری پیشەیی' : 'خدمات احترافية',
-    health: lang === 'en' ? 'Health & Wellness' : lang === 'ku' ? 'تەندروستی و چالاکی' : 'الصحة والعافية',
-    education: lang === 'en' ? 'Educational Center' : lang === 'ku' ? 'ناوەندی خوێندن' : 'مركز تعليمي',
-    automotive: lang === 'en' ? 'Auto Services' : lang === 'ku' ? 'خزمەتگوزاری ئۆتۆمبێل' : 'خدمات السيارات',
-    beauty: lang === 'en' ? 'Beauty Salon' : lang === 'ku' ? 'ساڵۆنی جوانی' : 'صالون تجميل',
-    it_software_services: lang === 'en' ? 'Tech Solutions' : lang === 'ku' ? 'چارەسەری تەکنەلۆژیی' : 'حلول تقنية'
-  };
-  
-  return businessNames[biz.category as keyof typeof businessNames] || categoryName;
-};
-
-// Helper function to generate business descriptions
-const getBusinessDescription = (biz: Business, lang: Language): string => {
-  const category = CATEGORIES.find(c => c.id === biz.category);
-  
-  const descriptions = {
-    restaurant: lang === 'en' ? 'Premium restaurant with excellent service and authentic cuisine.' : lang === 'ku' ? 'چێشتخانەی لوکس بە خزمەتگوزاری باش.' : 'مطعم ممتاز بخدمة ممتازة.',
-    cafe: lang === 'en' ? 'Artisan cafe serving premium coffee and fresh pastries.' : lang === 'ku' ? 'کافێی ھونەری بە قاوەی لوکس.' : 'مقهى فني يقدم قهوة مميزة.',
-    hotel: lang === 'en' ? 'Luxury hotel with premium amenities and exceptional hospitality.' : lang === 'ku' ? 'هوتەلی لوکس بە ئاسایشی بەرز.' : 'فندق فاخر بمرافق ممتازة.',
-    shopping: lang === 'en' ? 'Modern shopping center with diverse retail options.' : lang === 'ku' ? 'ناوەندی کڕینی مۆدێرن.' : 'مركز تسوق حديث.',
-    entertainment: lang === 'en' ? 'Exciting entertainment venue with live performances.' : lang === 'ku' ? 'شوێنی سەرگەرمی سەرەخۆش.' : 'مكان ترفيهي مثير.',
-    services: lang === 'en' ? 'Professional services with expert staff and reliable solutions.' : lang === 'ku' ? 'خزمەتگوزاری پیشەیی بە ستافی پسپۆڕ.' : 'خدمات احترافية مع فريق خبراء.',
-    health: lang === 'en' ? 'Modern health facility with advanced equipment.' : lang === 'ku' ? 'تەندروستیی مۆدێرن بە ئامێری پێشکەوتوو.' : 'منشأة صحية حديثة.',
-    education: lang === 'en' ? 'Leading educational institution with expert instructors.' : lang === 'ku' ? 'ناوەندی خوێندنی سەرەتایی.' : 'مؤسسة تعليمية رائدة.',
-    automotive: lang === 'en' ? 'Expert automotive services with certified technicians.' : lang === 'ku' ? 'خزمەتگوزاری ئۆتۆمبێلی پسپۆڕانە.' : 'خدمات السيارات الخبراء.',
-    beauty: lang === 'en' ? 'Premium beauty services with skilled professionals.' : lang === 'ku' ? 'خزمەتگوزاری جوانی لوکس.' : 'خدمات تجميل مميزة.',
-    it_software_services: lang === 'en' ? 'Advanced technology solutions and IT services.' : lang === 'ku' ? 'چارەسەری تەکنەلۆژیی پێشکەوتوو.' : 'حلول تقنية متقدمة.'
-  };
-  
-  return descriptions[biz.category as keyof typeof descriptions] || 
-    (lang === 'en' 
-      ? `Professional ${category?.name[lang] || 'Business'} with ${biz.rating}-star service. Quality and excellence guaranteed.`
-      : lang === 'ku'
-      ? `${category?.name[lang] || 'کارگێڕی'}ی پیشەیی بە خزمەتگوزاری ${biz.rating}-ئەستێرە. کوالیتی و باشی دیاریکراو.`
-      : `${category?.name[lang] || 'العمل'} التجاري الاحترافي بخدمة ${biz.rating} نجوم. الجودة والتميز مضمونان.`);
-};
 
 export default function BusinessFeed({
   currentLang,
@@ -76,10 +24,7 @@ export default function BusinessFeed({
   businesses,
   onToggleLike,
   onToggleSave,
-  onSelectStory,
-  onLoadMore,
-  loadingMore = false,
-  hasMore = false
+  onSelectStory
 }: BusinessFeedProps) {
   const [selectedBiz, setSelectedBiz] = useState<Business | null>(null);
   
@@ -103,13 +48,13 @@ export default function BusinessFeed({
   const isRtl = currentLang === 'ar' || currentLang === 'ku';
 
   // Filter businesses by Governorate (if not 'all')
-  const govFiltered = selectedGov === 'all'
-    ? businesses
+  const govFiltered = selectedGov === 'all' 
+    ? businesses 
     : businesses.filter(b => b.governorate === selectedGov);
 
   // If a specific category chip is active on the header selector, prioritize that category. Otherwise, group by all categories.
-  const categoriesToGroup = selectedCategory
-    ? CATEGORIES.filter(c => c.id === selectedCategory)
+  const categoriesToGroup = selectedCategory 
+    ? CATEGORIES.filter(c => c.id === selectedCategory) 
     : CATEGORIES;
 
   const handleToggleCategoryExpand = (catId: string) => {
@@ -133,7 +78,7 @@ export default function BusinessFeed({
         title: biz.name[currentLang],
         text: biz.description[currentLang],
         url: window.location.href,
-      }).catch(() => {});
+      }).catch(console.error);
     } else {
       // Fallback
       alert(`${t.share}: ${biz.name[currentLang]}\n${window.location.href}`);
@@ -251,17 +196,6 @@ export default function BusinessFeed({
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                         referrerPolicy="no-referrer"
                       />
-                      
-                      {/* Shaku Maku Arabic Branding Overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none">
-                        <div className="absolute bottom-0 left-0 right-0 p-2 xs:p-3">
-                          <div className="flex items-center justify-center">
-                            <span className="text-white/90 text-[10px] xs:text-xs font-black tracking-wider bg-black/40 backdrop-blur-sm px-2 py-1 rounded-lg border border-white/20" style={{ fontFamily: 'Cairo, sans-serif' }}>
-                              شكو ماكو
-                            </span>
-                          </div>
-                        </div>
-                      </div>
                     </div>
 
                     {/* Bottom details pack */}
@@ -271,7 +205,7 @@ export default function BusinessFeed({
                         {/* Title & Category with governorate */}
                         <div className="flex flex-col xs:flex-row xs:items-start justify-between gap-1 mb-1 xs:mb-1.5">
                           <h3 className="text-xs xs:text-sm font-black text-[#1A1A1A] group-hover:text-luxury-gold transition-colors line-clamp-1 font-sans">
-                            {biz.name[currentLang] || getBusinessDisplayName(biz, currentLang)}
+                            {biz.name[currentLang]}
                           </h3>
                           
                           <div className="flex items-center gap-0.5 xs:gap-1 text-[9px] xs:text-[11px] text-amber-805 font-black shrink-0 bg-amber-500/10 px-1 xs:px-1.5 py-0.5 rounded-lg border border-amber-500/20 w-fit">
@@ -281,28 +215,14 @@ export default function BusinessFeed({
                         </div>
 
                         {/* Location Subtext */}
-                        <div className="flex items-center gap-0.5 xs:gap-1 text-[9px] xs:text-[11px] text-zinc-500 mb-1 xs:mb-1.5 font-black">
+                        <div className="flex items-center gap-0.5 xs:gap-1 text-[9px] xs:text-[11px] text-zinc-500 mb-1 xs:mb-2 font-black">
                           <MapPin className="w-3 xs:w-3.5 h-3 xs:h-3.5 text-luxury-coral shrink-0" />
                           <span className="truncate">{biz.address[currentLang]}</span>
                         </div>
 
-                        {/* Phone Number */}
-                        {biz.phoneNumber && (
-                          <div className="flex items-center gap-0.5 xs:gap-1 text-[9px] xs:text-[11px] text-zinc-500 mb-1 xs:mb-1.5 font-black">
-                            <Phone className="w-3 xs:w-3.5 h-3 xs:h-3.5 text-luxury-teal shrink-0" />
-                            <a 
-                              href={`tel:${biz.phoneNumber}`}
-                              className="text-luxury-teal hover:text-luxury-gold transition-colors cursor-pointer underline"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              {biz.phoneNumber}
-                            </a>
-                          </div>
-                        )}
-
                         {/* Description snippet */}
-                        <p className="text-[9px] xs:text-[11px] text-zinc-500 line-clamp-2 leading-relaxed mb-2 xs:mb-3">
-                          {biz.description[currentLang] || getBusinessDescription(biz, currentLang)}
+                        <p className="text-[9px] xs:text-[11px] text-zinc-500 line-clamp-2 leading-relaxed mb-2 xs:mb-4">
+                          {biz.description[currentLang]}
                         </p>
                       </div>
 
@@ -417,27 +337,12 @@ export default function BusinessFeed({
             {t.noBusinessesFound}
           </h3>
           <p className="text-xs text-zinc-500">
-            {currentLang === 'en'
+            {currentLang === 'en' 
               ? 'Try switching the governorate back to "All Iraq 🇮🇶" to see national social hubs!'
               : currentLang === 'ku'
                 ? 'هەوڵ بدە پارێزگاکە بگۆڕیت بۆ "هەموو عێراق 🇮🇶" تا شوێنەکان ببینی!'
                 : 'حاول تغيير المحافظة إلى "كل العراق 🇮🇶" لتستعرض الأماكن والشركات على نطاق الوطن!'}
           </p>
-        </div>
-      )}
-
-      {/* Global Load More Button for cursor pagination */}
-      {hasMore && onLoadMore && (
-        <div className="text-center pt-6">
-          <button
-            onClick={onLoadMore}
-            disabled={loadingMore}
-            className="px-8 py-3 bg-luxury-bg text-white font-bold rounded-full hover:bg-luxury-teal transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
-          >
-            {loadingMore
-              ? (currentLang === 'en' ? 'Loading...' : currentLang === 'ku' ? 'تۆمارکردن...' : 'جاري التحميل...')
-              : (currentLang === 'en' ? 'Load More Businesses' : currentLang === 'ku' ? 'زیاتر باربکە' : 'تحميل المزيد')}
-          </button>
         </div>
       )}
 

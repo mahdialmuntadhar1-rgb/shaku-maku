@@ -5,12 +5,13 @@ import {
   Eye, EyeOff, CheckCircle2, Award, ArrowRight, ArrowLeft
 } from 'lucide-react';
 import { Language, UserProfile } from '../types';
+import { auth, db, signInWithGoogle } from '../firebase';
 import { 
-  registerUser, 
-  loginUser, 
-  requestPasswordReset, 
-  confirmPasswordReset 
-} from '../shakuAuth';
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword,
+  updateProfile
+} from 'firebase/auth';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -18,7 +19,6 @@ interface AuthModalProps {
   currentLang: Language;
   onCustomEmailLogin: (email: string) => void;
   onAuthSuccess?: (userProfile: UserProfile) => void;
-  onPasswordReset?: (email: string) => void;
 }
 
 export default function AuthModal({
@@ -26,16 +26,14 @@ export default function AuthModal({
   onClose,
   currentLang,
   onCustomEmailLogin,
-  onAuthSuccess,
-  onPasswordReset
+  onAuthSuccess
 }: AuthModalProps) {
   const [isSignUp, setIsSignUp] = useState(false);
-  const [showForgot, setShowForgot] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [role, setRole] = useState<'user' | 'owner'>('user');
-
+  
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
   const [loading, setLoading] = useState(false);
@@ -76,14 +74,7 @@ export default function AuthModal({
       or: "or",
       loading: "Processing secure request...",
       success_registered: "Account registered successfully! Welcome to Saku Maku.",
-      success_logged: "Welcome back! Login successful.",
-      forgot_pwd: "Forgot password?",
-      forgot_title: "Reset Password",
-      forgot_desc: "Enter your email and we'll send you a reset link.",
-      forgot_btn: "Send Reset Link",
-      forgot_success: "Reset link sent! Check your email inbox.",
-      back_login: "Back to login",
-      firebase_disabled: "Firebase Auth is not enabled. Please go to Firebase Console > Authentication > Sign-in method, then enable 'Email/Password' and 'Google' providers."
+      success_logged: "Welcome back! Login successful."
     },
     ar: {
       title_login: "الدخول لمنصة شكو ماكو",
@@ -114,14 +105,7 @@ export default function AuthModal({
       or: "أو",
       loading: "جاري معالجة الطلب بأمان...",
       success_registered: "تم إنشاء الحساب بنجاح! أهلاً بك في منصة شكو ماكو.",
-      success_logged: "أهلاً ومرحباً بك مجدداً! تم تسجيل الدخول.",
-      forgot_pwd: "نسيت كلمة المرور؟",
-      forgot_title: "إعادة تعيين كلمة المرور",
-      forgot_desc: "أدخل بريدك الإلكتروني وسنرسل لك رابط إعادة التعيين.",
-      forgot_btn: "إرسال رابط التعيين",
-      forgot_success: "تم إرسال رابط التعيين! تفقد بريدك الإلكتروني.",
-      back_login: "العودة لتسجيل الدخول",
-      firebase_disabled: "لم يتم تفعيل مصادقة Firebase. يرجى الذهاب إلى Firebase Console > Authentication > Sign-in method، ثم تفعيل مزودي 'Email/Password' و 'Google'."
+      success_logged: "أهلاً ومرحباً بك مجدداً! تم تسجيل الدخول."
     },
     ku: {
       title_login: "چوونەژوور بۆ شەکو مەکو",
@@ -152,24 +136,53 @@ export default function AuthModal({
       or: "یان",
       loading: "خەریکە پرۆسێس دەکرێت...",
       success_registered: "ئەکاونتەکەت سەرکەوتووانە دروستکرا! بەخێربێیت.",
-      success_logged: "بەخێربێیتەوە! چوونەژوورەوە سەرکەوتوو بوو.",
-      forgot_pwd: "وشەی نهێنیت لەبیرکردووە؟",
-      forgot_title: "گۆڕینی وشەی نهێنی",
-      forgot_desc: "ئیمەیڵەکەت بنووسە و ئێمە لینکی گۆڕینەوەی بۆ دەنێرین.",
-      forgot_btn: "لینکی گۆڕینەوە بنێرە",
-      forgot_success: "لینکی گۆڕینەوە نێردرا! ئیمەیڵەکەت بپشکۆنە.",
-      back_login: "گەڕانەوە بۆ چوونەژوورەوە",
-      firebase_disabled: "Firebase Auth چالاک نەکراوە. تکایە بچۆ بۆ Firebase Console > Authentication > Sign-in method، پاشان 'Email/Password' و 'Google' چالاک بکە."
+      success_logged: "بەخێربێیتەوە! چوونەژوورەوە سەرکەوتوو بوو."
     }
   }[currentLang];
 
   const handleGoogleClick = async () => {
-    setErrorMsg(currentLang === 'en' 
-      ? 'Google sign-in is temporarily unavailable. Please use email/password login.' 
-      : currentLang === 'ar' 
-        ? 'تسجيل الدخول بحساب Google غير متاح مؤقتًا. يرجى استخدام البريد الإلكتروني وكلمة المرور.'
-        : 'چوونەژوورەوەی Google بەردەست نییە. تکایە بە ئیمەیڵ و وشەی نهێنی بچۆ ژوورەوە.'
-    );
+    setLoading(true);
+    setErrorMsg('');
+    try {
+      const userObj = await signInWithGoogle();
+      if (userObj) {
+        // Create user document in firestore if not exists
+        const userRef = doc(db, 'users', userObj.uid);
+        const docSnap = await getDoc(userRef);
+        
+        let profileDetails: UserProfile;
+        if (!docSnap.exists()) {
+          const isAdmin = userObj.email === 'safaribosafar@gmail.com' || userObj.email === 'mahdialmuntadhar1@gmail.com';
+          profileDetails = {
+            uid: userObj.uid,
+            displayName: userObj.displayName || 'Iraqi Guest',
+            photoURL: userObj.photoURL || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80",
+            email: userObj.email || '',
+            createdAt: new Date().toISOString(),
+            role: isAdmin ? 'admin' : 'user',
+            onboarded: false,
+            businessId: null
+          };
+          await setDoc(userRef, profileDetails);
+        } else {
+          profileDetails = docSnap.data() as UserProfile;
+        }
+
+        setSuccessMsg(L.success_logged);
+        if (onAuthSuccess) {
+          onAuthSuccess(profileDetails);
+        }
+        setTimeout(() => {
+          onClose();
+          setSuccessMsg('');
+        }, 1500);
+      }
+    } catch (err: any) {
+      console.error(err);
+      setErrorMsg(err.message || 'Google Auth Cancelled or Failed.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleEmailAuthSubmit = async (e: React.FormEvent) => {
@@ -190,37 +203,69 @@ export default function AuthModal({
 
     try {
       if (isSignUp) {
-        const data = await registerUser(email.trim(), password, displayName.trim(), role);
+        // 1. Create firebase auth email account
+        const credential = await createUserWithEmailAndPassword(auth, email.trim(), password);
+        await updateProfile(credential.user, {
+          displayName: displayName.trim()
+        });
+
+        // 2. Create the firestore profile
+        const userRef = doc(db, 'users', credential.user.uid);
+        
+        const isAdmin = email.trim().toLowerCase() === 'safaribosafar@gmail.com' || email.trim().toLowerCase() === 'mahdialmuntadhar1@gmail.com';
         const profileDetails: UserProfile = {
-          uid: data.user.uid,
-          displayName: data.user.displayName,
-          photoURL: data.user.photoURL,
-          email: data.user.email,
+          uid: credential.user.uid,
+          displayName: displayName.trim(),
+          photoURL: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80",
+          email: email.trim().toLowerCase(),
           createdAt: new Date().toISOString(),
-          role: (data.user.role as 'user' | 'owner' | 'admin'),
-          onboarded: data.user.onboarded,
-          businessId: data.user.businessId,
+          role: isAdmin ? 'admin' : role,
+          onboarded: false,
+          businessId: null
         };
+
+        await setDoc(userRef, profileDetails);
         setSuccessMsg(L.success_registered);
-        if (onAuthSuccess) onAuthSuccess(profileDetails);
+        
+        if (onAuthSuccess) {
+          onAuthSuccess(profileDetails);
+        }
+        
         setTimeout(() => {
           onClose();
           setSuccessMsg('');
         }, 2000);
       } else {
-        const data = await loginUser(email.trim(), password);
-        const profileDetails: UserProfile = {
-          uid: data.user.uid,
-          displayName: data.user.displayName,
-          photoURL: data.user.photoURL,
-          email: data.user.email,
-          createdAt: new Date().toISOString(),
-          role: (data.user.role as 'user' | 'owner' | 'admin'),
-          onboarded: data.user.onboarded,
-          businessId: data.user.businessId,
-        };
+        // Login flow
+        const credential = await signInWithEmailAndPassword(auth, email.trim(), password);
+        
+        // Retrieve firestore profile details
+        const userRef = doc(db, 'users', credential.user.uid);
+        const docSnap = await getDoc(userRef);
+        
+        let profileDetails: UserProfile;
+        if (!docSnap.exists()) {
+          const isAdmin = credential.user.email === 'safaribosafar@gmail.com' || credential.user.email === 'mahdialmuntadhar1@gmail.com';
+          profileDetails = {
+            uid: credential.user.uid,
+            displayName: credential.user.displayName || credential.user.email?.split('@')[0] || 'Explorer User',
+            photoURL: credential.user.photoURL || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80",
+            email: credential.user.email || '',
+            createdAt: new Date().toISOString(),
+            role: isAdmin ? 'admin' : 'user',
+            onboarded: false,
+            businessId: null
+          };
+          await setDoc(userRef, profileDetails);
+        } else {
+          profileDetails = docSnap.data() as UserProfile;
+        }
+
         setSuccessMsg(L.success_logged);
-        if (onAuthSuccess) onAuthSuccess(profileDetails);
+        if (onAuthSuccess) {
+          onAuthSuccess(profileDetails);
+        }
+        
         setTimeout(() => {
           onClose();
           setSuccessMsg('');
@@ -228,26 +273,21 @@ export default function AuthModal({
       }
     } catch (err: any) {
       console.error("Auth Failure details: ", err);
-      setErrorMsg(err.message || 'Authentication failed');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleForgotPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) return;
-    setLoading(true);
-    setErrorMsg('');
-    setSuccessMsg('');
-    try {
-      if (onPasswordReset) {
-        await onPasswordReset(email.trim());
-        setSuccessMsg(L.forgot_success);
+      let localizedErr = err.message;
+      if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
+        localizedErr = currentLang === 'en' 
+          ? 'Invalid email or incorrect password. Please try again.' 
+          : 'البريد الإلكتروني أو كلمة المرور غير صحيحة. يرجى المحاولة ثانية.';
+      } else if (err.code === 'auth/email-already-in-use') {
+        localizedErr = currentLang === 'en'
+          ? 'This email address is already registered. Please login instead.'
+          : 'هذا البريد الإلكتروني مسجل بالفعل. يرجى اختيار تسجيل الدخول.';
+      } else if (err.code === 'auth/invalid-email') {
+        localizedErr = currentLang === 'en' ? 'Invalid email format' : 'صيغة البريد الإلكتروني غير صالحة';
+      } else if (err.code === 'auth/weak-password') {
+        localizedErr = currentLang === 'en' ? 'Weak password! Use at least 6 characters.' : 'كلمة المرور ضعيفة جداً! يرجى كتابة 6 أحرف على الأقل.';
       }
-    } catch (err: any) {
-      console.error("Password reset error: ", err);
-      setErrorMsg(err.message || 'Reset request failed');
+      setErrorMsg(localizedErr);
     } finally {
       setLoading(false);
     }
@@ -300,10 +340,10 @@ export default function AuthModal({
             </div>
             
             <h2 className="text-lg xs:text-xl font-black bg-gradient-to-r from-luxury-gold to-white bg-clip-text text-transparent mt-3">
-              {showForgot ? L.forgot_title : (isSignUp ? L.title_signup : L.title_login)}
+              {isSignUp ? L.title_signup : L.title_login}
             </h2>
             <p className="text-[11px] sm:text-xs text-zinc-400 max-w-sm mx-auto leading-relaxed">
-              {showForgot ? L.forgot_desc : (isSignUp ? L.desc_signup : L.desc_login)}
+              {isSignUp ? L.desc_signup : L.desc_login}
             </p>
           </div>
 
@@ -331,7 +371,7 @@ export default function AuthModal({
           )}
 
           {/* Real Auth form with email / password */}
-          <form onSubmit={showForgot ? handleForgotPassword : handleEmailAuthSubmit} className="space-y-4">
+          <form onSubmit={handleEmailAuthSubmit} className="space-y-4">
             
             {/* Display Name on Sign Up */}
             {isSignUp && (
@@ -371,51 +411,33 @@ export default function AuthModal({
               </div>
             </div>
 
-            {/* Password - hidden in forgot mode */}
-            {!showForgot && (
-              <div className="space-y-1">
-                <label className="text-[10px] uppercase font-black text-luxury-gold/80 tracking-wider block font-mono">
-                  {L.pwd}
-                </label>
-                <div className="relative flex items-center">
-                  <Lock className="absolute left-3.5 w-4 h-4 text-zinc-500" />
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    required
-                    placeholder={L.pwd_placeholder}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full bg-black/40 border border-white/15 focus:border-luxury-gold/50 text-xs pl-10 pr-10 py-3 rounded-xl text-white placeholder-zinc-500 focus:outline-none transition font-semibold"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3.5 text-zinc-500 hover:text-white transition cursor-pointer"
-                  >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
-                {/* Forgot password link */}
-                {!isSignUp && (
-                  <div className={`text-right mt-1 ${isRtl ? 'text-left' : ''}`}>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowForgot(true);
-                        setErrorMsg('');
-                        setSuccessMsg('');
-                      }}
-                      className="text-[10px] text-luxury-gold/70 hover:text-luxury-gold transition cursor-pointer font-semibold"
-                    >
-                      {L.forgot_pwd}
-                    </button>
-                  </div>
-                )}
+            {/* Password */}
+            <div className="space-y-1">
+              <label className="text-[10px] uppercase font-black text-luxury-gold/80 tracking-wider block font-mono">
+                {L.pwd}
+              </label>
+              <div className="relative flex items-center">
+                <Lock className="absolute left-3.5 w-4 h-4 text-zinc-500" />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  required
+                  placeholder={L.pwd_placeholder}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full bg-black/40 border border-white/15 focus:border-luxury-gold/50 text-xs pl-10 pr-10 py-3 rounded-xl text-white placeholder-zinc-500 focus:outline-none transition font-semibold"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 text-zinc-500 hover:text-white transition cursor-pointer"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
               </div>
-            )}
+            </div>
 
             {/* If Sign Up, let them choose a role context beautifully */}
-            {isSignUp && !showForgot && (
+            {isSignUp && (
               <div className="space-y-1.5 pt-1">
                 <label className="text-[10px] uppercase font-black text-luxury-gold/80 tracking-wider block font-mono">
                   {L.role_label}
@@ -467,38 +489,18 @@ export default function AuthModal({
               disabled={loading}
               className="w-full py-3.5 bg-gradient-to-r from-luxury-teal via-[#1E4143] to-luxury-gold hover:opacity-90 text-white font-black text-xs uppercase tracking-wider rounded-xl transition duration-300 shadow-xl cursor-pointer text-center font-mono border border-white/10 disabled:opacity-50"
             >
-              {loading ? L.loading : (showForgot ? L.forgot_btn : (isSignUp ? L.submit_signup : L.submit_login))}
+              {loading ? L.loading : (isSignUp ? L.submit_signup : L.submit_login)}
             </button>
-
-            {/* Back to login link when in forgot mode */}
-            {showForgot && (
-              <div className="text-center">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowForgot(false);
-                    setErrorMsg('');
-                    setSuccessMsg('');
-                  }}
-                  className="text-[11px] font-black text-luxury-gold hover:underline cursor-pointer tracking-wide uppercase"
-                >
-                  {L.back_login}
-                </button>
-              </div>
-            )}
           </form>
 
-          {/* OR separator - hidden in forgot mode */}
-          {!showForgot && (
-            <div className="flex items-center gap-3 py-1">
-              <div className="flex-grow h-[1px] bg-white/10"></div>
-              <span className="text-[10px] uppercase font-black tracking-widest text-zinc-500 font-mono">{L.or}</span>
-              <div className="flex-grow h-[1px] bg-white/10"></div>
-            </div>
-          )}
+          {/* OR separator */}
+          <div className="flex items-center gap-3 py-1">
+            <div className="flex-grow h-[1px] bg-white/10"></div>
+            <span className="text-[10px] uppercase font-black tracking-widest text-zinc-500 font-mono">{L.or}</span>
+            <div className="flex-grow h-[1px] bg-white/10"></div>
+          </div>
 
-          {/* Social Google/Gmail Login button - hidden in forgot mode */}
-          {!showForgot && (
+          {/* Social Google/Gmail Login button */}
           <button
             onClick={handleGoogleClick}
             disabled={loading}
@@ -524,10 +526,8 @@ export default function AuthModal({
             </svg>
             <span>{L.google_btn}</span>
           </button>
-          )}
 
-          {/* Toggle login vs signup - hidden in forgot mode */}
-          {!showForgot && (
+          {/* Toggle login vs signup */}
           <div className="text-center">
             <button
               onClick={() => {
@@ -540,10 +540,8 @@ export default function AuthModal({
               {isSignUp ? L.login_prompt : L.create_prompt}
             </button>
           </div>
-          )}
 
-          {/* Safe testing bypass sandbox accounts within iframe - hidden in forgot mode */}
-          {!showForgot && (
+          {/* Safe testing bypass sandbox accounts within iframe */}
           <div className="p-4 bg-white/5 border border-white/10 rounded-2xl text-left space-y-2 mt-2">
             <h4 className="text-[10px] font-extrabold text-amber-400 uppercase tracking-widest flex items-center gap-1.5 font-mono">
               <Sparkles className="w-3.5 h-3.5 text-amber-400" />
@@ -576,7 +574,6 @@ export default function AuthModal({
               </button>
             </div>
           </div>
-          )}
 
         </div>
       </motion.div>

@@ -1,6 +1,6 @@
 export type Language = 'ar' | 'ku' | 'en';
 
-export type GovernorateCode = 'all' | 'baghdad' | 'erbil' | 'basra' | 'sulaymaniyah' | 'najaf' | 'mosul' | 'karbala' | 'kirkuk' | 'anbar' | 'duhok' | 'babil' | 'diyala' | 'wasit' | 'saladin' | 'maysan' | 'dhiqar' | 'muthanna' | 'qadisiyyah' | 'halabja' | 'nineveh';
+export type GovernorateCode = 'all' | 'baghdad' | 'erbil' | 'basra' | 'sulaymaniyah' | 'najaf' | 'mosul' | 'karbala' | 'kirkuk' | 'anbar' | 'duhok' | 'babil' | 'diyala' | 'wasit' | 'saladin' | 'maysan' | 'dhiqar' | 'muthanna' | 'qadisiya' | 'halabja';
 
 export interface Governorate {
   code: GovernorateCode;

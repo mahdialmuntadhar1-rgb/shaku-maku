@@ -6,14 +6,10 @@ import {
   ChevronDown, MapPin
 } from 'lucide-react';
 import { Language, GovernorateCode, Business, SocialPost, UserProfile, HeroSlide } from './types';
-import { TRANSLATIONS, CATEGORIES, GOVERNORATES, HERO_SLIDES } from './data';
-import { db, auth } from './firebase';
+import { INITIAL_BUSINESSES, TRANSLATIONS, CATEGORIES, INITIAL_POSTS, GOVERNORATES, HERO_SLIDES } from './data';
+import { auth, db, signInWithGoogle } from './firebase';
+import { onAuthStateChanged, signOut, User, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { collection, onSnapshot, setDoc, doc, updateDoc } from 'firebase/firestore';
-import { getCurrentUser, logoutUser, loginUser, registerUser } from './shakuAuth';
-import { sendPasswordResetEmail } from 'firebase/auth';
-
-// Fixed Admin Email Configuration
-const ADMIN_EMAIL = 'mahdialmuntadhar1@gmail.com';
 
 // Saku Maku Modular Components
 import Header from './components/Header';
@@ -26,16 +22,14 @@ import AddBusinessForm from './components/AddBusinessForm';
 import AboutSakuMaku from './components/AboutSakuMaku';
 import AdminPanel from './components/AdminPanel';
 import AuthModal from './components/AuthModal';
-import InstallPrompt from './components/InstallPrompt';
-import PWAInstallButton from './components/PWAInstallButton';
 
 export default function App() {
   const [currentLang, setCurrentLang] = useState<Language>('ar'); // Default: Arabic
   const [selectedGov, setSelectedGov] = useState<GovernorateCode>('all'); // Default: All Iraq
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   
-  // Custom Auth User state
-  const [user, setUser] = useState<{ uid: string; email: string; displayName: string } | null>(null);
+  // Real-time Authenticated Firebase User state
+  const [user, setUser] = useState<User | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 
   // Saku Maku core Reactive businesses database
@@ -43,13 +37,13 @@ export default function App() {
   
   // Saku Maku elevated Live Social posts stream
   const [posts, setPosts] = useState<SocialPost[]>([]);
-
+  
   // Navigation active tab
   const [activeTab, setActiveTab] = useState<'discover' | 'feed' | 'map' | 'add' | 'about' | 'admin'>('discover');
-
+  
   // Real-time keyword filter
   const [searchQuery, setSearchQuery] = useState('');
-
+  
   // Merchant active story popup state
   const [activeStory, setActiveStory] = useState<string[] | null>(null);
   const [activeStoryIdx, setActiveStoryIdx] = useState(0);
@@ -57,11 +51,6 @@ export default function App() {
   const [govDropdownOpen, setGovDropdownOpen] = useState(false);
   const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
-
-  // Single-source data loading states
-  const [bizLoading, setBizLoading] = useState(true);
-  const [postsLoading, setPostsLoading] = useState(true);
-  const [dataError, setDataError] = useState<string | null>(null);
 
   const t = TRANSLATIONS[currentLang];
   const isRtl = currentLang === 'ar' || currentLang === 'ku';
@@ -81,7 +70,7 @@ export default function App() {
             try {
               await setDoc(doc(db, 'hero_slides', slide.id), slide);
             } catch (err) {
-              // silently ignore seed error
+              console.error("Fails seeding hero slide: ", err);
             }
           });
         }
@@ -93,7 +82,7 @@ export default function App() {
         setHeroSlides(list);
       }
     }, (error) => {
-      // silently ignore sync error
+      console.error("Error syncing hero slides in Firestore: ", error);
       setHeroSlides(HERO_SLIDES);
     });
     return () => unsubscribe();
@@ -106,24 +95,33 @@ export default function App() {
     const dummyPassword = "SandboxPassword123!";
 
     try {
-      let data;
+      let credential;
       try {
-        data = await loginUser(cleanEmail, dummyPassword);
+        credential = await signInWithEmailAndPassword(auth, cleanEmail, dummyPassword);
       } catch (signInErr: any) {
-        if (signInErr.message?.includes('Invalid') || signInErr.message?.includes('No account')) {
-          data = await registerUser(cleanEmail, dummyPassword, cleanEmail.split('@')[0], 'user');
+        if (signInErr.code === 'auth/user-not-found' || signInErr.code === 'auth/invalid-credential' || signInErr.code === 'auth/invalid-login-credentials') {
+          credential = await createUserWithEmailAndPassword(auth, cleanEmail, dummyPassword);
         } else {
           throw signInErr;
         }
       }
 
-      const isAdmin = cleanEmail === ADMIN_EMAIL;
+      const firebaseUser = credential.user;
+
+      if (!firebaseUser.displayName) {
+        await updateProfile(firebaseUser, {
+          displayName: cleanEmail.split('@')[0]
+        });
+      }
+
+      const isAdmin = cleanEmail === 'mahdialmuntadhar1@gmail.com' || cleanEmail === 'safaribosafar@gmail.com';
       const isOwner = cleanEmail.includes('owner');
 
+      const userRef = doc(db, 'users', firebaseUser.uid);
       const newProfile: UserProfile = {
-        uid: data.user.uid,
-        displayName: data.user.displayName || cleanEmail.split('@')[0],
-        photoURL: isAdmin 
+        uid: firebaseUser.uid,
+        displayName: firebaseUser.displayName || cleanEmail.split('@')[0],
+        photoURL: cleanEmail === 'mahdialmuntadhar1@gmail.com' || cleanEmail === 'safaribosafar@gmail.com' 
           ? "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" 
           : "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80",
         email: cleanEmail,
@@ -131,74 +129,106 @@ export default function App() {
         role: isAdmin ? 'admin' : (isOwner ? 'owner' : 'user'),
         onboarded: isOwner, 
         businessId: isOwner ? 'b-onboard-demo' : null,
+        businessOnboarding: isOwner ? {
+          name: 'Classic Baghdadi Café',
+          category: 'cafe_bakery',
+          governorate: 'baghdad',
+          address: 'Arasat Street, Karrada District',
+          phone: '+9647701234567',
+          whatsApp: '+9647701234567',
+          logo: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=120&auto=format&fit=crop&q=80',
+          coverImage: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&auto=format&fit=crop&q=80',
+          description: 'Elite cozy spot for specialty brews.'
+        } : undefined
       };
 
-      setUser({ uid: data.user.uid, email: data.user.email, displayName: data.user.displayName });
-      setUserProfile(newProfile);
-      // auth success
-    } catch (err) {
-      // silently ignore auth error
-    }
-  };
-
-  // Password reset functionality
-  const handlePasswordReset = async (email: string) => {
-    try {
-      const actionCodeSettings = {
-        url: 'https://shakumaku.pages.dev/',
-        handleCodeInApp: false,
-      };
-      await sendPasswordResetEmail(auth, email, actionCodeSettings);
-      alert(
-        currentLang === 'en' 
-          ? 'Password reset email sent! Please check your inbox and spam folder.'
-          : currentLang === 'ku'
-          ? 'ئیمەیڵی ڕێستکردنی تێپەڕەواژێ نێررا! تکایە سندووقی پۆستەکەت و سپامەکەت بپشکنە.'
-          : 'تم إرسال بريد إعادة تعيين كلمة المرور! يرجى التحقق من صندوق الوارد والرسائل غير المرغوب فيها.'
-      );
-    } catch (error: any) {
-      console.error('Password reset error:', error);
-      alert(
-        currentLang === 'en'
-          ? 'Failed to send password reset email. Please check your email address and try again.'
-          : currentLang === 'ku'
-          ? 'نەیتوانی ئیمەیڵی ڕێستکردنی تێپەڕەواژێ بنێرێت. تکایە ئیمەیڵەکەت بپشکنە و دووبارە هەوڵبەرەوە.'
-          : 'فشل في إرسال بريد إعادة تعيين كلمة المرور. يرجى التحقق من عنوان البريد الإلكتروني والمحاولة مرة أخرى.'
-      );
-    }
-  };
-
-  // Custom Auth state initialization
-  useEffect(() => {
-    const initAuth = async () => {
-      const storedUser = localStorage.getItem('shaku_user');
-      const storedToken = localStorage.getItem('shaku_token');
-      if (storedUser && storedToken) {
-        try {
-          const parsed = JSON.parse(storedUser);
-          setUser({ uid: parsed.uid, email: parsed.email, displayName: parsed.displayName });
-          setUserProfile(parsed as UserProfile);
-        } catch {
-          localStorage.removeItem('shaku_user');
-          localStorage.removeItem('shaku_token');
-        }
+      if (isOwner) {
+        const demoBiz = {
+          id: 'b-onboard-demo',
+          name: { ar: 'مقهى البغدادي الكلاسيكي ☕', ku: 'کافێی کلاسیکی بەغدادی ☕', en: 'Classic Baghdadi Café ☕' },
+          description: { ar: 'أرقى أنواع القهوة الفلتر والحلويات الشرقية في الكرادة.', ku: 'باشترین جۆرەکانی قاوە و شیرینییەکان.', en: 'Cozy traditional Iraqi roaster in Karada.' },
+          category: 'cafe_bakery',
+          governorate: 'baghdad',
+          rating: 4.9,
+          reviewsCount: 42,
+          image: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&auto=format&fit=crop&q=80',
+          images: ['https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&auto=format&fit=crop&q=80'],
+          avatar: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=120&auto=format&fit=crop&q=80',
+          isVerified: true,
+          phoneNumber: '+9647701234567',
+          address: { ar: 'شارع العرصات، الكرادة', ku: 'جادەی عەرەسات، بەغداد', en: 'Arasat Street, Karrada' },
+          likes: 35,
+          saves: 18,
+          mapCoords: { x: 48, y: 58 },
+          ownerUid: firebaseUser.uid
+        };
+        await setDoc(doc(db, 'businesses', 'b-onboard-demo'), demoBiz, { merge: true });
       }
+
+      await setDoc(userRef, newProfile, { merge: true });
+      setUser(firebaseUser);
+      setUserProfile(newProfile);
+      console.log("Firebase Auth sandbox preset session authenticated successfully for: ", cleanEmail);
+    } catch (err) {
+      console.error("Error setting custom user in Firebase Auth / Firestore: ", err);
+    }
+  };
+
+  // Real-time Auth Listening and User creation mapping inside Firestore
+  useEffect(() => {
+    let unsubProfile: (() => void) | null = null;
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      setUser(firebaseUser);
+      if (firebaseUser) {
+        const userRef = doc(db, 'users', firebaseUser.uid);
+        unsubProfile = onSnapshot(userRef, (docSnap) => {
+          if (docSnap.exists()) {
+            setUserProfile(docSnap.data() as UserProfile);
+          } else {
+            const isAdmin = firebaseUser.email === 'safaribosafar@gmail.com' || firebaseUser.email === 'mahdialmuntadhar1@gmail.com';
+            const newProfile: UserProfile = {
+              uid: firebaseUser.uid,
+              displayName: firebaseUser.displayName || 'Authorized User',
+              photoURL: firebaseUser.photoURL || '',
+              email: firebaseUser.email || '',
+              createdAt: new Date().toISOString(),
+              role: isAdmin ? 'admin' : 'user',
+              onboarded: false,
+              businessId: null
+            };
+            setDoc(userRef, newProfile).catch(err => console.error("Error seeding profile: ", err));
+            setUserProfile(newProfile);
+          }
+        }, (error) => {
+          console.error("Profile listen error: ", error);
+        });
+      } else {
+        if (unsubProfile) {
+          unsubProfile();
+          unsubProfile = null;
+        }
+        setUserProfile(null);
+      }
+    });
+    return () => {
+      unsubscribe();
+      if (unsubProfile) unsubProfile();
     };
-    initAuth();
   }, []);
 
-  // Secure logout
+  // Secure fully responsive terminations of session
   const handleSecureLogout = async () => {
     try {
-      logoutUser();
+      await signOut(auth);
       localStorage.removeItem('shkomaku_custom_user');
       setUser(null);
       setUserProfile(null);
       setActiveTab('discover');
+      localStorage.removeItem('firebase:authUser:' + auth.app.options.apiKey + ':[DEFAULT]');
       sessionStorage.clear();
-      // logout success
+      console.log("Stale sessions eradicated. Standard non-interactive guests initialized.");
     } catch (err) {
-      // silently ignore logout error
+      console.error("Logout error: ", err);
     }
   };
 
@@ -208,100 +238,113 @@ export default function App() {
       const userRef = doc(db, 'users', user.uid);
       await setDoc(userRef, { role: newRole }, { merge: true });
     } catch (err) {
-      // silently ignore role error
+      console.error("Error setting role: ", err);
     }
   };
 
   const handleUpdateProfile = async (updatedFields: Partial<UserProfile>) => {
     if (!user) return;
-    const updated = { ...userProfile, ...updatedFields } as UserProfile;
-    setUserProfile(updated);
-    localStorage.setItem('user_profile', JSON.stringify(updated));
+    try {
+      const userRef = doc(db, 'users', user.uid);
+      await setDoc(userRef, updatedFields, { merge: true });
+    } catch (err) {
+      console.error("Error updating profile: ", err);
+    }
   };
 
-  // ─────────────────────────────────────────────
-  // SINGLE SOURCE OF TRUTH: JSON files only
-  // No API fallback, no INITIAL fallback, no Firestore overwrite on read.
-  // ─────────────────────────────────────────────
-
-  // Load businesses from JSON only
+  // Real-time Firestore synchronization & Auto-seeding for businesses
   useEffect(() => {
-    let cancelled = false;
-    setBizLoading(true);
-    setDataError(null);
-    const gov = selectedGov === 'all' ? undefined : selectedGov;
+    const ref = collection(db, 'businesses');
+    const unsubscribe = onSnapshot(ref, (snap) => {
+      if (snap.empty) {
+        // Fallback to local businesses immediately so users never see a blank catalog
+        setBusinesses(INITIAL_BUSINESSES);
 
-    fetch('/iraq_businesses.json')
-      .then(r => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        return r.json();
-      })
-      .then((data: Business[]) => {
-        if (cancelled) return;
-        const filtered = gov ? data.filter(b => b.governorate === gov) : data;
-        setBusinesses(filtered);
-      })
-      .catch(() => {
-        if (cancelled) return;
-        setBusinesses([]);
-        setDataError(currentLang === 'en'
-          ? 'Failed to load business data. Please refresh.'
-          : currentLang === 'ku'
-          ? 'بارکردنی داتا شکستی هێنا. تکایە نوێ بکەرەوە.'
-          : 'فشل في تحميل بيانات الأعمال. يرجى التحديث.'
-        );
-      })
-      .finally(() => { if (!cancelled) setBizLoading(false); });
+        // ONLY attempt database seeding if current user is signed-in as administrative operator
+        const isAdminUser = user && user.email === 'safaribosafar@gmail.com';
+        if (isAdminUser) {
+          INITIAL_BUSINESSES.forEach(async (biz) => {
+            try {
+              await setDoc(doc(db, 'businesses', biz.id), {
+                ...biz,
+                ownerUid: 'system-seed'
+              });
+            } catch (e) {
+              console.error("Fails seeding biz: ", e);
+            }
+          });
+        }
+      } else {
+        const list: Business[] = [];
+        snap.forEach((doc) => {
+          list.push(doc.data() as Business);
+        });
+        setBusinesses(list);
+      }
+    }, (error) => {
+      console.error("Firestore businesses synced error: ", error);
+      // Fallback on sync/credential error
+      setBusinesses(INITIAL_BUSINESSES);
+    });
+    return () => unsubscribe();
+  }, [user]);
 
-    return () => { cancelled = true; };
-  }, [selectedGov, currentLang]);
-
-  // Load posts from JSON only
+  // Real-time Firestore synchronization & Auto-seeding for posts
   useEffect(() => {
-    let cancelled = false;
-    setPostsLoading(true);
-    setDataError(null);
+    const ref = collection(db, 'posts');
+    const unsubscribe = onSnapshot(ref, (snap) => {
+      if (snap.empty) {
+        // Fallback to local posts immediately so users never see a blank feed
+        setPosts(INITIAL_POSTS);
 
-    fetch('/iraq_posts.json')
-      .then(r => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        return r.json();
-      })
-      .then((data: SocialPost[]) => {
-        if (cancelled) return;
-        setPosts(data);
-      })
-      .catch(() => {
-        if (cancelled) return;
-        setPosts([]);
-        setDataError(currentLang === 'en'
-          ? 'Failed to load feed data. Please refresh.'
-          : currentLang === 'ku'
-          ? 'بارکردنی فید شکستی هێنا. تکایە نوێ بکەرەوە.'
-          : 'فشل في تحميل بيانات التغذية. يرجى التحديث.'
-        );
-      })
-      .finally(() => { if (!cancelled) setPostsLoading(false); });
-
-    return () => { cancelled = true; };
-  }, [currentLang]);
+        // ONLY attempt database seeding if current user is signed-in as administrative operator
+        const isAdminUser = user && user.email === 'safaribosafar@gmail.com';
+        if (isAdminUser) {
+          INITIAL_POSTS.forEach(async (post) => {
+            try {
+              await setDoc(doc(db, 'posts', post.id), {
+                ...post,
+                authorUid: 'system-seed'
+              });
+            } catch (e) {
+              console.error("Fails seeding post: ", e);
+            }
+          });
+        }
+      } else {
+        const list: SocialPost[] = [];
+        snap.forEach((doc) => {
+          list.push(doc.data() as SocialPost);
+        });
+        list.sort((a, b) => b.id.localeCompare(a.id));
+        setPosts(list);
+      }
+    }, (error) => {
+      console.error("Firestore posts synced error: ", error);
+      // Fallback on sync/credential error
+      setPosts(INITIAL_POSTS);
+    });
+    return () => unsubscribe();
+  }, [user]);
 
   // Filter business array based on search input + governorate matches + category
   const filteredBusinesses = useMemo(() => {
-    if (businesses.length === 0) return businesses;
-
-    const keyword = searchQuery.toLowerCase().trim();
     return businesses.filter(b => {
+      // Governorate Match
       const govMatch = selectedGov === 'all' || b.governorate === selectedGov;
+
+      // Category Match
       const catMatch = !selectedCategory || b.category === selectedCategory;
-      let keywordMatch = !keyword;
-      if (keyword) {
-        const nameStr = (b.name?.[currentLang] || b.name?.en || '').toLowerCase();
-        const descStr = (b.description?.[currentLang] || b.description?.en || '').toLowerCase();
-        const addrStr = (b.address?.[currentLang] || b.address?.en || '').toLowerCase();
-        const catStr = (b.category || '').toLowerCase();
-        keywordMatch = nameStr.includes(keyword) || descStr.includes(keyword) || addrStr.includes(keyword) || catStr.includes(keyword);
-      }
+      
+      // Keyword Match (case-insensitive across translated fields)
+      const keyword = searchQuery.toLowerCase().trim();
+      const keywordMatch = !keyword || 
+        b.name[currentLang].toLowerCase().includes(keyword) ||
+        b.name.en.toLowerCase().includes(keyword) ||
+        b.description[currentLang].toLowerCase().includes(keyword) ||
+        b.address[currentLang].toLowerCase().includes(keyword) ||
+        b.category.toLowerCase().includes(keyword);
+        
       return govMatch && catMatch && keywordMatch;
     });
   }, [businesses, selectedGov, selectedCategory, searchQuery, currentLang]);
@@ -318,7 +361,7 @@ export default function App() {
     try {
       await updateDoc(doc(db, 'businesses', bizId), payload);
     } catch (err) {
-      // silently ignore like error
+      console.error("Error liking business: ", err);
     }
   };
 
@@ -334,7 +377,7 @@ export default function App() {
     try {
       await updateDoc(doc(db, 'businesses', bizId), payload);
     } catch (err) {
-      // silently ignore save error
+      console.error("Error saving business: ", err);
     }
   };
 
@@ -353,7 +396,7 @@ export default function App() {
     try {
       await setDoc(doc(db, 'businesses', fullBiz.id), fullBiz);
     } catch (err) {
-      // silently ignore add error
+      console.error("Error adding live business in Firestore: ", err);
     }
   };
 
@@ -399,21 +442,14 @@ export default function App() {
     }
   };
 
-  // Determine text direction and language class
-  const textDirection = currentLang === 'ar' || currentLang === 'ku' ? 'rtl' : 'ltr';
-  const languageClass = currentLang === 'ar' ? 'text-arabic' : currentLang === 'ku' ? 'text-kurdish' : 'text-english';
-
   return (
-    <div className={`min-h-screen bg-luxury-neutral pb-28 text-[#1A1A1A] flex flex-col selection:bg-luxury-gold selection:text-[#1A1A1A] relative overflow-hidden ${languageClass}`} dir={textDirection}>
+    <div className="min-h-screen bg-luxury-neutral pb-28 text-[#1A1A1A] flex flex-col selection:bg-luxury-gold selection:text-[#1A1A1A] relative overflow-hidden" dir={isRtl ? 'rtl' : 'ltr'}>
       
       {/* Elegant Warm Luxury Atmosphere Glow */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute top-[-5%] left-[-5%] w-[450px] h-[450px] bg-luxury-gold/10 rounded-full blur-[130px]"></div>
         <div className="absolute bottom-[-5%] right-[-5%] w-[450px] h-[450px] bg-luxury-teal/5 rounded-full blur-[130px]"></div>
       </div>
-
-      {/* PWA Install Prompt — placed at the very top for immediate visibility */}
-      <InstallPrompt currentLang={currentLang} />
 
       {/* Dynamic Saku Maku top header */}
       <Header
@@ -447,7 +483,6 @@ export default function App() {
         onAuthSuccess={(profileObj) => {
           setUserProfile(profileObj);
         }}
-        onPasswordReset={handlePasswordReset}
       />
 
       <main className="flex-grow max-w-7xl w-full mx-auto px-4 py-6">
@@ -487,7 +522,6 @@ export default function App() {
         <Hero
           currentLang={currentLang}
           slides={heroSlides}
-          userProfile={userProfile}
           onExploreClick={() => {
             setActiveTab('discover');
             const catElem = document.getElementById('discovery-catalog-section');
@@ -626,8 +660,8 @@ export default function App() {
             }}
             className={`flex flex-col items-center justify-center p-4 rounded-3xl border aspect-square text-center transition-all duration-300 transform hover:scale-[1.02] cursor-pointer relative group overflow-hidden ${
               activeTab === 'discover'
-                ? 'bg-[#1A1A1A] border-[#0F2E2F] text-white shadow-xl shadow-[#0F2E2F]/15 animate-glow-alternate-1'
-                : 'bg-white border-zinc-200 text-zinc-800 hover:border-luxury-gold hover:bg-zinc-50/50 animate-glow-alternate-1'
+                ? 'bg-[#1A1A1A] border-[#0F2E2F] text-white shadow-xl shadow-[#0F2E2F]/15'
+                : 'bg-white border-zinc-200 text-zinc-800 hover:border-luxury-gold hover:bg-zinc-50/50'
             }`}
           >
             <div className={`w-11 h-11 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center text-xl sm:text-2xl mb-2 sm:mb-3 transition-colors duration-300 shrink-0 ${
@@ -658,8 +692,8 @@ export default function App() {
             }}
             className={`flex flex-col items-center justify-center p-4 rounded-3xl border aspect-square text-center transition-all duration-300 transform hover:scale-[1.02] cursor-pointer relative group overflow-hidden ${
               activeTab === 'feed'
-                ? 'bg-[#1A1A1A] border-[#0F2E2F] text-white shadow-xl shadow-[#0F2E2F]/15 animate-glow-alternate-2'
-                : 'bg-white border-zinc-200 text-zinc-800 hover:border-luxury-gold hover:bg-zinc-50/50 animate-glow-alternate-2'
+                ? 'bg-[#1A1A1A] border-[#0F2E2F] text-white shadow-xl shadow-[#0F2E2F]/15'
+                : 'bg-white border-zinc-200 text-zinc-800 hover:border-luxury-gold hover:bg-zinc-50/50'
             }`}
           >
             <div className={`w-11 h-11 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center text-xl sm:text-2xl mb-2 sm:mb-3 relative transition-colors duration-300 shrink-0 ${
@@ -685,18 +719,7 @@ export default function App() {
 
         {/* Core Dashboard Content Switcher tabs */}
         <div id="discovery-catalog-section" className="space-y-6">
-
-          {/* Single-source error banner */}
-          {dataError && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mx-4 sm:mx-0 bg-red-950/40 border border-red-500/30 text-red-200 px-4 py-3 rounded-xl text-sm text-center"
-            >
-              {dataError}
-            </motion.div>
-          )}
-
+          
           <AnimatePresence mode="wait">
             {activeTab === 'discover' && (
               <motion.div
@@ -744,7 +767,6 @@ export default function App() {
                   posts={posts}
                   setPosts={setPosts}
                   user={user}
-                  userProfile={userProfile}
                   onSignIn={() => setAuthModalOpen(true)}
                 />
               </motion.div>
@@ -827,39 +849,31 @@ export default function App() {
       {/* Floating Modern bottom-menu navigation bar (optimized for youth mobile thumb-reach) */}
       <div className="fixed bottom-6 inset-x-4 max-w-lg mx-auto bg-[#1A1A1A]/95 backdrop-blur-xl border border-luxury-gold/35 px-4.5 py-2.5 rounded-[24px] shadow-2xl z-40 flex items-center justify-between gap-1 select-none">
         
-        {/* Business (Discover) tab — vibrant amber/gold accent */}
         <button
           onClick={() => setActiveTab('discover')}
-          className={`relative flex flex-col items-center justify-center flex-1 py-1.5 px-2 rounded-2xl transition-all duration-300 cursor-pointer overflow-hidden ${
+          className={`flex flex-col items-center justify-center flex-1 py-1 px-2.5 rounded-xl transition-all duration-300 cursor-pointer ${
             activeTab === 'discover'
-              ? 'text-amber-400 font-bold bg-gradient-to-b from-amber-500/15 to-transparent border border-amber-400/40 shadow-[0_0_20px_rgba(251,191,36,0.15)]'
-              : 'text-zinc-400 hover:text-amber-200 hover:bg-amber-500/5'
+              ? 'text-luxury-gold font-bold bg-white/5 border border-luxury-gold/25'
+              : 'text-zinc-400 hover:text-white'
           }`}
           id="nav-tab-discover"
         >
-          {activeTab === 'discover' && (
-            <span className="absolute inset-0 bg-gradient-to-t from-amber-500/10 to-transparent animate-pulse pointer-events-none"></span>
-          )}
-          <Compass className={`w-5 h-5 mb-1 ${activeTab === 'discover' ? 'drop-shadow-[0_0_6px_rgba(251,191,36,0.5)]' : ''}`} />
+          <Compass className="w-5 h-5 mb-1" />
           <span className="text-[9px] font-black tracking-tight">{t.exploreTab.split(' ')[0]}</span>
         </button>
 
-        {/* Social Feed tab — vibrant magenta/pink accent */}
         <button
           onClick={() => setActiveTab('feed')}
-          className={`relative flex flex-col items-center justify-center flex-1 py-1.5 px-2 rounded-2xl transition-all duration-300 cursor-pointer overflow-hidden ${
+          className={`flex flex-col items-center justify-center flex-1 py-1 px-2.5 rounded-xl transition-all duration-300 cursor-pointer ${
             activeTab === 'feed'
-              ? 'text-fuchsia-400 font-bold bg-gradient-to-b from-fuchsia-500/15 to-transparent border border-fuchsia-400/40 shadow-[0_0_20px_rgba(232,121,249,0.15)]'
-              : 'text-zinc-400 hover:text-fuchsia-200 hover:bg-fuchsia-500/5'
+              ? 'text-luxury-gold font-bold bg-white/5 border border-luxury-gold/25'
+              : 'text-zinc-400 hover:text-white'
           }`}
           id="nav-tab-feed"
         >
-          {activeTab === 'feed' && (
-            <span className="absolute inset-0 bg-gradient-to-t from-fuchsia-500/10 to-transparent animate-pulse pointer-events-none"></span>
-          )}
           <div className="relative">
-            <Flame className={`w-5 h-5 mb-1 ${activeTab === 'feed' ? 'drop-shadow-[0_0_6px_rgba(232,121,249,0.5)]' : ''}`} />
-            <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-fuchsia-500 animate-ping"></span>
+            <Flame className="w-5 h-5 mb-1 text-inherit" />
+            <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
           </div>
           <span className="text-[9px] font-black tracking-tight">Pulse Feed</span>
         </button>
@@ -1023,13 +1037,6 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* Prominent PWA Installation Button */}
-      <PWAInstallButton
-        currentLang={currentLang}
-        isVisible={true}
-        onInstall={() => console.log('PWA install requested')}
-        onDismiss={() => console.log('PWA install dismissed')}
-      />
     </div>
   );
 }

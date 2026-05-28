@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, sendPasswordResetEmail } from 'firebase/auth';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
 import { getFirestore, doc, getDocFromServer } from 'firebase/firestore';
 import firebaseConfig from '../firebase-applet-config.json';
 
@@ -76,8 +76,11 @@ export async function signInWithGoogle() {
 async function validateFirestoreConnection() {
   try {
     await getDocFromServer(doc(db, 'test', 'connection'));
+    console.info("Firestore configuration handshake successful.");
   } catch (error) {
-    // silently ignore connection validation errors
+    if (error instanceof Error && error.message.includes('the client is offline')) {
+      console.error("Connection validation: client is offline. Please verify Firebase setup.");
+    }
   }
 }
 
