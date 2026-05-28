@@ -1,5 +1,5 @@
 // API Client for Cloudflare Workers Backend
-const API_BASE_URL = (import.meta as any).env?.VITE_API_URL || 'https://billboard3dnakedeye-mor.mahdialmuntadhar1.workers.dev';
+const API_BASE_URL = (import.meta as any).env?.VITE_API_URL || 'https://billboard3d-api.mahdialmuntadhar1.workers.dev';
 
 interface ApiResponse<T> {
   success?: boolean;
@@ -129,6 +129,20 @@ export const authApi = {
 
   async getMe(): Promise<AuthResponse['user']> {
     return apiRequest<AuthResponse['user']>('/api/auth/me', {}, true);
+  },
+
+  async forgotPassword(email: string): Promise<{ token?: string; message: string }> {
+    return apiRequest<{ token?: string; message: string }>('/api/auth/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    }, true);
+  },
+
+  async resetPassword(token: string, password: string): Promise<{ message: string }> {
+    return apiRequest<{ message: string }>('/api/auth/reset-password', {
+      method: 'POST',
+      body: JSON.stringify({ token, password }),
+    }, true);
   },
 
   isAuthenticated(): boolean {

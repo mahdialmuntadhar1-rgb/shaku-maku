@@ -33,6 +33,12 @@ export default function AuthModal({
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+  // Forgot password states
+  const [authMode, setAuthMode] = useState<'login' | 'forgot' | 'reset'>('login');
+  const [resetToken, setResetToken] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
   if (!isOpen) return null;
 
   const isRtl = currentLang === 'ar' || currentLang === 'ku';
@@ -68,7 +74,21 @@ export default function AuthModal({
       or: "or",
       loading: "Processing secure request...",
       success_registered: "Account registered successfully! Welcome to Saku Maku.",
-      success_logged: "Welcome back! Login successful."
+      success_logged: "Welcome back! Login successful.",
+      forgot_title: "Reset Your Password",
+      forgot_desc: "Enter your email address and we'll send you a reset link.",
+      forgot_btn: "Send Reset Link",
+      forgot_success: "Reset token generated! Check below.",
+      reset_title: "Enter New Password",
+      reset_desc: "Enter your new password below.",
+      reset_btn: "Update Password",
+      reset_success: "Password updated successfully! You can now login.",
+      forgot_link: "Forgot password?",
+      back_to_login: "Back to login",
+      token_label: "Your Reset Token (copy this)",
+      new_pwd: "New Password",
+      confirm_pwd: "Confirm Password",
+      pwd_mismatch: "Passwords do not match"
     },
     ar: {
       title_login: "الدخول لمنصة شكو ماكو",
@@ -99,7 +119,21 @@ export default function AuthModal({
       or: "أو",
       loading: "جاري معالجة الطلب بأمان...",
       success_registered: "تم إنشاء الحساب بنجاح! أهلاً بك في منصة شكو ماكو.",
-      success_logged: "أهلاً ومرحباً بك مجدداً! تم تسجيل الدخول."
+      success_logged: "أهلاً ومرحباً بك مجدداً! تم تسجيل الدخول.",
+      forgot_title: "إعادة تعيين كلمة المرور",
+      forgot_desc: "أدخل بريدك الإلكتروني وسنرسل لك رابط إعادة التعيين.",
+      forgot_btn: "إرسال رابط إعادة التعيين",
+      forgot_success: "تم إنشاء رمز إعادة التعيين! انظر أدناه.",
+      reset_title: "أدخل كلمة المرور الجديدة",
+      reset_desc: "أدخل كلمة المرور الجديدة أدناه.",
+      reset_btn: "تحديث كلمة المرور",
+      reset_success: "تم تحديث كلمة المرور بنجاح! يمكنك الآن تسجيل الدخول.",
+      forgot_link: "نسيت كلمة المرور؟",
+      back_to_login: "العودة لتسجيل الدخول",
+      token_label: "رمز إعادة التعيين (انسخ هذا)",
+      new_pwd: "كلمة المرور الجديدة",
+      confirm_pwd: "تأكيد كلمة المرور",
+      pwd_mismatch: "كلمات المرور غير متطابقة"
     },
     ku: {
       title_login: "چوونەژوور بۆ شەکو مەکو",
@@ -130,7 +164,21 @@ export default function AuthModal({
       or: "یان",
       loading: "خەریکە پرۆسێس دەکرێت...",
       success_registered: "ئەکاونتەکەت سەرکەوتووانە دروستکرا! بەخێربێیت.",
-      success_logged: "بەخێربێیتەوە! چوونەژوورەوە سەرکەوتوو بوو."
+      success_logged: "بەخێربێیتەوە! چوونەژوورەوە سەرکەوتوو بوو.",
+      forgot_title: "وشەی نهێنی بگۆڕە",
+      forgot_desc: "ئیمەیڵەکەت بنووسە و لینکی گۆڕینەوە بۆت دەنێردرێت.",
+      forgot_btn: "لینکی گۆڕینەوە بنێرە",
+      forgot_success: "کۆدی گۆڕینەوە دروستکرا! لە خوارەوە ببینە.",
+      reset_title: "وشەی نهێنی نوێ بنووسە",
+      reset_desc: "وشەی نهێنی نوێکەت لە خوارەوە بنووسە.",
+      reset_btn: "وشەی نهێنی نوێ بکە",
+      reset_success: "وشەی نهێنی بە سەرکەوتوویی گۆڕدرا! ئێستا دەتوانیت بچیی ژوورەوە.",
+      forgot_link: "وشەی نهێنیت بیرکردۆتەوە؟",
+      back_to_login: "گەڕانەوە بۆ چوونەژوورەوە",
+      token_label: "کۆدی گۆڕینەوە (ئیمەن کۆپی بکە)",
+      new_pwd: "وشەی نهێنی نوێ",
+      confirm_pwd: "دووبارەکردنەوەی وشەی نهێنی",
+      pwd_mismatch: "وشەی نهێنیەکان یەک ناگرنەوە"
     }
   }[currentLang];
 
@@ -245,6 +293,59 @@ export default function AuthModal({
     }, 1200);
   };
 
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+
+    setLoading(true);
+    setErrorMsg('');
+    setSuccessMsg('');
+
+    try {
+      const response = await authApi.forgotPassword(email.trim());
+      setResetToken(response.token || '');
+      setSuccessMsg(L.forgot_success);
+      setAuthMode('reset');
+    } catch (err: any) {
+      setErrorMsg(err.message || 'Failed to send reset link');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newPassword || !confirmPassword) return;
+    if (newPassword !== confirmPassword) {
+      setErrorMsg(L.pwd_mismatch);
+      return;
+    }
+    if (newPassword.length < 8) {
+      setErrorMsg(currentLang === 'en' ? 'Password must be at least 8 characters' : 'يجب أن لا تقل كلمة المرور عن 8 أحرف');
+      return;
+    }
+
+    setLoading(true);
+    setErrorMsg('');
+    setSuccessMsg('');
+
+    try {
+      await authApi.resetPassword(resetToken, newPassword);
+      setSuccessMsg(L.reset_success);
+      setTimeout(() => {
+        setAuthMode('login');
+        setNewPassword('');
+        setConfirmPassword('');
+        setResetToken('');
+        setSuccessMsg('');
+      }, 2000);
+    } catch (err: any) {
+      setErrorMsg(err.message || 'Failed to reset password');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-[999] flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
       {/* Dark blur glass backdrop */}
@@ -252,7 +353,13 @@ export default function AuthModal({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        onClick={onClose}
+        onClick={() => {
+          setAuthMode('login');
+          setErrorMsg('');
+          setSuccessMsg('');
+          setResetToken('');
+          onClose();
+        }}
         className="fixed inset-0 bg-black/85 backdrop-blur-xl"
       />
 
@@ -269,7 +376,13 @@ export default function AuthModal({
 
         {/* Close Button */}
         <button 
-          onClick={onClose}
+          onClick={() => {
+            setAuthMode('login');
+            setErrorMsg('');
+            setSuccessMsg('');
+            setResetToken('');
+            onClose();
+          }}
           className={`absolute top-4 ${isRtl ? 'left-4' : 'right-4'} p-2 rounded-full bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition cursor-pointer border border-white/5 z-20`}
         >
           <X className="w-4 h-4" />
@@ -283,10 +396,10 @@ export default function AuthModal({
             </div>
             
             <h2 className="text-lg xs:text-xl font-black bg-gradient-to-r from-luxury-gold to-white bg-clip-text text-transparent mt-3">
-              {isSignUp ? L.title_signup : L.title_login}
+              {authMode === 'forgot' ? L.forgot_title : authMode === 'reset' ? L.reset_title : isSignUp ? L.title_signup : L.title_login}
             </h2>
             <p className="text-[11px] sm:text-xs text-zinc-400 max-w-sm mx-auto leading-relaxed">
-              {isSignUp ? L.desc_signup : L.desc_login}
+              {authMode === 'forgot' ? L.forgot_desc : authMode === 'reset' ? L.reset_desc : isSignUp ? L.desc_signup : L.desc_login}
             </p>
           </div>
 
@@ -314,6 +427,7 @@ export default function AuthModal({
           )}
 
           {/* Real Auth form with email / password */}
+          {authMode === 'login' && (
           <form onSubmit={handleEmailAuthSubmit} className="space-y-4">
             
             {/* Display Name on Sign Up */}
@@ -379,6 +493,23 @@ export default function AuthModal({
               </div>
             </div>
 
+            {/* Forgot password link - only in login mode */}
+            {!isSignUp && (
+              <div className="text-right">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAuthMode('forgot');
+                    setErrorMsg('');
+                    setSuccessMsg('');
+                  }}
+                  className="text-[10px] font-bold text-luxury-gold/80 hover:text-luxury-gold cursor-pointer transition"
+                >
+                  {L.forgot_link}
+                </button>
+              </div>
+            )}
+
             {/* If Sign Up, let them choose a role context beautifully */}
             {isSignUp && (
               <div className="space-y-1.5 pt-1">
@@ -435,8 +566,135 @@ export default function AuthModal({
               {loading ? L.loading : (isSignUp ? L.submit_signup : L.submit_login)}
             </button>
           </form>
+          )}
 
-          {/* OR separator */}
+          {/* Forgot Password Form */}
+          {authMode === 'forgot' && (
+            <form onSubmit={handleForgotPassword} className="space-y-4">
+              <div className="space-y-1">
+                <label className="text-[10px] uppercase font-black text-luxury-gold/80 tracking-wider block font-mono">
+                  {L.email}
+                </label>
+                <div className="relative flex items-center">
+                  <Mail className="absolute left-3.5 w-4 h-4 text-zinc-500" />
+                  <input
+                    type="email"
+                    required
+                    placeholder={L.email_placeholder}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full bg-black/40 border border-white/15 focus:border-luxury-gold/50 text-xs pl-10 pr-4 py-3 rounded-xl text-white placeholder-zinc-500 focus:outline-none transition font-semibold"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-3.5 bg-gradient-to-r from-luxury-teal via-[#1E4143] to-luxury-gold hover:opacity-90 text-white font-black text-xs uppercase tracking-wider rounded-xl transition duration-300 shadow-xl cursor-pointer text-center font-mono border border-white/10 disabled:opacity-50"
+              >
+                {loading ? L.loading : L.forgot_btn}
+              </button>
+
+              <div className="text-center">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAuthMode('login');
+                    setErrorMsg('');
+                    setSuccessMsg('');
+                  }}
+                  className="text-[11px] font-black text-luxury-gold hover:underline cursor-pointer tracking-wide uppercase"
+                >
+                  {L.back_to_login}
+                </button>
+              </div>
+            </form>
+          )}
+
+          {/* Reset Password Form */}
+          {authMode === 'reset' && (
+            <form onSubmit={handleResetPassword} className="space-y-4">
+              {/* Show reset token */}
+              {resetToken && (
+                <div className="space-y-1">
+                  <label className="text-[10px] uppercase font-black text-luxury-gold/80 tracking-wider block font-mono">
+                    {L.token_label}
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      readOnly
+                      value={resetToken}
+                      className="w-full bg-black/40 border border-luxury-gold/30 text-xs px-4 py-3 rounded-xl text-luxury-gold font-mono focus:outline-none"
+                      onClick={(e) => (e.target as HTMLInputElement).select()}
+                    />
+                  </div>
+                </div>
+              )}
+
+              <div className="space-y-1">
+                <label className="text-[10px] uppercase font-black text-luxury-gold/80 tracking-wider block font-mono">
+                  {L.new_pwd}
+                </label>
+                <div className="relative flex items-center">
+                  <Lock className="absolute left-3.5 w-4 h-4 text-zinc-500" />
+                  <input
+                    type="password"
+                    required
+                    placeholder="Minimum 8 characters"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    className="w-full bg-black/40 border border-white/15 focus:border-luxury-gold/50 text-xs pl-10 pr-4 py-3 rounded-xl text-white placeholder-zinc-500 focus:outline-none transition font-semibold"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] uppercase font-black text-luxury-gold/80 tracking-wider block font-mono">
+                  {L.confirm_pwd}
+                </label>
+                <div className="relative flex items-center">
+                  <Lock className="absolute left-3.5 w-4 h-4 text-zinc-500" />
+                  <input
+                    type="password"
+                    required
+                    placeholder="Repeat password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="w-full bg-black/40 border border-white/15 focus:border-luxury-gold/50 text-xs pl-10 pr-4 py-3 rounded-xl text-white placeholder-zinc-500 focus:outline-none transition font-semibold"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-3.5 bg-gradient-to-r from-luxury-teal via-[#1E4143] to-luxury-gold hover:opacity-90 text-white font-black text-xs uppercase tracking-wider rounded-xl transition duration-300 shadow-xl cursor-pointer text-center font-mono border border-white/10 disabled:opacity-50"
+              >
+                {loading ? L.loading : L.reset_btn}
+              </button>
+
+              <div className="text-center">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAuthMode('login');
+                    setErrorMsg('');
+                    setSuccessMsg('');
+                    setResetToken('');
+                  }}
+                  className="text-[11px] font-black text-luxury-gold hover:underline cursor-pointer tracking-wide uppercase"
+                >
+                  {L.back_to_login}
+                </button>
+              </div>
+            </form>
+          )}
+
+          {/* OR separator - only in login mode */}
+          {authMode === 'login' && (
+          <>
           <div className="flex items-center gap-3 py-1">
             <div className="flex-grow h-[1px] bg-white/10"></div>
             <span className="text-[10px] uppercase font-black tracking-widest text-zinc-500 font-mono">{L.or}</span>
@@ -517,6 +775,8 @@ export default function AuthModal({
               </button>
             </div>
           </div>
+          </>
+          )}
 
         </div>
       </motion.div>
