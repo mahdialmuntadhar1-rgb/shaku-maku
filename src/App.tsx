@@ -145,7 +145,7 @@ export default function App() {
   const handlePasswordReset = async (email: string) => {
     try {
       const actionCodeSettings = {
-        url: 'https://shakumaku.eu.org/',
+        url: 'https://shakumaku.pages.dev/',
         handleCodeInApp: false,
       };
       await sendPasswordResetEmail(auth, email, actionCodeSettings);
