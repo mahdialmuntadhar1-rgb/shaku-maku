@@ -1,4 +1,29 @@
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+Arabic:wght@300;400;500;600;700;800;900&family=Noto+Sans+Kurdish:wght@300;400;500;600;700;800;900&family=Noto+Kufi+Arabic:wght@300;400;500;600;700;800;900&display=swap');
+
+/* Font loading optimization */
+@font-face {
+  font-family: 'Cairo';
+  font-display: swap;
+  src: local('Cairo');
+}
+
+@font-face {
+  font-family: 'Noto Sans Arabic';
+  font-display: swap;
+  src: local('Noto Sans Arabic');
+}
+
+@font-face {
+  font-family: 'Noto Sans Kurdish';
+  font-display: swap;
+  src: local('Noto Sans Kurdish');
+}
+
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-display: swap;
+  src: local('Plus Jakarta Sans');
+}
 @import "tailwindcss";
 
 @theme {
@@ -18,11 +43,11 @@
 body {
   background-color: #F9F9F9; /* Soft Off-white luxury background */
   color: #1A1A1A; /* Deep Charcoal primary text */
-  font-family: "Plus Jakarta Sans", "Cairo", "Noto Sans Arabic", "Noto Sans Kurdish", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  font-family: "Plus Jakarta Sans", "Cairo", "Noto Sans Arabic", "Noto Sans Kurdish", ui-sans-serif, system-ui, -apple-system, sans-serif !important;
   overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  text-rendering: optimizeLegibility !important;
 }
 
 /* Language-specific text rendering */
@@ -160,26 +185,44 @@ body {
   font-family: "Cairo", "Noto Sans Arabic", "Noto Sans Kurdish", sans-serif;
 }
 
-/* Universal text rendering fixes */
+/* AGGRESSIVE Universal text rendering fixes */
 * {
-  font-family: inherit;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
+  font-family: inherit !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  text-rendering: optimizeLegibility !important;
 }
 
-/* Force proper font inheritance for all elements */
-h1, h2, h3, h4, h5, h6, p, span, div, button, input, textarea, select, option, label, a, li, td, th {
-  font-family: inherit;
+/* Force proper font inheritance for ALL elements */
+h1, h2, h3, h4, h5, h6, p, span, div, button, input, textarea, select, option, label, a, li, td, th, ul, ol, nav, header, footer, main, section, article, aside {
+  font-family: inherit !important;
 }
 
-/* Specific fixes for common text distortion issues */
-.font-sans, .text-xs, .text-sm, .text-base, .text-lg, .text-xl, .text-2xl, .text-3xl {
+/* Override ALL Tailwind and inline styles */
+.font-sans, .text-xs, .text-sm, .text-base, .text-lg, .text-xl, .text-2xl, .text-3xl, .text-4xl, .text-5xl, .text-6xl, .text-7xl, .text-8xl, .text-9xl {
   font-family: "Plus Jakarta Sans", "Cairo", "Noto Sans Arabic", "Noto Sans Kurdish", ui-sans-serif, system-ui, -apple-system, sans-serif !important;
 }
 
 /* Override any conflicting font settings */
-body, html {
+body, html, #root {
+  font-family: "Plus Jakarta Sans", "Cairo", "Noto Sans Arabic", "Noto Sans Kurdish", ui-sans-serif, system-ui, -apple-system, sans-serif !important;
+}
+
+/* Force RTL/LTR text direction */
+[dir="rtl"] * {
+  direction: rtl !important;
+  text-align: right !important;
+  font-family: "Cairo", "Noto Sans Arabic", "Noto Sans Kurdish", sans-serif !important;
+}
+
+[dir="ltr"] * {
+  direction: ltr !important;
+  text-align: left !important;
+  font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, sans-serif !important;
+}
+
+/* Override inline styles and !important declarations */
+*[style*="font-family"] {
   font-family: "Plus Jakarta Sans", "Cairo", "Noto Sans Arabic", "Noto Sans Kurdish", ui-sans-serif, system-ui, -apple-system, sans-serif !important;
 }
 
