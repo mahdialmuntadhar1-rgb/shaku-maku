@@ -38,46 +38,6 @@ export default function SocialFeed({
   // Custom Pagination States for Social Feed
   const [visibleCount, setVisibleCount] = useState(3);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [isGeneratingLive, setIsGeneratingLive] = useState(false);
-
-  const handleStimulateLivePost = async () => {
-    setIsGeneratingLive(true);
-    
-    // Pick the governorate code to use
-    let govToUse = selectedGov;
-    if (selectedGov === 'all') {
-      const validGovs: GovernorateCode[] = [
-        'baghdad', 'erbil', 'basra', 'sulaymaniyah', 'najaf', 'mosul', 
-        'karbala', 'kirkuk', 'anbar', 'duhok', 'babil', 'diyala', 
-        'wasit', 'saladin', 'maysan', 'muthanna', 'qadisiya', 'halabja'
-      ];
-      govToUse = validGovs[Math.floor(Math.random() * validGovs.length)];
-    }
-
-    try {
-      const newLivePost = generateLivePostFromCSV(govToUse);
-      
-      // Save it directly to Firestore so it auto-triggers stream snap
-      await setDoc(doc(db, 'posts', newLivePost.id), {
-        ...newLivePost,
-        authorUid: 'csv-seed-injector'
-      });
-
-      // Show a quick transient overlay or alert
-      const bizNameText = newLivePost.businessName;
-      alert(
-        currentLang === 'en' 
-          ? `🎉 Success! Handpicked and populated a new simulated live update for "${bizNameText}" from the Iraqi Database.`
-          : currentLang === 'ku'
-          ? `🎉 سەرکەوتوو بوو! بابەتێکی نوێ دەربارەی "${bizNameText}" لە پارێزگای دیاریکراو بڵاوکرایەوە.`
-          : `🎉 تم بنجاح! سحب وتوليد تحديث حي لمشروع "${bizNameText}" من قاعدة البيانات العراقية.`
-      );
-    } catch (err) {
-      console.error("Error generating simulated live post: ", err);
-    } finally {
-      setIsGeneratingLive(false);
-    }
-  };
 
   const canCreatePost = userProfile?.role === 'owner' || userProfile?.role === 'admin';
   const canManagePost = (post: SocialPost) =>
@@ -389,11 +349,7 @@ export default function SocialFeed({
     }
   };
 
-<<<<<<< HEAD
-  const currentGovDetails = GOVERNORATES.find(g => g.code === selectedGov);
-  const govNameText = currentGovDetails ? currentGovDetails.name[currentLang] : selectedGov.toUpperCase();
-=======
-  const handleDeletePost = async (postId: string) => {
+const handleDeletePost = async (postId: string) => {
     const confirmMsg = currentLang === 'en' ? 'Delete this post?' : currentLang === 'ku' ? 'ئەم بابەتە بسڕەوە؟' : 'حذف هذا المنشور؟';
     if (!window.confirm(confirmMsg)) return;
     try {
@@ -422,7 +378,6 @@ export default function SocialFeed({
       handleFirestoreError(err, OperationType.UPDATE, `posts/${postId}`);
     }
   };
->>>>>>> 4639a50 (Apply-plan-PWA-CSV-posts-cleanup)
 
   return (
     <div className="w-full max-w-xl mx-auto space-y-8">
@@ -442,56 +397,8 @@ export default function SocialFeed({
         </span>
       </div>
 
-<<<<<<< HEAD
-      {/* Live Local Pulse Simulator Banner */}
-      <div className="bg-gradient-to-br from-[#12121a] via-[#14141d] to-[#181825] border border-indigo-500/10 rounded-[20px] p-5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl">
-        <div className="space-y-1 text-center sm:text-left">
-          <h4 className="text-xs font-black text-rose-400 uppercase tracking-widest flex items-center justify-center sm:justify-start gap-1.5 font-sans">
-            <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
-            <span>
-              {currentLang === 'en' ? 'Live Local Pulse Simulator' : currentLang === 'ku' ? 'سیستمی پەیوەندی زیندوو' : 'محاكي دفق المشاركات الحية للمحافظات'}
-            </span>
-          </h4>
-          <p className="text-[11.5px] text-zinc-400 font-sans leading-relaxed">
-            {currentLang === 'en'
-              ? `Instantly grab, translate, and post real-time social stories about certified Iraqi businesses in ${govNameText}.`
-              : currentLang === 'ku'
-              ? `ڕاستەوخۆ بابەتگەلی ڕاستەقینە و تەرجەمەکراوی فەرمی دەربارەی بازرگانییەکان کۆبکەرەوە لە ${govNameText}.`
-              : `اسحب وانشر تحديثاً حياً، مترجماً، ومصمماً بدقة لأعظم محلات وشركات العراق في محافظة ${govNameText}.`}
-          </p>
-        </div>
-
-        <button
-          type="button"
-          onClick={handleStimulateLivePost}
-          disabled={isGeneratingLive}
-          className="relative px-4 py-2.5 bg-gradient-to-r from-rose-500 to-indigo-600 hover:from-rose-400 hover:to-indigo-500 text-white font-extrabold text-xs rounded-xl cursor-pointer transition active:scale-95 flex items-center gap-1.5 shadow-lg shadow-indigo-500/10 shrink-0 font-sans disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isGeneratingLive ? (
-            <>
-              <span className="w-3 h-3 border-2 border-white/50 border-t-transparent rounded-full animate-spin"></span>
-              <span>{currentLang === 'en' ? 'Simulating...' : 'جاري السحب...'}</span>
-            </>
-          ) : (
-            <>
-              <span>✨</span>
-              <span>
-                {currentLang === 'en' 
-                  ? `Pull ${selectedGov === 'all' ? 'Live Story' : `${selectedGov.toUpperCase()} Story`}`
-                  : currentLang === 'ku'
-                  ? `بکێشە بابەت`
-                  : `سحب منشور حي ${selectedGov === 'all' ? 'عشوائي' : `لـ ${selectedGov.toUpperCase()}`}`}
-              </span>
-            </>
-          )}
-        </button>
-      </div>
-
-      {/* Immersive Refined Social Composer */}
-=======
-      {/* Immersive Refined Social Composer - Owners/Admins only */}
+{/* Immersive Refined Social Composer - Owners/Admins only */}
       {canCreatePost ? (
->>>>>>> 4639a50 (Apply-plan-PWA-CSV-posts-cleanup)
       <div className="bg-[#18191a] border border-[#2f3031]/80 rounded-[20px] p-5 space-y-4.5 shadow-2xl relative overflow-hidden font-sans">
         
         {/* Dynamic Guest Tip Banner instead of restrictive modal lock */}
@@ -1228,36 +1135,12 @@ export default function SocialFeed({
           </h3>
           <p className="text-xs text-zinc-500 max-w-sm mb-4 leading-relaxed">
             {currentLang === 'en' 
-              ? `No businesses in ${govNameText} have active broadcasts yet. Pull an authentic local update from the database now!`
+              ? `No businesses have active broadcasts yet. The feed will show posts when available.`
               : currentLang === 'ku'
-              ? `هیچ کۆمپانیایەک لە ${govNameText} پەخشی زیندووی نییە. بابەتێکی فەرمی ڕاستەقینە لێرەوە پۆست بکە!`
-              : `لم تقم المحلات أو الشركات في محافظة ${govNameText} بنشر حملات ترويجية بعد. اسحب وانشر تحديثاً حقيقياً تلقائياً الآن!`}
+              ? `هیچ کۆمپانیایەک پەخشی زیندووی نییە. بابەتەکان لەوە دەردەکەون کە بەردەست بن.`
+              : `لم تقم المحلات أو الشركات بنشر حملات ترويجية بعد. ستظهر المنشورات عند توفرها.`}
           </p>
 
-          <button
-            type="button"
-            onClick={handleStimulateLivePost}
-            disabled={isGeneratingLive}
-            className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 font-extrabold text-white text-xs rounded-xl transition cursor-pointer flex items-center justify-center gap-1.5 active:scale-95 shadow-lg shadow-indigo-600/10 disabled:opacity-50"
-          >
-            {isGeneratingLive ? (
-              <>
-                <span className="w-3 h-3 border-2 border-white/50 border-t-transparent rounded-full animate-spin"></span>
-                <span>{currentLang === 'en' ? 'Populating...' : 'جاري التوليد...'}</span>
-              </>
-            ) : (
-              <>
-                <span>✨</span>
-                <span>
-                  {currentLang === 'en'
-                    ? `Seed ${govNameText} Feed`
-                    : currentLang === 'ku'
-                    ? `تولیدکردنی بابەت بۆ ${govNameText}`
-                    : `توليد منشورات لـ ${govNameText} تلقائياً`}
-                </span>
-              </>
-            )}
-          </button>
         </div>
       )}
 
