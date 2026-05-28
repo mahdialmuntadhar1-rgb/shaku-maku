@@ -7,7 +7,7 @@ import {
   Award, RefreshCw
 } from 'lucide-react';
 import { Language, GovernorateCode, Business, SocialPost, UserProfile, HeroSlide, BusinessClaim } from '../types';
-import { CATEGORIES, GOVERNORATES, HERO_SLIDES } from '../data';
+import { CATEGORIES, GOVERNORATES, HERO_SLIDES, INITIAL_BUSINESSES, INITIAL_POSTS } from '../data';
 import { db } from '../firebase';
 import { collection, doc, setDoc, updateDoc, deleteDoc, onSnapshot } from 'firebase/firestore';
 
@@ -576,11 +576,48 @@ export default function AdminPanel({
               </div>
             </div>
 
-            <div className="p-6 bg-[#141417] border border-white/5 rounded-3xl text-xs text-zinc-400 space-y-3 shrink-0">
+             <div className="p-6 bg-[#141417] border border-white/5 rounded-3xl text-xs text-zinc-400 space-y-4 shrink-0">
               <h4 className="font-extrabold text-white text-sm uppercase">Quick Moderator Manual Guidelines:</h4>
               <p>1. As a platform administrator, you have complete authority to delete or bypass standard validations across the entire application.</p>
               <p>2. Select the <b>Cinematic Hero Slider</b> tab to replace slogans, photos, or hot banner badges in real-time. This updates the frontpage swiper instantly.</p>
               <p>3. Use the <b>Manage Listings</b> or <b>Moderate Social Feeds</b> tabs to edit descriptions, phone numbers, or captions of any post or merchant listing across Iraq's 19 governorates.</p>
+
+              <div className="pt-4 border-t border-white/5 flex flex-wrap gap-3">
+                <button
+                  onClick={async () => {
+                    if (window.confirm("Are you sure you want to re-seed the Firestore database with high-quality realistic postings & businesses?\nThis will overwrite matching IDs with realistic Iraqi data.")) {
+                      try {
+                        // Overwrite/Seed businesses
+                        for (let i = 0; i < INITIAL_BUSINESSES.length; i++) {
+                          const biz = INITIAL_BUSINESSES[i];
+                          await setDoc(doc(db, 'businesses', biz.id), {
+                            ...biz,
+                            ownerUid: 'system-seed'
+                          });
+                        }
+
+                        // Overwrite/Seed posts
+                        for (let i = 0; i < INITIAL_POSTS.length; i++) {
+                          const post = INITIAL_POSTS[i];
+                          await setDoc(doc(db, 'posts', post.id), {
+                            ...post,
+                            authorUid: 'system-seed'
+                          });
+                        }
+                        
+                        alert("🎉 Saku Maku Database successfully enriched and re-seeded with realistic business details and social posts!");
+                      } catch (err: any) {
+                        console.error(err);
+                        alert("Error during re-seeding: " + err?.message);
+                      }
+                    }
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 font-extrabold text-white rounded-xl transition cursor-pointer active:scale-95 text-xs shadow-lg shadow-indigo-550/10"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  <span>Restore & Re-Seed Database with Realistic Data</span>
+                </button>
+              </div>
             </div>
           </div>
         )}

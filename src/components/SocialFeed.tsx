@@ -6,7 +6,8 @@ import {
   Image as ImageIcon, Video, FileText, File
 } from 'lucide-react';
 import { SocialPost, Language, GovernorateCode } from '../types';
-import { TRANSLATIONS, CATEGORIES } from '../data';
+import { TRANSLATIONS, CATEGORIES, GOVERNORATES } from '../data';
+import { generateLivePostFromCSV } from '../csvBusinesses';
 import { setDoc, doc, updateDoc } from 'firebase/firestore';
 import { db, handleFirestoreError, OperationType } from '../firebase';
 
@@ -32,6 +33,46 @@ export default function SocialFeed({
   // Custom Pagination States for Social Feed
   const [visibleCount, setVisibleCount] = useState(3);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [isGeneratingLive, setIsGeneratingLive] = useState(false);
+
+  const handleStimulateLivePost = async () => {
+    setIsGeneratingLive(true);
+    
+    // Pick the governorate code to use
+    let govToUse = selectedGov;
+    if (selectedGov === 'all') {
+      const validGovs: GovernorateCode[] = [
+        'baghdad', 'erbil', 'basra', 'sulaymaniyah', 'najaf', 'mosul', 
+        'karbala', 'kirkuk', 'anbar', 'duhok', 'babil', 'diyala', 
+        'wasit', 'saladin', 'maysan', 'muthanna', 'qadisiya', 'halabja'
+      ];
+      govToUse = validGovs[Math.floor(Math.random() * validGovs.length)];
+    }
+
+    try {
+      const newLivePost = generateLivePostFromCSV(govToUse);
+      
+      // Save it directly to Firestore so it auto-triggers stream snap
+      await setDoc(doc(db, 'posts', newLivePost.id), {
+        ...newLivePost,
+        authorUid: 'csv-seed-injector'
+      });
+
+      // Show a quick transient overlay or alert
+      const bizNameText = newLivePost.businessName;
+      alert(
+        currentLang === 'en' 
+          ? `🎉 Success! Handpicked and populated a new simulated live update for "${bizNameText}" from the Iraqi Database.`
+          : currentLang === 'ku'
+          ? `🎉 سەرکەوتوو بوو! بابەتێکی نوێ دەربارەی "${bizNameText}" لە پارێزگای دیاریکراو بڵاوکرایەوە.`
+          : `🎉 تم بنجاح! سحب وتوليد تحديث حي لمشروع "${bizNameText}" من قاعدة البيانات العراقية.`
+      );
+    } catch (err) {
+      console.error("Error generating simulated live post: ", err);
+    } finally {
+      setIsGeneratingLive(false);
+    }
+  };
 
   // Reset page pagination state when governorate/filters change
   React.useEffect(() => {
@@ -68,7 +109,6 @@ export default function SocialFeed({
   const [showBrandInput, setShowBrandInput] = useState(false);
   const [showCategoryInput, setShowCategoryInput] = useState(false);
   const [showPresetGallery, setShowPresetGallery] = useState(false);
-  const [showMediaUploadArea, setShowMediaUploadArea] = useState(true);
 
   const t = TRANSLATIONS[currentLang];
   const isRtl = currentLang === 'ar' || currentLang === 'ku';
@@ -201,6 +241,7 @@ export default function SocialFeed({
       likedByUser: true,
       savedByUser: false,
       shares: 0,
+      views: 1,
       authorUid: user?.uid || 'anonymous'
     };
 
@@ -262,8 +303,7 @@ export default function SocialFeed({
     if (!post) return;
     const saved = !post.savedByUser;
     const payload = {
-      savedByUser: saved,
-      shares: saved ? post.shares + 1 : post.shares
+      savedByUser: saved
     };
     try {
       await updateDoc(doc(db, 'posts', postId), payload);
@@ -301,7 +341,15 @@ export default function SocialFeed({
     }
   };
 
-  const handleShare = (post: SocialPost) => {
+  const handleShare = async (post: SocialPost) => {
+    try {
+      await updateDoc(doc(db, 'posts', post.id), {
+        shares: (post.shares || 0) + 1
+      });
+    } catch (err) {
+      console.error("Error updating share count in Firestore: ", err);
+    }
+
     if (navigator.share) {
       navigator.share({
         title: post.businessName,
@@ -312,6 +360,9 @@ export default function SocialFeed({
       alert(`${t.share}: ${post.businessName}\n${window.location.href}`);
     }
   };
+
+  const currentGovDetails = GOVERNORATES.find(g => g.code === selectedGov);
+  const govNameText = currentGovDetails ? currentGovDetails.name[currentLang] : selectedGov.toUpperCase();
 
   return (
     <div className="w-full max-w-xl mx-auto space-y-8">
@@ -329,6 +380,50 @@ export default function SocialFeed({
         <span className="text-[10px] text-white/60 bg-white/5 border border-white/10 px-2.5 py-1 rounded-full font-bold">
           {filteredPosts.length} Active Feeds
         </span>
+      </div>
+
+      {/* Live Local Pulse Simulator Banner */}
+      <div className="bg-gradient-to-br from-[#12121a] via-[#14141d] to-[#181825] border border-indigo-500/10 rounded-[20px] p-5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl">
+        <div className="space-y-1 text-center sm:text-left">
+          <h4 className="text-xs font-black text-rose-400 uppercase tracking-widest flex items-center justify-center sm:justify-start gap-1.5 font-sans">
+            <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
+            <span>
+              {currentLang === 'en' ? 'Live Local Pulse Simulator' : currentLang === 'ku' ? 'سیستمی پەیوەندی زیندوو' : 'محاكي دفق المشاركات الحية للمحافظات'}
+            </span>
+          </h4>
+          <p className="text-[11.5px] text-zinc-400 font-sans leading-relaxed">
+            {currentLang === 'en'
+              ? `Instantly grab, translate, and post real-time social stories about certified Iraqi businesses in ${govNameText}.`
+              : currentLang === 'ku'
+              ? `ڕاستەوخۆ بابەتگەلی ڕاستەقینە و تەرجەمەکراوی فەرمی دەربارەی بازرگانییەکان کۆبکەرەوە لە ${govNameText}.`
+              : `اسحب وانشر تحديثاً حياً، مترجماً، ومصمماً بدقة لأعظم محلات وشركات العراق في محافظة ${govNameText}.`}
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={handleStimulateLivePost}
+          disabled={isGeneratingLive}
+          className="relative px-4 py-2.5 bg-gradient-to-r from-rose-500 to-indigo-600 hover:from-rose-400 hover:to-indigo-500 text-white font-extrabold text-xs rounded-xl cursor-pointer transition active:scale-95 flex items-center gap-1.5 shadow-lg shadow-indigo-500/10 shrink-0 font-sans disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isGeneratingLive ? (
+            <>
+              <span className="w-3 h-3 border-2 border-white/50 border-t-transparent rounded-full animate-spin"></span>
+              <span>{currentLang === 'en' ? 'Simulating...' : 'جاري السحب...'}</span>
+            </>
+          ) : (
+            <>
+              <span>✨</span>
+              <span>
+                {currentLang === 'en' 
+                  ? `Pull ${selectedGov === 'all' ? 'Live Story' : `${selectedGov.toUpperCase()} Story`}`
+                  : currentLang === 'ku'
+                  ? `بکێشە بابەت`
+                  : `سحب منشور حي ${selectedGov === 'all' ? 'عشوائي' : `لـ ${selectedGov.toUpperCase()}`}`}
+              </span>
+            </>
+          )}
+        </button>
       </div>
 
       {/* Immersive Refined Social Composer */}
@@ -417,11 +512,11 @@ export default function SocialFeed({
           </div>
         )}
 
-        {/* Unified Facebook-style Media Attachment Area */}
-        {(showMediaUploadArea || uploadedImage || newPhotoUrl || uploadedVideo || uploadedFile) && (
-          <div className="relative border border-[#3e4042] rounded-xl overflow-hidden bg-[#242526]/50 p-2 group transition-all">
+        {/* Visual Multi-Upload Active Previews in a clean box */}
+        {(uploadedImage || newPhotoUrl || uploadedVideo || uploadedFile) && (
+          <div className="relative border border-[#2f3031] rounded-xl overflow-hidden bg-[#242526]/40 p-2">
             
-            {/* Circular close button in the top right corner */}
+            {/* Unified circular close button in the top right corner */}
             <button
               type="button"
               onClick={() => {
@@ -429,56 +524,50 @@ export default function SocialFeed({
                 setUploadedVideo(null);
                 setUploadedFile(null);
                 setNewPhotoUrl('');
-                setShowMediaUploadArea(false);
               }}
-              className="absolute top-4 right-4 z-30 w-7 h-7 rounded-full bg-zinc-900/90 hover:bg-black text-[#e4e6eb] flex items-center justify-center transition active:scale-95 cursor-pointer border border-white/10 text-xs font-bold"
-              title="Remove media area"
+              className="absolute top-2.5 right-2.5 z-20 w-6 h-6 rounded-full bg-black/80 hover:bg-black text-white flex items-center justify-center transition active:scale-95 cursor-pointer border border-white/10 text-xs font-bold"
+              title="Remove attachment"
             >
               ✕
             </button>
 
-            {/* Render Preview IF active media is selected */}
+            {/* Video preview render if video is selected */}
             {uploadedVideo ? (
-              <div className="relative w-full rounded-lg overflow-hidden bg-black flex items-center justify-center min-h-[160px]">
-                <video src={uploadedVideo} style={{ maxHeight: '300px' }} controls className="w-full h-auto rounded-lg object-contain" />
+              <div className="relative w-full rounded-lg overflow-hidden bg-black flex flex-col items-center justify-center p-1.5 min-h-[140px]">
+                <video src={uploadedVideo} style={{ maxHeight: '160px' }} controls className="w-full h-auto rounded-lg object-contain" />
+                <div className="absolute bottom-2.5 left-2.5 flex items-center gap-1 bg-black/85 backdrop-blur-md px-2.5 py-1 rounded-full border border-pink-500/20 text-[10px] text-pink-400 font-extrabold shadow-md">
+                  <Video className="w-3.5 h-3.5" />
+                  <span>VIDEO ATTACHED</span>
+                </div>
               </div>
             ) : uploadedImage || newPhotoUrl ? (
-              <div className="relative w-full rounded-lg overflow-hidden bg-zinc-900 flex items-center justify-center min-h-[160px]">
+              /* Photo preview render */
+              <div className="relative w-full rounded-lg overflow-hidden bg-black/45 flex items-center justify-center p-1.5 min-h-[140px]">
                 <img
                   src={uploadedImage || newPhotoUrl}
-                  alt="Attached item"
-                  className="max-h-[300px] w-full rounded-lg object-contain text-white text-xs text-center"
+                  alt="Story attachment"
+                  className="max-h-[160px] w-auto max-w-full rounded-lg object-contain"
                   referrerPolicy="no-referrer"
                 />
+                <div className="absolute bottom-2.5 left-2.5 flex items-center gap-1 bg-black/85 backdrop-blur-md px-2.5 py-1 rounded-full border border-cyan-500/20 text-[10px] text-cyan-400 font-extrabold shadow-md">
+                  <ImageIcon className="w-3.5 h-3.5" />
+                  <span>IMAGE ATTACHED</span>
+                </div>
               </div>
-            ) : uploadedFile ? (
-              /* General document/flyer booklet preview */
-              <div className="p-4 bg-[#18191a] border border-[#2f3031] rounded-lg flex items-center justify-between gap-3 font-sans mt-8 mr-10">
+            ) : null}
+
+            {/* General document attachment preview */}
+            {uploadedFile && (
+              <div className="p-3 bg-zinc-850 border border-zinc-700 rounded-xl flex items-center justify-between gap-3 font-sans">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-10 h-10 rounded-lg bg-[#242526] flex items-center justify-center text-zinc-400 border border-[#3e4042] shadow-md">
-                    <FileText className="w-5 h-5 text-red-500" />
+                  <div className="w-9 h-9 rounded-lg bg-zinc-900 flex items-center justify-center text-zinc-400 border border-zinc-700 shadow-md">
+                    <FileText className="w-4.5 h-4.5" />
                   </div>
                   <div>
-                    <span className="text-xs font-bold text-white block truncate max-w-[190px]">{uploadedFile.name}</span>
-                    <span className="text-[10px] text-zinc-400 block font-mono">{uploadedFile.size} • PDF Attachment</span>
+                    <span className="text-xs font-black text-white block truncate max-w-[190px]">{uploadedFile.name}</span>
+                    <span className="text-[10px] text-zinc-400 block font-mono font-medium">{uploadedFile.size} • Menu Booklet PDF</span>
                   </div>
                 </div>
-              </div>
-            ) : (
-              /* Facebook empty state "Add Photos/Videos" dropzone box */
-              <div 
-                onClick={() => document.getElementById('social-photo-loader-input')?.click()}
-                className="border border-dashed border-[#505152] hover:border-[#8a8d91] bg-[#18191a]/50 hover:bg-[#242526]/40 rounded-lg p-10 flex flex-col items-center justify-center text-center cursor-pointer transition min-h-[160px]"
-              >
-                <div className="w-11 h-11 rounded-full bg-[#3a3b3c] flex items-center justify-center text-[#e4e6eb] transition text-xl shadow mb-2.5">
-                  🖼️
-                </div>
-                <span className="text-xs font-bold text-[#e4e6eb] block">
-                  {currentLang === 'en' ? 'Add Photos/Videos' : currentLang === 'ku' ? 'زیادکردنی وێنە و ڤیدیۆ' : 'إضافة صور / مقاطع فيديو'}
-                </span>
-                <span className="text-[10px] text-[#b0b3b8] block mt-1">
-                  {currentLang === 'en' ? 'or drag and drop here' : currentLang === 'ku' ? 'یان بیهێنە بۆ ئێرە' : 'أو اسحبها وأفلتها هنا'}
-                </span>
               </div>
             )}
           </div>
@@ -645,10 +734,7 @@ export default function SocialFeed({
             {/* Gallery Picker Mode (Presets) */}
             <button
               type="button"
-              onClick={() => {
-                setShowMediaUploadArea(true);
-                setShowPresetGallery(p => !p);
-              }}
+              onClick={() => setShowPresetGallery(p => !p)}
               className={`p-2 rounded-full transition cursor-pointer flex items-center justify-center border hover:bg-[#242526] active:scale-90 ${
                 showPresetGallery 
                   ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' 
@@ -663,7 +749,6 @@ export default function SocialFeed({
             <button
               type="button"
               onClick={() => {
-                setShowMediaUploadArea(true);
                 document.getElementById('social-video-loader-input')?.click();
               }}
               className={`p-2 rounded-full transition cursor-pointer flex items-center justify-center border hover:bg-[#242526] active:scale-90 ${
@@ -680,7 +765,6 @@ export default function SocialFeed({
             <button
               type="button"
               onClick={() => {
-                setShowMediaUploadArea(true);
                 document.getElementById('social-doc-loader-input')?.click();
               }}
               className={`p-2 rounded-full transition cursor-pointer flex items-center justify-center border hover:bg-[#242526] active:scale-90 ${
@@ -908,8 +992,18 @@ export default function SocialFeed({
                     <div className="p-1.5 rounded-xl border border-zinc-900 bg-slate-900/60 group-hover:bg-slate-900">
                       <Share2 className="w-4 h-4" />
                     </div>
-                    <span className="text-[10px] font-bold">{t.share}</span>
+                    <span className="text-xs font-black">{post.shares || 0}</span>
                   </button>
+
+                  {/* Views count */}
+                  {post.views !== undefined && post.views > 0 && (
+                    <div className="flex items-center gap-1 text-zinc-500 hover:text-zinc-400 transition cursor-default">
+                      <div className="p-1 bg-transparent border border-transparent">
+                        <Eye className="w-3.5 h-3.5" />
+                      </div>
+                      <span className="text-[11px] font-bold font-mono">{post.views}</span>
+                    </div>
+                  )}
 
                 </div>
 
@@ -1006,16 +1100,43 @@ export default function SocialFeed({
 
       {/* If absolutely no post fits governorate */}
       {filteredPosts.length === 0 && (
-        <div className="text-center py-16 bg-slate-900/10 border border-zinc-900 rounded-3xl p-6">
-          <ShoppingBag className="w-12 h-12 text-zinc-700 mx-auto mb-3" />
+        <div className="text-center py-16 bg-slate-900/10 border border-zinc-900/40 rounded-3xl p-8 flex flex-col items-center">
+          <ShoppingBag className="w-12 h-12 text-zinc-700 mb-3" />
           <h3 className="text-sm font-bold text-white mb-1">
-            {currentLang === 'en' ? 'No Live Broadcasts' : 'لا توجد منشورات حية'}
+            {currentLang === 'en' ? 'No Live Broadcasts' : currentLang === 'ku' ? 'هیچ پەخشێکی ڕاستەوخۆ نییە' : 'لا توجد منشورات حية'}
           </h3>
-          <p className="text-xs text-zinc-500">
+          <p className="text-xs text-zinc-500 max-w-sm mb-4 leading-relaxed">
             {currentLang === 'en' 
-              ? 'No businesses from this governorate have posted stories or campaigns yet. Change governorate filter above!'
-              : 'لم تقم المحلات أو الشركات بنشر حملات ترويجية في هذه المحافظة بعد.'}
+              ? `No businesses in ${govNameText} have active broadcasts yet. Pull an authentic local update from the database now!`
+              : currentLang === 'ku'
+              ? `هیچ کۆمپانیایەک لە ${govNameText} پەخشی زیندووی نییە. بابەتێکی فەرمی ڕاستەقینە لێرەوە پۆست بکە!`
+              : `لم تقم المحلات أو الشركات في محافظة ${govNameText} بنشر حملات ترويجية بعد. اسحب وانشر تحديثاً حقيقياً تلقائياً الآن!`}
           </p>
+
+          <button
+            type="button"
+            onClick={handleStimulateLivePost}
+            disabled={isGeneratingLive}
+            className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 font-extrabold text-white text-xs rounded-xl transition cursor-pointer flex items-center justify-center gap-1.5 active:scale-95 shadow-lg shadow-indigo-600/10 disabled:opacity-50"
+          >
+            {isGeneratingLive ? (
+              <>
+                <span className="w-3 h-3 border-2 border-white/50 border-t-transparent rounded-full animate-spin"></span>
+                <span>{currentLang === 'en' ? 'Populating...' : 'جاري التوليد...'}</span>
+              </>
+            ) : (
+              <>
+                <span>✨</span>
+                <span>
+                  {currentLang === 'en'
+                    ? `Seed ${govNameText} Feed`
+                    : currentLang === 'ku'
+                    ? `تولیدکردنی بابەت بۆ ${govNameText}`
+                    : `توليد منشورات لـ ${govNameText} تلقائياً`}
+                </span>
+              </>
+            )}
+          </button>
         </div>
       )}
 

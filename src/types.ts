@@ -79,6 +79,7 @@ export interface SocialPost {
   likes: number;
   commentsCount: number;
   shares: number;
+  views?: number;
   timeAgo: {
     ar: string;
     ku: string;

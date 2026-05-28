@@ -40,13 +40,6 @@ export default function App() {
   
   // Navigation active tab
   const [activeTab, setActiveTab] = useState<'discover' | 'feed' | 'map' | 'add' | 'about' | 'admin'>('discover');
-
-  // Pagination state — cursor-based for O(1) performance at 8000+ rows
-  const PAGE_SIZE = 20;
-  const [bizCursor, setBizCursor] = useState<string | null>(null);
-  const [bizHasMore, setBizHasMore] = useState(false);
-  const [bizLoadingMore, setBizLoadingMore] = useState(false);
-  const [bizLoading, setBizLoading] = useState(true);
   
   // Real-time keyword filter
   const [searchQuery, setSearchQuery] = useState('');
@@ -251,116 +244,11 @@ export default function App() {
 
   const handleUpdateProfile = async (updatedFields: Partial<UserProfile>) => {
     if (!user) return;
-    const updated = { ...userProfile, ...updatedFields } as UserProfile;
-    setUserProfile(updated);
-    localStorage.setItem('user_profile', JSON.stringify(updated));
-  };
-
-  // Map DB category string → frontend CATEGORIES id
-  const mapDbCategory = (cat: string): string => {
-    const c = (cat || '').toLowerCase();
-    if (c.includes('coffee') || c.includes('cafe') || c.includes('restaurant') || c.includes('food') || c.includes('beverage')) return 'coffee';
-    if (c.includes('dining') || c.includes('meal')) return 'dining';
-    if (c.includes('hotel') || c.includes('hospitality') || c.includes('resort') || c.includes('travel') || c.includes('tourism')) return 'hotels';
-    if (c.includes('salon') || c.includes('beauty') || c.includes('spa') || c.includes('grooming')) return 'salons';
-    if (c.includes('gym') || c.includes('fitness') || c.includes('sport')) return 'gyms';
-    if (c.includes('pharmacy') || c.includes('medical') || c.includes('health') || c.includes('clinic') || c.includes('doctor')) return 'pharmacies';
-    if (c.includes('university') || c.includes('education') || c.includes('training') || c.includes('school')) return 'universities';
-    if (c.includes('entertainment') || c.includes('event') || c.includes('fun')) return 'entertainment';
-    if (c.includes('shop') || c.includes('retail') || c.includes('clothing') || c.includes('fashion') || c.includes('store')) return 'shopping';
-    return 'entertainment'; // catch-all
-  };
-
-  // Map raw API business to typed Business
-  const mapApiBiz = (b: any): Business => ({
-    id: b.id,
-    name: { ar: b.name || '', ku: b.name || '', en: b.name || '' },
-    description: { ar: b.description || b.bio || '', ku: b.description || b.bio || '', en: b.description || b.bio || '' },
-    category: mapDbCategory(b.category),
-    governorate: (b.governorate || 'baghdad').toLowerCase().replace(/\s+/g, '').replace(/[^a-z]/g, '') as any,
-    rating: b.rating || 4.5,
-    reviewsCount: b.views || b.reviews_count || 0,
-    image: b.coverImageUrl || b.cover_image_url || b.logo_url || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&auto=format&fit=crop&q=80',
-    images: [b.coverImageUrl || b.cover_image_url || b.logo_url || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&auto=format&fit=crop&q=80'],
-    avatar: b.logo_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80',
-    isVerified: !!b.verified,
-    phoneNumber: b.mobile || b.phone || '',
-    address: { ar: b.address || b.city || '', ku: b.address || b.city || '', en: b.address || b.city || '' },
-    likes: b.likes || 0,
-    saves: b.saves || 0,
-    mapCoords: { x: 48, y: 55 },
-  });
-
-  // Load first batch whenever governorate OR category changes — resets list + cursor
-  useEffect(() => {
-    let cancelled = false;
-    setBizLoading(true);
-    setBizCursor(null);
-    setBusinesses([]);
-    const gov = selectedGov === 'all' ? undefined : selectedGov;
-    const cat = selectedCategory || undefined;
-    businessesApi.list({ limit: PAGE_SIZE, governorate: gov, category: cat })
-      .then((res: any) => {
-        if (cancelled) return;
-        const list: Business[] = (res.data || []).map(mapApiBiz);
-        setBusinesses(list.length > 0 ? list : []);
-        setBizCursor(res.next_cursor ?? null);
-        setBizHasMore(res.has_more ?? false);
-      })
-      .catch((err: any) => {
-        console.error('API businesses load error, using local data:', err);
-        if (!cancelled) {
-          setBusinesses(INITIAL_BUSINESSES);
-          setBizHasMore(false);
-          setBizCursor(null);
-        }
-      })
-      .finally(() => { if (!cancelled) setBizLoading(false); });
-    return () => { cancelled = true; };
-  }, [selectedGov, selectedCategory]);
-
-  // Load next cursor batch and append
-  const handleLoadMoreBiz = () => {
-    if (bizLoadingMore || !bizHasMore || !bizCursor) return;
-    setBizLoadingMore(true);
-    const gov = selectedGov === 'all' ? undefined : selectedGov;
-    const cat = selectedCategory || undefined;
-    businessesApi.list({ cursor: bizCursor, limit: PAGE_SIZE, governorate: gov, category: cat })
-      .then((res: any) => {
-        const list: Business[] = (res.data || []).map(mapApiBiz);
-        setBusinesses(prev => [...prev, ...list]);
-        setBizCursor(res.next_cursor ?? null);
-        setBizHasMore(res.has_more ?? false);
-      })
-      .catch((err: any) => console.error('Load more error:', err))
-      .finally(() => setBizLoadingMore(false));
-  };
-
-  // Load posts from REST API with local data fallback
-  useEffect(() => {
-    let cancelled = false;
-    postsApi.list({ limit: 30 })
-      .then((res: any) => {
-        if (cancelled) return;
-        const list: SocialPost[] = (res.data || []);
-        if (list.length > 0) {
-          setPosts(list);
-        } else {
-          setPosts(INITIAL_POSTS);
-        }
-      })
-      .catch((err: any) => {
-        console.error("API posts load error, using local data: ", err);
-        if (!cancelled) setPosts(INITIAL_POSTS);
-      });
-    return () => { cancelled = true; };
-  }, []);
-
-  // Client-side filter: category chip + keyword search
-  const filteredBusinesses = useMemo(() => {
-    let list = businesses;
-    if (selectedCategory) {
-      list = list.filter(b => b.category === selectedCategory);
+    try {
+      const userRef = doc(db, 'users', user.uid);
+      await setDoc(userRef, updatedFields, { merge: true });
+    } catch (err) {
+      console.error("Error updating profile: ", err);
     }
   };
 
