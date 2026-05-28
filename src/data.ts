@@ -902,346 +902,6 @@ const RAW_INITIAL_BUSINESSES: Business[] = [
   }
 ];
 
-<<<<<<< HEAD
-const RAW_INITIAL_POSTS: SocialPost[] = [
-  {
-    id: 'post-1',
-    businessId: 'b-1',
-    businessName: 'Lova Café - Karrada',
-    businessAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-    category: 'coffee',
-    governorate: 'baghdad',
-    mediaUrl: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&auto=format&fit=crop&q=80',
-    caption: {
-      ar: 'تبحث عن هدوء وإنجاز؟ أجواء الدراسة والعمل في كافيه لوفا بالكرادة توفر لك كل سبل الرواق البغدادي الأصيل 📚 انترنت فائق السرعة، بيئة مريحة وخالية من الضجيج كروشة سينمائية راقية، وجرب الكابتشينو مالتنا مع الهيل العراقي المميز! ☕✨ مفتوحون يومياً لغاية منتصف الليل. هاتف للتواصل: +9647701234567 • الكرادة داخل، قرب ساحة التحريات.',
-      ku: 'ژینگەیەکی هێمن و نایاب بۆ خوێندن و کارکردن لە کافێ لۆڤا لە بەغداد 📚 ئینتەرنێتی فێرا، کەشێکی دڵگیر وەک ڕۆژێکی بەهاری ڕووناک، لەگەڵ قاوەی نایابی هێلی عێراقی! ☕✨ هەموو ڕۆژێک تا نیوەی شەو کراوەیە. تەلەفۆن: +9647701234567 • کەڕادەی ناوەوە.',
-      en: 'Vibrant vibes, premium cinematic aesthetic, and quiet spaces to fuel your daily hustle. Come try our specialty Cardamom Espresso Brew at Lova now! 📚 Fast Wi-Fi, cozy reading corners, and outstanding service. Open daily 8:00 AM - Midnight. Contact: +9647701234567 • Karrada Inside, Near Tahariyat Square ☕✨'
-    },
-    likes: 248,
-    commentsCount: 2,
-    shares: 34,
-    views: 1150,
-    timeAgo: {
-      ar: 'منذ ٣ ساعات',
-      ku: '٣ کاتژمێر پێش ئێستا',
-      en: '3 hours ago'
-    },
-    likedByUser: false,
-    savedByUser: false,
-    comments: [
-      { id: 'c1', username: 'hasan_baghdadi', text: 'الكافيه المفضل عندي بالكرادة، الخدمة فد شي راقي والقهوة خرافية 🔥', time: '1h' },
-      { id: 'c2', username: 'layla.iq', text: 'Beautiful location, highly recommended for working remotely. Fast wifi!', time: '30m' }
-    ],
-    promotionBadge: {
-      ar: 'تريند الكرادة 🔥',
-      ku: 'ترێندی کەڕادە 🔥',
-      en: 'Karrada Hotspot 🔥'
-    }
-  },
-  {
-    id: 'post-2',
-    businessId: 'b-4',
-    businessName: 'Meskouf Tigris Riverfront',
-    businessAvatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80',
-    category: 'dining',
-    governorate: 'baghdad',
-    mediaUrl: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=800&auto=format&fit=crop&q=80',
-    caption: {
-      ar: 'المسكوف البغدادي الأصيل على ضفاف نهر دجلة الساحر في أبو نؤاس! 🐟🔥 سمك طازج يُشوى على حطب الصفصاف لمذاق بغدادي دافئ لا ينسى يرجعك لأيام بغداد القديمة الدافئة. بيئة عائلية راقية ومجلس مطل على النهر تحت النجوم البغدادية اللامعة. نعمل من 12 ظهراً لغاية 2 بعد منتصف الليل. هاتف للحجز والاستفسار الفوري: +9647719998822 • شارع أبو نؤاس، قرب تمثال شهريار وشهرزاد.',
-      ku: 'ماسی مەسگوفی بەغدادی ڕەسەن لەسەر کەناری ڕووباری دجلەی فێنک! 🐟🔥 ماسی زۆر تازە بە تامی داری سروشتی. گونجاوە بۆ خێزان و دۆست بۆ بینینی دیمەنی دجلە. تا ٢ی شەو کراوەیە. تەلەفۆن: +9647719998822.',
-      en: 'Golden traditional charcoal-grilled Tigris River Masgouf fish served sizzling hot. Experience absolute culinary heaven tonight with your family under the old Baghdad stars and refreshing river breeze. Open 12:00 PM - 2:00 AM. For premium family reservation tables, hotline: +9647719998822 • Abu Nuwas St 🐟🔥'
-    },
-    likes: 485,
-    commentsCount: 2,
-    shares: 82,
-    views: 2550,
-    timeAgo: {
-      ar: 'منذ ٤ ساعات',
-      ku: '٤ کاتژمێر پێش ئێستا',
-      en: '4 hours ago'
-    },
-    likedByUser: true,
-    savedByUser: false,
-    comments: [
-      { id: 'c3', username: 'ali_basrawi', text: 'أجمل إطلالة وأروع مسكوف مر علي ببغداد حبيبة قلبي ❤️', time: '2h' },
-      { id: 'c4', username: 'kurdo_erbil', text: 'زور جوانة، لازم نزوركم الأسبوع القادم ان شاء الله مع العائلة', time: '1h' }
-    ],
-    promotionBadge: {
-      ar: 'عرض عائلي مميز 👨‍👩‍👧‍👦',
-      ku: 'پێشنیاری خێزانی 👨‍👩‍👧‍👦',
-      en: 'Family Deal Special 👨‍👩‍👧‍👦'
-    }
-  },
-  {
-    id: 'post-3',
-    businessId: 'b-5',
-    businessName: 'Craft Burger - Bakhtiyari Erbil',
-    businessAvatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&auto=format&fit=crop&q=80',
-    category: 'dining',
-    governorate: 'erbil',
-    mediaUrl: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&auto=format&fit=crop&q=80',
-    caption: {
-      ar: 'بركان من جبنة الشيدر المعتقة واللحم البلدي العراقي الطازج! 🍔🧀 هل جربت برغر اللحم المحشي بجبنتنا اللذيذة في فرعنا البختياري؟ لحم بلدي محلي طازج يحضر يومياً خصيصاً لكم بخلطات كرافت السرية. اشترِ أي وجبة برغر واحصل على بطاطا كرافت وصودا مجاناً بالكامل للطلاب والمتابعين! 🍟 هاتف: +9647504449900 • أربيل، حي بختياري، شارع المطاعم الرئيسي.',
-      ku: 'کێ حەزی لە بەرگری بەتامە؟ 🍔🧀 گۆشتی فرێشی کوردی بە شێواز و سۆسی تایبەت لە گەڕەکی بەختیاری هەولێر. ژەمە هەمبەرگرێک بکڕە و پەتاتەی گەرم و سۆدا بێبەرامبەر وەربگرە! تەلەفۆن: +9647504449900.',
-      en: 'Oozing cheddar cheese explosion, hand-pressed prime local beef, and gourmet toasted brioche. Your dream burger is waiting for you at Craft Burger Bakhtiyari Erbil! 🍔🧀 Buy any combo and get free craft fries & soda upgrade today! Hotline: +9647504449900 • Bakhtiyari Main Boulevard 🍟'
-    },
-    likes: 215,
-    commentsCount: 1,
-    shares: 29,
-    views: 1020,
-    timeAgo: {
-      ar: 'منذ يوم',
-      ku: 'دوێنێ',
-      en: '1 day ago'
-    },
-    likedByUser: false,
-    savedByUser: true,
-    comments: [
-      { id: 'c5', username: 'shanga_erbil', text: 'The best service and the absolute juiciest burgers in Erbil Bakhtiyari 🍔🍟', time: '18h' }
-    ],
-    promotionBadge: {
-      ar: 'ترقية الوجبة مجاناً 🍟',
-      ku: 'پەتاتەی بەخۆڕایی 🍟',
-      en: 'Free Fries Upgrade 🍟'
-    }
-  },
-  {
-    id: 'post-4',
-    businessId: 'b-11',
-    businessName: 'Al-Nukhba Cosmetic Dental Clinic',
-    businessAvatar: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=150&auto=format&fit=crop&q=80',
-    category: 'clinic',
-    governorate: 'baghdad',
-    mediaUrl: 'https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=800&auto=format&fit=crop&q=80',
-    caption: {
-      ar: 'احصل على ابتسامة أحلامك الواثقة والصحية! ⭐🦷 عيادة النخبة لطب الأسنان بفرعها التخصصي بالمنصور تقدم أحدث تقنيات تبييض الأسنان بالليزر وتصميم ابتسامة هوليود البراقة بدون ألم وبإشراف نخبة من كبار الأخصائيين. تنظيف وتلميع أسنان مجاني تماماً مع أي فحص شامل للمتابعين. احجز موعدك الآن: +964782334455 • المنصور، شارع الرواد، عمارة النخبة، الطابق الثاني. أوقات العمل من 3:00 مساءً لغاية 9:00 مساءً.',
-      ku: 'پێبکەنینێکی سپیی شایستە و ناوازە بەدەستبهێنە! ⭐🦷 کلینیکی نوخبە بۆ پزیشکی ددانی جوانکاری لە بەغداد مەنسوور باشترین چارەسەر و سپیکردنەوەی ددان بە گرەنتی پێشکەش دەکات. زەردەخەنەی هۆلیوود بەبێ ئازار پێشکەشە. تەلەفۆن بۆ حیجزکردن: +964782334455. کراوەیە لە ٣ی ئێوارە تا ٩ی شەو.',
-      en: 'Get the perfect radiant smile you deserve! ⭐🦷 Al-Nukhba Clinic offers advanced cosmetic teeth whitening, professional smile design, and pain-free laser scaling. Free cleaning session included with any comprehensive consultation for Saku Maku users! Book today: +964782334455 • Al-Mansour, Al-Rowad Street, Al-Nukhba Bldg, 2nd floor 🦷'
-    },
-    likes: 142,
-    commentsCount: 2,
-    shares: 55,
-    views: 820,
-    timeAgo: {
-      ar: 'منذ ٧ ساعات',
-      ku: '٧ کاتژمێر پێش ئێستا',
-      en: '7 hours ago'
-    },
-    likedByUser: false,
-    savedByUser: false,
-    comments: [
-      { id: 'c11', username: 'dr_samir', text: 'جهاز تبييض الأسنان بالليزر عندهم فد شي متطور، وزرتهم الأسبوع الفات شغل راقي', time: '5h' },
-      { id: 'c12', username: 'noor_beauty', text: 'Very neat clinic and professional dental care!', time: '2h' }
-    ],
-    promotionBadge: {
-      ar: 'استشارة مجانية 🩺',
-      ku: 'پشکنینی بێبەرامبەر 🩺',
-      en: 'Free Consultation 🩺'
-    }
-  },
-  {
-    id: 'post-5',
-    businessId: 'b-13',
-    businessName: 'Baghdad Elegance Fashion House',
-    businessAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-    category: 'clothing_store',
-    governorate: 'baghdad',
-    mediaUrl: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800&auto=format&fit=crop&q=80',
-    caption: {
-      ar: 'تألقي هذا الموسم بأروع تشكيلة من ملابس الكتان الخفيفة والأزياء النسائية الفاخرة! 👗✨ مصممة بأيدي نخبة من المبدعين العراقيين لتضفي عليك لمسة من الجاذبية والأناقة في عطلات العمل والمناسبات الرسمية. تم إطلاق تشكيلة الصيف الجديدة بالكامل مع خصم ١٥٪ لمن يدفع بنظام الكاش! تفضلي بزيارتنا واستمتعي بتجربة تسوق فريدة. هاتف للتواصل: +964772114488 • المنصور، شارع الأميرات، قرب السفارة الليبية.',
-      ku: 'ئەم هاوینە بە شیکترین و نایابترین جلوبەرگ تێپەڕێنە! 👗✨ مۆدێلە نوێیەکانی هاوینە بە کەتانی زۆر فێنک لای ئێمە ئامادەیە بە داشکاندنی تایبەتی ١٥٪ لەکاتی پارەدانی نەختینە. بمانبینە لە بەغداد، مەنسوور، شەقامی ئەمیرات. تەلەفۆن: +964772114488.',
-      en: 'Empower your summer style with our gorgeous breathable linen collection! 👗✨ Hand-woven luxury details tailored carefully by local creative designers to match your supreme elegance. Active launch deal: Enjoy 15% discount on all purchases settled in physical cash. Visit us now: Mansour, Ameerat St. Tel: +964772114488'
-    },
-    likes: 205,
-    commentsCount: 2,
-    shares: 42,
-    views: 1120,
-    timeAgo: {
-      ar: 'منذ ٨ ساعات',
-      ku: '٨ کاتژمێر پێش ئێستا',
-      en: '8 hours ago'
-    },
-    likedByUser: false,
-    savedByUser: false,
-    comments: [
-      { id: 'c13', username: 'rana.style', text: 'الكتان الأبيض يجنن أخذت منه فستان ومريح بشكل بالحر 😍', time: '6h' },
-      { id: 'c14', username: 'baghdad_chic', text: 'Highly recommend this house if you love unique, non-commercial clothing.', time: '4h' }
-    ],
-    promotionBadge: {
-      ar: 'خصم الكاش ١٥٪ 👗',
-      ku: '١٥٪ داشکاندن 👗',
-      en: '15% Cash Discount 👗'
-    }
-  },
-  {
-    id: 'post-6',
-    businessId: 'b-3',
-    businessName: 'Mado Café - Erbil Citadel Road',
-    businessAvatar: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=150&auto=format&fit=crop&q=80',
-    category: 'coffee',
-    governorate: 'erbil',
-    mediaUrl: 'https://images.unsplash.com/photo-1498804103079-a6351b050096?w=800&auto=format&fit=crop&q=80',
-    caption: {
-      ar: 'حلوى البقلاوة التركية مع فنجان غني من الدبل اسبريسو الساخن تحت نسيم جبال أربيل وإطلالة قلعة أربيل الساحرة! 🍰☕ الجلسة الخارجية لا تقارن، وتفتح النفس للدراسة والدردشة مع الأصدقاء. استخدم رمز الخصم الحصري "MADO15" للحصول على حلوى مجاناً مع قهوتك. تواصل معنا: +9647501122334 • شارع قضاء القلعة، مقابل حديقة سامي عبد الرحمن. نعمل لغاية الساعة 1:00 صباحاً.',
-      ku: 'باقلاوای بەناوبانگی تورکی لەگەڵ کوپێک قاوەی گەرم لەسەر شەقامی قەلای هەولێری دڵگیر! 🍰☕ کۆدی داشکاندنی "MADO15" بەکاربهێنە بۆ وەرگرتنی شیرینی بێبەرامبەر لەگەڵ دۆبڵ ئیسپرێسۆدا. تا ١ی شەو کراوەیە. تەلەفۆن: +9647501122334.',
-      en: 'Traditional Turkish baklava sweets paired with hot rich Double Espresso under Erbil’s amazing spring breeze and spectacular citadel road view! 🍰☕ Use discount code "MADO15" for an exclusive sweet upgrade on Saku Maku app! Open daily until 1:00 AM. Location: Citadel Road, Erbil. Hotline: +9647501122334'
-    },
-    likes: 312,
-    commentsCount: 2,
-    shares: 41,
-    views: 1420,
-    timeAgo: {
-      ar: 'منذ يومين',
-      ku: '٢ ڕۆژ پێش ئێستا',
-      en: '2 days ago'
-    },
-    likedByUser: false,
-    savedByUser: false,
-    comments: [
-      { id: 'c15', username: 'danial_kurd', text: 'باقلاوە کانیان زۆر زۆر تایبەتە و تامی تورکی ڕاستەقینەیە', time: '1d' },
-      { id: 'c16', username: 'ahmed_baghdadi', text: 'المادو كافيه فخر قلعة أربيل، جلسة رايقة والخدمة ممتازة', time: '15h' }
-    ],
-    promotionBadge: {
-      ar: 'بقلاوة مجانية 🍰',
-      ku: 'باقلاوای بەلاش 🍰',
-      en: 'Free Baklava Upgrade 🍰'
-    }
-  },
-  {
-    id: 'post-7',
-    businessId: 'b-14',
-    businessName: 'Al-Fahad Electronics & Mobile Hub',
-    businessAvatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&auto=format&fit=crop&q=80',
-    category: 'mobile_shop',
-    governorate: 'basra',
-    mediaUrl: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=80',
-    caption: {
-      ar: 'عشاق الهواتف والتقنية في البصرة! 📱🎁 اقتنِ الآن أقوى الهواتف الرائدة بضمان فني فوري معتمد وبأفضل الأسعار المنافسة في السوق البصراوية. واحصل على شاحن باوربانك سريع هدية مجانية مضمونة مع أي موبايل يتم شراؤه خلال هذا الأسبوع. العنوان: حي العشار، شارع المكتبات التجاري العام، البصرة. اوقات العمل من 9 صباحاً لغاية 10 مساءً. هاتف للتواصل أو الطلب: +9647811223344.',
-      ku: 'دیارییەکی نایاب لە فرۆشگای ئەل فەهەد لە بەسرە! 📱🎁 مۆبایلێکی بەرز بکڕە و پاوەربانکێکی خێرا بە دیاری فەرمی لەگەڵ کڕیندا وەربگرە. ناونیشان: بەسرە، گەڕەکی عەشار، شەقامی کتێبخانەکان. تەلەفۆن: +9647811223344.',
-      en: "Calling all Basra tech enthusiasts! 📱🎁 Upgrade your device today at Al-Fahad Mobile Hub with local official warranty and Basra's unmatched competitive rates. Get a free fast-charging branded Powerbank with every flagship phone purchased this week! Ashar, Commercial Maktabat St. Hours: 9:00 AM - 10:00 PM. Call: +9647811223344."
-    },
-    likes: 235,
-    commentsCount: 2,
-    shares: 48,
-    views: 1200,
-    timeAgo: {
-      ar: 'منذ ١٢ ساعة',
-      ku: '١٢ کاتژمێر پێش ئێستا',
-      en: '12 hours ago'
-    },
-    likedByUser: false,
-    savedByUser: false,
-    comments: [
-      { id: 'c17', username: 'basra_vip', text: 'شريت جهاز سامسونج رائد وحصلت على هديتي والضمان عراقي ممتاز', time: '8h' },
-      { id: 'c18', username: 'electronics_guru', text: 'Highly trustworthy mobile reseller in Basra Ashar. Excellent customer support.', time: '5h' }
-    ],
-    promotionBadge: {
-      ar: 'باوربانك هدية 🎁',
-      ku: 'پاوەربانکی بەخۆڕایی 🎁',
-      en: 'Free Powerbank Gift 🎁'
-    }
-  },
-  {
-    id: 'post-8',
-    businessId: 'b-7',
-    businessName: 'Titanic Hotel & Spa Sulaymaniyah',
-    businessAvatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
-    category: 'hotels',
-    governorate: 'sulaymaniyah',
-    mediaUrl: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800&auto=format&fit=crop&q=80',
-    caption: {
-      ar: 'عش رفاهية الملوك وتذوق نسمات جبال السليمانية الباردة الساحرة! 🏔️🏨 يسعدنا في فندق تايتانك المصنف 5 نجوم تقديم باقة الاستجمام الخاصة بنهاية الأسبوع، والتي تشمل ليلة إضافية مجانية عند حجز ٣ ليالٍ متتالية عبر التطبيق، مع دخول مجاني للسبا التخصصي والمسبح الخارجي المطل على الجبال. احجز استجمامك الهادئ الآن: +9647480556633 • السليمانية، شارع سالم، قرب تلال سرجنار.',
-      ku: 'ئارامی و حەوانەوەی شاهانە لەگەڵ دیمەنی کێوەکانی سلێمانی لە هۆتێلی تایتانیک! 🏔️🏨 پاکێجی بەهاری تەندروستی سپا و مەلەوانگە چاوەڕێتان دەکات لە لای فێنکی دژە گەرمای سلێمانی. تەلەفۆن بۆ رزەربکردن: +9647480556633. کاتێکی شاهانە ببە بەڕێوە.',
-      en: 'Soak in world-class 5-star comfort and therapeutic mountain air at Titanic Hotel & Spa Sulaymaniyah. 🏔️🏨 Book 3 consecutive nights and get your 4th night absolutely free! Package includes complete access to our multi-sensory spa and mountain-view infinity pool. Salim Street, Near Sarchinar Hills. Call bookings hotline: +9647480556633.'
-    },
-    likes: 620,
-    commentsCount: 2,
-    shares: 94,
-    views: 3100,
-    timeAgo: {
-      ar: 'منذ يومين',
-      ku: '٢ ڕۆژ پێش ئێستا',
-      en: '2 days ago'
-    },
-    likedByUser: false,
-    savedByUser: true,
-    comments: [
-      { id: 'c6', username: 'ahmed_iraqi', text: 'أجمل مكان للاسترخاء بالعراق بلا منافس! الجو هناك يجنن والسبا فد شي خرافي 🏞️', time: '1d' },
-      { id: 'c7', username: 'mari_explorer', text: 'Super friendly staff and exceptional luxury services in Kurdistan.', time: '20h' }
-    ],
-    promotionBadge: {
-      ar: 'ليلة مجانية 🏨',
-      ku: 'شەوێکی بەبێ بەرامبەر 🏨',
-      en: '1 Night Free Special 🏨'
-    }
-  },
-  {
-    id: 'post-9',
-    businessId: 'b-12',
-    businessName: 'LifeCare Specialty Medical Clinic',
-    businessAvatar: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&auto=format&fit=crop&q=80',
-    category: 'clinic',
-    governorate: 'erbil',
-    mediaUrl: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&auto=format&fit=crop&q=80',
-    caption: {
-      ar: 'صحتك وصحة عائلتك هي أثمن ما تملك! 🩺❤️ يسر عيادة رعاية الحياة التخصصية في أربيل الإعلان عن حملة الفحص الوقائي الشامل لضغط الدم ومستويات السكر كل يوم جمعة في الفترة الصباحية، بمرافقة استشارات أولية وإرشادات أطبائنا ذوي الكفاءة العالية لمرضى القلب والضغط. يسعدنا تقديم الرعاية لكم دائماً. الحجز فوري: +9647508881234 • أربيل، شارع ١٠٠م، قرب مجسر عينكاوة ومقاطعة عشتار.',
-      ku: 'تەندروستیت لە سەرووی هەموو پێشبینییەکەوەیە! 🩺❤️ کلینیکی چاودێری ژیان لە هەولێر پشکنینی فشاری خوێن و شەکرە بێبەرامبەر پێشکەش دەکات هەموو ڕۆژانی هەینی بۆ پاراستنی تەندروستی خێزانەکانتان. تەندروست بن هەمیشە. تەلەفۆن بۆ گەیاندن: +9647508881234.',
-      en: "Protect your heart and health! 🩺❤️ LifeCare Specialty Clinic Erbil is organizing a free comprehensive wellness screening for diabetes and cardiovascular hypertension this Friday morning. Get expert advice and personalized preventative plans from our experienced medical board. Location: 100m Road, near Ainkawa intersection Erbil. Phone booking: +9647508881234."
-    },
-    likes: 98,
-    commentsCount: 1,
-    shares: 15,
-    views: 540,
-    timeAgo: {
-      ar: 'منذ يوم',
-      ku: 'دوێنێ',
-      en: '1 day ago'
-    },
-    likedByUser: false,
-    savedByUser: false,
-    comments: [
-      { id: 'c19', username: 'pary_erbil', text: 'سوپاس بۆ ئەم خزمەتگوزارییە نایابەتان هەمیشە یارمەتیدەرن', time: '12h' }
-    ],
-    promotionBadge: {
-      ar: 'فحص وقائي مجاني  ❤️',
-      ku: 'پشکنینی بەخۆڕایی ❤️',
-      en: 'Free Health Screening ❤️'
-    }
-  },
-  {
-    id: 'post-10',
-    businessId: 'b-9',
-    businessName: 'Hair Town Barbers - Jadriya',
-    businessAvatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80',
-    category: 'salon',
-    governorate: 'baghdad',
-    mediaUrl: 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=800&auto=format&fit=crop&q=80',
-    caption: {
-      ar: 'ثقتك ومظهرك هما عنوان تألقنا في صالون هير تاون الرجالي! 💈✂️ احصل على قصة شعر ستايل مميزة تناسب ذوقك وتمنحك حضوراً عصرياً، إلى جانب حلاقة ذقن راقية بالبخار الساخن وجلسة تنظيف بشرة مجانية تماماً بماسك الفحم الأسود الفعال للعناية الفائقة. نعمل يومياً من الساعة 10:00 صباحاً ولغاية 11:00 مساءً. العنوان: بغداد، الجادرية، قرب جامعة بغداد، تقاطع الحرية. تفضل بالحجز المسبق: +964771225577.',
-      ku: 'جوانتر و شیکتر ببە لە ساڵۆنی هێر تاونی پیاوان لە جادریەی بەغداد! 💈✂️ باشترین خزمەتگوزاری تاشینی قژ و چاککردنی ڕیش و ماسکی دەموچاو بەبێ ئازار بۆ گشت گەنجان. تەلەفۆن بۆ پۆشین: +964771225577. کراوەیە لە ١٠ی بەیانی تا ١١ی شەو.',
-      en: 'Groom with confidence and premium service at Hair Town Barbers Jadriya! 💈✂️ Pamper yourself with a sharp customized haircut, premium hot steam shave, and a complimentary deep exfoliating charcoal face mask mask to restore your skin. Backbeat modern music, amazing barista coffee. Open 10:00 AM - 11:00 PM. Reservations phone: +964771225577 • Liberty Intersection, Jadriya.'
-    },
-    likes: 154,
-    commentsCount: 2,
-    shares: 21,
-    views: 780,
-    timeAgo: {
-      ar: 'منذ ١٠ ساعات',
-      ku: '١٠ کاتژمێر پێش ئێستا',
-      en: '10 hours ago'
-    },
-    likedByUser: false,
-    savedByUser: false,
-    comments: [
-      { id: 'c9', username: 'kamal_karrada', text: 'أرقى صالون حلاقة وعناية ببغداد، كادر محترف والخدمة عالبخار ولا غلطة ⭐', time: '6h' },
-      { id: 'c10', username: 'ryan_barber', text: 'Stunning place, the facial remedy is absolute magic.', time: '3h' }
-    ],
-    promotionBadge: {
-      ar: 'تنظيف بشرة مجاني 💆‍♂️',
-      ku: 'ماسک بەلاش 💆‍♂️',
-      en: 'Free Charcoal Face Mask 💆‍♂️'
-    }
-=======
 // Realistic post templates by category
 const POST_TEMPLATES: Record<string, { en: string[]; ar: string[]; ku: string[] }> = {
   restaurant: {
@@ -1634,7 +1294,6 @@ const POST_TEMPLATES: Record<string, { en: string[]; ar: string[]; ku: string[] 
       'دوای بکە بۆ نوێکارییەکان دەربارەی بەرهەمە نوێیەکان، ئۆفەرەکان و ڕووداوەکان.',
       'پەیوەندیمان بکە بۆ پرسیار، داواکردن یان داواکاری تایبەتی. ئێرەیین بۆ یارمەتی!'
     ]
->>>>>>> 4639a50 (Apply-plan-PWA-CSV-posts-cleanup)
   }
 };
 
@@ -1922,3 +1581,149 @@ export const TRANSLATIONS = {
     dealsCorner: 'Promo Corner 🔥'
   }
 };
+
+// Realistic post templates by category for mock social feed generation
+const POST_TEMPLATES: Record<string, { en: string[]; ar: string[]; ku: string[] }> = {
+  restaurant: {
+    en: [
+      'Fresh grilled family platters now available! Dine in or order delivery. Open daily 10 AM – 11 PM.',
+      'Weekend special: Buy 2 mains get 1 free. Call now to reserve your table!',
+      'New chef\'s special menu launched today. Come taste the difference.',
+      'Hosting a private event? We offer catering services across the city. Contact us for details.',
+      'Daily fresh bread baked in-house. Authentic Iraqi flavors since 2010.'
+    ],
+    ar: [
+      'أطباق مشوية طازجة متاحة الآن للعائلات! تناول الطعام في المكان أو اطلب التوصيل. مفتوح يومياً من 10 صباحاً حتى 11 مساءً.',
+      'عرض نهاية الأسبوع: اشترِ طبقين رئيسيين واحصل على الثالث مجاناً. اتصل الآن لحجز طاولتك!',
+      'قائمة طعام جديدة من الشيف أطلقت اليوم. تعال وتذوق الفرق.',
+      'تستضيف حدثاً خاصاً؟ نقدم خدمات الولائم في جميع أنحاء المدينة. اتصل بنا للتفاصيل.',
+      'خبز طازج يومياً مخبوز في المنزل. نكهات عراقية أصيلة منذ عام 2010.'
+    ],
+    ku: [
+      'جێگای خواردنی تایبەتی خێزانی لەبەردەستە! لە ناوخۆدا بخۆ یان داوای گەیاندن بکە. ڕۆژانە کراوەیە لە 10 بەروار تا 11 شەو.',
+      'تایبەتی ھەفتە: 2 خواردنی سەرەکی بکڕە، 3یەم بەخۆڕاییە. ئێستا پەیوەندی بکە بۆ داواکردنی مێز!',
+      'لیستی خواردنی نوێی شێف بەڕێوەچوو. بێن و جیاوازی تام بکە.',
+      'بەرنامەیەکی تایبەت دابەش دەکەیت؟ خزمەتگوزاری بەڕێوەبردنی بەسەر شاردا پێشکەش دەکەین. پەیوەندیمان بکە بۆ وردەکاری.',
+      'نانێکی تازە ڕۆژانە لە ناوخۆدا دەکڕێن. تامی عێراقی ڕەسەن لە 2010ەوە.'
+    ]
+  },
+  cafe_bakery: {
+    en: [
+      'Morning brew alert! Specialty coffee and fresh pastries daily from 7 AM. Free WiFi & cozy vibes.',
+      'New seasonal cake collection just dropped. Perfect for birthdays and gatherings.',
+      'Study-friendly environment with quiet zones. Students get 15% off after 2 PM.',
+      'Weekend brunch menu: avocado toast, eggs Benedict, and fresh juice combos.',
+      'Grab your loyalty card — buy 5 coffees, get the 6th free!'
+    ],
+    ar: [
+      'تنبيه القهوة الصباحية! قهوة مميزة وحلويات طازجة يومياً من الساعة 7 صباحاً. واي فاي مجاني وأجواء مريحة.',
+      'مجموعة كيك موسمية جديدة وصلت للتو. مثالية لأعياد الميلاد والتجمعات.',
+      'بيئة مناسبة للدراسة مع مناطق هادئة. الطلاب يحصلون على خصم 15% بعد الساعة 2 ظهراً.',
+      'قائمة برانش نهاية الأسبوع: توست الأفوكادو، بيض بنديكت، وعصائر طازجة.',
+      'احصل على بطاقة الولاء — اشترِ 5 قهوات واحصل على السادسة مجاناً!'
+    ],
+    ku: [
+      'ئاگاداری قاوەی بەیانی! قاوەی تایبەتی و شیرینی تازە ڕۆژانە لە 7 بەیانیەوە. وای فای ئازاد و کەش و هەوایەکی خۆش.',
+      'کۆلێکشنی کیکی وەرزی نوێ تازە دابەزێنراوە. ئەمە بۆ ڕۆژی لەدایکبوون و کۆبوونەوەکان.',
+      'ژینگەی خوێندن بە ناوچە ئارامەکان. خوێندکاران 15% داشکان وەردەگرن دوای 2 دوانیان.',
+      'لیستی برانچی ھەفتە: تۆستی ئەڤۆکادۆ، ئێگ بێنێدیکت، و شیرەی تازە.',
+      'کارتی دڵسۆزیەکەت بگرە — 5 قاوە بکڕە، 6یەم بەخۆڕاییە!'
+    ]
+  },
+  default: {
+    en: [
+      'Now open for business! Visit us today for quality service and great prices.',
+      'Special promotion this week only. Don\'t miss out on our best deals!',
+      'Customer satisfaction is our priority. Rated 4.5+ stars by our community.',
+      'Follow us for updates on new products, offers, and events.',
+      'Contact us for inquiries, bookings, or custom orders. We\'re here to help!'
+    ],
+    ar: [
+      'مفتوح الآن للأعمال! تفضل بزيارتنا اليوم للحصول على خدمة عالية الجودة وأسعار رائعة.',
+      'عرض ترويجي خاص هذا الأسبوع فقط. لا تفوت أفضل عروضنا!',
+      'رضا العملاء هو أولويتنا. مصنف بـ 4.5+ نجوم من مجتمعنا.',
+      'تابعنا للحصول على تحديثات حول المنتجات الجديدة، العروض، والأحداث.',
+      'اتصل بنا للاستفسارات، الحجوزات، أو الطلبات الخاصة. نحن هنا للمساعدة!'
+    ],
+    ku: [
+      'ئێستا بۆ کار کراوەیە! ئەمڕۆ سەردامان بکە بۆ خزمەتگوزاری باش و نرخێکی باش.',
+      'بەرنامەی تایبەتی ئەم ھەفتەیە تەنها. لە باشترین ئۆفەرەکان جێماھێڵە!',
+      'ئارەزووی کڕیاران تەرجیحی ئێمەیە. لە لایەن کۆمەڵگەکەمانەوە 4.5+ ئەستێرە.',
+      'دوای بکە بۆ نوێکارییەکان دەربارەی بەرهەمە نوێیەکان، ئۆفەرەکان و ڕووداوەکان.',
+      'پەیوەندیمان بکە بۆ پرسیار، داواکردن یان داواکاری تایبەتی. ئێرەیین بۆ یارمەتی!'
+    ]
+  }
+};
+
+// Generate realistic mock posts from business data
+function generateMockPostsFromBusinesses(): SocialPost[] {
+  const posts: SocialPost[] = [];
+  const timeAgoOptions = [
+    { ar: 'منذ ساعة', ku: 'پێش 1 کاتژمێر', en: '1 hour ago' },
+    { ar: 'منذ 3 ساعات', ku: 'پێش 3 کاتژمێر', en: '3 hours ago' },
+    { ar: 'منذ 5 ساعات', ku: 'پێش 5 کاتژمێر', en: '5 hours ago' },
+    { ar: 'الأمس', ku: 'دوێنێ', en: 'Yesterday' },
+    { ar: 'منذ يومين', ku: 'پێش 2 ڕۆژ', en: '2 days ago' },
+  ];
+  
+  const commentUsers = [
+    { name: 'ali_iraqi', avatar: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=100&auto=format&fit=crop&q=80' },
+    { name: 'sara_kurd', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80' },
+    { name: 'basra_guy', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80' },
+    { name: 'noor_baghdad', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&auto=format&fit=crop&q=80' },
+  ];
+
+  // Generate posts from existing businesses
+  RAW_INITIAL_BUSINESSES.slice(0, 8).forEach((biz, index) => {
+    const categoryKey = biz.category === 'coffee' ? 'cafe_bakery' : 
+                        biz.category === 'dining' ? 'restaurant' : 'default';
+    const templates = POST_TEMPLATES[categoryKey] || POST_TEMPLATES.default;
+    const templateIndex = index % templates.en.length;
+    const timeAgo = timeAgoOptions[index % timeAgoOptions.length];
+    
+    // Generate realistic engagement numbers
+    const likes = Math.floor(Math.random() * 200) + 15;
+    const shares = Math.floor(Math.random() * 40) + 3;
+    const commentsCount = Math.floor(Math.random() * 10) + 1;
+    
+    // Generate 1-2 realistic comments
+    const comments = [];
+    const numComments = Math.floor(Math.random() * 2) + 1;
+    for (let c = 0; c < numComments; c++) {
+      const user = commentUsers[(index + c) % commentUsers.length];
+      comments.push({
+        id: `c-${index}-${c}`,
+        username: user.name,
+        userAvatar: user.avatar,
+        text: ['Great service!', 'Love this place!', 'Will visit soon', 'Recommended!'][c],
+        time: ['2h', '5h', '1d'][c]
+      });
+    }
+    
+    posts.push({
+      id: `mock-post-${index + 1}`,
+      businessId: biz.id,
+      businessName: biz.name.en,
+      businessAvatar: biz.avatar,
+      category: biz.category,
+      governorate: biz.governorate,
+      mediaUrl: biz.image,
+      caption: {
+        ar: templates.ar[templateIndex],
+        ku: templates.ku[templateIndex],
+        en: templates.en[templateIndex]
+      },
+      likes,
+      commentsCount,
+      shares,
+      timeAgo,
+      likedByUser: false,
+      savedByUser: false,
+      comments
+    });
+  });
+
+  return posts;
+}
+
+const MOCK_SOCIAL_POSTS = generateMockPostsFromBusinesses();

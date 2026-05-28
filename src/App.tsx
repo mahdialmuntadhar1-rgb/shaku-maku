@@ -6,11 +6,13 @@ import {
   ChevronDown, MapPin
 } from 'lucide-react';
 import { Language, GovernorateCode, Business, SocialPost, UserProfile, HeroSlide } from './types';
-import { INITIAL_BUSINESSES, TRANSLATIONS, CATEGORIES, INITIAL_POSTS, GOVERNORATES, HERO_SLIDES } from './data';
-import { businessesApi, postsApi } from './api';
+import { TRANSLATIONS, CATEGORIES, GOVERNORATES, HERO_SLIDES } from './data';
 import { db } from './firebase';
 import { collection, onSnapshot, setDoc, doc, updateDoc } from 'firebase/firestore';
 import { getCurrentUser, logoutUser, loginUser, registerUser } from './shakuAuth';
+
+// Fixed Admin Email Configuration
+const ADMIN_EMAIL = 'mahdialmuntadhar1@gmail.com';
 
 // Saku Maku Modular Components
 import Header from './components/Header';
@@ -38,14 +40,14 @@ export default function App() {
   const [businesses, setBusinesses] = useState<Business[]>([]);
   
   // Saku Maku elevated Live Social posts stream
-  const [posts, setPosts] = useState<SocialPost[]>(INITIAL_POSTS);
-  
+  const [posts, setPosts] = useState<SocialPost[]>([]);
+
   // Navigation active tab
   const [activeTab, setActiveTab] = useState<'discover' | 'feed' | 'map' | 'add' | 'about' | 'admin'>('discover');
-  
+
   // Real-time keyword filter
   const [searchQuery, setSearchQuery] = useState('');
-  
+
   // Merchant active story popup state
   const [activeStory, setActiveStory] = useState<string[] | null>(null);
   const [activeStoryIdx, setActiveStoryIdx] = useState(0);
@@ -53,6 +55,11 @@ export default function App() {
   const [govDropdownOpen, setGovDropdownOpen] = useState(false);
   const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
+
+  // Single-source data loading states
+  const [bizLoading, setBizLoading] = useState(true);
+  const [postsLoading, setPostsLoading] = useState(true);
+  const [dataError, setDataError] = useState<string | null>(null);
 
   const t = TRANSLATIONS[currentLang];
   const isRtl = currentLang === 'ar' || currentLang === 'ku';
@@ -108,13 +115,13 @@ export default function App() {
         }
       }
 
-      const isAdmin = cleanEmail === 'mahdialmuntadhar1@gmail.com' || cleanEmail === 'safaribosafar@gmail.com';
+      const isAdmin = cleanEmail === ADMIN_EMAIL;
       const isOwner = cleanEmail.includes('owner');
 
       const newProfile: UserProfile = {
         uid: data.user.uid,
         displayName: data.user.displayName || cleanEmail.split('@')[0],
-        photoURL: cleanEmail === 'mahdialmuntadhar1@gmail.com' || cleanEmail === 'safaribosafar@gmail.com' 
+        photoURL: isAdmin 
           ? "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" 
           : "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80",
         email: cleanEmail,
@@ -178,196 +185,77 @@ export default function App() {
 
   const handleUpdateProfile = async (updatedFields: Partial<UserProfile>) => {
     if (!user) return;
-<<<<<<< HEAD
-    try {
-      const userRef = doc(db, 'users', user.uid);
-      await setDoc(userRef, updatedFields, { merge: true });
-    } catch (err) {
-      console.error("Error updating profile: ", err);
-    }
-  };
-
-  // Real-time Firestore synchronization & Auto-seeding for businesses
-  useEffect(() => {
-    const ref = collection(db, 'businesses');
-    const unsubscribe = onSnapshot(ref, (snap) => {
-      if (snap.empty) {
-        // Fallback to local businesses immediately so users never see a blank catalog
-        setBusinesses(INITIAL_BUSINESSES);
-
-        // ONLY attempt database seeding if current user is signed-in as administrative operator
-        const isAdminUser = user && user.email === 'safaribosafar@gmail.com';
-        if (isAdminUser) {
-          INITIAL_BUSINESSES.forEach(async (biz) => {
-            try {
-              await setDoc(doc(db, 'businesses', biz.id), {
-                ...biz,
-                ownerUid: 'system-seed'
-              });
-            } catch (e) {
-              console.error("Fails seeding biz: ", e);
-            }
-          });
-        }
-      } else {
-        const list: Business[] = [];
-        snap.forEach((doc) => {
-          list.push(doc.data() as Business);
-        });
-        setBusinesses(list);
-      }
-    }, (error) => {
-      console.error("Firestore businesses synced error: ", error);
-      // Fallback on sync/credential error
-      setBusinesses(INITIAL_BUSINESSES);
-    });
-    return () => unsubscribe();
-  }, [user]);
-=======
     const updated = { ...userProfile, ...updatedFields } as UserProfile;
     setUserProfile(updated);
     localStorage.setItem('user_profile', JSON.stringify(updated));
   };
 
-  // Map raw API business to typed Business
-  const mapApiBiz = (b: any): Business => ({
-    id: b.id,
-    name: { ar: b.name || '', ku: b.name || '', en: b.name || '' },
-    description: { ar: b.description || b.bio || '', ku: b.description || b.bio || '', en: b.description || b.bio || '' },
-    category: b.category, // Categories are now unified — no mapping needed
-    governorate: (b.governorate || 'baghdad').toLowerCase().replace(/\s+/g, '').replace(/[^a-z]/g, '') as any,
-    rating: b.rating || 4.5,
-    reviewsCount: b.views || b.reviews_count || 0,
-    image: b.coverImageUrl || b.cover_image_url || b.logo_url || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&auto=format&fit=crop&q=80',
-    images: [b.coverImageUrl || b.cover_image_url || b.logo_url || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&auto=format&fit=crop&q=80'],
-    avatar: b.logo_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80',
-    isVerified: !!b.verified,
-    phoneNumber: b.mobile || b.phone || '',
-    address: { ar: b.address || b.city || '', ku: b.address || b.city || '', en: b.address || b.city || '' },
-    likes: b.likes || 0,
-    saves: b.saves || 0,
-    mapCoords: { x: 48, y: 55 },
-  });
+  // ─────────────────────────────────────────────
+  // SINGLE SOURCE OF TRUTH: JSON files only
+  // No API fallback, no INITIAL fallback, no Firestore overwrite on read.
+  // ─────────────────────────────────────────────
 
-  // Load first batch whenever governorate OR category changes — resets list + cursor
+  // Load businesses from JSON only
   useEffect(() => {
     let cancelled = false;
     setBizLoading(true);
-    setBizCursor(null);
+    setDataError(null);
     const gov = selectedGov === 'all' ? undefined : selectedGov;
 
-    // Primary: load from local JSON (real CSV data)
     fetch('/iraq_businesses.json')
-      .then(r => r.json())
+      .then(r => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
       .then((data: Business[]) => {
         if (cancelled) return;
         const filtered = gov ? data.filter(b => b.governorate === gov) : data;
         setBusinesses(filtered);
-        setBizHasMore(false);
-        setBizCursor(null);
       })
       .catch(() => {
         if (cancelled) return;
-        // Fallback: API
-        businessesApi.list({ limit: PAGE_SIZE, governorate: gov })
-          .then((res: any) => {
-            if (cancelled) return;
-            const list: Business[] = (res.data || []).map(mapApiBiz);
-            setBusinesses(list.length > 0 ? list : []);
-            setBizCursor(res.next_cursor ?? null);
-            setBizHasMore(res.has_more ?? false);
-          })
-          .catch(() => {
-            if (!cancelled) {
-              setBusinesses(INITIAL_BUSINESSES);
-              setBizHasMore(false);
-              setBizCursor(null);
-            }
-          });
+        setBusinesses([]);
+        setDataError(currentLang === 'en'
+          ? 'Failed to load business data. Please refresh.'
+          : currentLang === 'ku'
+          ? 'بارکردنی داتا شکستی هێنا. تکایە نوێ بکەرەوە.'
+          : 'فشل في تحميل بيانات الأعمال. يرجى التحديث.'
+        );
       })
       .finally(() => { if (!cancelled) setBizLoading(false); });
+
     return () => { cancelled = true; };
-  }, [selectedGov]);
+  }, [selectedGov, currentLang]);
 
-  // Load next cursor batch and append
-  const handleLoadMoreBiz = () => {
-    if (bizLoadingMore || !bizHasMore || !bizCursor) return;
-    setBizLoadingMore(true);
-    const gov = selectedGov === 'all' ? undefined : selectedGov;
-    // Don't pass category to backend — filter on frontend after mapping
-    businessesApi.list({ cursor: bizCursor, limit: PAGE_SIZE, governorate: gov })
-      .then((res: any) => {
-        const list: Business[] = (res.data || []).map(mapApiBiz);
-        setBusinesses(prev => [...prev, ...list]);
-        setBizCursor(res.next_cursor ?? null);
-        setBizHasMore(res.has_more ?? false);
-      })
-      .catch(() => {})
-      .finally(() => setBizLoadingMore(false));
-  };
-
-  // Load posts from JSON first, then API, then fallback
+  // Load posts from JSON only
   useEffect(() => {
     let cancelled = false;
+    setPostsLoading(true);
+    setDataError(null);
+
     fetch('/iraq_posts.json')
-      .then(r => r.json())
+      .then(r => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
       .then((data: SocialPost[]) => {
         if (cancelled) return;
-        setPosts(data.length > 0 ? data : INITIAL_POSTS);
+        setPosts(data);
       })
       .catch(() => {
         if (cancelled) return;
-        postsApi.list({ limit: 30 })
-          .then((res: any) => {
-            if (cancelled) return;
-            const list: SocialPost[] = (res.data || []);
-            setPosts(list.length > 0 ? list : INITIAL_POSTS);
-          })
-          .catch(() => {
-            if (!cancelled) setPosts(INITIAL_POSTS);
-          });
-      });
+        setPosts([]);
+        setDataError(currentLang === 'en'
+          ? 'Failed to load feed data. Please refresh.'
+          : currentLang === 'ku'
+          ? 'بارکردنی فید شکستی هێنا. تکایە نوێ بکەرەوە.'
+          : 'فشل في تحميل بيانات التغذية. يرجى التحديث.'
+        );
+      })
+      .finally(() => { if (!cancelled) setPostsLoading(false); });
+
     return () => { cancelled = true; };
-  }, []);
->>>>>>> 4639a50 (Apply-plan-PWA-CSV-posts-cleanup)
-
-  // Real-time Firestore synchronization & Auto-seeding for posts
-  useEffect(() => {
-    const ref = collection(db, 'posts');
-    const unsubscribe = onSnapshot(ref, (snap) => {
-      if (snap.empty) {
-        // Only fallback to local posts if no posts loaded yet
-        setPosts(prev => prev.length > 0 ? prev : INITIAL_POSTS);
-
-        // ONLY attempt database seeding if current user is signed-in as administrative operator
-        const isAdminUser = user && user.email === 'safaribosafar@gmail.com';
-        if (isAdminUser) {
-          INITIAL_POSTS.forEach(async (post) => {
-            try {
-              await setDoc(doc(db, 'posts', post.id), {
-                ...post,
-                authorUid: 'system-seed'
-              });
-            } catch (e) {
-              // silently ignore seed error
-            }
-          });
-        }
-      } else {
-        const list: SocialPost[] = [];
-        snap.forEach((doc) => {
-          list.push(doc.data() as SocialPost);
-        });
-        list.sort((a, b) => b.id.localeCompare(a.id));
-        setPosts(list);
-      }
-    }, (error) => {
-      // silently ignore firestore error
-      // Fallback on sync/credential error only if no posts yet
-      setPosts(prev => prev.length === 0 ? INITIAL_POSTS : prev);
-    });
-    return () => unsubscribe();
-  }, [user]);
+  }, [currentLang]);
 
   // Filter business array based on search input + governorate matches + category
   const filteredBusinesses = useMemo(() => {
@@ -704,8 +592,8 @@ export default function App() {
             }}
             className={`flex flex-col items-center justify-center p-4 rounded-3xl border aspect-square text-center transition-all duration-300 transform hover:scale-[1.02] cursor-pointer relative group overflow-hidden ${
               activeTab === 'discover'
-                ? 'bg-[#1A1A1A] border-[#0F2E2F] text-white shadow-xl shadow-[#0F2E2F]/15'
-                : 'bg-white border-zinc-200 text-zinc-800 hover:border-luxury-gold hover:bg-zinc-50/50'
+                ? 'bg-[#1A1A1A] border-[#0F2E2F] text-white shadow-xl shadow-[#0F2E2F]/15 animate-glow-alternate-1'
+                : 'bg-white border-zinc-200 text-zinc-800 hover:border-luxury-gold hover:bg-zinc-50/50 animate-glow-alternate-1'
             }`}
           >
             <div className={`w-11 h-11 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center text-xl sm:text-2xl mb-2 sm:mb-3 transition-colors duration-300 shrink-0 ${
@@ -736,8 +624,8 @@ export default function App() {
             }}
             className={`flex flex-col items-center justify-center p-4 rounded-3xl border aspect-square text-center transition-all duration-300 transform hover:scale-[1.02] cursor-pointer relative group overflow-hidden ${
               activeTab === 'feed'
-                ? 'bg-[#1A1A1A] border-[#0F2E2F] text-white shadow-xl shadow-[#0F2E2F]/15'
-                : 'bg-white border-zinc-200 text-zinc-800 hover:border-luxury-gold hover:bg-zinc-50/50'
+                ? 'bg-[#1A1A1A] border-[#0F2E2F] text-white shadow-xl shadow-[#0F2E2F]/15 animate-glow-alternate-2'
+                : 'bg-white border-zinc-200 text-zinc-800 hover:border-luxury-gold hover:bg-zinc-50/50 animate-glow-alternate-2'
             }`}
           >
             <div className={`w-11 h-11 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center text-xl sm:text-2xl mb-2 sm:mb-3 relative transition-colors duration-300 shrink-0 ${
@@ -763,7 +651,18 @@ export default function App() {
 
         {/* Core Dashboard Content Switcher tabs */}
         <div id="discovery-catalog-section" className="space-y-6">
-          
+
+          {/* Single-source error banner */}
+          {dataError && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mx-4 sm:mx-0 bg-red-950/40 border border-red-500/30 text-red-200 px-4 py-3 rounded-xl text-sm text-center"
+            >
+              {dataError}
+            </motion.div>
+          )}
+
           <AnimatePresence mode="wait">
             {activeTab === 'discover' && (
               <motion.div
@@ -793,9 +692,6 @@ export default function App() {
                     setActiveStoryIdx(0);
                     setStoryProgress(0);
                   }}
-                  onLoadMore={handleLoadMoreBiz}
-                  loadingMore={bizLoadingMore}
-                  hasMore={bizHasMore}
                 />
               </motion.div>
             )}

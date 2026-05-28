@@ -202,6 +202,17 @@ export default function BusinessFeed({
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                         referrerPolicy="no-referrer"
                       />
+                      
+                      {/* Shaku Maku Arabic Branding Overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none">
+                        <div className="absolute bottom-0 left-0 right-0 p-2 xs:p-3">
+                          <div className="flex items-center justify-center">
+                            <span className="text-white/90 text-[10px] xs:text-xs font-black tracking-wider bg-black/40 backdrop-blur-sm px-2 py-1 rounded-lg border border-white/20" style={{ fontFamily: 'Cairo, sans-serif' }}>
+                              شكو ماكو
+                            </span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
 
                     {/* Bottom details pack */}

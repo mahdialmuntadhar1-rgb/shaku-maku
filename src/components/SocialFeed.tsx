@@ -5,16 +5,9 @@ import {
   Sparkles, CheckCircle2, SlidersHorizontal, Eye, Gift, ShoppingBag,
   Image as ImageIcon, Video, FileText, File, Trash2, Edit3
 } from 'lucide-react';
-<<<<<<< HEAD
-import { SocialPost, Language, GovernorateCode } from '../types';
-import { TRANSLATIONS, CATEGORIES, GOVERNORATES } from '../data';
-import { generateLivePostFromCSV } from '../csvBusinesses';
-import { setDoc, doc, updateDoc } from 'firebase/firestore';
-=======
 import { SocialPost, Language, GovernorateCode, UserProfile } from '../types';
-import { TRANSLATIONS, CATEGORIES } from '../data';
+import { TRANSLATIONS, CATEGORIES, GOVERNORATES } from '../data';
 import { setDoc, doc, updateDoc, deleteDoc } from 'firebase/firestore';
->>>>>>> 4639a50 (Apply-plan-PWA-CSV-posts-cleanup)
 import { db, handleFirestoreError, OperationType } from '../firebase';
 
 interface SocialFeedProps {
