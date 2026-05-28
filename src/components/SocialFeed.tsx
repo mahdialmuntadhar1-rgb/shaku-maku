@@ -397,8 +397,8 @@ const handleDeletePost = async (postId: string) => {
         </span>
       </div>
 
-{/* Immersive Refined Social Composer - Owners/Admins only */}
-      {canCreatePost ? (
+{/* Immersive Refined Social Composer - Available to all users */}
+      {true ? (
       <div className="bg-[#18191a] border border-[#2f3031]/80 rounded-[20px] p-5 space-y-4.5 shadow-2xl relative overflow-hidden font-sans">
         
         {/* Dynamic Guest Tip Banner instead of restrictive modal lock */}
@@ -818,16 +818,6 @@ const handleDeletePost = async (postId: string) => {
         </button>
 
       </div>
-      ) : user ? (
-        <div className="bg-[#18191a] border border-[#2f3031]/80 rounded-[20px] p-5 text-center">
-          <p className="text-xs text-zinc-400">
-            {currentLang === 'en'
-              ? 'Only business owners can create posts.'
-              : currentLang === 'ku'
-              ? 'تەنها خاوەن کارگێڕیەکان دەتوانن بابەت دروست بکەن.'
-              : 'يمكن لأصحاب المتاجر فقط إنشاء المنشورات.'}
-          </p>
-        </div>
       ) : null}
 
       {/* Main post stream list */}
@@ -838,7 +828,7 @@ const handleDeletePost = async (postId: string) => {
             key={post.id}
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white/5 border border-white/10 rounded-3xl overflow-hidden shadow-xl"
+            className="bg-gradient-to-br from-slate-900/90 via-slate-800/80 to-slate-900/90 backdrop-blur-xl border border-slate-700/50 rounded-3xl overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-300"
           >
             
             {/* Post Header: Business logo avatar, Governorate, category tag */}
@@ -951,31 +941,31 @@ const handleDeletePost = async (postId: string) => {
                   {/* Like heart */}
                   <button
                     onClick={() => handleLike(post.id)}
-                    className="flex items-center gap-1.5 text-zinc-400 hover:text-pink-500 transition group"
+                    className="flex items-center gap-1.5 text-zinc-400 hover:text-pink-500 transition-all duration-200 group"
                   >
-                    <div className={`p-1.5 rounded-xl border border-zinc-900 bg-slate-900/60 group-hover:bg-slate-900 ${post.likedByUser ? 'text-pink-500 border-pink-500/20' : ''}`}>
-                      <Heart className={`w-4 h-4 ${post.likedByUser ? 'fill-pink-500 text-pink-500' : ''}`} />
+                    <div className={`p-1.5 rounded-xl border border-zinc-900 bg-gradient-to-br from-slate-900/60 to-slate-800/60 group-hover:from-pink-900/40 group-hover:to-pink-800/40 ${post.likedByUser ? 'text-pink-500 border-pink-500/30 bg-gradient-to-br from-pink-900/30 to-pink-800/30' : ''} transition-all duration-200`}>
+                      <Heart className={`w-4 h-4 ${post.likedByUser ? 'fill-pink-500 text-pink-500 animate-pulse' : ''}`} />
                     </div>
-                    <span className="text-xs font-black">{post.likes}</span>
+                    <span className="text-xs font-black group-hover:text-pink-400 transition-colors">{post.likes}</span>
                   </button>
 
                   {/* Comment icon button */}
-                  <button className="flex items-center gap-1.5 text-zinc-400 hover:text-cyan-400 transition group">
-                    <div className="p-1.5 rounded-xl border border-zinc-900 bg-slate-900/60 group-hover:bg-slate-900">
+                  <button className="flex items-center gap-1.5 text-zinc-400 hover:text-cyan-400 transition-all duration-200 group">
+                    <div className="p-1.5 rounded-xl border border-zinc-900 bg-gradient-to-br from-slate-900/60 to-slate-800/60 group-hover:from-cyan-900/40 group-hover:to-cyan-800/40 transition-all duration-200">
                       <MessageCircle className="w-4 h-4" />
                     </div>
-                    <span className="text-xs font-black">{post.comments.length}</span>
+                    <span className="text-xs font-black group-hover:text-cyan-400 transition-colors">{post.comments.length}</span>
                   </button>
 
                   {/* Share item */}
                   <button
                     onClick={() => handleShare(post)}
-                    className="flex items-center gap-1.5 text-zinc-400 hover:text-purple-400 transition group"
+                    className="flex items-center gap-1.5 text-zinc-400 hover:text-purple-400 transition-all duration-200 group"
                   >
-                    <div className="p-1.5 rounded-xl border border-zinc-900 bg-slate-900/60 group-hover:bg-slate-900">
+                    <div className="p-1.5 rounded-xl border border-zinc-900 bg-gradient-to-br from-slate-900/60 to-slate-800/60 group-hover:from-purple-900/40 group-hover:to-purple-800/40 transition-all duration-200">
                       <Share2 className="w-4 h-4" />
                     </div>
-                    <span className="text-xs font-black">{post.shares || 0}</span>
+                    <span className="text-xs font-black group-hover:text-purple-400 transition-colors">{post.shares || 0}</span>
                   </button>
 
                   {/* Views count */}
