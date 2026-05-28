@@ -8,8 +8,7 @@ import {
 } from 'lucide-react';
 import { Language, GovernorateCode, Business, SocialPost, UserProfile, HeroSlide, BusinessClaim } from '../types';
 import { CATEGORIES, GOVERNORATES, HERO_SLIDES, INITIAL_BUSINESSES, INITIAL_POSTS } from '../data';
-import { db } from '../firebase';
-import { collection, doc, setDoc, updateDoc, deleteDoc, onSnapshot } from 'firebase/firestore';
+import { businessesApi, postsApi } from '../api';
 
 interface AdminPanelProps {
   currentLang: Language;

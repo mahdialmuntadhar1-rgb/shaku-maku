@@ -10,8 +10,7 @@ import {
 } from 'lucide-react';
 import { Business, Language, GovernorateCode, UserProfile, SocialPost, BusinessClaim } from '../types';
 import { GOVERNORATES, CATEGORIES } from '../data';
-import { doc, updateDoc, setDoc, collection, addDoc, getDocs, query, where } from 'firebase/firestore';
-import { db } from '../firebase';
+import { businessesApi } from '../api';
 
 // Import newly created modular components
 import BusinessCard from './BusinessCard';
@@ -1009,8 +1008,8 @@ export default function AddBusinessForm({
                               onClick={async () => {
                                 if (window.confirm("Permanently delete this Saku Maku directory post?")) {
                                   try {
-                                    const { deleteDoc, doc } = await import('firebase/firestore');
-                                    await deleteDoc(doc(db, 'posts', post.id));
+                                    // TODO: Call API to delete post
+                                    console.log("Delete post not implemented in backend yet");
                                   } catch (e) {
                                     console.error(e);
                                   }

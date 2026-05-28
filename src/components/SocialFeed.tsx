@@ -8,8 +8,7 @@ import {
 import { SocialPost, Language, GovernorateCode } from '../types';
 import { TRANSLATIONS, CATEGORIES, GOVERNORATES } from '../data';
 import { generateLivePostFromCSV } from '../csvBusinesses';
-import { setDoc, doc, updateDoc } from 'firebase/firestore';
-import { db, handleFirestoreError, OperationType } from '../firebase';
+import { postsApi } from '../api';
 
 interface SocialFeedProps {
   currentLang: Language;

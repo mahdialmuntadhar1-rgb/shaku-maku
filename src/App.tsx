@@ -7,9 +7,7 @@ import {
 } from 'lucide-react';
 import { Language, GovernorateCode, Business, SocialPost, UserProfile, HeroSlide } from './types';
 import { INITIAL_BUSINESSES, TRANSLATIONS, CATEGORIES, INITIAL_POSTS, GOVERNORATES, HERO_SLIDES } from './data';
-import { auth, db, signInWithGoogle } from './firebase';
-import { onAuthStateChanged, signOut, User, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
-import { collection, onSnapshot, setDoc, doc, updateDoc } from 'firebase/firestore';
+import { authApi, businessesApi, postsApi, AuthResponse } from './api';
 
 // Saku Maku Modular Components
 import Header from './components/Header';
@@ -28,8 +26,8 @@ export default function App() {
   const [selectedGov, setSelectedGov] = useState<GovernorateCode>('all'); // Default: All Iraq
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   
-  // Real-time Authenticated Firebase User state
-  const [user, setUser] = useState<User | null>(null);
+  // Authenticated User state from Cloudflare API
+  const [user, setUser] = useState<AuthResponse['user'] | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 
   // Saku Maku core Reactive businesses database
@@ -55,38 +53,27 @@ export default function App() {
   const t = TRANSLATIONS[currentLang];
   const isRtl = currentLang === 'ar' || currentLang === 'ku';
 
-  // Real-time Hero Slides synced from Firestore with auto-seeding
-  const [heroSlides, setHeroSlides] = useState<HeroSlide[]>([]);
+  // Hero Slides (static for now, can be moved to backend later)
+  const [heroSlides, setHeroSlides] = useState<HeroSlide[]>(HERO_SLIDES);
 
-  // Sync Hero Slides in Real Time!
+  // Check for existing auth on mount
   useEffect(() => {
-    const ref = collection(db, 'hero_slides');
-    const unsubscribe = onSnapshot(ref, (snap) => {
-      if (snap.empty) {
-        setHeroSlides(HERO_SLIDES);
-        const isAdminUser = userProfile?.role === 'admin';
-        if (isAdminUser) {
-          HERO_SLIDES.forEach(async (slide) => {
-            try {
-              await setDoc(doc(db, 'hero_slides', slide.id), slide);
-            } catch (err) {
-              console.error("Fails seeding hero slide: ", err);
-            }
-          });
-        }
-      } else {
-        const list: HeroSlide[] = [];
-        snap.forEach((doc) => {
-          list.push(doc.data() as HeroSlide);
-        });
-        setHeroSlides(list);
-      }
-    }, (error) => {
-      console.error("Error syncing hero slides in Firestore: ", error);
-      setHeroSlides(HERO_SLIDES);
-    });
-    return () => unsubscribe();
-  }, [userProfile]);
+    const currentUser = authApi.getCurrentUser();
+    if (currentUser) {
+      setUser(currentUser);
+      const isAdmin = currentUser.email === 'safaribosafar@gmail.com' || currentUser.email === 'mahdialmuntadhar1@gmail.com';
+      setUserProfile({
+        uid: currentUser.id,
+        displayName: currentUser.name || currentUser.email.split('@')[0],
+        photoURL: '',
+        email: currentUser.email,
+        createdAt: new Date().toISOString(),
+        role: isAdmin ? 'admin' : 'user',
+        onboarded: false,
+        businessId: null
+      });
+    }
+  }, []);
 
   const handleCustomEmailLogin = async (customEmail: string) => {
     const cleanEmail = customEmail.trim().toLowerCase();
@@ -95,237 +82,131 @@ export default function App() {
     const dummyPassword = "SandboxPassword123!";
 
     try {
-      let credential;
+      // Try login first
       try {
-        credential = await signInWithEmailAndPassword(auth, cleanEmail, dummyPassword);
-      } catch (signInErr: any) {
-        if (signInErr.code === 'auth/user-not-found' || signInErr.code === 'auth/invalid-credential' || signInErr.code === 'auth/invalid-login-credentials') {
-          credential = await createUserWithEmailAndPassword(auth, cleanEmail, dummyPassword);
-        } else {
-          throw signInErr;
+        const response = await authApi.login({ email: cleanEmail, password: dummyPassword });
+        setUser(response.user);
+        authApi.setCurrentUser(response.user);
+        const isAdmin = response.user.email === 'mahdialmuntadhar1@gmail.com' || response.user.email === 'safaribosafar@gmail.com';
+        setUserProfile({
+          uid: response.user.id,
+          displayName: response.user.name || cleanEmail.split('@')[0],
+          photoURL: '',
+          email: cleanEmail,
+          createdAt: new Date().toISOString(),
+          role: isAdmin ? 'admin' : 'user',
+          onboarded: false,
+          businessId: null
+        });
+      } catch (loginErr: any) {
+        // If login fails, try signup
+        try {
+          const response = await authApi.signup({ email: cleanEmail, password: dummyPassword, name: cleanEmail.split('@')[0] });
+          setUser(response.user);
+          authApi.setCurrentUser(response.user);
+          const isAdmin = response.user.email === 'mahdialmuntadhar1@gmail.com' || response.user.email === 'safaribosafar@gmail.com';
+          setUserProfile({
+            uid: response.user.id,
+            displayName: response.user.name || cleanEmail.split('@')[0],
+            photoURL: '',
+            email: cleanEmail,
+            createdAt: new Date().toISOString(),
+            role: isAdmin ? 'admin' : 'user',
+            onboarded: false,
+            businessId: null
+          });
+        } catch (signupErr) {
+          throw signupErr;
         }
       }
-
-      const firebaseUser = credential.user;
-
-      if (!firebaseUser.displayName) {
-        await updateProfile(firebaseUser, {
-          displayName: cleanEmail.split('@')[0]
-        });
-      }
-
-      const isAdmin = cleanEmail === 'mahdialmuntadhar1@gmail.com' || cleanEmail === 'safaribosafar@gmail.com';
-      const isOwner = cleanEmail.includes('owner');
-
-      const userRef = doc(db, 'users', firebaseUser.uid);
-      const newProfile: UserProfile = {
-        uid: firebaseUser.uid,
-        displayName: firebaseUser.displayName || cleanEmail.split('@')[0],
-        photoURL: cleanEmail === 'mahdialmuntadhar1@gmail.com' || cleanEmail === 'safaribosafar@gmail.com' 
-          ? "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" 
-          : "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80",
-        email: cleanEmail,
-        createdAt: new Date().toISOString(),
-        role: isAdmin ? 'admin' : (isOwner ? 'owner' : 'user'),
-        onboarded: isOwner, 
-        businessId: isOwner ? 'b-onboard-demo' : null,
-        businessOnboarding: isOwner ? {
-          name: 'Classic Baghdadi Café',
-          category: 'cafe_bakery',
-          governorate: 'baghdad',
-          address: 'Arasat Street, Karrada District',
-          phone: '+9647701234567',
-          whatsApp: '+9647701234567',
-          logo: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=120&auto=format&fit=crop&q=80',
-          coverImage: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&auto=format&fit=crop&q=80',
-          description: 'Elite cozy spot for specialty brews.'
-        } : undefined
-      };
-
-      if (isOwner) {
-        const demoBiz = {
-          id: 'b-onboard-demo',
-          name: { ar: 'مقهى البغدادي الكلاسيكي ☕', ku: 'کافێی کلاسیکی بەغدادی ☕', en: 'Classic Baghdadi Café ☕' },
-          description: { ar: 'أرقى أنواع القهوة الفلتر والحلويات الشرقية في الكرادة.', ku: 'باشترین جۆرەکانی قاوە و شیرینییەکان.', en: 'Cozy traditional Iraqi roaster in Karada.' },
-          category: 'cafe_bakery',
-          governorate: 'baghdad',
-          rating: 4.9,
-          reviewsCount: 42,
-          image: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&auto=format&fit=crop&q=80',
-          images: ['https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&auto=format&fit=crop&q=80'],
-          avatar: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=120&auto=format&fit=crop&q=80',
-          isVerified: true,
-          phoneNumber: '+9647701234567',
-          address: { ar: 'شارع العرصات، الكرادة', ku: 'جادەی عەرەسات، بەغداد', en: 'Arasat Street, Karrada' },
-          likes: 35,
-          saves: 18,
-          mapCoords: { x: 48, y: 58 },
-          ownerUid: firebaseUser.uid
-        };
-        await setDoc(doc(db, 'businesses', 'b-onboard-demo'), demoBiz, { merge: true });
-      }
-
-      await setDoc(userRef, newProfile, { merge: true });
-      setUser(firebaseUser);
-      setUserProfile(newProfile);
-      console.log("Firebase Auth sandbox preset session authenticated successfully for: ", cleanEmail);
+      console.log("Auth session authenticated successfully for: ", cleanEmail);
     } catch (err) {
-      console.error("Error setting custom user in Firebase Auth / Firestore: ", err);
+      console.error("Error setting custom user: ", err);
     }
   };
 
-  // Real-time Auth Listening and User creation mapping inside Firestore
-  useEffect(() => {
-    let unsubProfile: (() => void) | null = null;
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      setUser(firebaseUser);
-      if (firebaseUser) {
-        const userRef = doc(db, 'users', firebaseUser.uid);
-        unsubProfile = onSnapshot(userRef, (docSnap) => {
-          if (docSnap.exists()) {
-            setUserProfile(docSnap.data() as UserProfile);
-          } else {
-            const isAdmin = firebaseUser.email === 'safaribosafar@gmail.com' || firebaseUser.email === 'mahdialmuntadhar1@gmail.com';
-            const newProfile: UserProfile = {
-              uid: firebaseUser.uid,
-              displayName: firebaseUser.displayName || 'Authorized User',
-              photoURL: firebaseUser.photoURL || '',
-              email: firebaseUser.email || '',
-              createdAt: new Date().toISOString(),
-              role: isAdmin ? 'admin' : 'user',
-              onboarded: false,
-              businessId: null
-            };
-            setDoc(userRef, newProfile).catch(err => console.error("Error seeding profile: ", err));
-            setUserProfile(newProfile);
-          }
-        }, (error) => {
-          console.error("Profile listen error: ", error);
-        });
-      } else {
-        if (unsubProfile) {
-          unsubProfile();
-          unsubProfile = null;
-        }
-        setUserProfile(null);
-      }
-    });
-    return () => {
-      unsubscribe();
-      if (unsubProfile) unsubProfile();
-    };
-  }, []);
-
-  // Secure fully responsive terminations of session
+  // Secure logout
   const handleSecureLogout = async () => {
     try {
-      await signOut(auth);
-      localStorage.removeItem('shkomaku_custom_user');
+      await authApi.logout();
       setUser(null);
       setUserProfile(null);
       setActiveTab('discover');
-      localStorage.removeItem('firebase:authUser:' + auth.app.options.apiKey + ':[DEFAULT]');
       sessionStorage.clear();
-      console.log("Stale sessions eradicated. Standard non-interactive guests initialized.");
+      console.log("Session terminated.");
     } catch (err) {
       console.error("Logout error: ", err);
     }
   };
 
   const handleUpdateRole = async (newRole: 'user' | 'owner' | 'admin') => {
-    if (!user) return;
-    try {
-      const userRef = doc(db, 'users', user.uid);
-      await setDoc(userRef, { role: newRole }, { merge: true });
-    } catch (err) {
-      console.error("Error setting role: ", err);
-    }
+    // Role updates would need backend API support
+    console.log("Role update not implemented in backend yet");
   };
 
   const handleUpdateProfile = async (updatedFields: Partial<UserProfile>) => {
-    if (!user) return;
-    try {
-      const userRef = doc(db, 'users', user.uid);
-      await setDoc(userRef, updatedFields, { merge: true });
-    } catch (err) {
-      console.error("Error updating profile: ", err);
-    }
+    // Profile updates would need backend API support
+    console.log("Profile update not implemented in backend yet");
   };
 
-  // Real-time Firestore synchronization & Auto-seeding for businesses
+  // Fetch businesses from Cloudflare API
   useEffect(() => {
-    const ref = collection(db, 'businesses');
-    const unsubscribe = onSnapshot(ref, (snap) => {
-      if (snap.empty) {
-        // Fallback to local businesses immediately so users never see a blank catalog
+    const fetchBusinesses = async () => {
+      try {
+        const response = await businessesApi.list({ limit: 100 });
+        if (response.data && response.data.length > 0) {
+          // Transform API data to match Business type
+          const transformedBusinesses: Business[] = response.data.map((biz: any) => ({
+            id: biz.id,
+            name: { ar: biz.name, ku: biz.name, en: biz.name },
+            description: { ar: biz.description || '', ku: biz.description || '', en: biz.description || '' },
+            category: biz.category,
+            governorate: biz.governorate,
+            rating: biz.rating || 0,
+            reviewsCount: biz.reviewCount || 0,
+            image: biz.coverImageUrl || '',
+            images: [biz.coverImageUrl || ''],
+            avatar: biz.logoUrl || '',
+            isVerified: biz.verified,
+            phoneNumber: biz.phone || '',
+            address: { ar: biz.address || '', ku: biz.address || '', en: biz.address || '' },
+            likes: biz.likes || 0,
+            saves: biz.saves || 0,
+            mapCoords: { x: 0, y: 0 },
+            likedByUser: false,
+            savedByUser: false
+          }));
+          setBusinesses(transformedBusinesses);
+        } else {
+          setBusinesses(INITIAL_BUSINESSES);
+        }
+      } catch (error) {
+        console.error("Error fetching businesses from API:", error);
         setBusinesses(INITIAL_BUSINESSES);
-
-        // ONLY attempt database seeding if current user is signed-in as administrative operator
-        const isAdminUser = user && user.email === 'safaribosafar@gmail.com';
-        if (isAdminUser) {
-          INITIAL_BUSINESSES.forEach(async (biz) => {
-            try {
-              await setDoc(doc(db, 'businesses', biz.id), {
-                ...biz,
-                ownerUid: 'system-seed'
-              });
-            } catch (e) {
-              console.error("Fails seeding biz: ", e);
-            }
-          });
-        }
-      } else {
-        const list: Business[] = [];
-        snap.forEach((doc) => {
-          list.push(doc.data() as Business);
-        });
-        setBusinesses(list);
       }
-    }, (error) => {
-      console.error("Firestore businesses synced error: ", error);
-      // Fallback on sync/credential error
-      setBusinesses(INITIAL_BUSINESSES);
-    });
-    return () => unsubscribe();
-  }, [user]);
+    };
 
-  // Real-time Firestore synchronization & Auto-seeding for posts
+    fetchBusinesses();
+  }, []);
+
+  // Fetch posts from Cloudflare API
   useEffect(() => {
-    const ref = collection(db, 'posts');
-    const unsubscribe = onSnapshot(ref, (snap) => {
-      if (snap.empty) {
-        // Fallback to local posts immediately so users never see a blank feed
-        setPosts(INITIAL_POSTS);
-
-        // ONLY attempt database seeding if current user is signed-in as administrative operator
-        const isAdminUser = user && user.email === 'safaribosafar@gmail.com';
-        if (isAdminUser) {
-          INITIAL_POSTS.forEach(async (post) => {
-            try {
-              await setDoc(doc(db, 'posts', post.id), {
-                ...post,
-                authorUid: 'system-seed'
-              });
-            } catch (e) {
-              console.error("Fails seeding post: ", e);
-            }
-          });
+    const fetchPosts = async () => {
+      try {
+        const response = await postsApi.list({ limit: 50 });
+        if (response.data && response.data.length > 0) {
+          setPosts(response.data);
+        } else {
+          setPosts(INITIAL_POSTS);
         }
-      } else {
-        const list: SocialPost[] = [];
-        snap.forEach((doc) => {
-          list.push(doc.data() as SocialPost);
-        });
-        list.sort((a, b) => b.id.localeCompare(a.id));
-        setPosts(list);
+      } catch (error) {
+        console.error("Error fetching posts from API:", error);
+        setPosts(INITIAL_POSTS);
       }
-    }, (error) => {
-      console.error("Firestore posts synced error: ", error);
-      // Fallback on sync/credential error
-      setPosts(INITIAL_POSTS);
-    });
-    return () => unsubscribe();
-  }, [user]);
+    };
+
+    fetchPosts();
+  }, []);
 
   // Filter business array based on search input + governorate matches + category
   const filteredBusinesses = useMemo(() => {
@@ -349,55 +230,36 @@ export default function App() {
     });
   }, [businesses, selectedGov, selectedCategory, searchQuery, currentLang]);
 
-  // Handle Likes state toggle in Firestore
+  // Handle Likes state toggle (local state for now, API support needed)
   const handleToggleLike = async (bizId: string) => {
     const target = businesses.find(b => b.id === bizId);
     if (!target) return;
     const liked = !target.likedByUser;
-    const payload = {
-      likedByUser: liked,
-      likes: liked ? target.likes + 1 : target.likes - 1
-    };
-    try {
-      await updateDoc(doc(db, 'businesses', bizId), payload);
-    } catch (err) {
-      console.error("Error liking business: ", err);
-    }
+    setBusinesses(businesses.map(b => 
+      b.id === bizId 
+        ? { ...b, likedByUser: liked, likes: liked ? b.likes + 1 : b.likes - 1 }
+        : b
+    ));
+    // TODO: Call API to persist like
   };
 
-  // Handle Saves state toggle in Firestore
+  // Handle Saves state toggle (local state for now, API support needed)
   const handleToggleSave = async (bizId: string) => {
     const target = businesses.find(b => b.id === bizId);
     if (!target) return;
     const saved = !target.savedByUser;
-    const payload = {
-      savedByUser: saved,
-      saves: saved ? target.saves + 1 : target.saves - 1
-    };
-    try {
-      await updateDoc(doc(db, 'businesses', bizId), payload);
-    } catch (err) {
-      console.error("Error saving business: ", err);
-    }
+    setBusinesses(businesses.map(b => 
+      b.id === bizId 
+        ? { ...b, savedByUser: saved, saves: saved ? b.saves + 1 : b.saves - 1 }
+        : b
+    ));
+    // TODO: Call API to persist save
   };
 
-  // Callback to add a new customized business to Firestore from owners claim form
+  // Callback to add a new business (API support needed)
   const handleAddLiveBusiness = async (newBiz: Omit<Business, 'rating' | 'reviewsCount' | 'likes' | 'saves'>) => {
-    const fullBiz: Business = {
-      ...newBiz,
-      rating: 4.8,
-      reviewsCount: 1,
-      likes: 15,
-      saves: 8,
-      likedByUser: false,
-      savedByUser: false,
-      ownerUid: user?.uid || 'anonymous'
-    };
-    try {
-      await setDoc(doc(db, 'businesses', fullBiz.id), fullBiz);
-    } catch (err) {
-      console.error("Error adding live business in Firestore: ", err);
-    }
+    console.log("Add business not implemented in backend yet");
+    // TODO: Call API to create business
   };
 
   // Stories auto advancing timer handler

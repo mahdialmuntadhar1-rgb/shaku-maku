@@ -5,13 +5,7 @@ import {
   Eye, EyeOff, CheckCircle2, Award, ArrowRight, ArrowLeft
 } from 'lucide-react';
 import { Language, UserProfile } from '../types';
-import { auth, db, signInWithGoogle } from '../firebase';
-import { 
-  signInWithEmailAndPassword, 
-  createUserWithEmailAndPassword,
-  updateProfile
-} from 'firebase/auth';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { authApi } from '../api';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -141,48 +135,8 @@ export default function AuthModal({
   }[currentLang];
 
   const handleGoogleClick = async () => {
-    setLoading(true);
-    setErrorMsg('');
-    try {
-      const userObj = await signInWithGoogle();
-      if (userObj) {
-        // Create user document in firestore if not exists
-        const userRef = doc(db, 'users', userObj.uid);
-        const docSnap = await getDoc(userRef);
-        
-        let profileDetails: UserProfile;
-        if (!docSnap.exists()) {
-          const isAdmin = userObj.email === 'safaribosafar@gmail.com' || userObj.email === 'mahdialmuntadhar1@gmail.com';
-          profileDetails = {
-            uid: userObj.uid,
-            displayName: userObj.displayName || 'Iraqi Guest',
-            photoURL: userObj.photoURL || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80",
-            email: userObj.email || '',
-            createdAt: new Date().toISOString(),
-            role: isAdmin ? 'admin' : 'user',
-            onboarded: false,
-            businessId: null
-          };
-          await setDoc(userRef, profileDetails);
-        } else {
-          profileDetails = docSnap.data() as UserProfile;
-        }
-
-        setSuccessMsg(L.success_logged);
-        if (onAuthSuccess) {
-          onAuthSuccess(profileDetails);
-        }
-        setTimeout(() => {
-          onClose();
-          setSuccessMsg('');
-        }, 1500);
-      }
-    } catch (err: any) {
-      console.error(err);
-      setErrorMsg(err.message || 'Google Auth Cancelled or Failed.');
-    } finally {
-      setLoading(false);
-    }
+    // Google auth not implemented in Cloudflare backend yet
+    setErrorMsg(currentLang === 'en' ? 'Google auth not available yet' : 'تسجيل الدخول بـ Google غير متاح حالياً');
   };
 
   const handleEmailAuthSubmit = async (e: React.FormEvent) => {
@@ -203,19 +157,16 @@ export default function AuthModal({
 
     try {
       if (isSignUp) {
-        // 1. Create firebase auth email account
-        const credential = await createUserWithEmailAndPassword(auth, email.trim(), password);
-        await updateProfile(credential.user, {
-          displayName: displayName.trim()
+        const response = await authApi.signup({
+          email: email.trim(),
+          password,
+          name: displayName.trim()
         });
-
-        // 2. Create the firestore profile
-        const userRef = doc(db, 'users', credential.user.uid);
         
         const isAdmin = email.trim().toLowerCase() === 'safaribosafar@gmail.com' || email.trim().toLowerCase() === 'mahdialmuntadhar1@gmail.com';
         const profileDetails: UserProfile = {
-          uid: credential.user.uid,
-          displayName: displayName.trim(),
+          uid: response.user.id,
+          displayName: response.user.name || displayName.trim(),
           photoURL: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80",
           email: email.trim().toLowerCase(),
           createdAt: new Date().toISOString(),
@@ -224,7 +175,6 @@ export default function AuthModal({
           businessId: null
         };
 
-        await setDoc(userRef, profileDetails);
         setSuccessMsg(L.success_registered);
         
         if (onAuthSuccess) {
@@ -237,29 +187,22 @@ export default function AuthModal({
         }, 2000);
       } else {
         // Login flow
-        const credential = await signInWithEmailAndPassword(auth, email.trim(), password);
+        const response = await authApi.login({
+          email: email.trim(),
+          password
+        });
         
-        // Retrieve firestore profile details
-        const userRef = doc(db, 'users', credential.user.uid);
-        const docSnap = await getDoc(userRef);
-        
-        let profileDetails: UserProfile;
-        if (!docSnap.exists()) {
-          const isAdmin = credential.user.email === 'safaribosafar@gmail.com' || credential.user.email === 'mahdialmuntadhar1@gmail.com';
-          profileDetails = {
-            uid: credential.user.uid,
-            displayName: credential.user.displayName || credential.user.email?.split('@')[0] || 'Explorer User',
-            photoURL: credential.user.photoURL || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80",
-            email: credential.user.email || '',
-            createdAt: new Date().toISOString(),
-            role: isAdmin ? 'admin' : 'user',
-            onboarded: false,
-            businessId: null
-          };
-          await setDoc(userRef, profileDetails);
-        } else {
-          profileDetails = docSnap.data() as UserProfile;
-        }
+        const isAdmin = response.user.email === 'safaribosafar@gmail.com' || response.user.email === 'mahdialmuntadhar1@gmail.com';
+        const profileDetails: UserProfile = {
+          uid: response.user.id,
+          displayName: response.user.name || response.user.email?.split('@')[0] || 'Explorer User',
+          photoURL: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80",
+          email: response.user.email || '',
+          createdAt: new Date().toISOString(),
+          role: isAdmin ? 'admin' : 'user',
+          onboarded: false,
+          businessId: null
+        };
 
         setSuccessMsg(L.success_logged);
         if (onAuthSuccess) {
@@ -274,17 +217,17 @@ export default function AuthModal({
     } catch (err: any) {
       console.error("Auth Failure details: ", err);
       let localizedErr = err.message;
-      if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
+      if (localizedErr.includes('user-not-found') || localizedErr.includes('wrong-password')) {
         localizedErr = currentLang === 'en' 
           ? 'Invalid email or incorrect password. Please try again.' 
           : 'البريد الإلكتروني أو كلمة المرور غير صحيحة. يرجى المحاولة ثانية.';
-      } else if (err.code === 'auth/email-already-in-use') {
+      } else if (localizedErr.includes('email-already-in-use')) {
         localizedErr = currentLang === 'en'
           ? 'This email address is already registered. Please login instead.'
           : 'هذا البريد الإلكتروني مسجل بالفعل. يرجى اختيار تسجيل الدخول.';
-      } else if (err.code === 'auth/invalid-email') {
+      } else if (localizedErr.includes('invalid-email')) {
         localizedErr = currentLang === 'en' ? 'Invalid email format' : 'صيغة البريد الإلكتروني غير صالحة';
-      } else if (err.code === 'auth/weak-password') {
+      } else if (localizedErr.includes('weak-password')) {
         localizedErr = currentLang === 'en' ? 'Weak password! Use at least 6 characters.' : 'كلمة المرور ضعيفة جداً! يرجى كتابة 6 أحرف على الأقل.';
       }
       setErrorMsg(localizedErr);
