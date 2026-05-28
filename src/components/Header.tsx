@@ -70,9 +70,48 @@ export default function Header({
   const isRtl = currentLang === 'ar' || currentLang === 'ku';
 
   const languages = [
-    { code: 'ar', label: 'العربية', flag: '🇮🇶' },
-    { code: 'ku', label: 'کوردی', flag: '☀️' },
-    { code: 'en', label: 'English', flag: '🇺🇸' }
+    { 
+      code: 'ar', 
+      label: 'العربية', 
+      flag: (
+        <svg viewBox="0 0 3 2" className="w-5 h-3.5 rounded-sm shadow-sm inline-block">
+          <rect width="3" height="2" fill="#fff" />
+          <rect width="3" height="0.67" fill="#DA191A" />
+          <rect y="1.33" width="3" height="0.67" fill="#007A3D" />
+          <text x="1.5" y="1.15" fontFamily="sans-serif" fontSize="0.32" fontWeight="bold" fill="#007A3D" textAnchor="middle">الله أكبر</text>
+        </svg>
+      )
+    },
+    { 
+      code: 'ku', 
+      label: 'کوردی', 
+      flag: (
+        <svg viewBox="0 0 3 2" className="w-5 h-3.5 rounded-sm shadow-sm inline-block">
+          <rect width="3" height="2" fill="#fff" />
+          <rect width="3" height="0.67" fill="#E41E26" />
+          <rect y="1.33" width="3" height="0.67" fill="#138B43" />
+          <circle cx="1.5" cy="1.0" r="0.22" fill="#FEB813" />
+          <path d="M1.5,0.7 L1.5,1.3 M1.2,1.0 L1.8,1.0 M1.29,0.79 L1.71,1.21 M1.29,1.21 L1.71,0.79" stroke="#FEB813" strokeWidth="0.06" strokeLinecap="round" />
+          <path d="M1.37,0.74 L1.63,1.26 M1.63,0.74 L1.37,1.26" stroke="#FEB813" strokeWidth="0.06" strokeLinecap="round" />
+          <path d="M1.22,0.88 L1.78,1.12 M1.22,1.12 L1.78,0.88" stroke="#FEB813" strokeWidth="0.06" strokeLinecap="round" />
+        </svg>
+      )
+    },
+    { 
+      code: 'en', 
+      label: 'English', 
+      flag: (
+        <svg viewBox="0 0 60 30" className="w-5 h-3.5 rounded-sm shadow-sm inline-block bg-[#012169]">
+          <clipPath id="uj_clip">
+            <path d="M0,0 v30 h60 v-30 z"/>
+          </clipPath>
+          <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" strokeWidth="6" clipPath="url(#uj_clip)"/>
+          <path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" strokeWidth="2" clipPath="url(#uj_clip)"/>
+          <path d="M30,0 V30 M0,15 H60" stroke="#fff" strokeWidth="10" />
+          <path d="M30,0 V30 M0,15 H60" stroke="#C8102E" strokeWidth="6" />
+        </svg>
+      )
+    }
   ];
 
   return (
