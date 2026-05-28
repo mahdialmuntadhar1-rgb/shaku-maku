@@ -27,29 +27,91 @@ body {
 
 /* Language-specific text rendering */
 .text-arabic {
-  font-family: "Cairo", "Noto Sans Arabic", "Noto Kufi Arabic", sans-serif;
-  direction: rtl;
-  text-align: right;
+  font-family: "Cairo", "Noto Sans Arabic", "Noto Kufi Arabic", sans-serif !important;
+  direction: rtl !important;
+  text-align: right !important;
   line-height: 1.8;
   letter-spacing: -0.02em;
   font-weight: 400;
 }
 
 .text-kurdish {
-  font-family: "Noto Sans Kurdish", "Cairo", sans-serif;
-  direction: rtl;
-  text-align: right;
+  font-family: "Noto Sans Kurdish", "Cairo", sans-serif !important;
+  direction: rtl !important;
+  text-align: right !important;
   line-height: 1.8;
   letter-spacing: -0.01em;
   font-weight: 400;
 }
 
 .text-english {
-  font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
-  direction: ltr;
-  text-align: left;
+  font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif !important;
+  direction: ltr !important;
+  text-align: left !important;
   line-height: 1.6;
   font-weight: 400;
+}
+
+/* RTL/LTR body and html direction */
+[dir="rtl"] {
+  direction: rtl !important;
+  text-align: right !important;
+  font-family: "Cairo", "Noto Sans Arabic", "Noto Sans Kurdish", sans-serif !important;
+}
+
+[dir="ltr"] {
+  direction: ltr !important;
+  text-align: left !important;
+  font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif !important;
+}
+
+/* Force RTL/LTR on all text elements */
+[dir="rtl"] * {
+  direction: rtl !important;
+  text-align: right !important;
+  font-family: "Cairo", "Noto Sans Arabic", "Noto Sans Kurdish", sans-serif !important;
+}
+
+[dir="ltr"] * {
+  direction: ltr !important;
+  text-align: left !important;
+  font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif !important;
+}
+
+/* Specific component fixes */
+[dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3, [dir="rtl"] h4, [dir="rtl"] h5, [dir="rtl"] h6 {
+  direction: rtl !important;
+  text-align: right !important;
+  font-family: "Cairo", "Noto Sans Arabic", "Noto Kufi Arabic", sans-serif !important;
+}
+
+[dir="rtl"] p, [dir="rtl"] span, [dir="rtl"] div, [dir="rtl"] button, [dir="rtl"] input, [dir="rtl"] textarea {
+  direction: rtl !important;
+  text-align: right !important;
+  font-family: "Cairo", "Noto Sans Arabic", "Noto Sans Kurdish", sans-serif !important;
+}
+
+[dir="rtl"] .font-sans {
+  font-family: "Cairo", "Noto Sans Arabic", "Noto Sans Kurdish", sans-serif !important;
+  direction: rtl !important;
+}
+
+[dir="ltr"] .font-sans {
+  font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif !important;
+  direction: ltr !important;
+}
+
+/* Override any conflicting styles */
+[dir="rtl"] body, [dir="rtl"] html {
+  direction: rtl !important;
+  text-align: right !important;
+  font-family: "Cairo", "Noto Sans Arabic", "Noto Sans Kurdish", sans-serif !important;
+}
+
+[dir="ltr"] body, [dir="ltr"] html {
+  direction: ltr !important;
+  text-align: left !important;
+  font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif !important;
 }
 
 /* Enhanced language support for all text elements */

@@ -27,6 +27,7 @@ import AboutSakuMaku from './components/AboutSakuMaku';
 import AdminPanel from './components/AdminPanel';
 import AuthModal from './components/AuthModal';
 import InstallPrompt from './components/InstallPrompt';
+import PWAInstallButton from './components/PWAInstallButton';
 
 export default function App() {
   const [currentLang, setCurrentLang] = useState<Language>('ar'); // Default: Arabic
@@ -1022,6 +1023,13 @@ export default function App() {
         )}
       </AnimatePresence>
 
+      {/* Prominent PWA Installation Button */}
+      <PWAInstallButton
+        currentLang={currentLang}
+        isVisible={true}
+        onInstall={() => console.log('PWA install requested')}
+        onDismiss={() => console.log('PWA install dismissed')}
+      />
     </div>
   );
 }
