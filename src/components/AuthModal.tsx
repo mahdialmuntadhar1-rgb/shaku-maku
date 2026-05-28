@@ -78,7 +78,7 @@ export default function AuthModal({
       forgot_title: "Reset Your Password",
       forgot_desc: "Enter your email address and we'll send you a reset link.",
       forgot_btn: "Send Reset Link",
-      forgot_success: "Reset token generated! Check below.",
+      forgot_success: "Email verified! Enter your new password below.",
       reset_title: "Enter New Password",
       reset_desc: "Enter your new password below.",
       reset_btn: "Update Password",
@@ -123,7 +123,7 @@ export default function AuthModal({
       forgot_title: "إعادة تعيين كلمة المرور",
       forgot_desc: "أدخل بريدك الإلكتروني وسنرسل لك رابط إعادة التعيين.",
       forgot_btn: "إرسال رابط إعادة التعيين",
-      forgot_success: "تم إنشاء رمز إعادة التعيين! انظر أدناه.",
+      forgot_success: "تم التحقق من البريد الإلكتروني! أدخل كلمة المرور الجديدة أدناه.",
       reset_title: "أدخل كلمة المرور الجديدة",
       reset_desc: "أدخل كلمة المرور الجديدة أدناه.",
       reset_btn: "تحديث كلمة المرور",
@@ -168,7 +168,7 @@ export default function AuthModal({
       forgot_title: "وشەی نهێنی بگۆڕە",
       forgot_desc: "ئیمەیڵەکەت بنووسە و لینکی گۆڕینەوە بۆت دەنێردرێت.",
       forgot_btn: "لینکی گۆڕینەوە بنێرە",
-      forgot_success: "کۆدی گۆڕینەوە دروستکرا! لە خوارەوە ببینە.",
+      forgot_success: "ئیمەیڵەکە دڵنیا کرایەوە! وشەی نهێنی نوێت لە خوارەوە بنووسە.",
       reset_title: "وشەی نهێنی نوێ بنووسە",
       reset_desc: "وشەی نهێنی نوێکەت لە خوارەوە بنووسە.",
       reset_btn: "وشەی نهێنی نوێ بکە",
@@ -615,24 +615,6 @@ export default function AuthModal({
           {/* Reset Password Form */}
           {authMode === 'reset' && (
             <form onSubmit={handleResetPassword} className="space-y-4">
-              {/* Show reset token */}
-              {resetToken && (
-                <div className="space-y-1">
-                  <label className="text-[10px] uppercase font-black text-luxury-gold/80 tracking-wider block font-mono">
-                    {L.token_label}
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      readOnly
-                      value={resetToken}
-                      className="w-full bg-black/40 border border-luxury-gold/30 text-xs px-4 py-3 rounded-xl text-luxury-gold font-mono focus:outline-none"
-                      onClick={(e) => (e.target as HTMLInputElement).select()}
-                    />
-                  </div>
-                </div>
-              )}
-
               <div className="space-y-1">
                 <label className="text-[10px] uppercase font-black text-luxury-gold/80 tracking-wider block font-mono">
                   {L.new_pwd}
