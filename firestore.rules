@@ -22,6 +22,16 @@ service cloud.firestore {
         (request.auth.token.email == "safaribosafar@gmail.com" || request.auth.token.email == "mahdialmuntadhar1@gmail.com");
     }
 
+    function isBusinessOwner() {
+      return isSignedIn() && (
+        request.auth.token.email == "mahdialmuntadhar1@gmail.com" ||
+        request.auth.token.email == "safaribosafar@gmail.com" ||
+        request.auth.token.email == "owner@shkomaku.com" ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'owner')
+      );
+    }
+
     function incoming() {
       return request.resource.data;
     }
@@ -148,7 +158,7 @@ service cloud.firestore {
     // HERO SLIDES COLLECTION
     match /hero_slides/{slideId} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow write: if isAdmin() || isBusinessOwner();
     }
 
     // BUSINESS CLAIMS COLLECTION

@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronLeft, ChevronRight, Sparkles, MapPin, Compass } from 'lucide-react';
-import { Language, GovernorateCode, HeroSlide } from '../types';
+import { ChevronLeft, ChevronRight, Sparkles, MapPin, Compass, Edit3 } from 'lucide-react';
+import { Language, GovernorateCode, HeroSlide, UserProfile } from '../types';
 import { HERO_SLIDES, TRANSLATIONS } from '../data';
+import HeroEditor from './HeroEditor';
 
 interface HeroProps {
   currentLang: Language;
   onExploreClick: () => void;
   onSelectGov: (gov: GovernorateCode) => void;
   slides?: HeroSlide[];
+  userProfile?: UserProfile | null;
 }
 
-export default function Hero({ currentLang, onExploreClick, onSelectGov, slides }: HeroProps) {
+export default function Hero({ currentLang, onExploreClick, onSelectGov, slides, userProfile }: HeroProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [editing, setEditing] = useState(false);
 
   const activeSlidesList = slides && slides.length > 0 ? slides : HERO_SLIDES;
 
@@ -34,6 +37,8 @@ export default function Hero({ currentLang, onExploreClick, onSelectGov, slides 
   const t = TRANSLATIONS[currentLang];
   const activeSlide = activeSlidesList[currentIndex % activeSlidesList.length] || activeSlidesList[0];
   const isRtl = currentLang === 'ar' || currentLang === 'ku';
+
+  const canEditHero = userProfile?.role === 'owner' || userProfile?.role === 'admin';
 
   return (
     <div className="relative w-full h-[320px] md:h-[420px] overflow-hidden rounded-3xl group mb-6 bg-slate-950">
@@ -60,6 +65,17 @@ export default function Hero({ currentLang, onExploreClick, onSelectGov, slides 
           <div className="absolute inset-0 bg-gradient-to-r from-[#020205]/80 via-transparent to-[#020205]/20"></div>
         </motion.div>
       </AnimatePresence>
+
+      {/* Edit hero button - visible only to owners/admins */}
+      {canEditHero && (
+        <button
+          onClick={() => setEditing(!editing)}
+          className="absolute top-4 right-4 z-20 p-2 rounded-full bg-black/50 hover:bg-black/70 backdrop-blur-md border border-luxury-gold/30 text-luxury-gold hover:text-white transition cursor-pointer"
+          title={currentLang === 'en' ? 'Edit hero slide' : currentLang === 'ar' ? 'تعديل الشريحة' : 'دەستکاری سلاید'}
+        >
+          <Edit3 className="w-4 h-4" />
+        </button>
+      )}
 
       {/* Floating Sparkle Elements & Active Content Overlay */}
       <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-10 z-10">
@@ -151,6 +167,14 @@ export default function Hero({ currentLang, onExploreClick, onSelectGov, slides 
           />
         ))}
       </div>
+
+      {/* Inline Hero Editor for Owners/Admins */}
+      <HeroEditor
+        currentLang={currentLang}
+        slide={activeSlide}
+        isVisible={editing && canEditHero}
+        onClose={() => setEditing(false)}
+      />
 
     </div>
   );

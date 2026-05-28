@@ -164,13 +164,22 @@ export const GOVERNORATES: Governorate[] = [
     englishLabel: 'Muthanna'
   },
   {
-    code: 'qadisiya',
+    code: 'qadisiyyah',
     name: {
       ar: 'القادسية 🌾',
       ku: 'قادسیە 🌾',
-      en: 'Qadisiya 🌾'
+      en: 'Qadisiyyah 🌾'
     },
-    englishLabel: 'Qadisiya'
+    englishLabel: 'Qadisiyyah'
+  },
+  {
+    code: 'nineveh',
+    name: {
+      ar: 'نينوى 🍏',
+      ku: 'نەینەوا 🍏',
+      en: 'Nineveh 🍏'
+    },
+    englishLabel: 'Nineveh'
   },
   {
     code: 'halabja',
@@ -185,324 +194,104 @@ export const GOVERNORATES: Governorate[] = [
 
 export const CATEGORIES: Category[] = [
   {
-    id: 'restaurant',
-    icon: '🍔',
-    name: {
-      ar: 'مطاعم',
-      ku: 'چێشتخانەکان',
-      en: 'Restaurants'
-    },
-    color: 'from-orange-600 to-red-500'
-  },
-  {
-    id: 'cafe_bakery',
+    id: 'restaurants_cafes',
     icon: '☕',
     name: {
-      ar: 'كافيهات ومخابز',
-      ku: 'کافێ و نانەواخانەکان',
-      en: 'Cafés & Bakeries'
-    },
-    color: 'from-amber-600 to-yellow-500'
-  },
-  {
-    id: 'supermarket',
-    icon: '🛒',
-    name: {
-      ar: 'سوبرماركت',
-      ku: 'سۆپەرمارکێتەکان',
-      en: 'Supermarkets'
-    },
-    color: 'from-green-600 to-emerald-500'
-  },
-  {
-    id: 'mall',
-    icon: '🛍️',
-    name: {
-      ar: 'مولات ومراكز تسوق',
-      ku: 'مۆڵەکان',
-      en: 'Malls & Shopping'
-    },
-    color: 'from-pink-600 to-rose-500'
-  },
-  {
-    id: 'pharmacy',
-    icon: '💊',
-    name: {
-      ar: 'صيدليات',
-      ku: 'دەرمانخانەکان',
-      en: 'Pharmacies'
-    },
-    color: 'from-cyan-600 to-sky-500'
-  },
-  {
-    id: 'hospital',
-    icon: '🏥',
-    name: {
-      ar: 'مستشفيات',
-      ku: 'نەخۆشخانەکان',
-      en: 'Hospitals'
-    },
-    color: 'from-red-600 to-rose-500'
-  },
-  {
-    id: 'clinic',
-    icon: '🩺',
-    name: {
-      ar: 'عيادات طبية',
-      ku: 'کلینیکەکان',
-      en: 'Clinics'
-    },
-    color: 'from-teal-600 to-emerald-500'
-  },
-  {
-    id: 'doctor',
-    icon: '👨‍⚕️',
-    name: {
-      ar: 'أطباء وعيادات خاصة',
-      ku: 'دکتۆرەکان',
-      en: 'Doctors'
-    },
-    color: 'from-blue-600 to-sky-500'
-  },
-  {
-    id: 'dentist',
-    icon: '🦷',
-    name: {
-      ar: 'أطباء أسنان',
-      ku: 'پزیشکی ددان',
-      en: 'Dentists'
-    },
-    color: 'from-cyan-500 to-indigo-500'
-  },
-  {
-    id: 'salon',
-    icon: '💈',
-    name: {
-      ar: 'صالونات ومراكز تجميل',
-      ku: 'ساڵۆنی جوانکاری',
-      en: 'Beauty Salons'
-    },
-    color: 'from-purple-600 to-pink-500'
-  },
-  {
-    id: 'spa',
-    icon: '💆‍♀️',
-    name: {
-      ar: 'مراكز سبا واستجمام',
-      ku: 'سێنتەری سپا',
-      en: 'Spas & Wellness'
-    },
-    color: 'from-fuchsia-600 to-pink-500'
-  },
-  {
-    id: 'gym',
-    icon: '🏋️',
-    name: {
-      ar: 'صالات رياضية ورشاقة',
-      ku: 'هۆڵەکانی وەرزش',
-      en: 'Gyms & Fitness'
+      ar: 'مطاعم وكافيهات',
+      ku: 'چێشتخانە و کافێ',
+      en: 'Restaurants & Cafes'
     },
     color: 'from-emerald-600 to-teal-500'
   },
   {
-    id: 'hotel',
+    id: 'hotels_hospitality',
     icon: '🏨',
     name: {
-      ar: 'فنادق ومنتجعات',
-      ku: 'هۆتێلەکان',
-      en: 'Hotels & Resorts'
+      ar: 'فنادق وضيافة',
+      ku: 'هۆتێل و میوانداری',
+      en: 'Hotels & Hospitality'
     },
-    color: 'from-indigo-600 to-blue-500'
+    color: 'from-amber-600 to-yellow-500'
   },
   {
-    id: 'travel_agency',
-    icon: '✈️',
+    id: 'health_medical_services',
+    icon: '�',
     name: {
-      ar: 'وكالات سفر وسياحة',
-      ku: 'بریکاری گەشتوگوزار',
-      en: 'Travel Agencies'
+      ar: 'صحة وخدمات طبية',
+      ku: 'تەندروستی و خزمەتگوزاری پزیشکی',
+      en: 'Health & Medical Services'
     },
-    color: 'from-sky-500 to-blue-600'
+    color: 'from-rose-600 to-pink-500'
   },
   {
-    id: 'university',
+    id: 'fitness_gyms',
+    icon: '🏋️',
+    name: {
+      ar: 'لياقة وصالات رياضية',
+      ku: 'ورزش و سالۆنی وەرزشی',
+      en: 'Fitness & Gyms'
+    },
+    color: 'from-orange-600 to-red-500'
+  },
+  {
+    id: 'education_training_centers',
     icon: '🎓',
     name: {
-      ar: 'جامعات ومعاهد',
-      ku: 'زانکۆکان',
-      en: 'Universities'
+      ar: 'تعليم ومراكز تدريب',
+      ku: 'خوێندن و قوتابخانە',
+      en: 'Education & Training Centers'
     },
-    color: 'from-violet-600 to-purple-500'
-  },
-  {
-    id: 'bank',
-    icon: '🏦',
-    name: {
-      ar: 'بنوك ومصارف',
-      ku: 'بانکەکان',
-      en: 'Banks & Finance'
-    },
-    color: 'from-green-600 to-teal-600'
+    color: 'from-indigo-600 to-purple-500'
   },
   {
     id: 'real_estate',
     icon: '🏢',
     name: {
-      ar: 'عقارات ومكاتب دلالية',
+      ar: 'عقارات',
       ku: 'عەقارات',
       en: 'Real Estate'
     },
-    color: 'from-rose-500 to-amber-600'
+    color: 'from-blue-600 to-sky-500'
   },
   {
-    id: 'lawyer',
-    icon: '⚖️',
-    name: {
-      ar: 'محامون واستشارات قانونية',
-      ku: 'پارێزەران',
-      en: 'Lawyers & Legal'
-    },
-    color: 'from-amber-700 to-orange-600'
-  },
-  {
-    id: 'car_dealer',
-    icon: '🚗',
-    name: {
-      ar: 'معارض سيارات',
-      ku: 'پیتاکی ئۆتۆمبێل',
-      en: 'Car Dealers'
-    },
-    color: 'from-yellow-500 to-orange-500'
-  },
-  {
-    id: 'car_rental',
-    icon: '🔑',
-    name: {
-      ar: 'تأجير سيارات',
-      ku: 'کرێی ئۆتۆمبێل',
-      en: 'Car Rental'
-    },
-    color: 'from-teal-500 to-cyan-500'
-  },
-  {
-    id: 'mobile_shop',
-    icon: '📱',
-    name: {
-      ar: 'متاجر هواتف وإلكترونيات',
-      ku: 'مۆبایل و ئەلیکترۆنیات',
-      en: 'Mobile Shops'
-    },
-    color: 'from-violet-500 to-indigo-500'
-  },
-  {
-    id: 'furniture',
-    icon: '🛋️',
-    name: {
-      ar: 'مفروشات وأثاث منزلي',
-      ku: 'کەلەپوور و مۆبایلەکان',
-      en: 'Furniture'
-    },
-    color: 'from-amber-800 to-amber-600'
-  },
-  {
-    id: 'clothing_store',
-    icon: '👔',
-    name: {
-      ar: 'متاجر ألبسة وأزياء',
-      ku: 'فرۆشگاکانی جلوبەرگ',
-      en: 'Clothing Stores'
-    },
-    color: 'from-pink-500 to-purple-500'
-  },
-  {
-    id: 'software_company',
-    icon: '💻',
-    name: {
-      ar: 'شركات برمجيات وتقنية',
-      ku: 'کۆمپانیاکانی تەکنەلۆجیا',
-      en: 'Tech & Software'
-    },
-    color: 'from-blue-700 to-indigo-600'
-  },
-  {
-    id: 'marketing_agency',
-    icon: '📣',
-    name: {
-      ar: 'وكالات تسويق وإعلان',
-      ku: 'ڕیکلام و مارکێتینگ',
-      en: 'Marketing Agencies'
-    },
-    color: 'from-purple-500 to-fuchsia-500'
-  },
-  {
-    id: 'construction_company',
+    id: 'construction_contractors',
     icon: '🏗️',
     name: {
-      ar: 'شركات مقاولات وإنشاءات',
-      ku: 'کۆمپانیاکانی بیناسازی',
-      en: 'Construction'
+      ar: 'مقاولات وبناء',
+      ku: 'بیناسازی و پەیمانکار',
+      en: 'Construction & Contractors'
     },
     color: 'from-yellow-600 to-amber-700'
   },
   {
-    id: 'architecture',
-    icon: '📐',
+    id: 'beauty_salons',
+    icon: '�',
     name: {
-      ar: 'مكاتب هندسية وتصميم',
-      ku: 'ئەندازیاری و نەخشەسازی',
-      en: 'Architecture & Design'
+      ar: 'صالونات ومراكز تجميل',
+      ku: 'ساڵۆنی جوانکاری',
+      en: 'Beauty & Salons'
     },
-    color: 'from-teal-500 to-blue-500'
+    color: 'from-purple-600 to-pink-500'
   },
   {
-    id: 'photography',
-    icon: '📷',
+    id: 'electronics_tech_shops',
+    icon: '�',
     name: {
-      ar: 'استوديوهات تصوير',
-      ku: 'ستۆدیۆکانی وێنەگرتن',
-      en: 'Photography'
+      ar: 'إلكترونيات وتقنية',
+      ku: 'ئەلیکترۆنیات و تەکنەلۆژیا',
+      en: 'Electronics & Tech Shops'
     },
-    color: 'from-pink-600 to-purple-500'
+    color: 'from-violet-600 to-indigo-500'
   },
   {
-    id: 'cinema',
-    icon: '🎬',
+    id: 'it_software_services',
+    icon: '💻',
     name: {
-      ar: 'سينما وعروض أفلام',
-      ku: 'سینەماکان',
-      en: 'Cinema & Theatres'
+      ar: 'IT وخدمات برمجية',
+      ku: 'IT و خزمەتگوزاری نەرمەواڵە',
+      en: 'IT & Software Services'
     },
-    color: 'from-red-600 to-amber-500'
-  },
-  {
-    id: 'gaming_center',
-    icon: '🎮',
-    name: {
-      ar: 'مراكز ألعاب كومبيوتر',
-      ku: 'سەنتەری یارییەکان',
-      en: 'Gaming Centers'
-    },
-    color: 'from-indigo-600 to-purple-600'
-  },
-  {
-    id: 'sports_club',
-    icon: '⚽',
-    name: {
-      ar: 'نوادي رياضية وملاعب',
-      ku: 'یانە وەرزشییەکان',
-      en: 'Sports Clubs'
-    },
-    color: 'from-emerald-500 to-green-600'
-  },
-  {
-    id: 'pet_shop',
-    icon: '🐱',
-    name: {
-      ar: 'متاجر وعيادات حيوانات أليفة',
-      ku: 'ئاژەڵە ماڵییەکان',
-      en: 'Pet Shops'
-    },
-    color: 'from-orange-500 to-amber-500'
+    color: 'from-cyan-600 to-blue-500'
   }
 ];
 
@@ -1113,6 +902,7 @@ const RAW_INITIAL_BUSINESSES: Business[] = [
   }
 ];
 
+<<<<<<< HEAD
 const RAW_INITIAL_POSTS: SocialPost[] = [
   {
     id: 'post-1',
@@ -1451,19 +1241,505 @@ const RAW_INITIAL_POSTS: SocialPost[] = [
       ku: 'ماسک بەلاش 💆‍♂️',
       en: 'Free Charcoal Face Mask 💆‍♂️'
     }
+=======
+// Realistic post templates by category
+const POST_TEMPLATES: Record<string, { en: string[]; ar: string[]; ku: string[] }> = {
+  restaurant: {
+    en: [
+      'Fresh grilled family platters now available! Dine in or order delivery. Open daily 10 AM – 11 PM.',
+      'Weekend special: Buy 2 mains get 1 free. Call now to reserve your table!',
+      'New chef\'s special menu launched today. Come taste the difference.',
+      'Hosting a private event? We offer catering services across the city. Contact us for details.',
+      'Daily fresh bread baked in-house. Authentic Iraqi flavors since 2010.'
+    ],
+    ar: [
+      'أطباق مشوية طازجة متاحة الآن للعائلات! تناول الطعام في المكان أو اطلب التوصيل. مفتوح يومياً من 10 صباحاً حتى 11 مساءً.',
+      'عرض نهاية الأسبوع: اشترِ طبقين رئيسيين واحصل على الثالث مجاناً. اتصل الآن لحجز طاولتك!',
+      'قائمة طعام جديدة من الشيف أطلقت اليوم. تعال و taste الفرق.',
+      'تستضيف حدثاً خاصاً؟ نقدم خدمات الولائم في جميع أنحاء المدينة. اتصل بنا للتفاصيل.',
+      'خبز طازج يومياً مخبوز في المنزل. نكهات عراقية أصيلة منذ عام 2010.'
+    ],
+    ku: [
+      'جێگای خواردنی تایبەتی خێزانی لەبەردەستە! لە ناوخۆدا بخۆ یان داوای گەیاندن بکە. ڕۆژانە کراوەیە لە 10 بەروار تا 11 شەو.',
+      'تایبەتی ھەفتە: 2 خواردنی سەرەکی بکڕە، 3یەم بەخۆڕاییە. ئێستا پەیوەندی بکە بۆ داواکردنی مێز!',
+      'لیستی خواردنی نوێی شێف بەڕێوەچوو. بێن و جیاوازی تام بکە.',
+      'بەرنامەیەکی تایبەت دابەش دەکەیت؟ خزمەتگوزاری بەڕێوەبردنی بەسەر شاردا پێشکەش دەکەین. پەیوەندیمان بکە بۆ وردەکاری.',
+      'نانێکی تازە ڕۆژانە لە ناوخۆدا دەکڕێن. تامی عێراقی ڕەسەن لە 2010ەوە.'
+    ]
+  },
+  cafe_bakery: {
+    en: [
+      'Morning brew alert! Specialty coffee and fresh pastries daily from 7 AM. Free WiFi & cozy vibes.',
+      'New seasonal cake collection just dropped. Perfect for birthdays and gatherings.',
+      'Study-friendly environment with quiet zones. Students get 15% off after 2 PM.',
+      'Weekend brunch menu: avocado toast, eggs Benedict, and fresh juice combos.',
+      'Grab your loyalty card — buy 5 coffees, get the 6th free!'
+    ],
+    ar: [
+      'تنبيه القهوة الصباحية! قهوة مميزة وحلويات طازجة يومياً من الساعة 7 صباحاً. واي فاي مجاني وأجواء مريحة.',
+      'مجموعة كيك موسمية جديدة وصلت للتو. مثالية لأعياد الميلاد والتجمعات.',
+      'بيئة مناسبة للدراسة مع مناطق هادئة. الطلاب يحصلون على خصم 15% بعد الساعة 2 ظهراً.',
+      'قائمة برانش نهاية الأسبوع: توست الأفوكادو، بيض بنديكت، وعصائر طازجة.',
+      'احصل على بطاقة الولاء — اشترِ 5 قهوات واحصل على السادسة مجاناً!'
+    ],
+    ku: [
+      'ئاگاداری قاوەی بەیانی! قاوەی تایبەتی و شیرینی تازە ڕۆژانە لە 7 بەیانیەوە. وای فای ئازاد و کەش و هەوایەکی خۆش.',
+      'کۆلێکشنی کیکی وەرزی نوێ تازە دابەزێنراوە. ئەمە بۆ ڕۆژی لەدایکبوون و کۆبوونەوەکان.',
+      'ژینگەی خوێندن بە ناوچە ئارامەکان. خوێندکاران 15% داشکان وەردەگرن دوای 2 دوانیان.',
+      'لیستی برانچی ھەفتە: تۆستی ئەڤۆکادۆ، ئێگ بێنێدیکت، و شیرەی تازە.',
+      'کارتی دڵسۆزیەکەت بگرە — 5 قاوە بکڕە، 6یەم بەخۆڕاییە!'
+    ]
+  },
+  supermarket: {
+    en: [
+      'Weekly deals are here! Fresh produce, dairy, and pantry staples at unbeatable prices.',
+      'New organic section now open. Imported goods and local favorites side by side.',
+      'Family value packs available. Save more when you buy in bulk.',
+      'Open 24/7 for your convenience. Home delivery available across the governorate.',
+      'Ramadan essentials now in stock. Dates, juices, and traditional sweets.'
+    ],
+    ar: [
+      'عروض الأسبوع هنا! منتجات طازجة، ألبان، ومستلزمات المطبخ بأسعار لا تُقهر.',
+      'قسم الأغذية العضوية الجديد مفتوح الآن. بضائع مستوردة ومحلية في مكان واحد.',
+      'عبوات القيمة العائلية متاحة. وفّر أكثر عند الشراء بالجملة.',
+      'مفتوح 24/7 لراحتك. خدمة التوصيل للمنازل متاحة في جميع أنحاء المحافظة.',
+      'مستلزمات رمضان متوفرة الآن. تمر، عصائر، وحلويات تقليدية.'
+    ],
+    ku: [
+      'ئۆفەری ھەفتەیی لێرەیە! بەرهەمێکی تازە، شیر و بەسڵەکانی ناونخ بە نرخێکی ناتەباو.',
+      'بەشی ئۆرگانیکی نوێ ئێستا کراوەیە. بەرهەمە ھەناردەکراوەکان و دڵخوازانی ناوخۆیی لە کناری یەکتردان.',
+      'پاکێجی بەهای خێزانی لەبەردەستە. زیاتر پاشەکەوت بکە کاتێک بە کۆمەڵ دەکڕیت.',
+      '٢٤/٧ کراوەیە بۆ ئاسانیەکەت. گەیاندنی ناوخۆ لەسەرجەم پارێزگاکە بەردەستە.',
+      'پێداویستیەکانی ڕەمەزان ئێستا لە کۆگاکەماندان. خورما، شیرە و شیرینیە کۆنەکان.'
+    ]
+  },
+  mall: {
+    en: [
+      'Weekend shopping festival starts Friday! Up to 70% off on selected brands.',
+      'New international stores now open on the 2nd floor. Explore the latest fashion trends.',
+      'Kids entertainment zone expanded. Bring the whole family for a fun day out.',
+      'Free parking for the first 2 hours. Valet service available at Gate 3.',
+      'Food court renovation complete! 12 new restaurants and cafes to try.'
+    ],
+    ar: [
+      'مهرجان التسوق نهاية الأسبوع يبدأ الجمعة! خصومات تصل إلى 70% على الماركات المختارة.',
+      'متاجر دولية جديدة مفتوحة الآن في الطابق الثاني. استكشف أحدث صيحات الموضة.',
+      'منطقة الترفيه للأطفال توسعت. اصطحب العائلة بأكملها ليوم ممتع.',
+      'موقف سيارات مجاني للساعتين الأوليين. خدمة الڤاليه متاحة عند البوابة 3.',
+      'تجديد مطعم المحكمة اكتمل! 12 مطعم ومقهى جديد لتجربتهم.'
+    ],
+    ku: [
+      'فیستیڤاڵی کڕینی ھەفتە لە ھەینی دەستپێدەکات! داشکان تا 70% لەسەر نیشانە ھەڵبژێردراوەکان.',
+      'دوکانە نێودەوڵەتییە نوێیەکان ئێستا لە نهۆمی 2ەم کراوەن. نوێترین بانگەوازی فاشنەکەت دۆزەوە.',
+      'ناوچەی کێش و شاخیکانی منداڵان فراوان کرا. ھەموو خێزانەکەت بێن بۆ ڕۆژێکی خۆش.',
+      'پارکینگی بەخۆڕایی بۆ 2 کاتژمێری یەکەم. خزمەتگوزاری ڤالێت لە دەرگای 3 بەردەستە.',
+      'نوێکردنەوەی قوتابخانەی خواردن تەواو بوو! 12 چێشتخانە و کافێی نوێ بۆ تامکردن.'
+    ]
+  },
+  pharmacy: {
+    en: [
+      'Free blood pressure check every Tuesday. Walk in, no appointment needed.',
+      'New vitamins and supplements section stocked. Ask our pharmacist for advice.',
+      'Prescription delivery service now available. Call us to arrange same-day delivery.',
+      'Flu shots available. Protect your family this season.',
+      'Baby care essentials: diapers, formula, and skincare. All trusted brands in one place.'
+    ],
+    ar: [
+      'فحص ضغط الدم مجاناً كل ثلاثاء. ادخل مباشرة، لا حاجة لموعد مسبق.',
+      'قسم الفيتامينات والمكملات الجديد مخزّن. اسأل صيدلانيّنا للحصول على النصيحة.',
+      'خدمة توصيل الوصفات الطبية متاحة الآن. اتصل بنا لترتيب التوصيل في نفس اليوم.',
+      'لقاحات الإنفلونزا متاحة. احمِ عائلتك هذا الموسم.',
+      'مستلزمات رعاية الأطفال: حفاضات، حليب صناعي، وعناية بالبشرة. جميع الماركات الموثوقة في مكان واحد.'
+    ],
+    ku: [
+      'پشکنینی ڕێژەی خوێنی بێ بەرامبەر ھەر سێشەممەیەک. بێ داواکردن، پێویست بە چارەسەری پێشوو ناکات.',
+      'بەشی ڤیتامین و ماددە کۆمەڵکەرە نوێیەکان پڕکراونەتەوە. دەرمانسازمان بپرسە بۆ ئامۆژگاری.',
+      'خزمەتگوزاری گەیاندنی دەرمان ئێستا بەردەستە. پەیوەندیمان بکە بۆ ڕێکخستنی گەیاندنی ھەمان ڕۆژ.',
+      'تێکەڵکاری فڵۆ بەردەستە. ئەم وەرزە خێزانەکەت بپارێزە.',
+      'پێداویستییەکانی منداڵی: جلەبەرگە، شیر و چاودێری پێست. ھەموو نیشانە ئەمنیەکان لە شوێنێکدا.'
+    ]
+  },
+  hospital: {
+    en: [
+      '24/7 emergency services with modern ICU facilities. Your health is our priority.',
+      'Specialist consultations available: cardiology, orthopedics, and pediatrics. Book online.',
+      'Health checkup packages starting at affordable rates. Full body screening available.',
+      'New maternity ward with private suites. Experienced obstetricians on call.',
+      'Accepting all major insurance plans. Cashless treatment facility available.'
+    ],
+    ar: [
+      'خدمات الطوارئ 24/7 مع مرافع العناية المركزة الحديثة. صحتك هي أولويتنا.',
+      'استشارات الأخصائيين متاحة: أمراض القلب، العظام، وطب الأطفال. احجز عبر الإنترنت.',
+      'باقات الفحص الصحي تبدأ بأسعار معقولة. فحص شامل للجسم متاح.',
+      'قسم الولادة الجديد مع أجنحة خاصة. أطباء نساء ذوو خبرة متواجدون.',
+      'نقبل جميع خطط التأمين الرئيسية. خدمة العلاج بدون نقد متاحة.'
+    ],
+    ku: [
+      'خزمەتگوزاری ھاتوچۆ 24/7 لەگەڵ ئۆتێلەکانی ICU ی ئەمری. تەندروستی تەرجیحی ئێمەیە.',
+      'وتارەکانی پزیشکی تایبەتی بەردەستن: دڵ، ئێسک و منداڵبوون. لەسەرھێڵ داوابکە.',
+      'پاکێجی پشکنینی تەندروستی بە نرخێکی گونجاو دەستپێدەکات. پشکنینی تەواوی لەش بەردەستە.',
+      'بەشی منداڵبوونی نوێ لەگەڵ ژووری تایبەت. پزیشکانی ئێکسپێرتی ژنان لە پەیوەندیدان.',
+      'ھەموو پلانە سەرەکییەکانی بیمە وەردەگرین. خزمەتگوزاری چارەسەری بێ پارە بەردەستە.'
+    ]
+  },
+  clinic: {
+    en: [
+      'Same-day appointments available. Walk-ins welcome for minor ailments.',
+      'Dental checkups and cleanings at half price this month only.',
+      'Pediatric clinic open Saturdays. Vaccinations and growth monitoring.',
+      'Physiotherapy sessions now offered. Experienced therapists on staff.',
+      'Lab tests with fast results. Blood work, X-rays, and ultrasound available.'
+    ],
+    ar: [
+      'مواعيد في نفس اليوم متاحة. استقبال الزوار مباشرة للحالات البسيطة.',
+      'فحوصات و تنظيف الأسنان بنصف السعر هذا الشهر فقط.',
+      'عيادة الأطفال مفتوحة أيام السبت. تطعيمات ومتابعة النمو.',
+      'جلسات العلاج الطبيعي متاحة الآن. أخصائيون مؤهلون في الفريق.',
+      'تحاليل مختبرية بنتائج سريعة. فحوصات الدم، الأشعة السينية، والألتراساوند متاحة.'
+    ],
+    ku: [
+      'چارەسەری ھەمان ڕۆژ بەردەستە. بۆ نەخۆشییە بچووکەکان بەخێرایی قبوڵ دەکرێن.',
+      'پشکنین و پاککردنەوەی ددان لەگەڵ نیوە نرخ ئەم مانگە تەنها.',
+      'نەخۆشخانەی منداڵان لە شەممە کراوەیە. ڤاکسین و چاودێری گەشەسەندن.',
+      'دامەزراندنی فێزیۆتێراپی ئێستا پێشکەش دەکرێت. چارەسازانی ئێکسپێر لە کارمەندیدان.',
+      'تاقیکردنەوەی تاقیگە بە ئەنجامی خێرا. خوێن، X-ray و ئاڵتراساوند بەردەستە.'
+    ]
+  },
+  doctor: {
+    en: [
+      'Board-certified specialist with 15+ years experience. Accepting new patients.',
+      'Second opinion consultations available. Bring your medical records.',
+      'Telemedicine appointments via video call. Stay home, stay safe.',
+      'Evening clinic hours: 5 PM – 9 PM, Monday through Thursday.',
+      'Home visits for elderly and disabled patients. Call to schedule.'
+    ],
+    ar: [
+      'أخصائي معتمد بخبرة 15+ سنة. نقبل مرضى جدد.',
+      'استشارات رأي ثانٍ متاحة. اجلب سجلاتك الطبية.',
+      'مواعيد طبية عن بعد عبر مكالمة الفيديو. ابقَ في المنزل، ابقَ آمناً.',
+      'ساعات العيادة المسائية: 5 مساءً – 9 مساءً، من الاثنين إلى الخميس.',
+      'زيارات منزلية للمرضى المسنين وذوي الإعاقة. اتصل لتحديد موعد.'
+    ],
+    ku: [
+      'پزیشکی تایبەتی پەسەندکراو لەگەڵ 15+ ساڵ ئەزموون. نەخۆشی نوێ وەردەگرین.',
+      'وتارەکانی ڕای دووەم بەردەستە. تۆمارەکانی پزیشکی خۆت بێنە.',
+      'چارەسەری تەلەمیزینی ڕاستەوخۆ. لە ماڵەوە بمێنەوە، سەلامەت بمێنەوە.',
+      'کاتژمێری نەخۆشخانەی ئێوارە: 5 ئێوارە – 9 ئێوارە، دوشنێن تا پێنجشەممە.',
+      'سەردانی ماڵ بۆ نەخۆشانە پیر و کەم توانا. پەیوەندی بکە بۆ دانانی کات.'
+    ]
+  },
+  dentist: {
+    en: [
+      'Smile makeover packages now available. Whitening, veneers, and braces.',
+      'Pain-free root canal treatment using latest technology. Book your appointment.',
+      'Kids dental care: friendly environment, gentle approach. First visit free under 5.',
+      'Emergency dental service 7 days a week. Broken tooth? We\'ve got you covered.',
+      'Invisalign consultations free this month. Straighten your teeth discreetly.'
+    ],
+    ar: [
+      'باقات تجديد الابتسامة متاحة الآن. تبييض، قشور، و تقويم الأسنان.',
+      'علاج عصب الأسنان بدون ألم باستخدام أحدث التقنيات. احجز موعدك.',
+      'رعاية أسنان الأطفال: بيئة ودودة، نهج لطيف. أول زيارة مجانية تحت 5 سنوات.',
+      'خدمة طوارئ الأسنان 7 أيام في الأسبوع. سن مكسور؟ نحن نغطيك.',
+      'استشارات Invisalign مجانية هذا الشهر. رتّب أسنانك بسرية.'
+    ],
+    ku: [
+      'پاکێجی نوێکردنەوەی پێکەنین ئێستا لەبەردەستە. سپی کردنەوە، ڤینێر و دەرزین.',
+      'چارەسەری ڕەگی ددان بەبێ ئازار بە بەکارھێنانی نوێترین تەکنەلۆژیا. چارەسەری خۆت دابنێ.',
+      'چاودێری ددانی منداڵان: ژینگەیەکی دۆستانە، ڕێگەیەکی نەرم. یەکەم سەردان بێ بەرامبەرە بۆ خوارێ 5 ساڵ.',
+      'خزمەتگوزاری ددانی فەواری 7 ڕۆژ لە ھەفتەیەکدا. ددانی شکاو؟ ئێمە دەیپارێزین.',
+      'وتارەکانی Invisalign بێ بەرامبەرە ئەم مانگە. ددانی خۆت بە نهێنی ڕێکبخە.'
+    ]
+  },
+  salon: {
+    en: [
+      'New hair color collection arrived! Balayage, ombre, and vibrant tones.',
+      'Bridal packages: hair, makeup, and henna. Book your special day package.',
+      'Gentlemen\'s grooming: cuts, beard trims, and hot towel shaves.',
+      'Ladies\' night every Wednesday: 20% off all services after 6 PM.',
+      'Professional nail art and spa manicures. Gel and acrylic extensions available.'
+    ],
+    ar: [
+      'مجموعة ألوان شعر جديدة وصلت! بالاياج، أومبري، وألوان نابضة بالحياة.',
+      'باقات العروس: شعر، مكياج، وحنة. احجز باقة يومك الخاص.',
+      'العناية بالرجال: قصات، تشذيب اللحية، وحلاقة منشفة ساخنة.',
+      'ليلة السيدات كل أربعاء: 20% خصم على جميع الخدمات بعد الساعة 6 مساءً.',
+      'فن الأظافر الاحترافي وسبا الأظافر. جيل وأكريليك متاح.'
+    ],
+    ku: [
+      'کۆلێکشنی ڕەنگی قژی نوێ گەیشت! بالایاج، ئۆمبڕە و ڕەنگی زیندوو.',
+      'پاکێژی بەڕۆژگاری: قژ، ئارایش و حەنە. بۆ ڕۆژی تایبەتی خۆت دابنێ.',
+      'خزمەتگوزاری پیاوان: بڕین، ڕشتنی ڕیش و خ巍ینی گەرم.',
+      'شەوێ ئافرەتان ھەر چوارشەممە: 20% داشکان بۆ ھەموو خزمەتگوزاریەکان دوای 6 ئێوارە.',
+      'نەخشەی ناخۆنی پیشەیی و سپا. جێل و درێژکردنەوەی ئاکرلیک بەردەستە.'
+    ]
+  },
+  gym: {
+    en: [
+      'Summer body challenge starts Monday! Sign up and get 1 free PT session.',
+      'New equipment installed: cable machines, squat racks, and rowing stations.',
+      'Ladies-only hours: 7 AM – 12 PM daily. Private training area available.',
+      'Protein bar and shake station now open. Refuel after your workout.',
+      'Group classes: yoga, spinning, HIIT, and boxing. Check the weekly schedule.'
+    ],
+    ar: [
+      'تحدي جسم الصيف يبدأ الاثنين! سجّل واحصل على جلسة تدريب شخصي مجانية.',
+      'معدات جديدة تم تركيبها: أجهزة كابل، أرفع القرفصاء، ومحطات التجديف.',
+      'ساعات السيدات فقط: 7 صباحاً – 12 ظهراً يومياً. منطقة تدريب خاصة متاحة.',
+      'محطة البروتين والشيك الآن مفتوحة. أعد التغذية بعد تمرينك.',
+      'دروس جماعية: يوغا، سبينينغ، HIIT، وملاكمة. تحقق من الجدول الأسبوعي.'
+    ],
+    ku: [
+      'بەرنامەی لەشێ بەھاری لە دووشەممە دەستپێدەکات! تۆمار بکە و 1 جەلسی ڕاهێنانی تایبەتی بەخۆڕایی وەرگرە.',
+      'ئامرازی نوێ دامەزرێنرا: ئامێری کەبل، ستاندەکانی سکوات و شەپۆلێن.',
+      'کاتژمێری تەنها ئافرەتان: 7 بەیانی – 12 نیوەڕۆ ڕۆژانە. ناوچەی ڕاهێنانێکی تایبەت بەردەستە.',
+      'بەشی بەری پڕۆتین و شیک ئێستا کراوەیە. دوای ڕاهێنانەکەت خۆراکی بەکاردەھێنە.',
+      'پۆلە کۆمەڵایەتیەکان: یۆگا، سپینینگ، HIIT و بوکسینگ. بەندەری ھەفتەیەکە ببینە.'
+    ]
+  },
+  hotel: {
+    en: [
+      'Staycation packages starting from $49/night. Pool, spa, and breakfast included.',
+      'Business traveler? Enjoy high-speed WiFi, meeting rooms, and airport shuttle.',
+      'Wedding venue bookings open for 2025. Elegant halls and catering included.',
+      'Weekend family buffet: international cuisine, live cooking stations, kids eat free.',
+      'Rooftop lounge now open. Sunset views, cocktails, and shisha daily from 6 PM.'
+    ],
+    ar: [
+      'باقات الإقامة الداخلية تبدأ من 49$ لليلة. مسبح، سبا، وإفطار مشمول.',
+      'مسافر للأعمال؟ استمتع بواي فاي فائق السرعة، غرف اجتماعات، ومواصلات المطار.',
+      'حجوزات قاعات الأعراس مفتوحة لعام 2025. صالات أنيقة والولائم مشمولة.',
+      'بوفيه العائلة نهاية الأسبوع: مطبخ دولي، محطات طهي مباشر، الأطفال يأكلون مجاناً.',
+      'لاونج السطح مفتوح الآن. إطلالات الغروب، كوكتيلات، وشيشة يومياً من 6 مساءً.'
+    ],
+    ku: [
+      'پاکێجی مانەوە لە شارەوە لە 49$/شەو دەستپێدەکات. حەوشە، سپا و بەیانی لەگەڵە.',
+      'گەشتیاری کار؟ خۆشی بگرە لە وای فای خێرا، ژووری کۆبوونەوە و شۆفێری فڕۆکەخانە.',
+      'داواکردنی شوێنی باژێڕی عەڕوسی بۆ 2025 کراوەیە. تالارە شێوازەکان و خزمەتگوزاری خواردن لەگەڵە.',
+      'بوفێی خێزانی ھەفتە: خواردنی نێودەوڵەتی، ستاندەکانی چێشتلێنانی ڕاستەوخۆ، منداڵان بەخۆڕایی دەیخۆن.',
+      'لاونجی سەربان ئێستا کراوەیە. دیمەنی خۆرئاوابوون، کوکتێل و شێشە ڕۆژانە لە 6 ئێوارە.'
+    ]
+  },
+  travel_agency: {
+    en: [
+      'Summer holiday packages to Turkey, Dubai, and Malaysia now booking.',
+      'Umrah packages starting at competitive rates. Visa and transport included.',
+      'Corporate travel management services. Group bookings and incentive trips.',
+      'Flight + hotel bundles at 20% off when booked together.',
+      '24/7 travel support hotline. Lost luggage? Cancelled flight? We handle it.'
+    ],
+    ar: [
+      'باقات العطلات الصيفية إلى تركيا، دبي، وماليزيا الآن للحجز.',
+      'باقات العمرة تبدأ بأسعار تنافسية. التأشيرة والمواصلات مشمولتان.',
+      'خدمات إدارة السفر للشركات. حجوزات جماعية ورحلات تحفيزية.',
+      'حزم الطيران + الفندق بخصم 20% عند الحجز معاً.',
+      'خط ساخن لدعم السفر 24/7. أمتعة مفقودة؟ رحلة ملغاة؟ نحن نتعامل معها.'
+    ],
+    ku: [
+      'پاکێجی ڤاکانسی ھاوین بۆ تورکیا، دوبەی و مالیزیا ئێستا دەکرێن.',
+      'پاکێجی عومڕە بە نرخێکی پێشبڕکێوەرانە دەستپێدەکات. ڤیزا و گواستنەوە لەگەڵە.',
+      'خزمەتگوزاری بەڕێوەبردنی گەشتی کۆمپانیا. داواکردنی کۆمەڵ و گەشتی پاداشت.',
+      'پاکێجی فڕین + ھۆتێل بە 20% داشکان کاتێک یەکتر دادەنێن.',
+      'ھێڵی پشتگیری گەشت 24/7. بار و قاپی ون بووە؟ فڕۆکە ھەڵوەشێنراوەتەوە؟ ئێمە چارەسەر دەکەین.'
+    ]
+  },
+  university: {
+    en: [
+      'Fall semester admissions now open. Scholarships available for outstanding students.',
+      'New master\'s programs in IT, business, and engineering. Apply before deadline.',
+      'Campus open day this Saturday. Tours, workshops, and meet the faculty.',
+      'Evening and weekend classes for working professionals. Flexible scheduling.',
+      'Research grants available. Partner with industry leaders on innovative projects.'
+    ],
+    ar: [
+      'التسجيل للفصل الخريفي مفتوح الآن. منح دراسية متاحة للطلاب المتميزين.',
+      'برامج ماجستير جديدة في تكنولوجيا المعلومات، الأعمال، والهندسة. قدّم قبل الموعد النهائي.',
+      'يوم مفتوح في الحرم الجامعي هذا السبت. جولات، ورش عمل، والتقاء أعضاء الهيئة التدريسية.',
+      'صفوف مسائية ونهاية الأسبوع للمهنيين العاملين. جدولة مرنة.',
+      'منح بحثية متاحة. شارك مع قادة الصناعة في مشاريع مبتكرة.'
+    ],
+    ku: [
+      'تۆمارکردنی سێمستەری پایزی ئێستا کراوەیە. بورسی خوێندن بۆ قوتابیانە سەرکەوتووەکان.',
+      'بەرنامەی ماستەری نوێ لە IT، بازرگانی و ئەندازیاری. پێش کاتی کۆتایی داوای بکە.',
+      'ڕۆژی دەرگای کراوەی کیەمپەسی ئەم شەممەیە. گەشت، ورکشۆپەکان و کۆبونەوەی فاکەڵتی.',
+      'پۆلەکانی ئێوارە و ھەفتە بۆ پیشەگرانی کار. خشتەکردنی ناسک.',
+      'بورسی توێژینەوە بەردەستە. لەگەڵ پێشەنگانی پیشەسازی لە پرۆژە نوێیەکان هاوکاری بکە.'
+    ]
+  },
+  construction: {
+    en: [
+      'Residential and commercial building projects. Free consultation and estimates.',
+      'Renovation services: kitchens, bathrooms, and full home makeovers.',
+      'Licensed engineers and certified contractors. Quality materials, guaranteed work.',
+      'New apartment complex launching next month. Pre-booking with flexible payments.',
+      'Steel structure and concrete specialists. Industrial warehouses and factories.'
+    ],
+    ar: [
+      'مشاريع بناء سكنية وتجارية. استشارات وتقديرات مجانية.',
+      'خدمات التجديد: مطابخ، حمامات، وتجديدات منزلية كاملة.',
+      'مهندسون مرخصون ومقاولون معتمدون. مواد عالية الجودة، عمل مضمون.',
+      'مجمع سكني جديد سيتم إطلاقه الشهر المقبل. الحجز المسبق مع دفعات مرنة.',
+      'أخصائيو الهياكل المعدنية والخرسانة. مستودعات صناعية ومصانع.'
+    ],
+    ku: [
+      'پرۆژەکانی بینای نیشتەجێ و بازرگانی. وتوێژ و ھەژماری بێ بەرامبەر.',
+      'خزمەتگوزاری نوێکردنەوە: ناوخۆیی، حەمام و دەستکاری تەواوی ماڵ.',
+      'ئەندازیارانی بڕیار و پێشەنگانی پەسەندکراو. مادەی بەرز و کارێکی تەحەتیدار.',
+      'کۆمەڵە ئەپارتمانی نوێ مانگی داهاتوو دەکرێتەوە. پێشداوانین لەگەڵ پارەدانێکی ناسک.',
+      'پیشەناسەکانی بنەماڵەی پۆل و کۆنکریت. کۆگاکانی پیشەسازی و فابریکەکان.'
+    ]
+  },
+  logistics: {
+    en: [
+      'Express delivery across all Iraqi governorates. Same-day delivery in major cities.',
+      'Warehousing and storage solutions. Climate-controlled facilities available.',
+      'Fleet of modern trucks and refrigerated vehicles. Safe transport, every time.',
+      'E-commerce fulfillment services. Pick, pack, and ship for your online store.',
+      'Customs clearance and international shipping. Door-to-door service worldwide.'
+    ],
+    ar: [
+      'توصيل سريع في جميع محافظات العراق. توصيل في نفس اليوم في المدن الرئيسية.',
+      'حلول التخزين والمستودعات. مرافق مكيفة متاحة.',
+      'أسطول من الشاحنات الحديثة والمركبات المبردة. نقل آمن، في كل مرة.',
+      'خدمات إنجاز الطلبات الإلكترونية. اختيار، تغليف، وشحن لمتجرك الإلكتروني.',
+      'تخليص جمركي وشحن دولي. خدمة من الباب إلى الباب في جميع أنحاء العالم.'
+    ],
+    ku: [
+      'گەیاندنی خێرا لە سەرجەم پارێزگاکانی عێراق. گەیاندنی ھەمان ڕۆژ لە شارە گەورەکان.',
+      'چارەسەری کۆگا و خەزێن. ئۆتێلی چاودێری کەیسەی بەردەستە.',
+      'فلیتێکی کامێنەی نوێ و ئۆتۆمبێلی ساردکەرەوە. گواستنەوەی ئەمن، ھەموو جارێک.',
+      'خزمەتگوزاری پابەندبوونی بازرگانی ئەلیکترۆنی. هەڵبژاردن، پاککردنەوە و گەیاندن بۆ دوکانی ئۆنلاینی خۆت.',
+      'چارەسەری گومرگ و گەیاندنی نێودەوڵەتی. خزمەتگوزاری دەرگا بۆ دەرگا لە سەرانسەری جیھان.'
+    ]
+  },
+  default: {
+    en: [
+      'Now open for business! Visit us today for quality service and great prices.',
+      'Special promotion this week only. Don\'t miss out on our best deals!',
+      'Customer satisfaction is our priority. Rated 4.5+ stars by our community.',
+      'Follow us for updates on new products, offers, and events.',
+      'Contact us for inquiries, bookings, or custom orders. We\'re here to help!'
+    ],
+    ar: [
+      'مفتوح الآن للأعمال! تفضل بزيارتنا اليوم للحصول على خدمة عالية الجودة وأسعار رائعة.',
+      'عرض ترويجي خاص هذا الأسبوع فقط. لا تفوت أفضل عروضنا!',
+      'رضا العملاء هو أولويتنا. مصنف بـ 4.5+ نجوم من مجتمعنا.',
+      'تابعنا للحصول على تحديثات حول المنتجات الجديدة، العروض، والأحداث.',
+      'اتصل بنا للاستفسارات، الحجوزات، أو الطلبات الخاصة. نحن هنا للمساعدة!'
+    ],
+    ku: [
+      'ئێستا بۆ کار کراوەیە! ئەمڕۆ سەردامان بکە بۆ خزمەتگوزاری باش و نرخێکی باش.',
+      'بەرنامەی تایبەتی ئەم ھەفتەیە تەنها. لە باشترین ئۆفەرەکان جێماھێڵە!',
+      'ئارەزووی کڕیاران تەرجیحی ئێمەیە. لە لایەن کۆمەڵگەکەمانەوە 4.5+ ئەستێرە.',
+      'دوای بکە بۆ نوێکارییەکان دەربارەی بەرهەمە نوێیەکان، ئۆفەرەکان و ڕووداوەکان.',
+      'پەیوەندیمان بکە بۆ پرسیار، داواکردن یان داواکاری تایبەتی. ئێرەیین بۆ یارمەتی!'
+    ]
+>>>>>>> 4639a50 (Apply-plan-PWA-CSV-posts-cleanup)
   }
+};
+
+// Sample businesses for realistic post generation
+const SAMPLE_BUSINESSES = [
+  { name: 'Al-Yasmin Restaurant', category: 'restaurant', gov: 'baghdad', avatar: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=100&auto=format&fit=crop&q=80' },
+  { name: 'Costa Cafe Baghdad', category: 'cafe_bakery', gov: 'baghdad', avatar: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=100&auto=format&fit=crop&q=80' },
+  { name: 'Grand Mall', category: 'mall', gov: 'erbil', avatar: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=100&auto=format&fit=crop&q=80' },
+  { name: 'Basra Supermarket', category: 'supermarket', gov: 'basra', avatar: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=100&auto=format&fit=crop&q=80' },
+  { name: 'Al-Rashid Pharmacy', category: 'pharmacy', gov: 'najaf', avatar: 'https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?w=100&auto=format&fit=crop&q=80' },
+  { name: 'Mosul Medical Center', category: 'clinic', gov: 'mosul', avatar: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=100&auto=format&fit=crop&q=80' },
+  { name: 'Erbil Grand Hospital', category: 'hospital', gov: 'erbil', avatar: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=100&auto=format&fit=crop&q=80' },
+  { name: 'Dr. Ahmed Clinic', category: 'doctor', gov: 'karbala', avatar: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=100&auto=format&fit=crop&q=80' },
+  { name: 'Pearl Dental Care', category: 'dentist', gov: 'sulaymaniyah', avatar: 'https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=100&auto=format&fit=crop&q=80' },
+  { name: 'Golden Salon', category: 'salon', gov: 'baghdad', avatar: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=100&auto=format&fit=crop&q=80' },
+  { name: 'Power Gym', category: 'gym', gov: 'basra', avatar: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=100&auto=format&fit=crop&q=80' },
+  { name: 'Royal Hotel Erbil', category: 'hotel', gov: 'erbil', avatar: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=100&auto=format&fit=crop&q=80' },
+  { name: 'Iraqi Travel Co', category: 'travel_agency', gov: 'baghdad', avatar: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=100&auto=format&fit=crop&q=80' },
+  { name: 'Baghdad University', category: 'university', gov: 'baghdad', avatar: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=100&auto=format&fit=crop&q=80' },
+  { name: 'Al-Mustafa Builders', category: 'construction', gov: 'duhok', avatar: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=100&auto=format&fit=crop&q=80' },
+  { name: 'Fast Iraq Logistics', category: 'logistics', gov: 'kirkuk', avatar: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=100&auto=format&fit=crop&q=80' },
 ];
 
+// Generate realistic posts from sample businesses
+function generateRealPosts(): SocialPost[] {
+  const posts: SocialPost[] = [];
+  const timeAgoOptions = [
+    { ar: 'منذ ساعة', ku: 'پێش 1 کاتژمێر', en: '1 hour ago' },
+    { ar: 'منذ 3 ساعات', ku: 'پێش 3 کاتژمێر', en: '3 hours ago' },
+    { ar: 'منذ 5 ساعات', ku: 'پێش 5 کاتژمێر', en: '5 hours ago' },
+    { ar: 'الأمس', ku: 'دوێنێ', en: 'Yesterday' },
+    { ar: 'منذ يومين', ku: 'پێش 2 ڕۆژ', en: '2 days ago' },
+    { ar: 'منذ 3 أيام', ku: 'پێش 3 ڕۆژ', en: '3 days ago' },
+  ];
+  
+  const commentUsers = [
+    { name: 'ali_iraqi', avatar: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=100&auto=format&fit=crop&q=80' },
+    { name: 'sara_kurd', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80' },
+    { name: 'basra_guy', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80' },
+    { name: 'noor_baghdad', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&auto=format&fit=crop&q=80' },
+    { name: 'kurdi_boy', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80' },
+  ];
+
+  SAMPLE_BUSINESSES.forEach((biz, index) => {
+    const templates = POST_TEMPLATES[biz.category] || POST_TEMPLATES.default;
+    const templateIndex = index % templates.en.length;
+    const timeAgo = timeAgoOptions[index % timeAgoOptions.length];
+    
+    // Generate realistic engagement numbers
+    const likes = Math.floor(Math.random() * 150) + 12;
+    const shares = Math.floor(Math.random() * 35) + 2;
+    const commentsCount = Math.floor(Math.random() * 12) + 1;
+    
+    // Generate 1-3 realistic comments
+    const comments = [];
+    const numComments = Math.floor(Math.random() * 3) + 1;
+    for (let c = 0; c < numComments; c++) {
+      const user = commentUsers[(index + c) % commentUsers.length];
+      comments.push({
+        id: `c-${index}-${c}`,
+        username: user.name,
+        userAvatar: user.avatar,
+        text: ['Great service!', 'Love this place!', 'Will visit soon', 'Prices are good', 'Recommended!'][c],
+        time: ['2h', '5h', '1d', '3h', '6h'][c]
+      });
+    }
+    
+    posts.push({
+      id: `post-${index + 1}`,
+      businessId: `biz-${index + 1}`,
+      businessName: biz.name,
+      businessAvatar: biz.avatar,
+      category: biz.category,
+      governorate: biz.gov as any,
+      mediaUrl: `https://images.unsplash.com/photo-${[1509042239860, 1554118811, 1568901346375, 1540555700478, 1517248135467, 1523050854058, 1534438327276, 1566073771259, 1488646953014, 1552566626, 1571902943202, 1582407947304, 1600596542815, 1560518883, 1586528116311, 1504307651254][index]}?w=800&auto=format&fit=crop&q=80`,
+      caption: {
+        ar: templates.ar[templateIndex],
+        ku: templates.ku[templateIndex],
+        en: templates.en[templateIndex]
+      },
+      likes,
+      commentsCount,
+      shares,
+      timeAgo,
+      likedByUser: false,
+      savedByUser: false,
+      comments
+    });
+  });
+
+  return posts;
+}
+
+const RAW_INITIAL_POSTS: SocialPost[] = generateRealPosts();
+
 const CATEGORY_COMPAT_MAP: Record<string, string> = {
-  coffee: 'cafe_bakery',
-  dining: 'restaurant',
-  shopping: 'mall',
-  hotels: 'hotel',
-  salons: 'salon',
-  gyms: 'gym',
-  pharmacies: 'pharmacy',
-  entertainment: 'cinema',
-  universities: 'university'
+  coffee: 'restaurants_cafes',
+  dining: 'restaurants_cafes',
+  shopping: 'electronics_tech_shops',
+  hotels: 'hotels_hospitality',
+  salons: 'beauty_salons',
+  gyms: 'fitness_gyms',
+  pharmacies: 'health_medical_services',
+  entertainment: 'restaurants_cafes',
+  universities: 'education_training_centers'
 };
 
 export const INITIAL_BUSINESSES: Business[] = RAW_INITIAL_BUSINESSES.map(biz => ({

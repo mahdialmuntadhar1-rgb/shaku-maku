@@ -3,12 +3,18 @@ import { motion, AnimatePresence } from 'motion/react';
 import { 
   Heart, MessageCircle, Send, Bookmark, Share2, 
   Sparkles, CheckCircle2, SlidersHorizontal, Eye, Gift, ShoppingBag,
-  Image as ImageIcon, Video, FileText, File
+  Image as ImageIcon, Video, FileText, File, Trash2, Edit3
 } from 'lucide-react';
+<<<<<<< HEAD
 import { SocialPost, Language, GovernorateCode } from '../types';
 import { TRANSLATIONS, CATEGORIES, GOVERNORATES } from '../data';
 import { generateLivePostFromCSV } from '../csvBusinesses';
 import { setDoc, doc, updateDoc } from 'firebase/firestore';
+=======
+import { SocialPost, Language, GovernorateCode, UserProfile } from '../types';
+import { TRANSLATIONS, CATEGORIES } from '../data';
+import { setDoc, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+>>>>>>> 4639a50 (Apply-plan-PWA-CSV-posts-cleanup)
 import { db, handleFirestoreError, OperationType } from '../firebase';
 
 interface SocialFeedProps {
@@ -17,19 +23,25 @@ interface SocialFeedProps {
   posts: SocialPost[];
   setPosts: React.Dispatch<React.SetStateAction<SocialPost[]>>;
   user: any;
+  userProfile?: UserProfile | null;
   onSignIn: () => void;
 }
 
-export default function SocialFeed({ 
-  currentLang, 
+export default function SocialFeed({
+  currentLang,
   selectedGov,
   posts,
   setPosts,
   user,
+  userProfile,
   onSignIn
 }: SocialFeedProps) {
   const [commentInputs, setCommentInputs] = useState<Record<string, string>>({});
-  
+
+  // Post edit/delete state
+  const [editingPostId, setEditingPostId] = useState<string | null>(null);
+  const [editCaption, setEditCaption] = useState('');
+
   // Custom Pagination States for Social Feed
   const [visibleCount, setVisibleCount] = useState(3);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -74,6 +86,10 @@ export default function SocialFeed({
     }
   };
 
+  const canCreatePost = userProfile?.role === 'owner' || userProfile?.role === 'admin';
+  const canManagePost = (post: SocialPost) =>
+    userProfile?.role === 'admin' || post.authorUid === user?.uid;
+
   // Reset page pagination state when governorate/filters change
   React.useEffect(() => {
     setVisibleCount(3);
@@ -109,6 +125,9 @@ export default function SocialFeed({
   const [showBrandInput, setShowBrandInput] = useState(false);
   const [showCategoryInput, setShowCategoryInput] = useState(false);
   const [showPresetGallery, setShowPresetGallery] = useState(false);
+
+  // Post creation feedback toast
+  const [createToast, setCreateToast] = useState<{msg: string; type: 'success'|'error'} | null>(null);
 
   const t = TRANSLATIONS[currentLang];
   const isRtl = currentLang === 'ar' || currentLang === 'ku';
@@ -212,6 +231,7 @@ export default function SocialFeed({
 
   const handleCreatePost = async (e: React.FormEvent) => {
     e.preventDefault();
+    // create post triggered
     if (!newCaption.trim()) return;
 
     const imgToUse = uploadedImage || customPhotoInput.trim() || (uploadedVideo ? '' : newPhotoUrl);
@@ -261,6 +281,16 @@ export default function SocialFeed({
 
     try {
       await setDoc(doc(db, 'posts', newPostItem.id), newPostItem);
+      // post saved
+
+      // Add to local state immediately so it appears in the UI
+      setPosts(prev => [newPostItem, ...prev]);
+
+      setCreateToast({
+        msg: currentLang === 'en' ? 'Post published!' : currentLang === 'ku' ? 'بابەت بڵاوکرایەوە!' : 'تم نشر المنشور!',
+        type: 'success'
+      });
+      setTimeout(() => setCreateToast(null), 3000);
 
       // Reset fields & collapse
       setNewBizName('');
@@ -278,8 +308,13 @@ export default function SocialFeed({
       setShowCategoryInput(false);
       setShowPresetGallery(false);
     } catch (err) {
-      console.error("Error creating post in Firestore: ", err);
+      // silently ignore create error
       handleFirestoreError(err, OperationType.CREATE, `posts/${newPostItem.id}`);
+      setCreateToast({
+        msg: currentLang === 'en' ? 'Failed to publish post.' : currentLang === 'ku' ? 'شکستی هێنا لە بڵاوکردنەوە.' : 'فشل في نشر المنشور.',
+        type: 'error'
+      });
+      setTimeout(() => setCreateToast(null), 5000);
     }
   };
 
@@ -294,7 +329,7 @@ export default function SocialFeed({
     try {
       await updateDoc(doc(db, 'posts', postId), payload);
     } catch (err) {
-      console.error("Error liking post in Firestore: ", err);
+      // silently ignore like error
     }
   };
 
@@ -308,7 +343,7 @@ export default function SocialFeed({
     try {
       await updateDoc(doc(db, 'posts', postId), payload);
     } catch (err) {
-      console.error("Error saving post in Firestore: ", err);
+      // silently ignore save error
     }
   };
 
@@ -337,7 +372,7 @@ export default function SocialFeed({
       await updateDoc(doc(db, 'posts', postId), payload);
       setCommentInputs(prev => ({ ...prev, [postId]: '' }));
     } catch (err) {
-      console.error("Error adding post comment in Firestore: ", err);
+      // silently ignore comment error
     }
   };
 
@@ -355,14 +390,46 @@ export default function SocialFeed({
         title: post.businessName,
         text: post.caption[currentLang],
         url: window.location.href,
-      }).catch(console.error);
+      }).catch(() => {});
     } else {
       alert(`${t.share}: ${post.businessName}\n${window.location.href}`);
     }
   };
 
+<<<<<<< HEAD
   const currentGovDetails = GOVERNORATES.find(g => g.code === selectedGov);
   const govNameText = currentGovDetails ? currentGovDetails.name[currentLang] : selectedGov.toUpperCase();
+=======
+  const handleDeletePost = async (postId: string) => {
+    const confirmMsg = currentLang === 'en' ? 'Delete this post?' : currentLang === 'ku' ? 'ئەم بابەتە بسڕەوە؟' : 'حذف هذا المنشور؟';
+    if (!window.confirm(confirmMsg)) return;
+    try {
+      await deleteDoc(doc(db, 'posts', postId));
+    } catch (err) {
+      // silently ignore delete error
+      handleFirestoreError(err, OperationType.DELETE, `posts/${postId}`);
+    }
+  };
+
+  const handleStartEdit = (post: SocialPost) => {
+    setEditingPostId(post.id);
+    setEditCaption(post.caption[currentLang] || post.caption.en || '');
+  };
+
+  const handleSaveEdit = async (postId: string) => {
+    if (!editCaption.trim()) return;
+    try {
+      await updateDoc(doc(db, 'posts', postId), {
+        [`caption.${currentLang}`]: editCaption.trim()
+      });
+      setEditingPostId(null);
+      setEditCaption('');
+    } catch (err) {
+      // silently ignore update error
+      handleFirestoreError(err, OperationType.UPDATE, `posts/${postId}`);
+    }
+  };
+>>>>>>> 4639a50 (Apply-plan-PWA-CSV-posts-cleanup)
 
   return (
     <div className="w-full max-w-xl mx-auto space-y-8">
@@ -382,6 +449,7 @@ export default function SocialFeed({
         </span>
       </div>
 
+<<<<<<< HEAD
       {/* Live Local Pulse Simulator Banner */}
       <div className="bg-gradient-to-br from-[#12121a] via-[#14141d] to-[#181825] border border-indigo-500/10 rounded-[20px] p-5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl">
         <div className="space-y-1 text-center sm:text-left">
@@ -427,6 +495,10 @@ export default function SocialFeed({
       </div>
 
       {/* Immersive Refined Social Composer */}
+=======
+      {/* Immersive Refined Social Composer - Owners/Admins only */}
+      {canCreatePost ? (
+>>>>>>> 4639a50 (Apply-plan-PWA-CSV-posts-cleanup)
       <div className="bg-[#18191a] border border-[#2f3031]/80 rounded-[20px] p-5 space-y-4.5 shadow-2xl relative overflow-hidden font-sans">
         
         {/* Dynamic Guest Tip Banner instead of restrictive modal lock */}
@@ -846,6 +918,17 @@ export default function SocialFeed({
         </button>
 
       </div>
+      ) : user ? (
+        <div className="bg-[#18191a] border border-[#2f3031]/80 rounded-[20px] p-5 text-center">
+          <p className="text-xs text-zinc-400">
+            {currentLang === 'en'
+              ? 'Only business owners can create posts.'
+              : currentLang === 'ku'
+              ? 'تەنها خاوەن کارگێڕیەکان دەتوانن بابەت دروست بکەن.'
+              : 'يمكن لأصحاب المتاجر فقط إنشاء المنشورات.'}
+          </p>
+        </div>
+      ) : null}
 
       {/* Main post stream list */}
       {filteredPosts.slice(0, visibleCount).map((post) => {
@@ -1017,15 +1100,60 @@ export default function SocialFeed({
                   <Bookmark className="w-3.5 h-3.5" />
                   <span>{post.savedByUser ? t.saves + 'ed' : t.saves}</span>
                 </button>
+
+                {/* Edit/Delete for authors/admins */}
+                {canManagePost(post) && (
+                  <div className="flex items-center gap-1 ml-1">
+                    <button
+                      onClick={() => handleStartEdit(post)}
+                      className="p-1.5 rounded-lg text-zinc-500 hover:text-blue-400 hover:bg-blue-500/10 border border-transparent hover:border-blue-500/20 transition"
+                      title="Edit"
+                    >
+                      <Edit3 className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={() => handleDeletePost(post.id)}
+                      className="p-1.5 rounded-lg text-zinc-500 hover:text-red-400 hover:bg-red-500/10 border border-transparent hover:border-red-500/20 transition"
+                      title="Delete"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                )}
               </div>
 
-              {/* Caption text */}
-              <div className="space-y-1.5">
-                <span className="text-xs font-black text-white hover:underline cursor-pointer block">{post.businessName}</span>
-                <p className="text-xs leading-relaxed text-zinc-300">
-                  {post.caption[currentLang]}
-                </p>
-              </div>
+              {/* Caption text / Inline Edit */}
+              {editingPostId === post.id ? (
+                <div className="space-y-2">
+                  <textarea
+                    rows={3}
+                    value={editCaption}
+                    onChange={(e) => setEditCaption(e.target.value)}
+                    className="w-full bg-[#020205]/60 text-xs text-white border border-white/10 rounded-xl p-3 focus:outline-none focus:border-blue-400 resize-none"
+                  />
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleSaveEdit(post.id)}
+                      className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-bold rounded-lg transition"
+                    >
+                      {currentLang === 'en' ? 'Save' : currentLang === 'ku' ? 'پاشەکەوت' : 'حفظ'}
+                    </button>
+                    <button
+                      onClick={() => { setEditingPostId(null); setEditCaption(''); }}
+                      className="px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-[10px] font-bold rounded-lg transition"
+                    >
+                      {currentLang === 'en' ? 'Cancel' : currentLang === 'ku' ? 'هەڵوەشاندنەوە' : 'إلغاء'}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-1.5">
+                  <span className="text-xs font-black text-white hover:underline cursor-pointer block">{post.businessName}</span>
+                  <p className="text-xs leading-relaxed text-zinc-300">
+                    {post.caption[currentLang]}
+                  </p>
+                </div>
+              )}
 
               {/* Active list stream of comments */}
               {post.comments.length > 0 && (

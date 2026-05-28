@@ -274,7 +274,7 @@ export default function AddBusinessForm({
         setClaimStep('success');
       }
     } catch (err) {
-      console.error("Verification error: ", err);
+      // silently ignore verification error
       alert("Error writing ownership records to registry database.");
     }
   };
@@ -411,7 +411,7 @@ export default function AddBusinessForm({
       setUpdateSuccess(true);
       setTimeout(() => setUpdateSuccess(false), 3500);
     } catch (err) {
-      console.error("Failed spot update: ", err);
+      // silently ignore update error
       alert("Error saving dashboard edits to firestore.");
     } finally {
       setSubmittingUpdate(false);
@@ -429,7 +429,7 @@ export default function AddBusinessForm({
         images: updated
       });
     } catch (e) {
-      console.error(e);
+      // silently ignore error
     }
   };
 
@@ -443,7 +443,7 @@ export default function AddBusinessForm({
         images: updated
       });
     } catch (e) {
-      console.error(e);
+      // silently ignore error
     }
   };
 
@@ -497,7 +497,7 @@ export default function AddBusinessForm({
       setPostSuccess(true);
       setTimeout(() => setPostSuccess(false), 3500);
     } catch (err) {
-      console.error("Story publish fault: ", err);
+      // silently ignore story publish error
     } finally {
       setSubmittingPost(false);
     }
@@ -1012,7 +1012,7 @@ export default function AddBusinessForm({
                                     const { deleteDoc, doc } = await import('firebase/firestore');
                                     await deleteDoc(doc(db, 'posts', post.id));
                                   } catch (e) {
-                                    console.error(e);
+                                    // silently ignore error
                                   }
                                 }
                               }}

@@ -76,11 +76,8 @@ export async function signInWithGoogle() {
 async function validateFirestoreConnection() {
   try {
     await getDocFromServer(doc(db, 'test', 'connection'));
-    console.info("Firestore configuration handshake successful.");
   } catch (error) {
-    if (error instanceof Error && error.message.includes('the client is offline')) {
-      console.error("Connection validation: client is offline. Please verify Firebase setup.");
-    }
+    // silently ignore connection validation errors
   }
 }
 

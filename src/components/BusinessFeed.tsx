@@ -15,6 +15,9 @@ interface BusinessFeedProps {
   onToggleLike: (bizId: string) => void;
   onToggleSave: (bizId: string) => void;
   onSelectStory: (stories: string[]) => void;
+  onLoadMore?: () => void;
+  loadingMore?: boolean;
+  hasMore?: boolean;
 }
 
 export default function BusinessFeed({
@@ -24,7 +27,10 @@ export default function BusinessFeed({
   businesses,
   onToggleLike,
   onToggleSave,
-  onSelectStory
+  onSelectStory,
+  onLoadMore,
+  loadingMore = false,
+  hasMore = false
 }: BusinessFeedProps) {
   const [selectedBiz, setSelectedBiz] = useState<Business | null>(null);
   
@@ -48,13 +54,13 @@ export default function BusinessFeed({
   const isRtl = currentLang === 'ar' || currentLang === 'ku';
 
   // Filter businesses by Governorate (if not 'all')
-  const govFiltered = selectedGov === 'all' 
-    ? businesses 
+  const govFiltered = selectedGov === 'all'
+    ? businesses
     : businesses.filter(b => b.governorate === selectedGov);
 
   // If a specific category chip is active on the header selector, prioritize that category. Otherwise, group by all categories.
-  const categoriesToGroup = selectedCategory 
-    ? CATEGORIES.filter(c => c.id === selectedCategory) 
+  const categoriesToGroup = selectedCategory
+    ? CATEGORIES.filter(c => c.id === selectedCategory)
     : CATEGORIES;
 
   const handleToggleCategoryExpand = (catId: string) => {
@@ -78,7 +84,7 @@ export default function BusinessFeed({
         title: biz.name[currentLang],
         text: biz.description[currentLang],
         url: window.location.href,
-      }).catch(console.error);
+      }).catch(() => {});
     } else {
       // Fallback
       alert(`${t.share}: ${biz.name[currentLang]}\n${window.location.href}`);
@@ -337,12 +343,27 @@ export default function BusinessFeed({
             {t.noBusinessesFound}
           </h3>
           <p className="text-xs text-zinc-500">
-            {currentLang === 'en' 
+            {currentLang === 'en'
               ? 'Try switching the governorate back to "All Iraq 🇮🇶" to see national social hubs!'
               : currentLang === 'ku'
                 ? 'هەوڵ بدە پارێزگاکە بگۆڕیت بۆ "هەموو عێراق 🇮🇶" تا شوێنەکان ببینی!'
                 : 'حاول تغيير المحافظة إلى "كل العراق 🇮🇶" لتستعرض الأماكن والشركات على نطاق الوطن!'}
           </p>
+        </div>
+      )}
+
+      {/* Global Load More Button for cursor pagination */}
+      {hasMore && onLoadMore && (
+        <div className="text-center pt-6">
+          <button
+            onClick={onLoadMore}
+            disabled={loadingMore}
+            className="px-8 py-3 bg-luxury-bg text-white font-bold rounded-full hover:bg-luxury-teal transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+          >
+            {loadingMore
+              ? (currentLang === 'en' ? 'Loading...' : currentLang === 'ku' ? 'تۆمارکردن...' : 'جاري التحميل...')
+              : (currentLang === 'en' ? 'Load More Businesses' : currentLang === 'ku' ? 'زیاتر باربکە' : 'تحميل المزيد')}
+          </button>
         </div>
       )}
 
