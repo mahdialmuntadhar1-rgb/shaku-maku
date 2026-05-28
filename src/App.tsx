@@ -7,9 +7,10 @@ import {
 } from 'lucide-react';
 import { Language, GovernorateCode, Business, SocialPost, UserProfile, HeroSlide } from './types';
 import { TRANSLATIONS, CATEGORIES, GOVERNORATES, HERO_SLIDES } from './data';
-import { db } from './firebase';
+import { db, auth } from './firebase';
 import { collection, onSnapshot, setDoc, doc, updateDoc } from 'firebase/firestore';
 import { getCurrentUser, logoutUser, loginUser, registerUser } from './shakuAuth';
+import { sendPasswordResetEmail } from 'firebase/auth';
 
 // Fixed Admin Email Configuration
 const ADMIN_EMAIL = 'mahdialmuntadhar1@gmail.com';
@@ -136,6 +137,29 @@ export default function App() {
       // auth success
     } catch (err) {
       // silently ignore auth error
+    }
+  };
+
+  // Password reset functionality
+  const handlePasswordReset = async (email: string) => {
+    try {
+      await sendPasswordResetEmail(auth, email);
+      alert(
+        currentLang === 'en' 
+          ? 'Password reset email sent! Please check your inbox.'
+          : currentLang === 'ku'
+          ? 'ئیمەیڵی ڕێستکردنی تێپەڕەواژێ نێررا! تکایە سندووقی پۆستەکەت بپشکنە.'
+          : 'تم إرسال بريد إعادة تعيين كلمة المرور! يرجى التحقق من صندوق الوارد.'
+      );
+    } catch (error: any) {
+      console.error('Password reset error:', error);
+      alert(
+        currentLang === 'en'
+          ? 'Failed to send password reset email. Please try again.'
+          : currentLang === 'ku'
+          ? 'نەیتوانی ئیمەیڵی ڕێستکردنی تێپەڕەواژێ بنێرێت. تکایە دووبارە هەوڵبەرەوە.'
+          : 'فشل في إرسال بريد إعادة تعيين كلمة المرور. يرجى المحاولة مرة أخرى.'
+      );
     }
   };
 
@@ -418,6 +442,7 @@ export default function App() {
         onAuthSuccess={(profileObj) => {
           setUserProfile(profileObj);
         }}
+        onPasswordReset={handlePasswordReset}
       />
 
       <main className="flex-grow max-w-7xl w-full mx-auto px-4 py-6">

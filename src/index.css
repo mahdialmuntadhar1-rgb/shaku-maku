@@ -29,6 +29,7 @@ body {
   text-align: right;
   line-height: 1.8;
   letter-spacing: -0.02em;
+  font-weight: 400;
 }
 
 .text-kurdish {
@@ -37,6 +38,7 @@ body {
   text-align: right;
   line-height: 1.8;
   letter-spacing: -0.01em;
+  font-weight: 400;
 }
 
 .text-english {
@@ -44,6 +46,48 @@ body {
   direction: ltr;
   text-align: left;
   line-height: 1.6;
+  font-weight: 400;
+}
+
+/* Enhanced language support for all text elements */
+[dir="rtl"] .font-sans {
+  font-family: "Cairo", "Noto Sans Arabic", "Noto Sans Kurdish", sans-serif;
+}
+
+[dir="ltr"] .font-sans {
+  font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Fix text rendering in all components */
+[dir="rtl"] * {
+  font-family: inherit;
+}
+
+[dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3, [dir="rtl"] h4, [dir="rtl"] h5, [dir="rtl"] h6 {
+  font-family: "Cairo", "Noto Sans Arabic", "Noto Kufi Arabic", sans-serif;
+  font-weight: 700;
+}
+
+[dir="rtl"] p, [dir="rtl"] span, [dir="rtl"] div {
+  font-family: "Cairo", "Noto Sans Arabic", "Noto Kufi Arabic", sans-serif;
+}
+
+[dir="rtl"] button {
+  font-family: "Cairo", "Noto Sans Arabic", "Noto Kufi Arabic", sans-serif;
+}
+
+[dir="rtl"] input, [dir="rtl"] textarea {
+  font-family: "Cairo", "Noto Sans Arabic", "Noto Kufi Arabic", sans-serif;
+}
+
+[dir="rtl"] .text-xs, [dir="rtl"] .text-sm {
+  font-family: "Cairo", "Noto Sans Arabic", "Noto Kufi Arabic", sans-serif;
+  font-size: 0.875rem;
+}
+
+[dir="rtl"] .text-lg, [dir="rtl"] .text-xl {
+  font-family: "Cairo", "Noto Sans Arabic", "Noto Kufi Arabic", sans-serif;
+  font-weight: 600;
 }
 
 /* Ensure proper text shaping for RTL languages */

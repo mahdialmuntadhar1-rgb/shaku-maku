@@ -18,6 +18,7 @@ interface AuthModalProps {
   currentLang: Language;
   onCustomEmailLogin: (email: string) => void;
   onAuthSuccess?: (userProfile: UserProfile) => void;
+  onPasswordReset?: (email: string) => void;
 }
 
 export default function AuthModal({
@@ -25,7 +26,8 @@ export default function AuthModal({
   onClose,
   currentLang,
   onCustomEmailLogin,
-  onAuthSuccess
+  onAuthSuccess,
+  onPasswordReset
 }: AuthModalProps) {
   const [isSignUp, setIsSignUp] = useState(false);
   const [showForgot, setShowForgot] = useState(false);
@@ -239,8 +241,10 @@ export default function AuthModal({
     setErrorMsg('');
     setSuccessMsg('');
     try {
-      const data = await requestPasswordReset(email.trim());
-      setSuccessMsg(L.forgot_success + ` Token: ${data.token.substring(0, 8)}...`);
+      if (onPasswordReset) {
+        await onPasswordReset(email.trim());
+        setSuccessMsg(L.forgot_success);
+      }
     } catch (err: any) {
       console.error("Password reset error: ", err);
       setErrorMsg(err.message || 'Reset request failed');
