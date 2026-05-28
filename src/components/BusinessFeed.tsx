@@ -232,13 +232,27 @@ export default function BusinessFeed({
                         </div>
 
                         {/* Location Subtext */}
-                        <div className="flex items-center gap-0.5 xs:gap-1 text-[9px] xs:text-[11px] text-zinc-500 mb-1 xs:mb-2 font-black">
+                        <div className="flex items-center gap-0.5 xs:gap-1 text-[9px] xs:text-[11px] text-zinc-500 mb-1 xs:mb-1.5 font-black">
                           <MapPin className="w-3 xs:w-3.5 h-3 xs:h-3.5 text-luxury-coral shrink-0" />
                           <span className="truncate">{biz.address[currentLang]}</span>
                         </div>
 
+                        {/* Phone Number */}
+                        {biz.phoneNumber && (
+                          <div className="flex items-center gap-0.5 xs:gap-1 text-[9px] xs:text-[11px] text-zinc-500 mb-1 xs:mb-1.5 font-black">
+                            <Phone className="w-3 xs:w-3.5 h-3 xs:h-3.5 text-luxury-teal shrink-0" />
+                            <a 
+                              href={`tel:${biz.phoneNumber}`}
+                              className="text-luxury-teal hover:text-luxury-gold transition-colors cursor-pointer underline"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              {biz.phoneNumber}
+                            </a>
+                          </div>
+                        )}
+
                         {/* Description snippet */}
-                        <p className="text-[9px] xs:text-[11px] text-zinc-500 line-clamp-2 leading-relaxed mb-2 xs:mb-4">
+                        <p className="text-[9px] xs:text-[11px] text-zinc-500 line-clamp-2 leading-relaxed mb-2 xs:mb-3">
                           {biz.description[currentLang]}
                         </p>
                       </div>

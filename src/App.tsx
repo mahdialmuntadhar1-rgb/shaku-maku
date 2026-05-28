@@ -370,8 +370,12 @@ export default function App() {
     }
   };
 
+  // Determine text direction and language class
+  const textDirection = currentLang === 'ar' || currentLang === 'ku' ? 'rtl' : 'ltr';
+  const languageClass = currentLang === 'ar' ? 'text-arabic' : currentLang === 'ku' ? 'text-kurdish' : 'text-english';
+
   return (
-    <div className="min-h-screen bg-luxury-neutral pb-28 text-[#1A1A1A] flex flex-col selection:bg-luxury-gold selection:text-[#1A1A1A] relative overflow-hidden" dir={isRtl ? 'rtl' : 'ltr'}>
+    <div className={`min-h-screen bg-luxury-neutral pb-28 text-[#1A1A1A] flex flex-col selection:bg-luxury-gold selection:text-[#1A1A1A] relative overflow-hidden ${languageClass}`} dir={textDirection}>
       
       {/* Elegant Warm Luxury Atmosphere Glow */}
       <div className="absolute inset-0 z-0 pointer-events-none">
