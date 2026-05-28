@@ -2,12 +2,12 @@
   "name": "Shko Maku - Iraqi Business Directory",
   "short_name": "Shko Maku",
   "description": "Discover and connect with local Iraqi businesses. Owners can manage their profiles and content.",
-  "start_url": "/",
+  "start_url": "https://shakumaku.iq/",
   "display": "standalone",
   "background_color": "#1A1A1A",
   "theme_color": "#C8A95F",
   "orientation": "portrait-primary",
-  "scope": "/",
+  "scope": "https://shakumaku.iq/",
   "icons": [
     {
       "src": "/icon-192x192.svg",
