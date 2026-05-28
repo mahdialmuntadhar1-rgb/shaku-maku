@@ -51,11 +51,8 @@ export default function SocialFeed({
     try {
       const newLivePost = generateLivePostFromCSV(govToUse);
       
-      // Save it directly to Firestore so it auto-triggers stream snap
-      await setDoc(doc(db, 'posts', newLivePost.id), {
-        ...newLivePost,
-        authorUid: 'csv-seed-injector'
-      });
+      // Add to local state
+      setPosts(prev => [newLivePost, ...prev]);
 
       // Show a quick transient overlay or alert
       const bizNameText = newLivePost.businessName;
@@ -259,7 +256,8 @@ export default function SocialFeed({
     }
 
     try {
-      await setDoc(doc(db, 'posts', newPostItem.id), newPostItem);
+      // Add to local state
+      setPosts(prev => [newPostItem, ...prev]);
 
       // Reset fields & collapse
       setNewBizName('');
@@ -277,41 +275,29 @@ export default function SocialFeed({
       setShowCategoryInput(false);
       setShowPresetGallery(false);
     } catch (err) {
-      console.error("Error creating post in Firestore: ", err);
-      handleFirestoreError(err, OperationType.CREATE, `posts/${newPostItem.id}`);
+      console.error("Error creating post: ", err);
     }
   };
 
-  const handleLike = async (postId: string) => {
+  const handleLike = (postId: string) => {
     const post = posts.find(p => p.id === postId);
     if (!post) return;
     const liked = !post.likedByUser;
-    const payload = {
+    setPosts(prev => prev.map(p => p.id === postId ? {
+      ...p,
       likedByUser: liked,
-      likes: liked ? post.likes + 1 : post.likes - 1
-    };
-    try {
-      await updateDoc(doc(db, 'posts', postId), payload);
-    } catch (err) {
-      console.error("Error liking post in Firestore: ", err);
-    }
+      likes: liked ? p.likes + 1 : Math.max(0, p.likes - 1)
+    } : p));
   };
 
-  const handleSave = async (postId: string) => {
+  const handleSave = (postId: string) => {
     const post = posts.find(p => p.id === postId);
     if (!post) return;
     const saved = !post.savedByUser;
-    const payload = {
-      savedByUser: saved
-    };
-    try {
-      await updateDoc(doc(db, 'posts', postId), payload);
-    } catch (err) {
-      console.error("Error saving post in Firestore: ", err);
-    }
+    setPosts(prev => prev.map(p => p.id === postId ? { ...p, savedByUser: saved } : p));
   };
 
-  const handlePostComment = async (e: React.FormEvent, postId: string) => {
+  const handlePostComment = (e: React.FormEvent, postId: string) => {
     e.preventDefault();
     const txt = commentInputs[postId];
     if (!txt || !txt.trim()) return;
@@ -327,27 +313,16 @@ export default function SocialFeed({
       time: currentLang === 'en' ? 'Just now' : currentLang === 'ku' ? 'ئێستا' : 'الآن'
     };
 
-    const payload = {
-      comments: [...post.comments, newCom],
-      commentsCount: post.commentsCount + 1
-    };
-
-    try {
-      await updateDoc(doc(db, 'posts', postId), payload);
-      setCommentInputs(prev => ({ ...prev, [postId]: '' }));
-    } catch (err) {
-      console.error("Error adding post comment in Firestore: ", err);
-    }
+    setPosts(prev => prev.map(p => p.id === postId ? {
+      ...p,
+      comments: [...p.comments, newCom],
+      commentsCount: p.commentsCount + 1
+    } : p));
+    setCommentInputs(prev => ({ ...prev, [postId]: '' }));
   };
 
-  const handleShare = async (post: SocialPost) => {
-    try {
-      await updateDoc(doc(db, 'posts', post.id), {
-        shares: (post.shares || 0) + 1
-      });
-    } catch (err) {
-      console.error("Error updating share count in Firestore: ", err);
-    }
+  const handleShare = (post: SocialPost) => {
+    setPosts(prev => prev.map(p => p.id === post.id ? { ...p, shares: (p.shares || 0) + 1 } : p));
 
     if (navigator.share) {
       navigator.share({
@@ -428,28 +403,6 @@ export default function SocialFeed({
       {/* Immersive Refined Social Composer */}
       <div className="bg-[#18191a] border border-[#2f3031]/80 rounded-[20px] p-5 space-y-4.5 shadow-2xl relative overflow-hidden font-sans">
         
-        {/* Dynamic Guest Tip Banner instead of restrictive modal lock */}
-        {!user && (
-          <div 
-            onClick={onSignIn}
-            className="p-3 bg-blue-500/10 hover:bg-blue-500/15 border border-blue-500/20 rounded-xl text-xs text-blue-400 flex items-center justify-between gap-2 transition cursor-pointer active:scale-[0.99] font-sans"
-          >
-            <div className="flex items-center gap-2">
-              <span className="text-sm">📝</span>
-              <span className="font-semibold text-left">
-                {currentLang === 'en' 
-                  ? 'Posting as Saku Maku Guest. Click to log in.' 
-                  : currentLang === 'ku' 
-                  ? 'بڵاوکردنەوە وەک میوان. کلیک بکە بۆ چوونەژوورەوە.' 
-                  : 'أنت تنشر كضيف الآن. انقر لتسجيل الدخول السريع.'}
-              </span>
-            </div>
-            <span className="text-[10px] bg-blue-500 text-white px-2 py-0.5 rounded font-black uppercase tracking-wider shrink-0">
-              {currentLang === 'en' ? 'Google Login' : currentLang === 'ku' ? 'گووگڵ' : 'دخول'}
-            </span>
-          </div>
-        )}
-
         <div className="space-y-3.5">
           {/* User Row Option */}
           <div className="flex items-center gap-3">

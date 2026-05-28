@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Sparkles, Clock, MapPin, Check, User, LogOut, Shield, ChevronDown, Award, HelpCircle } from 'lucide-react';
+import PWAInstallButton from './PWAInstallButton';
 import { motion, AnimatePresence } from 'motion/react';
 import { Language, GovernorateCode, UserProfile } from '../types';
 import { GOVERNORATES, TRANSLATIONS } from '../data';
@@ -406,6 +407,8 @@ export default function Header({
               <span>{currentLang === 'en' ? 'Access Portal' : currentLang === 'ku' ? 'چوونەژوور' : 'دخول المنصة'}</span>
             </button>
           )}
+
+          <PWAInstallButton />
 
         </div>
       </div>

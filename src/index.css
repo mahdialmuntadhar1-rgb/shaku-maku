@@ -61,3 +61,19 @@ body {
 .animate-shake {
   animation: gentleShake 2s infinite ease-in-out;
 }
+
+/* PWA Install Button glowing pulse */
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(200, 169, 95, 0.3), 0 0 16px rgba(15, 46, 47, 0.2);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(200, 169, 95, 0.6), 0 0 40px rgba(15, 46, 47, 0.4);
+    transform: scale(1.03);
+  }
+}
+
+.animate-glow-pulse {
+  animation: glowPulse 2.5s infinite ease-in-out;
+}
