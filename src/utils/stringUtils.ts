@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Unicode and RTL-safe string utility functions (Chunk 4)
  */
 
@@ -69,15 +69,15 @@ export function isGarbled(text: string): boolean {
   if (!text) return false;
   // Contains replacement chars
   if (/[\uFFFD\uFFFE\uFFFF]/.test(text)) return true;
-  // Contains Latin-1 supplement chars that appear in double-encoded Arabic (Ø Ù Û Ú Â Ã)
+  // Contains Latin-1 supplement chars that appear in double-encoded Arabic (Ã˜ Ã™ Ã› Ãš Ã‚ Ãƒ)
   if (/[\u00C0-\u00FF]/.test(text)) return true;
   // Contains ASCII control or non-printable chars
   if (/[\x00-\x08\x0E-\x1F\x7F]/.test(text)) return true;
   // Contains sequences like random ASCII letters sandwiched between Arabic chars
-  // e.g. "كاف‌S‌? لوفا" — ASCII letter between Arabic chars is a strong signal
+  // e.g. "ÙƒØ§Ùâ€ŒSâ€Œ? Ù„ÙˆÙØ§" â€” ASCII letter between Arabic chars is a strong signal
   if (/[\u0600-\u06FF][A-Za-z][A-Za-z\?~^"]{1,2}[\u0600-\u06FF]/.test(text)) return true;
-  // Starts with garbage pattern like "â" or "Â"
-  if (/^[âÂãÃ]/.test(text)) return true;
+  // Starts with garbage pattern like "Ã¢" or "Ã‚"
+  if (/^[Ã¢Ã‚Ã£Ãƒ]/.test(text)) return true;
   return false;
 }
 

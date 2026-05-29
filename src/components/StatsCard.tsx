@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { motion } from 'motion/react';
 import { ArrowUpRight, ArrowDownRight, TrendingUp, Sparkles } from 'lucide-react';
 

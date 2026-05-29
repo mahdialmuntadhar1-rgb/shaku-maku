@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { Sparkles, Clock, MapPin, Check, User, LogOut, Shield, ChevronDown, Award, HelpCircle } from 'lucide-react';
 import PWAInstallButton from './PWAInstallButton';
 import { motion, AnimatePresence } from 'motion/react';
@@ -73,19 +73,19 @@ export default function Header({
   const languages = [
     { 
       code: 'ar', 
-      label: 'العربية', 
+      label: 'Ø§Ù„Ø¹Ø±Ø¨ÙŠØ©', 
       flag: (
         <svg viewBox="0 0 3 2" className="w-5 h-3.5 rounded-sm shadow-sm inline-block">
           <rect width="3" height="2" fill="#fff" />
           <rect width="3" height="0.67" fill="#DA191A" />
           <rect y="1.33" width="3" height="0.67" fill="#007A3D" />
-          <text x="1.5" y="1.15" fontFamily="sans-serif" fontSize="0.32" fontWeight="bold" fill="#007A3D" textAnchor="middle">الله أكبر</text>
+          <text x="1.5" y="1.15" fontFamily="sans-serif" fontSize="0.32" fontWeight="bold" fill="#007A3D" textAnchor="middle">Ø§Ù„Ù„Ù‡ Ø£ÙƒØ¨Ø±</text>
         </svg>
       )
     },
     { 
       code: 'ku', 
-      label: 'کوردی', 
+      label: 'Ú©ÙˆØ±Ø¯ÛŒ', 
       flag: (
         <svg viewBox="0 0 3 2" className="w-5 h-3.5 rounded-sm shadow-sm inline-block">
           <rect width="3" height="2" fill="#fff" />
@@ -123,14 +123,14 @@ export default function Header({
         <div className="bg-gradient-to-r from-luxury-teal/90 via-luxury-gold/80 to-[#FF6B4A]/90 text-white text-[10px] md:text-xs px-4 py-3 border-b border-luxury-gold/30 flex flex-col md:flex-row items-center justify-between gap-3 animate-fade-in relative z-50">
           <div className="flex items-center gap-2">
             <span className="text-[10px] bg-red-650 bg-red-500 text-white font-mono font-black py-0.5 px-2 rounded-full animate-pulse shrink-0">
-              🔴 QUICK SESSION ACCESS
+              ðŸ”´ QUICK SESSION ACCESS
             </span>
             <span className="font-extrabold text-zinc-100 max-w-sm sm:max-w-md md:max-w-lg leading-tight">
               {currentLang === 'en' 
                 ? 'Enter email to sign in instantly, or click a direct test account preset:' 
                 : currentLang === 'ku'
-                ? 'ئیمەیڵ بنووسە بۆ چوونەژوورەوەی خێرا، یان کلیک لەسەر یەکێک لە ئەکاونتە تاقیکارییەکان بکە:'
-                : 'أدخل أي بريد إلكتروني للدخول الفوري، أو اضغط على أحد الحسابات الجاهزة للتجربة:'}
+                ? 'Ø¦ÛŒÙ…Û•ÛŒÚµ Ø¨Ù†ÙˆÙˆØ³Û• Ø¨Û† Ú†ÙˆÙˆÙ†Û•Ú˜ÙˆÙˆØ±Û•ÙˆÛ•ÛŒ Ø®ÛŽØ±Ø§ØŒ ÛŒØ§Ù† Ú©Ù„ÛŒÚ© Ù„Û•Ø³Û•Ø± ÛŒÛ•Ú©ÛŽÚ© Ù„Û• Ø¦Û•Ú©Ø§ÙˆÙ†ØªÛ• ØªØ§Ù‚ÛŒÚ©Ø§Ø±ÛŒÛŒÛ•Ú©Ø§Ù† Ø¨Ú©Û•:'
+                : 'Ø£Ø¯Ø®Ù„ Ø£ÙŠ Ø¨Ø±ÙŠØ¯ Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ Ù„Ù„Ø¯Ø®ÙˆÙ„ Ø§Ù„ÙÙˆØ±ÙŠØŒ Ø£Ùˆ Ø§Ø¶ØºØ· Ø¹Ù„Ù‰ Ø£Ø­Ø¯ Ø§Ù„Ø­Ø³Ø§Ø¨Ø§Øª Ø§Ù„Ø¬Ø§Ù‡Ø²Ø© Ù„Ù„ØªØ¬Ø±Ø¨Ø©:'}
             </span>
           </div>
           
@@ -142,8 +142,8 @@ export default function Header({
                 onClick={() => onCustomEmailLogin('mahdialmuntadhar1@gmail.com')}
                 className="px-2.5 py-1 bg-red-950/40 hover:bg-red-900 border border-red-500/35 text-red-200 text-[9px] font-black transition-all active:scale-95 cursor-pointer flex items-center gap-1 rounded-md"
               >
-                <span>🛡️</span>
-                <span>{currentLang === 'en' ? 'Click: Admin' : 'مدير (مهدي)'}</span>
+                <span>ðŸ›¡ï¸</span>
+                <span>{currentLang === 'en' ? 'Click: Admin' : 'Ù…Ø¯ÙŠØ± (Ù…Ù‡Ø¯ÙŠ)'}</span>
               </button>
               
               <button 
@@ -151,8 +151,8 @@ export default function Header({
                 onClick={() => onCustomEmailLogin('owner@shkomaku.com')}
                 className="px-2.5 py-1 bg-amber-950/40 hover:bg-amber-900 border border-amber-500/35 text-amber-200 text-[9px] font-black transition-all active:scale-95 cursor-pointer flex items-center gap-1 rounded-md"
               >
-                <span>🏢</span>
-                <span>{currentLang === 'en' ? 'Click: Owner' : 'صاحب مصلحة'}</span>
+                <span>ðŸ¢</span>
+                <span>{currentLang === 'en' ? 'Click: Owner' : 'ØµØ§Ø­Ø¨ Ù…ØµÙ„Ø­Ø©'}</span>
               </button>
             </div>
 
@@ -167,14 +167,14 @@ export default function Header({
                 name="quickEmail"
                 required
                 type="email"
-                placeholder={currentLang === 'en' ? 'Enter Gmail/Email' : 'أدخل بريدك الإلكتروني'}
+                placeholder={currentLang === 'en' ? 'Enter Gmail/Email' : 'Ø£Ø¯Ø®Ù„ Ø¨Ø±ÙŠØ¯Ùƒ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ'}
                 className="bg-transparent text-[10px] text-white px-2 py-1 focus:outline-none w-full placeholder-zinc-500 font-bold"
               />
               <button 
                 type="submit"
                 className="px-2.5 py-1 rounded-sm bg-gradient-to-r from-luxury-teal to-luxury-gold text-white text-[9px] font-black uppercase shrink-0 hover:opacity-85 active:scale-95 transition cursor-pointer"
               >
-                {currentLang === 'en' ? 'Sign In' : 'دخول'}
+                {currentLang === 'en' ? 'Sign In' : 'Ø¯Ø®ÙˆÙ„'}
               </button>
             </form>
           </div>
@@ -190,7 +190,7 @@ export default function Header({
               <div className="absolute -inset-0.5 bg-gradient-to-r from-luxury-teal via-luxury-gold to-white rounded-xl blur opacity-75 group-hover:opacity-100 transition duration-500"></div>
               <div className="relative px-3 py-1.5 bg-[#16161a] rounded-xl leading-none flex items-center border border-luxury-gold/30">
                 <span className="text-base xs:text-lg sm:text-xl font-black bg-gradient-to-r from-luxury-gold to-white bg-clip-text text-transparent tracking-tighter">
-                  {currentLang === 'en' ? 'Shko Maku' : currentLang === 'ku' ? 'شكو ماكو' : 'شكو ماكو'}
+                  {currentLang === 'en' ? 'Shko Maku' : currentLang === 'ku' ? 'Ø´ÙƒÙˆ Ù…Ø§ÙƒÙˆ' : 'Ø´ÙƒÙˆ Ù…Ø§ÙƒÙˆ'}
                 </span>
                 <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 ml-1.5 text-luxury-gold animate-pulse" />
               </div>
@@ -303,9 +303,9 @@ export default function Header({
                          userProfile?.role === 'owner' ? <Award className="w-4 h-4 text-amber-500" /> :
                          <User className="w-4 h-4 text-sky-400" />}
                         <span className="text-[10px] font-black tracking-wider uppercase text-zinc-300">
-                          {userProfile?.role === 'admin' ? (currentLang === 'en' ? 'Platform Admin' : 'مدير المنصة 🛡️') :
-                           userProfile?.role === 'owner' ? (currentLang === 'en' ? 'Spot Owner' : 'صاحب مصلحة 🏢') :
-                           (currentLang === 'en' ? 'Regular User' : 'مستكشف نشط 👤')}
+                          {userProfile?.role === 'admin' ? (currentLang === 'en' ? 'Platform Admin' : 'Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ù†ØµØ© ðŸ›¡ï¸') :
+                           userProfile?.role === 'owner' ? (currentLang === 'en' ? 'Spot Owner' : 'ØµØ§Ø­Ø¨ Ù…ØµÙ„Ø­Ø© ðŸ¢') :
+                           (currentLang === 'en' ? 'Regular User' : 'Ù…Ø³ØªÙƒØ´Ù Ù†Ø´Ø· ðŸ‘¤')}
                         </span>
                       </div>
                       <span className={`w-2 h-2 rounded-full ${userProfile?.role === 'admin' ? 'bg-red-500' : userProfile?.role === 'owner' ? 'bg-amber-400' : 'bg-sky-400'} animate-pulse`}></span>
@@ -314,7 +314,7 @@ export default function Header({
                     {/* Developer / Tester Switcher block (highly user-friendly testability) */}
                     <div className="bg-white/5 rounded-2xl p-2.5 border border-white/10 space-y-2">
                       <span className="text-[9px] font-black text-amber-400 uppercase tracking-widest block font-mono">
-                        🛠️ Dynamic Role Swapper
+                        ðŸ› ï¸ Dynamic Role Swapper
                       </span>
                       <p className="text-[8px] text-zinc-400 leading-normal">
                         Switch roles instantly on the fly to test custom dashboards & claimant workflows:
@@ -366,7 +366,7 @@ export default function Header({
                           }}
                           className="w-full text-left font-black text-[11px] px-3 py-2 rounded-xl text-amber-400 hover:bg-amber-500/10 border border-amber-500/20 flex items-center gap-2 cursor-pointer"
                         >
-                          🏢 {currentLang === 'en' ? 'Manage My Business' : 'إدارة صالوني / مشروعي'}
+                          ðŸ¢ {currentLang === 'en' ? 'Manage My Business' : 'Ø¥Ø¯Ø§Ø±Ø© ØµØ§Ù„ÙˆÙ†ÙŠ / Ù…Ø´Ø±ÙˆØ¹ÙŠ'}
                         </button>
                       )}
 
@@ -377,7 +377,7 @@ export default function Header({
                         }}
                         className="w-full text-left text-xs text-zinc-300 hover:bg-white/5 rounded-xl px-3 py-2 flex items-center justify-between transition-all cursor-pointer"
                       >
-                        <span className="font-semibold">{currentLang === 'en' ? 'Our Mission' : 'مهمة شكو ماكو'}</span>
+                        <span className="font-semibold">{currentLang === 'en' ? 'Our Mission' : 'Ù…Ù‡Ù…Ø© Ø´ÙƒÙˆ Ù…Ø§ÙƒÙˆ'}</span>
                         <HelpCircle className="w-3.5 h-3.5 text-zinc-500" />
                       </button>
 
@@ -388,7 +388,7 @@ export default function Header({
                         }}
                         className="w-full text-left text-xs text-red-400 hover:bg-red-500/10 rounded-xl px-3 py-2.5 flex items-center justify-between transition-all font-bold group bg-red-950/20 border border-red-900/10 cursor-pointer mt-1"
                       >
-                        <span>{currentLang === 'en' ? 'Sign Out Session' : 'تسجيل الخروج الآمن'}</span>
+                        <span>{currentLang === 'en' ? 'Sign Out Session' : 'ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø®Ø±ÙˆØ¬ Ø§Ù„Ø¢Ù…Ù†'}</span>
                         <LogOut className="w-3.5 h-3.5 text-red-400 group-hover:translate-x-1 transition-transform" />
                       </button>
                     </div>
@@ -403,8 +403,8 @@ export default function Header({
               className="flex items-center gap-2 px-4.5 py-2.5 rounded-full bg-gradient-to-r from-luxury-teal to-luxury-gold hover:from-[#154648] hover:to-[#dfbe6d] text-xs font-black uppercase text-white tracking-widest cursor-pointer shadow-xl transition active:scale-95 border border-white/10 shrink-0"
               id="google-sign-in-hdr"
             >
-              <span>🔑</span>
-              <span>{currentLang === 'en' ? 'Access Portal' : currentLang === 'ku' ? 'چوونەژوور' : 'دخول المنصة'}</span>
+              <span>ðŸ”‘</span>
+              <span>{currentLang === 'en' ? 'Access Portal' : currentLang === 'ku' ? 'Ú†ÙˆÙˆÙ†Û•Ú˜ÙˆÙˆØ±' : 'Ø¯Ø®ÙˆÙ„ Ø§Ù„Ù…Ù†ØµØ©'}</span>
             </button>
           )}
 

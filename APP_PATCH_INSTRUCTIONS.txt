@@ -1,0 +1,22 @@
+﻿// Add these imports at the top of App.tsx:
+// import { InfiniteScrollBusinesses } from './components/InfiniteScrollBusinesses';
+// import { PasswordResetModal } from './components/PasswordResetModal';
+// import { getBusinesses } from './api';
+
+// Replace the business cards section (where businesses.map is called) with:
+// <InfiniteScrollBusinesses 
+//   governorate={selectedGovernorate === 'الكل' ? undefined : selectedGovernorate}
+//   category={selectedCategory === 'الكل' ? undefined : selectedCategory}
+//   search={searchTerm}
+// />
+
+// Add password reset modal state:
+// const [showResetModal, setShowResetModal] = useState(false);
+
+// Add "Forgot Password" link in login form:
+// <button onClick={() => setShowResetModal(true)} className="text-sm text-emerald-600 hover:underline">
+//   نسيت كلمة المرور؟
+// </button>
+
+// Add modal to JSX:
+// <PasswordResetModal isOpen={showResetModal} onClose={() => setShowResetModal(false)} />

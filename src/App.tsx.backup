@@ -86,7 +86,7 @@ export default function App() {
       try {
         const response = await authApi.login({ email: cleanEmail, password: dummyPassword });
         setUser(response.user);
-        localStorage.setItem("user", JSON.stringify(response.user));
+        localStorage.setItem("user", JSON.stringify(user));
         const isAdmin = response.user.email === 'mahdialmuntadhar1@gmail.com' || response.user.email === 'safaribosafar@gmail.com';
         setUserProfile({
           uid: response.user.id,
@@ -103,7 +103,7 @@ export default function App() {
         try {
           const response = await authApi.signup({ email: cleanEmail, password: dummyPassword, name: cleanEmail.split('@')[0] });
           setUser(response.user);
-          localStorage.setItem("user", JSON.stringify(response.user));
+          localStorage.setItem("user", JSON.stringify(user));
           const isAdmin = response.user.email === 'mahdialmuntadhar1@gmail.com' || response.user.email === 'safaribosafar@gmail.com';
           setUserProfile({
             uid: response.user.id,
@@ -340,19 +340,10 @@ export default function App() {
       <AuthModal
         isOpen={authModalOpen}
         onClose={() => setAuthModalOpen(false)}
-        onAuthSuccess={(userObj) => {
-          setUser(userObj);
-          const isAdmin = userObj.email === 'mahdialmuntadhar1@gmail.com' || userObj.email === 'safaribosafar@gmail.com';
-          setUserProfile({
-            uid: userObj.id,
-            displayName: userObj.name || userObj.email.split('@')[0],
-            photoURL: '',
-            email: userObj.email,
-            createdAt: new Date().toISOString(),
-            role: isAdmin ? 'admin' : 'user',
-            onboarded: false,
-            businessId: null
-          });
+        currentLang={currentLang}
+        onCustomEmailLogin={handleCustomEmailLogin}
+        onAuthSuccess={(profileObj) => {
+          setUserProfile(profileObj);
         }}
       />
 

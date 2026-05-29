@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { motion } from 'motion/react';
 import { MapPin, Phone, Calendar, Heart, Bookmark, MessageSquare, ShieldCheck, Check } from 'lucide-react';
 import { Business, Language } from '../types';
@@ -29,7 +29,7 @@ export default function BusinessCard({
   // Find translated category
   const categoryMeta = CATEGORIES.find(c => c.id === business.category);
   const categoryName = categoryMeta ? (categoryMeta.name[currentLang] || categoryMeta.name.en) : business.category;
-  const categoryIcon = categoryMeta ? categoryMeta.icon : '🏢';
+  const categoryIcon = categoryMeta ? categoryMeta.icon : 'ðŸ¢';
 
   // Find translated governorate
   const govMeta = GOVERNORATES.find(g => g.code === business.governorate);
@@ -109,7 +109,7 @@ export default function BusinessCard({
           <div className="flex items-start gap-1.5">
             <MapPin className="w-3.5 h-3.5 text-zinc-500 shrink-0 mt-0.5" />
             <span className="font-semibold text-zinc-300 leading-normal">
-              {govLabel} — <span className="text-zinc-400 font-normal">{business.address[currentLang] || business.address.en}</span>
+              {govLabel} â€” <span className="text-zinc-400 font-normal">{business.address[currentLang] || business.address.en}</span>
             </span>
           </div>
 
@@ -144,7 +144,7 @@ export default function BusinessCard({
               className="w-full py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-extrabold text-xs uppercase tracking-wider rounded-2xl transition-all shadow-md active:scale-97 cursor-pointer flex items-center justify-center gap-1.5"
             >
               <span>{actionButtonText}</span>
-              <span>➔</span>
+              <span>âž”</span>
             </button>
           </div>
         )}

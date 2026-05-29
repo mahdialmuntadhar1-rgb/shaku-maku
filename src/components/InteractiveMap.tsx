@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Map, MapPin, Sparkles, Navigation, Globe, Eye, Compass, Heart, Bookmark } from 'lucide-react';
 import { Business, Language, GovernorateCode } from '../types';
 import { GOVERNORATES, TRANSLATIONS, CATEGORIES } from '../data';
@@ -48,12 +48,12 @@ export default function InteractiveMap({
   // Iraqi Cities/Governorates mapped roughly onto an imaginary grid
   // Baghdad: center, Erbil: north, Basra: south, Sulaymaniyah: northeast, Mosul: northwest, Najaf: west-center
   const pins = [
-    { name: 'Baghdad 🏰', code: 'baghdad', top: '56%', left: '46%', label: 'العاصمة بغداد' },
-    { name: 'Erbil 🏔️', code: 'erbil', top: '24%', left: '45%', label: 'أربيل - هه ولير' },
-    { name: 'Basra 🌴', code: 'basra', top: '86%', left: '76%', label: 'البصرة الفيحاء' },
-    { name: 'Sulaymaniyah 🌸', code: 'sulaymaniyah', top: '34%', left: '60%', label: 'سلێمانی چاوان' },
-    { name: 'Mosul 🍏', code: 'mosul', top: '22%', left: '28%', label: 'الموصل الحدباء' },
-    { name: 'Najaf ✨', code: 'najaf', top: '68%', left: '34%', label: 'النجف الأشرف' }
+    { name: 'Baghdad ðŸ°', code: 'baghdad', top: '56%', left: '46%', label: 'Ø§Ù„Ø¹Ø§ØµÙ…Ø© Ø¨ØºØ¯Ø§Ø¯' },
+    { name: 'Erbil ðŸ”ï¸', code: 'erbil', top: '24%', left: '45%', label: 'Ø£Ø±Ø¨ÙŠÙ„ - Ù‡Ù‡ ÙˆÙ„ÙŠØ±' },
+    { name: 'Basra ðŸŒ´', code: 'basra', top: '86%', left: '76%', label: 'Ø§Ù„Ø¨ØµØ±Ø© Ø§Ù„ÙÙŠØ­Ø§Ø¡' },
+    { name: 'Sulaymaniyah ðŸŒ¸', code: 'sulaymaniyah', top: '34%', left: '60%', label: 'Ø³Ù„ÛŽÙ…Ø§Ù†ÛŒ Ú†Ø§ÙˆØ§Ù†' },
+    { name: 'Mosul ðŸ', code: 'mosul', top: '22%', left: '28%', label: 'Ø§Ù„Ù…ÙˆØµÙ„ Ø§Ù„Ø­Ø¯Ø¨Ø§Ø¡' },
+    { name: 'Najaf âœ¨', code: 'najaf', top: '68%', left: '34%', label: 'Ø§Ù„Ù†Ø¬Ù Ø§Ù„Ø£Ø´Ø±Ù' }
   ];
 
   return (
@@ -74,7 +74,7 @@ export default function InteractiveMap({
             </span>
 
             <h2 className="text-xl font-extrabold text-white leading-tight">
-              {currentLang === 'en' ? 'Urban Interactive Map' : currentLang === 'ku' ? 'نەخشەی فەرمی عێراق' : 'بوصلة خارطة العراق التفاعلية'}
+              {currentLang === 'en' ? 'Urban Interactive Map' : currentLang === 'ku' ? 'Ù†Û•Ø®Ø´Û•ÛŒ ÙÛ•Ø±Ù…ÛŒ Ø¹ÛŽØ±Ø§Ù‚' : 'Ø¨ÙˆØµÙ„Ø© Ø®Ø§Ø±Ø·Ø© Ø§Ù„Ø¹Ø±Ø§Ù‚ Ø§Ù„ØªÙØ§Ø¹Ù„ÙŠØ©'}
             </h2>
             <p className="text-xs text-zinc-400 leading-relaxed mt-2">
               {t.interactiveMapIntro}
@@ -84,7 +84,7 @@ export default function InteractiveMap({
           {/* Quick city triggers list */}
           <div className="space-y-2">
             <span className="text-[10px] text-zinc-500 uppercase font-mono font-bold block">
-              {currentLang === 'en' ? 'Quick City Filters' : 'تصفية سريعة بالمدن'}
+              {currentLang === 'en' ? 'Quick City Filters' : 'ØªØµÙÙŠØ© Ø³Ø±ÙŠØ¹Ø© Ø¨Ø§Ù„Ù…Ø¯Ù†'}
             </span>
             <div className="flex flex-wrap gap-1.5">
               <button
@@ -95,7 +95,7 @@ export default function InteractiveMap({
                     : 'bg-white/5 border-white/10 text-zinc-300 hover:border-blue-400/40'
                 }`}
                 aria-pressed={selectedGov === 'all'}
-                aria-label={currentLang === 'en' ? 'Show all governorates combined' : currentLang === 'ku' ? 'پیشاندانی هەموو پارێزگاکان' : 'عرض كافة المحافظات معاً'}
+                aria-label={currentLang === 'en' ? 'Show all governorates combined' : currentLang === 'ku' ? 'Ù¾ÛŒØ´Ø§Ù†Ø¯Ø§Ù†ÛŒ Ù‡Û•Ù…ÙˆÙˆ Ù¾Ø§Ø±ÛŽØ²Ú¯Ø§Ú©Ø§Ù†' : 'Ø¹Ø±Ø¶ ÙƒØ§ÙØ© Ø§Ù„Ù…Ø­Ø§ÙØ¸Ø§Øª Ù…Ø¹Ø§Ù‹'}
               >
                 {t.allIraq}
               </button>
@@ -109,7 +109,7 @@ export default function InteractiveMap({
                        : 'bg-white/5 border-white/10 text-zinc-300 hover:border-blue-450/40'
                    }`}
                    aria-pressed={selectedGov === g.code}
-                   aria-label={currentLang === 'en' ? `Filter by ${g.name.en}` : `تصفية حسب ${g.name[currentLang]}`}
+                   aria-label={currentLang === 'en' ? `Filter by ${g.name.en}` : `ØªØµÙÙŠØ© Ø­Ø³Ø¨ ${g.name[currentLang]}`}
                 >
                   {g.name[currentLang]}
                 </button>
@@ -142,10 +142,10 @@ export default function InteractiveMap({
                   : 'text-zinc-400 hover:text-white'
               }`}
               aria-pressed={viewMode === 'map'}
-              aria-label={currentLang === 'en' ? 'Switch to Interactive visual map radar representation' : 'التحويل إلى مظهر الرادار التفاعلي المرئي'}
+              aria-label={currentLang === 'en' ? 'Switch to Interactive visual map radar representation' : 'Ø§Ù„ØªØ­ÙˆÙŠÙ„ Ø¥Ù„Ù‰ Ù…Ø¸Ù‡Ø± Ø§Ù„Ø±Ø§Ø¯Ø§Ø± Ø§Ù„ØªÙØ§Ø¹Ù„ÙŠ Ø§Ù„Ù…Ø±Ø¦ÙŠ'}
             >
-              <span>🧭</span>
-              <span className="hidden xs:inline">{currentLang === 'en' ? 'Map Radar' : currentLang === 'ku' ? 'نەخشەی ڕادار' : 'رادار الخارطة'}</span>
+              <span>ðŸ§­</span>
+              <span className="hidden xs:inline">{currentLang === 'en' ? 'Map Radar' : currentLang === 'ku' ? 'Ù†Û•Ø®Ø´Û•ÛŒ Ú•Ø§Ø¯Ø§Ø±' : 'Ø±Ø§Ø¯Ø§Ø± Ø§Ù„Ø®Ø§Ø±Ø·Ø©'}</span>
             </button>
             <button
               onClick={() => setViewMode('list')}
@@ -155,18 +155,18 @@ export default function InteractiveMap({
                   : 'text-zinc-400 hover:text-white'
               }`}
               aria-pressed={viewMode === 'list'}
-              aria-label={currentLang === 'en' ? 'Switch to accessibility keyboard and screen reader optimized directories' : 'التحويل للقائمة النصية الميسرة للوحة المفاتيح والمكفوفين'}
+              aria-label={currentLang === 'en' ? 'Switch to accessibility keyboard and screen reader optimized directories' : 'Ø§Ù„ØªØ­ÙˆÙŠÙ„ Ù„Ù„Ù‚Ø§Ø¦Ù…Ø© Ø§Ù„Ù†ØµÙŠØ© Ø§Ù„Ù…ÙŠØ³Ø±Ø© Ù„Ù„ÙˆØ­Ø© Ø§Ù„Ù…ÙØ§ØªÙŠØ­ ÙˆØ§Ù„Ù…ÙƒÙÙˆÙÙŠÙ†'}
             >
-              <span>📋</span>
-              <span className="hidden xs:inline">{currentLang === 'en' ? 'Keyboard List' : currentLang === 'ku' ? 'لیستی تەختەکلیل' : 'القائمة الميسرة'}</span>
+              <span>ðŸ“‹</span>
+              <span className="hidden xs:inline">{currentLang === 'en' ? 'Keyboard List' : currentLang === 'ku' ? 'Ù„ÛŒØ³ØªÛŒ ØªÛ•Ø®ØªÛ•Ú©Ù„ÛŒÙ„' : 'Ø§Ù„Ù‚Ø§Ø¦Ù…Ø© Ø§Ù„Ù…ÙŠØ³Ø±Ø©'}</span>
             </button>
           </div>
 
           {/* Live announcer for screen readers */}
           <div className="sr-only" aria-live="polite">
             {viewMode === 'map' 
-              ? (currentLang === 'en' ? 'Switched to interactive map view' : 'تم التحويل إلى وضع خريطة الرادار المرئية')
-              : (currentLang === 'en' ? 'Switched to tabular accessible keyboard list view' : 'تم التحويل إلى وضع القائمة النصية المرتبة والميسرة للوحة المفاتيح')
+              ? (currentLang === 'en' ? 'Switched to interactive map view' : 'ØªÙ… Ø§Ù„ØªØ­ÙˆÙŠÙ„ Ø¥Ù„Ù‰ ÙˆØ¶Ø¹ Ø®Ø±ÙŠØ·Ø© Ø§Ù„Ø±Ø§Ø¯Ø§Ø± Ø§Ù„Ù…Ø±Ø¦ÙŠØ©')
+              : (currentLang === 'en' ? 'Switched to tabular accessible keyboard list view' : 'ØªÙ… Ø§Ù„ØªØ­ÙˆÙŠÙ„ Ø¥Ù„Ù‰ ÙˆØ¶Ø¹ Ø§Ù„Ù‚Ø§Ø¦Ù…Ø© Ø§Ù„Ù†ØµÙŠØ© Ø§Ù„Ù…Ø±ØªØ¨Ø© ÙˆØ§Ù„Ù…ÙŠØ³Ø±Ø© Ù„Ù„ÙˆØ­Ø© Ø§Ù„Ù…ÙØ§ØªÙŠØ­')
             }
           </div>
 
@@ -182,7 +182,7 @@ export default function InteractiveMap({
               {/* Compass layout pointer */}
               <div className="absolute bottom-3 right-3 flex items-center gap-1.5 bg-slate-900/80 px-2.5 py-1 rounded-lg border border-zinc-805 text-[10px] font-mono text-zinc-500">
                 <Globe className="w-3.5 h-3.5 text-cyan-400 animate-spin" style={{ animationDuration: '10s' }} />
-                <span>N 33.3152° / E 44.3661°</span>
+                <span>N 33.3152Â° / E 44.3661Â°</span>
               </div>
 
               {/* Governorates Bubble Buttons directly plotted onto map frame */}
@@ -195,7 +195,7 @@ export default function InteractiveMap({
                     onKeyDown={(e) => handlePinKeyDown(e, index, pins.length, 'gov')}
                     className={`gov-pin-btn-${index} absolute -translate-x-1/2 -translate-y-1/2 transition-all duration-300 group z-10 cursor-pointer`}
                     style={{ top: pin.top, left: pin.left }}
-                    aria-label={currentLang === 'en' ? `Select governorate: ${pin.name}` : currentLang === 'ku' ? `هەڵبژاردنی پارێزگای: ${pin.name}` : `اختيار محافظة: ${pin.name}`}
+                    aria-label={currentLang === 'en' ? `Select governorate: ${pin.name}` : currentLang === 'ku' ? `Ù‡Û•ÚµØ¨Ú˜Ø§Ø±Ø¯Ù†ÛŒ Ù¾Ø§Ø±ÛŽØ²Ú¯Ø§ÛŒ: ${pin.name}` : `Ø§Ø®ØªÙŠØ§Ø± Ù…Ø­Ø§ÙØ¸Ø©: ${pin.name}`}
                     aria-pressed={isActive}
                     tabIndex={0}
                   >
@@ -233,7 +233,7 @@ export default function InteractiveMap({
                     className={`biz-pin-btn-${index} absolute leading-none cursor-pointer hover:scale-125 transition-transform duration-300 z-20 group`}
                     style={{ top: `${pinY}%`, left: `${pinX}%` }}
                     title={`Fast explore ${biz.name[currentLang]}`}
-                    aria-label={currentLang === 'en' ? `Premium Spot: ${biz.name.en}. Click to view details.` : `متجر متميز: ${biz.name[currentLang]}. انقر للتفاصيل.`}
+                    aria-label={currentLang === 'en' ? `Premium Spot: ${biz.name.en}. Click to view details.` : `Ù…ØªØ¬Ø± Ù…ØªÙ…ÙŠØ²: ${biz.name[currentLang]}. Ø§Ù†Ù‚Ø± Ù„Ù„ØªÙØ§ØµÙŠÙ„.`}
                     aria-haspopup="dialog"
                     aria-expanded={isSelected}
                     tabIndex={0}
@@ -258,7 +258,7 @@ export default function InteractiveMap({
               <div className="space-y-4">
                 <div className="flex items-center justify-between border-b border-white/5 pb-2">
                   <h3 className="text-[10px] font-black uppercase text-cyan-400 tracking-wider font-mono">
-                    {currentLang === 'en' ? 'Iraq City Centers (Alternative Table View)' : currentLang === 'ku' ? 'لیستی ناوچەکان' : 'أدلة مراكز المدن العراقية (تصفح بديل ميسّر)'}
+                    {currentLang === 'en' ? 'Iraq City Centers (Alternative Table View)' : currentLang === 'ku' ? 'Ù„ÛŒØ³ØªÛŒ Ù†Ø§ÙˆÚ†Û•Ú©Ø§Ù†' : 'Ø£Ø¯Ù„Ø© Ù…Ø±Ø§ÙƒØ² Ø§Ù„Ù…Ø¯Ù† Ø§Ù„Ø¹Ø±Ø§Ù‚ÙŠØ© (ØªØµÙØ­ Ø¨Ø¯ÙŠÙ„ Ù…ÙŠØ³Ù‘Ø±)'}
                   </h3>
                   <span className="text-[9px] text-zinc-500 font-mono scale-90">
                     KEYBOARD + SCREEN READER OPTIMIZED
@@ -280,10 +280,10 @@ export default function InteractiveMap({
                             ? 'bg-cyan-500/10 border-cyan-400 text-cyan-400 shadow-sm shadow-cyan-400/5'
                             : 'bg-zinc-900/30 border-zinc-850 hover:border-zinc-700 text-zinc-400 hover:text-white'
                         }`}
-                        aria-label={currentLang === 'en' ? `Select governorate: ${pin.name}` : `اختيار محافظة: ${pin.name}`}
+                        aria-label={currentLang === 'en' ? `Select governorate: ${pin.name}` : `Ø§Ø®ØªÙŠØ§Ø± Ù…Ø­Ø§ÙØ¸Ø©: ${pin.name}`}
                       >
                         <div className="flex items-center gap-1">
-                          <span className="shrink-0 text-xs">📍</span>
+                          <span className="shrink-0 text-xs">ðŸ“</span>
                           <span className="truncate">{pin.name}</span>
                         </div>
                       </button>
@@ -294,12 +294,12 @@ export default function InteractiveMap({
                 {/* Mapped premium spots list in active filter */}
                 <div className="space-y-2 pt-2">
                   <h4 className="text-[10px] font-extrabold uppercase text-pink-400 tracking-wider font-mono">
-                    {currentLang === 'en' ? 'Pinned Map Spots' : currentLang === 'ku' ? 'شوێنە پاشکۆکراوەکان' : 'الأماكن المثبتة في الخريطة بهذه المنطقة'}
+                    {currentLang === 'en' ? 'Pinned Map Spots' : currentLang === 'ku' ? 'Ø´ÙˆÛŽÙ†Û• Ù¾Ø§Ø´Ú©Û†Ú©Ø±Ø§ÙˆÛ•Ú©Ø§Ù†' : 'Ø§Ù„Ø£Ù…Ø§ÙƒÙ† Ø§Ù„Ù…Ø«Ø¨ØªØ© ÙÙŠ Ø§Ù„Ø®Ø±ÙŠØ·Ø© Ø¨Ù‡Ø°Ù‡ Ø§Ù„Ù…Ù†Ø·Ù‚Ø©'}
                   </h4>
 
                   {mappedBusinesses.length === 0 ? (
                     <p className="text-[10px] text-zinc-500 italic py-1">
-                      {currentLang === 'en' ? 'No venues pinned under active filter coordinates.' : 'لا توجد أماكن تفاعلية مثبتة على هذه الإحداثيات حالياً.'}
+                      {currentLang === 'en' ? 'No venues pinned under active filter coordinates.' : 'Ù„Ø§ ØªÙˆØ¬Ø¯ Ø£Ù…Ø§ÙƒÙ† ØªÙØ§Ø¹Ù„ÙŠØ© Ù…Ø«Ø¨ØªØ© Ø¹Ù„Ù‰ Ù‡Ø°Ù‡ Ø§Ù„Ø¥Ø­Ø¯Ø§Ø«ÙŠØ§Øª Ø­Ø§Ù„ÙŠØ§Ù‹.'}
                     </p>
                   ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2" role="list" aria-label="Premium stores on coordinates">
@@ -312,13 +312,13 @@ export default function InteractiveMap({
                             className="bg-zinc-950/70 p-2.5 rounded-xl border border-zinc-900 flex items-center justify-between gap-3 hover:border-zinc-800 transition shadow-sm"
                           >
                             <div className="min-w-0 flex-1 flex items-center gap-1.5">
-                              <span className="text-pink-500 shrink-0 text-xs font-mono">•</span>
+                              <span className="text-pink-500 shrink-0 text-xs font-mono">â€¢</span>
                               <div className="min-w-0">
                                 <h5 className="text-[11px] font-extrabold text-white truncate">
                                   {biz.name[currentLang]}
                                 </h5>
                                 <p className="text-[9px] text-zinc-500 truncate">
-                                  {CATEGORIES.find(c => c.id === biz.category)?.name[currentLang]} — {biz.address[currentLang]}
+                                  {CATEGORIES.find(c => c.id === biz.category)?.name[currentLang]} â€” {biz.address[currentLang]}
                                 </p>
                               </div>
                             </div>
@@ -330,11 +330,11 @@ export default function InteractiveMap({
                                   ? 'bg-pink-500/15 text-pink-300 border border-pink-500/30'
                                   : 'bg-white/5 text-zinc-300 hover:bg-white/10 border border-white/5'
                               }`}
-                              aria-label={currentLang === 'en' ? `Inspect Details for ${biz.name.en}` : `عرض تفاصيل ${biz.name[currentLang]}`}
+                              aria-label={currentLang === 'en' ? `Inspect Details for ${biz.name.en}` : `Ø¹Ø±Ø¶ ØªÙØ§ØµÙŠÙ„ ${biz.name[currentLang]}`}
                               aria-haspopup="dialog"
                               aria-expanded={isSelected}
                             >
-                              {currentLang === 'en' ? 'Inspect' : 'عرض'}
+                              {currentLang === 'en' ? 'Inspect' : 'Ø¹Ø±Ø¶'}
                             </button>
                           </div>
                         );
@@ -399,9 +399,9 @@ export default function InteractiveMap({
                 setActivePin(biz);
                 setViewMode('list');
               }}
-              aria-label={currentLang === 'en' ? `Open details for ${biz.name.en}` : `عرض تفاصيل ${biz.name[currentLang]}`}
+              aria-label={currentLang === 'en' ? `Open details for ${biz.name.en}` : `Ø¹Ø±Ø¶ ØªÙØ§ØµÙŠÙ„ ${biz.name[currentLang]}`}
             >
-              {currentLang === 'en' ? `View ${biz.name.en}` : `عرض ${biz.name[currentLang]}`}
+              {currentLang === 'en' ? `View ${biz.name.en}` : `Ø¹Ø±Ø¶ ${biz.name[currentLang]}`}
             </button>
           </div>
         ))}

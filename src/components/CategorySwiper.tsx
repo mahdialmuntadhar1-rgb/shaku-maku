@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+﻿import React, { useRef, useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 import { Sparkles } from 'lucide-react';
 import { Language } from '../types';
@@ -26,11 +26,11 @@ export default function CategorySwiper({
   // Define the "All" virtual category chip
   const allChip = {
     id: null,
-    icon: '🗺️',
+    icon: 'ðŸ—ºï¸',
     name: {
       en: 'All Sections',
-      ar: 'كل الأقسام',
-      ku: 'هەموو بەشەکان'
+      ar: 'ÙƒÙ„ Ø§Ù„Ø£Ù‚Ø³Ø§Ù…',
+      ku: 'Ù‡Û•Ù…ÙˆÙˆ Ø¨Û•Ø´Û•Ú©Ø§Ù†'
     },
     color: 'from-violet-600 to-cyan-400'
   };
@@ -111,8 +111,8 @@ export default function CategorySwiper({
             {currentLang === 'en' 
               ? 'Auto-scrolling industry directory. Drag to explore' 
               : currentLang === 'ku' 
-                ? 'کەتەلۆگی خۆکارانە گەڕۆک. ڕایبکێشە بۆ گەڕان' 
-                : 'دليل تصفح تلقائي الحركة. اسحب للاستكشاف'}
+                ? 'Ú©Û•ØªÛ•Ù„Û†Ú¯ÛŒ Ø®Û†Ú©Ø§Ø±Ø§Ù†Û• Ú¯Û•Ú•Û†Ú©. Ú•Ø§ÛŒØ¨Ú©ÛŽØ´Û• Ø¨Û† Ú¯Û•Ú•Ø§Ù†' 
+                : 'Ø¯Ù„ÙŠÙ„ ØªØµÙØ­ ØªÙ„Ù‚Ø§Ø¦ÙŠ Ø§Ù„Ø­Ø±ÙƒØ©. Ø§Ø³Ø­Ø¨ Ù„Ù„Ø§Ø³ØªÙƒØ´Ø§Ù'}
           </p>
         </div>
 
@@ -124,7 +124,7 @@ export default function CategorySwiper({
             onClick={() => handleSelect(null)}
             className="text-[10px] font-bold text-cyan-400 hover:text-white bg-cyan-950/40 px-2.5 py-1 rounded-full border border-cyan-500/20 transition-all cursor-pointer flex items-center gap-1 shrink-0"
           >
-            <span>{currentLang === 'en' ? 'Reset' : currentLang === 'ku' ? 'پاککردنەوە' : 'إعادة تعيين'} ↺</span>
+            <span>{currentLang === 'en' ? 'Reset' : currentLang === 'ku' ? 'Ù¾Ø§Ú©Ú©Ø±Ø¯Ù†Û•ÙˆÛ•' : 'Ø¥Ø¹Ø§Ø¯Ø© ØªØ¹ÙŠÙŠÙ†'} â†º</span>
           </motion.button>
         )}
       </div>
@@ -195,8 +195,8 @@ export default function CategorySwiper({
             {currentLang === 'en' 
               ? 'Filtering results for ' 
               : currentLang === 'ku' 
-                ? 'پاڵاوتنی ئەنجامەکان بۆ ' 
-                : 'تصفية النتائج لـ '}
+                ? 'Ù¾Ø§ÚµØ§ÙˆØªÙ†ÛŒ Ø¦Û•Ù†Ø¬Ø§Ù…Û•Ú©Ø§Ù† Ø¨Û† ' 
+                : 'ØªØµÙÙŠØ© Ø§Ù„Ù†ØªØ§Ø¦Ø¬ Ù„Ù€ '}
             <span className="text-cyan-400 font-black">
               {CATEGORIES.find(c => c.id === selectedCategory)?.name[currentLang]}
             </span>

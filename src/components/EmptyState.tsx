@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Store, HelpCircle, PhoneCall, AlertCircle, Sparkles, MessageSquare } from 'lucide-react';
 import { Language } from '../types';
@@ -29,29 +29,29 @@ export default function EmptyState({
     en: {
       title: "We couldn't find your business yet",
       description: "No active phone number or spot details matched your input. You can search Saku Maku's directories manually or register a new listing right away.",
-      searchBtn: "Search Manually 🔍",
-      registerBtn: "Register New Spot 🚀",
+      searchBtn: "Search Manually ðŸ”",
+      registerBtn: "Register New Spot ðŸš€",
       supportTitle: "Saku Maku Support Desk",
       supportDesc: "Need direct assistance with verification? Drop a message to our verification audit specialists.",
       contactWhatsApp: "Contact Support Chat"
     },
     ar: {
-      title: "لم نتمكن من العثور على مشروعك بعد",
-      description: "لم يطابق أي رقم هاتف أو تفاصيل الأماكن الحالية مدخلاتك. يمكنك البحث في سجلات شكو ماكو يدوياً لتثبيت ملكيتك، أو يمكنك تسجيل مشروع جديد فوراً.",
-      searchBtn: "البحث يدوياً في السجل 🔍",
-      registerBtn: "تسجيل مكان جديد كلياً 🚀",
-      supportTitle: "مركز دعم شكو ماكو تليجرام/واتساب",
-      supportDesc: "هل تواجه مشكلة في تفعيل الملكية؟ تواصل مباشرة مع فريق تدقيق الهوية وتنشيط التوثيق.",
-      contactWhatsApp: "مراسلة الدعم الفني"
+      title: "Ù„Ù… Ù†ØªÙ…ÙƒÙ† Ù…Ù† Ø§Ù„Ø¹Ø«ÙˆØ± Ø¹Ù„Ù‰ Ù…Ø´Ø±ÙˆØ¹Ùƒ Ø¨Ø¹Ø¯",
+      description: "Ù„Ù… ÙŠØ·Ø§Ø¨Ù‚ Ø£ÙŠ Ø±Ù‚Ù… Ù‡Ø§ØªÙ Ø£Ùˆ ØªÙØ§ØµÙŠÙ„ Ø§Ù„Ø£Ù…Ø§ÙƒÙ† Ø§Ù„Ø­Ø§Ù„ÙŠØ© Ù…Ø¯Ø®Ù„Ø§ØªÙƒ. ÙŠÙ…ÙƒÙ†Ùƒ Ø§Ù„Ø¨Ø­Ø« ÙÙŠ Ø³Ø¬Ù„Ø§Øª Ø´ÙƒÙˆ Ù…Ø§ÙƒÙˆ ÙŠØ¯ÙˆÙŠØ§Ù‹ Ù„ØªØ«Ø¨ÙŠØª Ù…Ù„ÙƒÙŠØªÙƒØŒ Ø£Ùˆ ÙŠÙ…ÙƒÙ†Ùƒ ØªØ³Ø¬ÙŠÙ„ Ù…Ø´Ø±ÙˆØ¹ Ø¬Ø¯ÙŠØ¯ ÙÙˆØ±Ø§Ù‹.",
+      searchBtn: "Ø§Ù„Ø¨Ø­Ø« ÙŠØ¯ÙˆÙŠØ§Ù‹ ÙÙŠ Ø§Ù„Ø³Ø¬Ù„ ðŸ”",
+      registerBtn: "ØªØ³Ø¬ÙŠÙ„ Ù…ÙƒØ§Ù† Ø¬Ø¯ÙŠØ¯ ÙƒÙ„ÙŠØ§Ù‹ ðŸš€",
+      supportTitle: "Ù…Ø±ÙƒØ² Ø¯Ø¹Ù… Ø´ÙƒÙˆ Ù…Ø§ÙƒÙˆ ØªÙ„ÙŠØ¬Ø±Ø§Ù…/ÙˆØ§ØªØ³Ø§Ø¨",
+      supportDesc: "Ù‡Ù„ ØªÙˆØ§Ø¬Ù‡ Ù…Ø´ÙƒÙ„Ø© ÙÙŠ ØªÙØ¹ÙŠÙ„ Ø§Ù„Ù…Ù„ÙƒÙŠØ©ØŸ ØªÙˆØ§ØµÙ„ Ù…Ø¨Ø§Ø´Ø±Ø© Ù…Ø¹ ÙØ±ÙŠÙ‚ ØªØ¯Ù‚ÙŠÙ‚ Ø§Ù„Ù‡ÙˆÙŠØ© ÙˆØªÙ†Ø´ÙŠØ· Ø§Ù„ØªÙˆØ«ÙŠÙ‚.",
+      contactWhatsApp: "Ù…Ø±Ø§Ø³Ù„Ø© Ø§Ù„Ø¯Ø¹Ù… Ø§Ù„ÙÙ†ÙŠ"
     },
     ku: {
-      title: "نەمانتوانی شوێنەکەت بدۆزینەوە",
-      description: "هیچ ژمارەیەکی مۆبایل یان شوێنێکی فەرمی لەگەڵ داواکاریەکەت یەکی نەگرتەوە. دەتوانیت بە دروستی بگەڕێیت یان شوێنی نوێ تۆمار بکەیت.",
-      searchBtn: "گەڕانی دەستی لە تۆماردا 🔍",
-      registerBtn: "زیادکردنی شوێنی نوێ 🚀",
-      supportTitle: "بنکەی پشتیوانی شکو ماکۆ",
-      supportDesc: "پێویستت بە یارمەتی ڕاستەوخۆ هەیە بۆ پشتڕاستکردنەوە؟ پەیوەندی بە دەستەی پاڵپشتی ئێمەوە بکە.",
-      contactWhatsApp: "پەیوەندی بە پشتیوانییەوە بکە"
+      title: "Ù†Û•Ù…Ø§Ù†ØªÙˆØ§Ù†ÛŒ Ø´ÙˆÛŽÙ†Û•Ú©Û•Øª Ø¨Ø¯Û†Ø²ÛŒÙ†Û•ÙˆÛ•",
+      description: "Ù‡ÛŒÚ† Ú˜Ù…Ø§Ø±Û•ÛŒÛ•Ú©ÛŒ Ù…Û†Ø¨Ø§ÛŒÙ„ ÛŒØ§Ù† Ø´ÙˆÛŽÙ†ÛŽÚ©ÛŒ ÙÛ•Ø±Ù…ÛŒ Ù„Û•Ú¯Û•Úµ Ø¯Ø§ÙˆØ§Ú©Ø§Ø±ÛŒÛ•Ú©Û•Øª ÛŒÛ•Ú©ÛŒ Ù†Û•Ú¯Ø±ØªÛ•ÙˆÛ•. Ø¯Û•ØªÙˆØ§Ù†ÛŒØª Ø¨Û• Ø¯Ø±ÙˆØ³ØªÛŒ Ø¨Ú¯Û•Ú•ÛŽÛŒØª ÛŒØ§Ù† Ø´ÙˆÛŽÙ†ÛŒ Ù†ÙˆÛŽ ØªÛ†Ù…Ø§Ø± Ø¨Ú©Û•ÛŒØª.",
+      searchBtn: "Ú¯Û•Ú•Ø§Ù†ÛŒ Ø¯Û•Ø³ØªÛŒ Ù„Û• ØªÛ†Ù…Ø§Ø±Ø¯Ø§ ðŸ”",
+      registerBtn: "Ø²ÛŒØ§Ø¯Ú©Ø±Ø¯Ù†ÛŒ Ø´ÙˆÛŽÙ†ÛŒ Ù†ÙˆÛŽ ðŸš€",
+      supportTitle: "Ø¨Ù†Ú©Û•ÛŒ Ù¾Ø´ØªÛŒÙˆØ§Ù†ÛŒ Ø´Ú©Ùˆ Ù…Ø§Ú©Û†",
+      supportDesc: "Ù¾ÛŽÙˆÛŒØ³ØªØª Ø¨Û• ÛŒØ§Ø±Ù…Û•ØªÛŒ Ú•Ø§Ø³ØªÛ•ÙˆØ®Û† Ù‡Û•ÛŒÛ• Ø¨Û† Ù¾Ø´ØªÚ•Ø§Ø³ØªÚ©Ø±Ø¯Ù†Û•ÙˆÛ•ØŸ Ù¾Û•ÛŒÙˆÛ•Ù†Ø¯ÛŒ Ø¨Û• Ø¯Û•Ø³ØªÛ•ÛŒ Ù¾Ø§ÚµÙ¾Ø´ØªÛŒ Ø¦ÛŽÙ…Û•ÙˆÛ• Ø¨Ú©Û•.",
+      contactWhatsApp: "Ù¾Û•ÛŒÙˆÛ•Ù†Ø¯ÛŒ Ø¨Û• Ù¾Ø´ØªÛŒÙˆØ§Ù†ÛŒÛŒÛ•ÙˆÛ• Ø¨Ú©Û•"
     }
   }[currentLang];
 
@@ -106,7 +106,7 @@ export default function EmptyState({
           className="inline-flex items-center gap-1.5 text-xs text-zinc-500 hover:text-amber-500 font-bold hover:underline transition-all cursor-pointer"
         >
           <HelpCircle className="w-4 h-4" />
-          <span>{currentLang === 'en' ? 'Need verification help?' : isRtl ? 'هل تحتاج إلى مساعدة الدعم الفني؟' : 'پێویستت بە یارمەتی هەیە؟'}</span>
+          <span>{currentLang === 'en' ? 'Need verification help?' : isRtl ? 'Ù‡Ù„ ØªØ­ØªØ§Ø¬ Ø¥Ù„Ù‰ Ù…Ø³Ø§Ø¹Ø¯Ø© Ø§Ù„Ø¯Ø¹Ù… Ø§Ù„ÙÙ†ÙŠØŸ' : 'Ù¾ÛŽÙˆÛŒØ³ØªØª Ø¨Û• ÛŒØ§Ø±Ù…Û•ØªÛŒ Ù‡Û•ÛŒÛ•ØŸ'}</span>
         </button>
 
         <AnimatePresence>

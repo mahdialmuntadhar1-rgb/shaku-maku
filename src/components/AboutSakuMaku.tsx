@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Sparkles, Heart, Rocket, Compass, Store, Award } from 'lucide-react';
 import { Language } from '../types';
 
@@ -18,14 +18,14 @@ export default function AboutSakuMaku({ currentLang }: AboutSakuMakuProps) {
 
       <div className="text-center space-y-3 pb-4 border-b border-white/5">
         <h2 className="text-2xl font-black bg-gradient-to-r from-blue-400 to-violet-500 bg-clip-text text-transparent">
-          {isEn ? 'Iraq’s Pulse • Saku Maku' : isKu ? 'لێدانی دڵی عێراق • ساكۆ ماكۆ' : 'نبض الشارع العراقي • شكو ماكو'}
+          {isEn ? 'Iraqâ€™s Pulse â€¢ Saku Maku' : isKu ? 'Ù„ÛŽØ¯Ø§Ù†ÛŒ Ø¯ÚµÛŒ Ø¹ÛŽØ±Ø§Ù‚ â€¢ Ø³Ø§ÙƒÛ† Ù…Ø§ÙƒÛ†' : 'Ù†Ø¨Ø¶ Ø§Ù„Ø´Ø§Ø±Ø¹ Ø§Ù„Ø¹Ø±Ø§Ù‚ÙŠ â€¢ Ø´ÙƒÙˆ Ù…Ø§ÙƒÙˆ'}
         </h2>
         <p className="text-xs text-white/60 max-w-md mx-auto leading-relaxed">
           {isEn 
-            ? 'We are transforming Saku Maku from a flat local directory into Baghdad and Kurdistan’s most visual, addictive business-discovery social hub.'
+            ? 'We are transforming Saku Maku from a flat local directory into Baghdad and Kurdistanâ€™s most visual, addictive business-discovery social hub.'
             : isKu
-              ? 'ئێمە ساكۆ ماكۆ دەگۆڕین لە ڕێبەرییەکی وشکەوە بۆ چاوگێکی زیندوو و سەرنجڕاکێش بۆ دۆزینەوەی باشترین شوێنەکانی عێراق.'
-              : 'نحن نصل بك إلى أفضل كافيهات ومطاعم وبوتيكات العراق الحبيبة برؤية رقمية عصرية وروح مستوحاة من الإنستغرام والتيك توك.'}
+              ? 'Ø¦ÛŽÙ…Û• Ø³Ø§ÙƒÛ† Ù…Ø§ÙƒÛ† Ø¯Û•Ú¯Û†Ú•ÛŒÙ† Ù„Û• Ú•ÛŽØ¨Û•Ø±ÛŒÛŒÛ•Ú©ÛŒ ÙˆØ´Ú©Û•ÙˆÛ• Ø¨Û† Ú†Ø§ÙˆÚ¯ÛŽÚ©ÛŒ Ø²ÛŒÙ†Ø¯ÙˆÙˆ Ùˆ Ø³Û•Ø±Ù†Ø¬Ú•Ø§Ú©ÛŽØ´ Ø¨Û† Ø¯Û†Ø²ÛŒÙ†Û•ÙˆÛ•ÛŒ Ø¨Ø§Ø´ØªØ±ÛŒÙ† Ø´ÙˆÛŽÙ†Û•Ú©Ø§Ù†ÛŒ Ø¹ÛŽØ±Ø§Ù‚.'
+              : 'Ù†Ø­Ù† Ù†ØµÙ„ Ø¨Ùƒ Ø¥Ù„Ù‰ Ø£ÙØ¶Ù„ ÙƒØ§ÙÙŠÙ‡Ø§Øª ÙˆÙ…Ø·Ø§Ø¹Ù… ÙˆØ¨ÙˆØªÙŠÙƒØ§Øª Ø§Ù„Ø¹Ø±Ø§Ù‚ Ø§Ù„Ø­Ø¨ÙŠØ¨Ø© Ø¨Ø±Ø¤ÙŠØ© Ø±Ù‚Ù…ÙŠØ© Ø¹ØµØ±ÙŠØ© ÙˆØ±ÙˆØ­ Ù…Ø³ØªÙˆØ­Ø§Ø© Ù…Ù† Ø§Ù„Ø¥Ù†Ø³ØªØºØ±Ø§Ù… ÙˆØ§Ù„ØªÙŠÙƒ ØªÙˆÙƒ.'}
         </p>
       </div>
 
@@ -36,14 +36,14 @@ export default function AboutSakuMaku({ currentLang }: AboutSakuMakuProps) {
             <Compass className="w-4 h-4" />
           </div>
           <h3 className="text-sm font-bold text-white">
-            {isEn ? 'Discover Lifestyle' : isKu ? 'شێوازی ژیان بدۆزەرەوە' : 'اكتشف النمط العصري'}
+            {isEn ? 'Discover Lifestyle' : isKu ? 'Ø´ÛŽÙˆØ§Ø²ÛŒ Ú˜ÛŒØ§Ù† Ø¨Ø¯Û†Ø²Û•Ø±Û•ÙˆÛ•' : 'Ø§ÙƒØªØ´Ù Ø§Ù„Ù†Ù…Ø· Ø§Ù„Ø¹ØµØ±ÙŠ'}
           </h3>
           <p className="text-[11px] text-zinc-400 leading-relaxed">
             {isEn 
-              ? 'Browse places emotionally. Every café, boutique or spa is listed with live visual indicators, reviews, and interactive directions.'
+              ? 'Browse places emotionally. Every cafÃ©, boutique or spa is listed with live visual indicators, reviews, and interactive directions.'
               : isKu
-                ? 'باشترین شوێنەکان بۆ خۆشی و ئارامگرتن هەڵبژێرە، بە نمرەی گەشتیاران و پێشنیارەکانیان.'
-                : 'تصفح الأماكن بمتعة الشغف والمظهر السينمائي الجميل، مع صور حية واستعراض حي ومكالمات مباشرة.'}
+                ? 'Ø¨Ø§Ø´ØªØ±ÛŒÙ† Ø´ÙˆÛŽÙ†Û•Ú©Ø§Ù† Ø¨Û† Ø®Û†Ø´ÛŒ Ùˆ Ø¦Ø§Ø±Ø§Ù…Ú¯Ø±ØªÙ† Ù‡Û•ÚµØ¨Ú˜ÛŽØ±Û•ØŒ Ø¨Û• Ù†Ù…Ø±Û•ÛŒ Ú¯Û•Ø´ØªÛŒØ§Ø±Ø§Ù† Ùˆ Ù¾ÛŽØ´Ù†ÛŒØ§Ø±Û•Ú©Ø§Ù†ÛŒØ§Ù†.'
+                : 'ØªØµÙØ­ Ø§Ù„Ø£Ù…Ø§ÙƒÙ† Ø¨Ù…ØªØ¹Ø© Ø§Ù„Ø´ØºÙ ÙˆØ§Ù„Ù…Ø¸Ù‡Ø± Ø§Ù„Ø³ÙŠÙ†Ù…Ø§Ø¦ÙŠ Ø§Ù„Ø¬Ù…ÙŠÙ„ØŒ Ù…Ø¹ ØµÙˆØ± Ø­ÙŠØ© ÙˆØ§Ø³ØªØ¹Ø±Ø§Ø¶ Ø­ÙŠ ÙˆÙ…ÙƒØ§Ù„Ù…Ø§Øª Ù…Ø¨Ø§Ø´Ø±Ø©.'}
           </p>
         </div>
 
@@ -52,14 +52,14 @@ export default function AboutSakuMaku({ currentLang }: AboutSakuMakuProps) {
             <Sparkles className="w-4 h-4" />
           </div>
           <h3 className="text-sm font-bold text-white">
-            {isEn ? 'Street Pulse Feeds' : isKu ? 'تۆڕی کۆمەڵایەتی زیندوو' : 'الفيد والستوريات الحية'}
+            {isEn ? 'Street Pulse Feeds' : isKu ? 'ØªÛ†Ú•ÛŒ Ú©Û†Ù…Û•ÚµØ§ÛŒÛ•ØªÛŒ Ø²ÛŒÙ†Ø¯ÙˆÙˆ' : 'Ø§Ù„ÙÙŠØ¯ ÙˆØ§Ù„Ø³ØªÙˆØ±ÙŠØ§Øª Ø§Ù„Ø­ÙŠØ©'}
           </h3>
           <p className="text-[11px] text-zinc-400 leading-relaxed">
             {isEn 
               ? 'See announcements, discounts, event schedules, and seasonal campaigns posted directly by verified Iraqi merchant souls.'
               : isKu
-                ? 'جوانترین پڕۆمۆشن و ئۆفەری بەردەست ببینی، کە ڕاستەوخۆ لەلایەن خاوەن کارەکانەوە دادەنرێن.'
-                : 'اطلع على أحدث العروض والستوريات المنشورة فوراً بواسطة رواد الأعمال العراقيين وأصحاب المشاريع.'}
+                ? 'Ø¬ÙˆØ§Ù†ØªØ±ÛŒÙ† Ù¾Ú•Û†Ù…Û†Ø´Ù† Ùˆ Ø¦Û†ÙÛ•Ø±ÛŒ Ø¨Û•Ø±Ø¯Û•Ø³Øª Ø¨Ø¨ÛŒÙ†ÛŒØŒ Ú©Û• Ú•Ø§Ø³ØªÛ•ÙˆØ®Û† Ù„Û•Ù„Ø§ÛŒÛ•Ù† Ø®Ø§ÙˆÛ•Ù† Ú©Ø§Ø±Û•Ú©Ø§Ù†Û•ÙˆÛ• Ø¯Ø§Ø¯Û•Ù†Ø±ÛŽÙ†.'
+                : 'Ø§Ø·Ù„Ø¹ Ø¹Ù„Ù‰ Ø£Ø­Ø¯Ø« Ø§Ù„Ø¹Ø±ÙˆØ¶ ÙˆØ§Ù„Ø³ØªÙˆØ±ÙŠØ§Øª Ø§Ù„Ù…Ù†Ø´ÙˆØ±Ø© ÙÙˆØ±Ø§Ù‹ Ø¨ÙˆØ§Ø³Ø·Ø© Ø±ÙˆØ§Ø¯ Ø§Ù„Ø£Ø¹Ù…Ø§Ù„ Ø§Ù„Ø¹Ø±Ø§Ù‚ÙŠÙŠÙ† ÙˆØ£ØµØ­Ø§Ø¨ Ø§Ù„Ù…Ø´Ø§Ø±ÙŠØ¹.'}
           </p>
         </div>
 
@@ -68,14 +68,14 @@ export default function AboutSakuMaku({ currentLang }: AboutSakuMakuProps) {
             <Store className="w-4 h-4" />
           </div>
           <h3 className="text-sm font-bold text-white">
-            {isEn ? 'Host Your Project Free' : isKu ? 'بێبەرامبەر پڕۆژەکەت دابنێ' : 'انشر مشروعك مجاناً'}
+            {isEn ? 'Host Your Project Free' : isKu ? 'Ø¨ÛŽØ¨Û•Ø±Ø§Ù…Ø¨Û•Ø± Ù¾Ú•Û†Ú˜Û•Ú©Û•Øª Ø¯Ø§Ø¨Ù†ÛŽ' : 'Ø§Ù†Ø´Ø± Ù…Ø´Ø±ÙˆØ¹Ùƒ Ù…Ø¬Ø§Ù†Ø§Ù‹'}
           </h3>
           <p className="text-[11px] text-zinc-400 leading-relaxed">
             {isEn 
               ? 'Claim your digital presence and let our local Iraqi community discover your specialties. No charges, no corporate setups.'
               : isKu
-                ? 'شوێنکەوتوو و موشتەری زیاتر پەیدا بکە لە ڕێگەی بڵاوکردنەوەی کارەکەت ژێر چاودێری ساكۆ ماكۆ.'
-                : 'روّج لمطعمك، كافيهك أو صيدليتك بالمجان دون أي تكاليف وموافقات بيروقراطية وعقيمة.'}
+                ? 'Ø´ÙˆÛŽÙ†Ú©Û•ÙˆØªÙˆÙˆ Ùˆ Ù…ÙˆØ´ØªÛ•Ø±ÛŒ Ø²ÛŒØ§ØªØ± Ù¾Û•ÛŒØ¯Ø§ Ø¨Ú©Û• Ù„Û• Ú•ÛŽÚ¯Û•ÛŒ Ø¨ÚµØ§ÙˆÚ©Ø±Ø¯Ù†Û•ÙˆÛ•ÛŒ Ú©Ø§Ø±Û•Ú©Û•Øª Ú˜ÛŽØ± Ú†Ø§ÙˆØ¯ÛŽØ±ÛŒ Ø³Ø§ÙƒÛ† Ù…Ø§ÙƒÛ†.'
+                : 'Ø±ÙˆÙ‘Ø¬ Ù„Ù…Ø·Ø¹Ù…ÙƒØŒ ÙƒØ§ÙÙŠÙ‡Ùƒ Ø£Ùˆ ØµÙŠØ¯Ù„ÙŠØªÙƒ Ø¨Ø§Ù„Ù…Ø¬Ø§Ù† Ø¯ÙˆÙ† Ø£ÙŠ ØªÙƒØ§Ù„ÙŠÙ ÙˆÙ…ÙˆØ§ÙÙ‚Ø§Øª Ø¨ÙŠØ±ÙˆÙ‚Ø±Ø§Ø·ÙŠØ© ÙˆØ¹Ù‚ÙŠÙ…Ø©.'}
           </p>
         </div>
 
@@ -84,14 +84,14 @@ export default function AboutSakuMaku({ currentLang }: AboutSakuMakuProps) {
             <Award className="w-4 h-4" />
           </div>
           <h3 className="text-sm font-bold text-white">
-            {isEn ? 'Proudly Local' : isKu ? 'شانازی دەکەین بە لۆکاڵ بوون' : 'محلي بفخر واعتزاز'}
+            {isEn ? 'Proudly Local' : isKu ? 'Ø´Ø§Ù†Ø§Ø²ÛŒ Ø¯Û•Ú©Û•ÛŒÙ† Ø¨Û• Ù„Û†Ú©Ø§Úµ Ø¨ÙˆÙˆÙ†' : 'Ù…Ø­Ù„ÙŠ Ø¨ÙØ®Ø± ÙˆØ§Ø¹ØªØ²Ø§Ø²'}
           </h3>
           <p className="text-[11px] text-zinc-400 leading-relaxed">
             {isEn 
               ? 'Supporting Baghdad, Erbil, Basra, Mosul, Sulaymaniyah, Najaf and every governorate in Iraq under a unified aesthetic.'
               : isKu
-                ? 'پشتیوانیکردنی هەموو گەنجانی عێراق بە زمانەکانی کوردی، عەرەبی و ئینگلیزی.'
-                : 'ندعم رواد الأعمال العراقيين في بغداد، أربيل، البصرة، السليمانية، الموصل والنجف بنفس الروح العربية والكردية الجميلة.'}
+                ? 'Ù¾Ø´ØªÛŒÙˆØ§Ù†ÛŒÚ©Ø±Ø¯Ù†ÛŒ Ù‡Û•Ù…ÙˆÙˆ Ú¯Û•Ù†Ø¬Ø§Ù†ÛŒ Ø¹ÛŽØ±Ø§Ù‚ Ø¨Û• Ø²Ù…Ø§Ù†Û•Ú©Ø§Ù†ÛŒ Ú©ÙˆØ±Ø¯ÛŒØŒ Ø¹Û•Ø±Û•Ø¨ÛŒ Ùˆ Ø¦ÛŒÙ†Ú¯Ù„ÛŒØ²ÛŒ.'
+                : 'Ù†Ø¯Ø¹Ù… Ø±ÙˆØ§Ø¯ Ø§Ù„Ø£Ø¹Ù…Ø§Ù„ Ø§Ù„Ø¹Ø±Ø§Ù‚ÙŠÙŠÙ† ÙÙŠ Ø¨ØºØ¯Ø§Ø¯ØŒ Ø£Ø±Ø¨ÙŠÙ„ØŒ Ø§Ù„Ø¨ØµØ±Ø©ØŒ Ø§Ù„Ø³Ù„ÙŠÙ…Ø§Ù†ÙŠØ©ØŒ Ø§Ù„Ù…ÙˆØµÙ„ ÙˆØ§Ù„Ù†Ø¬Ù Ø¨Ù†ÙØ³ Ø§Ù„Ø±ÙˆØ­ Ø§Ù„Ø¹Ø±Ø¨ÙŠØ© ÙˆØ§Ù„ÙƒØ±Ø¯ÙŠØ© Ø§Ù„Ø¬Ù…ÙŠÙ„Ø©.'}
           </p>
         </div>
 
@@ -99,7 +99,7 @@ export default function AboutSakuMaku({ currentLang }: AboutSakuMakuProps) {
 
       <div className="text-center pt-2">
         <span className="text-[10px] text-zinc-500 font-mono">
-          Saku Maku Platform Version 3.4.0 • Made with ❤️ in Iraq
+          Saku Maku Platform Version 3.4.0 â€¢ Made with â¤ï¸ in Iraq
         </span>
       </div>
 
