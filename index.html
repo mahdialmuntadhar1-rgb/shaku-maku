@@ -12,7 +12,12 @@
     <link rel="manifest" href="/manifest.json" />
     <link rel="apple-touch-icon" href="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=192&h=192&fit=crop&q=80" />
     <title>Shaku Maku | Iraqi Business Directory</title>
-  </head>
+  <script>
+if (!localStorage.getItem('i18nextLng')) {
+    localStorage.setItem('i18nextLng', 'en');
+}
+</script>
+
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
