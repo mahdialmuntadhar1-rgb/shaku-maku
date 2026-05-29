@@ -330,7 +330,7 @@ export default function AuthModal({
     setSuccessMsg('');
 
     try {
-      await authApi.resetPassword(resetToken, newPassword);
+      await authApi.resetPassword(email.trim(), newPassword);
       setSuccessMsg(L.reset_success);
       setTimeout(() => {
         setAuthMode('login');

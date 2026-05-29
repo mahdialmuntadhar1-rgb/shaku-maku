@@ -208,6 +208,10 @@ export default function SocialFeed({
 
   const handleCreatePost = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user) {
+      onSignIn();
+      return;
+    }
     if (!newCaption.trim()) return;
 
     const imgToUse = uploadedImage || customPhotoInput.trim() || (uploadedVideo ? '' : newPhotoUrl);
@@ -280,6 +284,10 @@ export default function SocialFeed({
   };
 
   const handleLike = (postId: string) => {
+    if (!user) {
+      onSignIn();
+      return;
+    }
     const post = posts.find(p => p.id === postId);
     if (!post) return;
     const liked = !post.likedByUser;
@@ -291,6 +299,10 @@ export default function SocialFeed({
   };
 
   const handleSave = (postId: string) => {
+    if (!user) {
+      onSignIn();
+      return;
+    }
     const post = posts.find(p => p.id === postId);
     if (!post) return;
     const saved = !post.savedByUser;
@@ -299,6 +311,10 @@ export default function SocialFeed({
 
   const handlePostComment = (e: React.FormEvent, postId: string) => {
     e.preventDefault();
+    if (!user) {
+      onSignIn();
+      return;
+    }
     const txt = commentInputs[postId];
     if (!txt || !txt.trim()) return;
 
@@ -322,6 +338,10 @@ export default function SocialFeed({
   };
 
   const handleShare = (post: SocialPost) => {
+    if (!user) {
+      onSignIn();
+      return;
+    }
     setPosts(prev => prev.map(p => p.id === post.id ? { ...p, shares: (p.shares || 0) + 1 } : p));
 
     if (navigator.share) {

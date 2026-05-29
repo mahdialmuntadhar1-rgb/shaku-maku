@@ -138,10 +138,10 @@ export const authApi = {
     });
   },
 
-  async resetPassword(token: string, password: string): Promise<{ message: string }> {
+  async resetPassword(email: string, password: string): Promise<{ message: string }> {
     return apiRequest<{ message: string }>('/api/auth/reset-password', {
       method: 'POST',
-      body: JSON.stringify({ token, password }),
+      body: JSON.stringify({ email, password }),
     });
   },
 
