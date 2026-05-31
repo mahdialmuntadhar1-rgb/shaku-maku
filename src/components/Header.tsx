@@ -79,7 +79,7 @@ export default function Header({
           <rect width="3" height="2" fill="#fff" />
           <rect width="3" height="0.67" fill="#DA191A" />
           <rect y="1.33" width="3" height="0.67" fill="#007A3D" />
-          <text x="1.5" y="1.15" fontFamily="sans-serif" fontSize="0.32" fontWeight="bold" fill="#007A3D" textAnchor="middle">Ø§Ù„Ù„Ù‡ Ø£ÙƒØ¨Ø±</text>
+          <text x="1.5" y="1.15" fontFamily="sans-serif" fontSize="0.32" fontWeight="bold" fill="#007A3D" textAnchor="middle">الله أكبر</text>
         </svg>
       )
     },
@@ -123,7 +123,7 @@ export default function Header({
         <div className="bg-gradient-to-r from-luxury-teal/90 via-luxury-gold/80 to-[#FF6B4A]/90 text-white text-[10px] md:text-xs px-4 py-3 border-b border-luxury-gold/30 flex flex-col md:flex-row items-center justify-between gap-3 animate-fade-in relative z-50">
           <div className="flex items-center gap-2">
             <span className="text-[10px] bg-red-650 bg-red-500 text-white font-mono font-black py-0.5 px-2 rounded-full animate-pulse shrink-0">
-              ðŸ”´ QUICK SESSION ACCESS
+              🔴 QUICK SESSION ACCESS
             </span>
             <span className="font-extrabold text-zinc-100 max-w-sm sm:max-w-md md:max-w-lg leading-tight">
               {currentLang === 'en' 
@@ -142,7 +142,7 @@ export default function Header({
                 onClick={() => onCustomEmailLogin('mahdialmuntadhar1@gmail.com')}
                 className="px-2.5 py-1 bg-red-950/40 hover:bg-red-900 border border-red-500/35 text-red-200 text-[9px] font-black transition-all active:scale-95 cursor-pointer flex items-center gap-1 rounded-md"
               >
-                <span>ðŸ›¡ï¸</span>
+                <span>🛡️</span>
                 <span>{currentLang === 'en' ? 'Click: Admin' : 'Ù…Ø¯ÙŠØ± (Ù…Ù‡Ø¯ÙŠ)'}</span>
               </button>
               
@@ -151,7 +151,7 @@ export default function Header({
                 onClick={() => onCustomEmailLogin('owner@shkomaku.com')}
                 className="px-2.5 py-1 bg-amber-950/40 hover:bg-amber-900 border border-amber-500/35 text-amber-200 text-[9px] font-black transition-all active:scale-95 cursor-pointer flex items-center gap-1 rounded-md"
               >
-                <span>ðŸ¢</span>
+                <span>🏢</span>
                 <span>{currentLang === 'en' ? 'Click: Owner' : 'ØµØ§Ø­Ø¨ Ù…ØµÙ„Ø­Ø©'}</span>
               </button>
             </div>
@@ -314,7 +314,7 @@ export default function Header({
                     {/* Developer / Tester Switcher block (highly user-friendly testability) */}
                     <div className="bg-white/5 rounded-2xl p-2.5 border border-white/10 space-y-2">
                       <span className="text-[9px] font-black text-amber-400 uppercase tracking-widest block font-mono">
-                        ðŸ› ï¸ Dynamic Role Swapper
+                        🛠️ Dynamic Role Swapper
                       </span>
                       <p className="text-[8px] text-zinc-400 leading-normal">
                         Switch roles instantly on the fly to test custom dashboards & claimant workflows:
@@ -366,7 +366,7 @@ export default function Header({
                           }}
                           className="w-full text-left font-black text-[11px] px-3 py-2 rounded-xl text-amber-400 hover:bg-amber-500/10 border border-amber-500/20 flex items-center gap-2 cursor-pointer"
                         >
-                          ðŸ¢ {currentLang === 'en' ? 'Manage My Business' : 'Ø¥Ø¯Ø§Ø±Ø© ØµØ§Ù„ÙˆÙ†ÙŠ / Ù…Ø´Ø±ÙˆØ¹ÙŠ'}
+                          🏢 {currentLang === 'en' ? 'Manage My Business' : 'Ø¥Ø¯Ø§Ø±Ø© ØµØ§Ù„ÙˆÙ†ÙŠ / Ù…Ø´Ø±ÙˆØ¹ÙŠ'}
                         </button>
                       )}
 
@@ -403,7 +403,7 @@ export default function Header({
               className="flex items-center gap-2 px-4.5 py-2.5 rounded-full bg-gradient-to-r from-luxury-teal to-luxury-gold hover:from-[#154648] hover:to-[#dfbe6d] text-xs font-black uppercase text-white tracking-widest cursor-pointer shadow-xl transition active:scale-95 border border-white/10 shrink-0"
               id="google-sign-in-hdr"
             >
-              <span>ðŸ”‘</span>
+              <span>🔑</span>
               <span>{currentLang === 'en' ? 'Access Portal' : currentLang === 'ku' ? 'Ú†ÙˆÙˆÙ†Û•Ú˜ÙˆÙˆØ±' : 'Ø¯Ø®ÙˆÙ„ Ø§Ù„Ù…Ù†ØµØ©'}</span>
             </button>
           )}

@@ -29,7 +29,7 @@ export default function BusinessCard({
   // Find translated category
   const categoryMeta = CATEGORIES.find(c => c.id === business.category);
   const categoryName = categoryMeta ? (categoryMeta.name[currentLang] || categoryMeta.name.en) : business.category;
-  const categoryIcon = categoryMeta ? categoryMeta.icon : 'ðŸ¢';
+  const categoryIcon = categoryMeta ? categoryMeta.icon : '🏢';
 
   // Find translated governorate
   const govMeta = GOVERNORATES.find(g => g.code === business.governorate);

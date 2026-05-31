@@ -420,7 +420,7 @@ export default function App() {
           <div>
             <div className="text-[10px] font-black text-luxury-gold uppercase tracking-wider mb-1.5 text-center flex items-center justify-center gap-1.5">
               <MapPin className="w-3.5 h-3.5 text-luxury-gold shrink-0" />
-              <span>{currentLang === 'en' ? 'Select Iraqi Governorate / Region' : currentLang === 'ku' ? 'Ù¾Ø§Ø±ÛŽØ²Ú¯Ø§ÛŒÛ•Ú© Ø¯Û•Ø³ØªÙ†ÛŒØ´Ø§Ù† Ø¨Ú©Û•' : 'Ø§Ø®ØªØ± Ø§Ù„Ù…Ø­Ø§ÙØ¸Ø© Ø§Ù„Ø¹Ø±Ø§Ù‚ÙŠØ© Ù„ØªØµÙØ­ Ø§Ù„Ù…ØªØ§Ø¬Ø±'}</span>
+              <span>{currentLang === 'en' ? 'Select Iraqi Governorate / Region' : currentLang === 'ku' ? 'پارێزگایەک دەستنیشان بکە' : 'اختر المحافظة العراقية لتصفح المتاجر'}</span>
             </div>
             
             <div className="relative">
@@ -465,7 +465,7 @@ export default function App() {
 
           <div>
             <div className="text-[10px] font-black text-luxury-gold uppercase tracking-wider mb-1.5 text-center flex items-center justify-center gap-1.5">
-              <span>{currentLang === 'en' ? 'ðŸ” Filter by Category' : currentLang === 'ku' ? 'ðŸ” Ø¨Û•Ù¾ÛŽÛŒ Ù¾Û†Ù„ Ø¯Û•Ø³ØªÙ†ÛŒØ´Ø§Ù† Ø¨Ú©Û•' : 'ðŸ” ØªØµÙÙŠØ© Ø­Ø³Ø¨ Ø§Ù„ÙØ¦Ø©'}</span>
+              <span>{currentLang === 'en' ? '🔍 Filter by Category' : currentLang === 'ku' ? '🔍 بەپێی پۆل دەستنیشان بکە' : '🔍 تصفية حسب الفئة'}</span>
             </div>
             
             <div className="relative">
@@ -478,12 +478,12 @@ export default function App() {
               >
                 <div className="flex items-center gap-2">
                   <span className="text-base">
-                    {selectedCategory ? CATEGORIES.find(c => c.id === selectedCategory)?.icon || 'ðŸ¢' : 'ðŸ¢'}
+                    {selectedCategory ? CATEGORIES.find(c => c.id === selectedCategory)?.icon || '🏢' : '🏢'}
                   </span>
                   <span>
                     {selectedCategory 
                       ? CATEGORIES.find(c => c.id === selectedCategory)?.name[currentLang] 
-                      : (currentLang === 'en' ? 'All Categories' : currentLang === 'ku' ? 'Ù‡Û•Ù…ÙˆÙˆ Ù¾Û†Ù„Û•Ú©Ø§Ù†' : 'Ø¬Ù…ÙŠØ¹ Ø§Ù„ÙØ¦Ø§Øª')}
+                      : (currentLang === 'en' ? 'All Categories' : currentLang === 'ku' ? 'هەموو پۆلەکان' : 'جميع الفئات')}
                   </span>
                 </div>
                 <ChevronDown className={`w-4 h-4 text-luxury-gold transition-transform duration-300 ${categoryDropdownOpen ? 'rotate-180' : ''}`} />
@@ -503,7 +503,7 @@ export default function App() {
                         : 'text-zinc-300 hover:bg-white/5 font-semibold'
                     }`}
                   >
-                    <span>ðŸ” {currentLang === 'en' ? 'All Categories' : currentLang === 'ku' ? 'Ù‡Û•Ù…ÙˆÙˆ Ù¾Û†Ù„Û•Ú©Ø§Ù†' : 'Ø¬Ù…ÙŠØ¹ Ø§Ù„ÙØ¦Ø§Øª'}</span>
+                    <span>ðŸ” {currentLang === 'en' ? 'All Categories' : currentLang === 'ku' ? 'هەموو پۆلەکان' : 'جميع الفئات'}</span>
                     {selectedCategory === null && <span className="text-[9px]">âœ¨</span>}
                   </button>
 
@@ -553,11 +553,11 @@ export default function App() {
             </div>
             
             <span className={`text-xs sm:text-sm md:text-base font-black block leading-tight tracking-tight ${activeTab === 'discover' ? 'text-white' : 'text-[#1A1A1A]'}`}>
-              {currentLang === 'en' ? 'Businesses' : currentLang === 'ku' ? 'Ø´ÙˆÛŽÙ†Û•Ú©Ø§Ù†' : 'Ø§Ù„Ù…Ø­Ù„Ø§Øª'}
+              {currentLang === 'en' ? 'Businesses' : currentLang === 'ku' ? 'شوێنەکان' : 'المحلات'}
             </span>
             
             <span className={`text-[9px] sm:text-[10px] md:text-[11px] leading-tight font-medium mt-1 sm:mt-1.5 block opacity-70 px-1 line-clamp-2 max-w-full ${activeTab === 'discover' ? 'text-zinc-300' : 'text-zinc-500'}`}>
-              {currentLang === 'en' ? 'Explore cafes & spas' : currentLang === 'ku' ? 'Ú¯Û•Ú•Ø§Ù† Ø¨Û•Ø¯ÙˆØ§ÛŒ Ù¾Û†Ù„Û•Ú©Ø§Ù†Ø¯Ø§' : 'Ø§Ø³ØªÙƒØ´Ù Ø§Ù„Ù…Ø­Ù„Ø§Øª ÙˆØ§Ù„Ø®Ø¯Ù…Ø§Øª'}
+              {currentLang === 'en' ? 'Explore cafes & spas' : currentLang === 'ku' ? 'گەڕان بەدوای پۆلەکاندا' : 'استكشف المحلات والخدمات'}
             </span>
             
             <div className={`absolute bottom-3 text-xs font-bold transition-opacity transition-transform duration-300 ${activeTab === 'discover' ? 'text-luxury-gold opacity-100' : 'text-zinc-400 opacity-0 group-hover:opacity-100 translateY(2px)'}`}>
@@ -586,11 +586,11 @@ export default function App() {
             </div>
             
             <span className={`text-xs sm:text-sm md:text-base font-black block leading-tight tracking-tight ${activeTab === 'feed' ? 'text-white' : 'text-[#1A1A1A]'}`}>
-              {currentLang === 'en' ? 'Social Feed' : currentLang === 'ku' ? 'Ù¾Û†Ø³ØªÛ• Ù†ÙˆÛŽÚ©Ø§Ù†' : 'Ù†Ø¨Ø¶ Ø§Ù„Ø´Ø§Ø±Ø¹'}
+              {currentLang === 'en' ? 'Social Feed' : currentLang === 'ku' ? 'پۆستە نوێکان' : 'نبض الشارع'}
             </span>
             
             <span className={`text-[9px] sm:text-[10px] md:text-[11px] leading-tight font-medium mt-1 sm:mt-1.5 block opacity-70 px-1 line-clamp-2 max-w-full ${activeTab === 'feed' ? 'text-zinc-300' : 'text-zinc-500'}`}>
-              {currentLang === 'en' ? 'Stories & photo updates' : currentLang === 'ku' ? 'Ø¨ÚµØ§ÙˆÚ©Ø±Ø§ÙˆÛ•Ú©Ø§Ù† Ùˆ ÙˆÛŽÙ†Û•Ú©Ø§Ù†' : 'Ø¹Ø±ÙˆØ¶ ÙˆÙ…Ø´Ø§Ø±ÙƒØ§Øª Ø­ÙŠØ©'}
+              {currentLang === 'en' ? 'Stories & photo updates' : currentLang === 'ku' ? 'بڵاوکراوەکان و وێنەکان' : 'عروض ومشاركات حية'}
             </span>
 
             <div className={`absolute bottom-3 text-xs font-bold transition-opacity transition-transform duration-300 ${activeTab === 'feed' ? 'text-luxury-gold opacity-100' : 'text-zinc-400 opacity-0 group-hover:opacity-100 translateY(2px)'}`}>

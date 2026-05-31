@@ -37,26 +37,26 @@ export default function MediaUploader({
       emptyGrid: 'No gallery photos uploaded yet. Drag photos above to populate catalog!'
     },
     ar: {
-      dragTitle: 'Ø§Ù†Ù‚Ø± Ù‡Ù†Ø§ Ù„ØªØµÙØ­ Ù…Ù„ÙØ§ØªÙƒØŒ Ø£Ùˆ Ø§Ø³Ø­Ø¨ Ø§Ù„ØµÙˆØ± Ù„Ù„Ø¥ÙÙ„Ø§Øª',
-      dragSub: 'ÙŠØ¯Ø¹Ù… ØµÙŠØº JPGØŒ PNGØŒ WebP Ù„ØºØ§ÙŠØ© 8 Ù…ÙŠØºØ§Ø¨Ø§ÙŠØª Ù„ÙƒÙ„ Ù…Ù„Ù',
-      activeUpload: 'Ø¬Ø§Ø±ÙŠ Ø±ÙØ¹ Ø§Ù„Ù…Ù„Ù...',
-      uploadFinished: 'ØªÙ…Øª Ø¥Ø¶Ø§ÙØ© Ø§Ù„ØµÙˆØ±Ø© Ø¨Ù†Ø¬Ø§Ø­ Ø¥Ù„Ù‰ Ø³Ø¬Ù„ Ù…Ø¹Ø±Ø¶ Ø§Ù„ØµÙˆØ± Ø§Ù„Ø®Ø§Øµ Ø¨Ùƒ!',
-      mockImageLabel: 'Ø£Ùˆ ØµÙ†Ù Ø±Ø§Ø¨Ø· ØµÙˆØ±Ø© Ø¨Ø§Ù„Ø¥Ù†ØªØ±Ù†Øª Ù…Ø¨Ø§Ø´Ø±Ø©:',
+      dragTitle: 'انقر هنا لتصفح ملفاتك، أو اسحب الصور للإفلات',
+      dragSub: 'يدعم صيغ JPG، PNG، WebP لغاية 8 ميغابايت لكل ملف',
+      activeUpload: 'جاري رفع الملف...',
+      uploadFinished: 'تمت إضافة الصورة بنجاح إلى سجل معرض الصور الخاص بك!',
+      mockImageLabel: 'أو صنف رابط صورة بالإنترنت مباشرة:',
       pastePlaceholder: 'https://images.unsplash.com/photo-example...',
-      addUrlBtn: 'Ø±Ø¨Ø· Ø±Ø§Ø¨Ø· Ù…Ù„Ù Ø§Ù„ØµÙˆØ±Ø©',
-      listTitle: 'Ø£Ù„Ø¨ÙˆÙ… ØµÙˆØ± Ø§Ù„Ù…Ø´Ø±ÙˆØ¹ ÙˆØªØµÙ†ÙŠÙØ§ØªÙ‡Ø§',
-      emptyGrid: 'Ù…Ø¹Ø±Ø¶ ØµÙˆØ±Ùƒ ÙØ§Ø±Øº Ø­Ø§Ù„ÙŠØ§Ù‹. Ù‚Ù… Ø¨Ø±ÙØ¹ ØµÙˆØ± Ù…Ù…ØªØ§Ø²Ø© Ù„Ø¥Ø¨Ù‡Ø§Ø± Ø§Ù„Ø²ÙˆØ§Ø± ÙˆØ§Ù„Ø¹Ù…Ù„Ø§Ø¡!'
+      addUrlBtn: 'ربط رابط ملف الصورة',
+      listTitle: 'ألبوم صور المشروع وتصنيفاتها',
+      emptyGrid: 'معرض صورك فارغ حالياً. قم برفع صور ممتازة لإبهار الزوار والعملاء!'
     },
     ku: {
-      dragTitle: 'Ú©Û†Ù¾ÛŒ Ú©Ø±Ø¯Ù† ÛŒØ§Ù† Ù†Ø§Ø±Ø¯Ù†ÛŒ ÙˆÛŽÙ†Û• Ù„ÛŽØ±Û•',
-      dragSub: 'Ù¾Ø´ØªÛŒÙˆØ§Ù†ÛŒ JPGØŒ PNGØŒ ÛŒØ§Ù† WebP Ø¯Û•Ú©Ø§Øª ØªØ§ Ù„Ø§ÛŒÛ•Ù†ÛŒ Ø²Û†Ø± Ù¨ Ù…ÛŽÚ¯Ø§Ø¨Ø§ÛŒØª',
-      activeUpload: 'Ø¨Ø§Ø±Ú©Ø±Ø¯Ù†ÛŒ ÙˆÛŽÙ†Û• Ù„Û• Ø³ÛŒØ³ØªÛ•Ù…Ø¯Ø§...',
-      uploadFinished: 'ÙˆÛŽÙ†Û•Ú©Û• Ø¨Û• Ø³Û•Ø±Ú©Û•ÙˆØªÙˆÙˆÛŒÛŒ Ø²ÛŒØ§Ø¯Ú©Ø±Ø§ Ø¨Û† Ù†Ø§Ùˆ Ù¾ÛŒØ´Ø§Ù†Ú¯Ø§Ú©Û•Øª!',
-      mockImageLabel: 'ÛŒØ§Ù† Ø¨Û•Ø³ØªÛ•Ø±ÛŒ Ù†Ø§ÙˆÙ†ÛŒØ´Ø§Ù†ÛŒ ÙˆÛŽÙ†Û• Ø¨Ù†ÙˆÙˆØ³Û• Ù„ÛŽØ±Û•:',
+      dragTitle: 'کۆپی کردن یان ناردنی وێنە لێرە',
+      dragSub: 'پشتیوانی JPG، PNG، یان WebP دەکات تا لایەنی زۆر ٨ مێگابایت',
+      activeUpload: 'بارکردنی وێنە لە سیستەمدا...',
+      uploadFinished: 'وێنەکە بە سەرکەوتوویی زیادکرا بۆ ناو پیشانگاکەت!',
+      mockImageLabel: 'یان بەستەری ناونیشانی وێنە بنووسە لێرە:',
       pastePlaceholder: 'https://images.unsplash.com/photo-example...',
-      addUrlBtn: 'Ú¯Ø±ÛŽØ¯Ø§Ù†ÛŒ Ø¨Û•Ø³ØªÛ•Ø±',
-      listTitle: 'Ù¾ÛŽØ´Ø§Ù†Ú¯Ø§ÛŒ ÙˆÛŽÙ†Û•Ú©Ø§Ù†',
-      emptyGrid: 'Ù‡ÛŒÚ† ÙˆÛŽÙ†Û•ÛŒÛ•Ú© Ù„Û• Ù¾ÛŒØ´Ø§Ù†Ú¯Ø§Ú©Û•Ø¯Ø§ Ù†ÛŒÛŒÛ•. ÙˆÛŽÙ†Û• Ø¨Û•Ø±Ø² Ø¨Ú©Û•Ø±Û•ÙˆÛ• ØªØ§ Ù¾ÛŽØ´Ø§Ù†Ú¯Ø§ Ú¯Û•Ø´Û• Ø¨Ú©Ø§Øª!'
+      addUrlBtn: 'گرێدانی بەستەر',
+      listTitle: 'پێشانگای وێنەکان',
+      emptyGrid: 'هیچ وێنەیەک لە پیشانگاکەدا نییە. وێنە بەرز بکەرەوە تا پێشانگا گەشە بکات!'
     }
   }[currentLang];
 
@@ -108,7 +108,7 @@ export default function MediaUploader({
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const file = e.dataTransfer.files[0];
       if (!file.type.startsWith('image/')) {
-        setErrorText(currentLang === 'en' ? 'Only image files are allowed!' : 'Ø§Ù„ØµÙŠØº Ø§Ù„Ù…Ø¯Ø¹ÙˆÙ…Ø© Ù‡ÙŠ Ø§Ù„ØµÙˆØ± ÙÙ‚Ø·!');
+        setErrorText(currentLang === 'en' ? 'Only image files are allowed!' : 'الصيغ المدعومة هي الصور فقط!');
         return;
       }
       setPreviewURL(URL.createObjectURL(file));
@@ -128,7 +128,7 @@ export default function MediaUploader({
   const handleLinkSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!pasteURL.trim().startsWith('http')) {
-      setErrorText(currentLang === 'en' ? 'Please enter a valid image URL link!' : 'ÙŠØ±Ø¬Ù‰ Ø¥Ø¯Ø®Ø§Ù„ Ø±Ø§Ø¨Ø· ØµÙˆØ±Ø© Ø¥Ù†ØªØ±Ù†Øª ÙÙ†ÙŠ ØµØ§Ù„Ø­!');
+      setErrorText(currentLang === 'en' ? 'Please enter a valid image URL link!' : 'يرجى إدخال رابط صورة إنترنت فني صالح!');
       return;
     }
     setErrorText(null);

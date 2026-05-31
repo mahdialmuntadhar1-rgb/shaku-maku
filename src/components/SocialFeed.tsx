@@ -58,10 +58,10 @@ export default function SocialFeed({
       const bizNameText = newLivePost.businessName;
       alert(
         currentLang === 'en' 
-          ? `ðŸŽ‰ Success! Handpicked and populated a new simulated live update for "${bizNameText}" from the Iraqi Database.`
+          ? `🎉 Success! Handpicked and populated a new simulated live update for "${bizNameText}" from the Iraqi Database.`
           : currentLang === 'ku'
-          ? `ðŸŽ‰ Ø³Û•Ø±Ú©Û•ÙˆØªÙˆÙˆ Ø¨ÙˆÙˆ! Ø¨Ø§Ø¨Û•ØªÛŽÚ©ÛŒ Ù†ÙˆÛŽ Ø¯Û•Ø±Ø¨Ø§Ø±Û•ÛŒ "${bizNameText}" Ù„Û• Ù¾Ø§Ø±ÛŽØ²Ú¯Ø§ÛŒ Ø¯ÛŒØ§Ø±ÛŒÚ©Ø±Ø§Ùˆ Ø¨ÚµØ§ÙˆÚ©Ø±Ø§ÛŒÛ•ÙˆÛ•.`
-          : `ðŸŽ‰ ØªÙ… Ø¨Ù†Ø¬Ø§Ø­! Ø³Ø­Ø¨ ÙˆØªÙˆÙ„ÙŠØ¯ ØªØ­Ø¯ÙŠØ« Ø­ÙŠ Ù„Ù…Ø´Ø±ÙˆØ¹ "${bizNameText}" Ù…Ù† Ù‚Ø§Ø¹Ø¯Ø© Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ø¹Ø±Ø§Ù‚ÙŠØ©.`
+          ? `🎉 سەرکەوتوو بوو! بابەتێکی نوێ دەربارەی "${bizNameText}" لە پارێزگای دیاریکراو بڵاوکرایەوە.`
+          : `🎉 تم بنجاح! سحب وتوليد تحديث حي لمشروع "${bizNameText}" من قاعدة البيانات العراقية.`
       );
     } catch (err) {
       console.error("Error generating simulated live post: ", err);
@@ -173,8 +173,8 @@ export default function SocialFeed({
           currentLang === 'en' 
             ? 'Video must be smaller than 1.4MB' 
             : currentLang === 'ku' 
-            ? 'ØªÚ©Ø§ÛŒÛ• Ú¤ÛŒØ¯ÛŒÛ†Ú©Û• Ù„Û• Ù¡.Ù¤ Ù…ÛŽÚ¯Ø§Ø¨Ø§ÛŒØª Ø¨Ú†ÙˆÙˆÚ©ØªØ± Ø¨ÛŽØª' 
-            : 'ÙŠØ¬Ø¨ Ø£Ù† ÙŠÙƒÙˆÙ† Ø§Ù„ÙÙŠØ¯ÙŠÙˆ Ø£Ù‚Ù„ Ù…Ù† 1.4 Ù…ÙŠØ¬Ø§Ø¨Ø§ÙŠØª'
+            ? 'تکایە ڤیدیۆکە لە ١.٤ مێگابایت بچووکتر بێت' 
+            : 'يجب أن يكون الفيديو أقل من 1.4 ميجابايت'
         );
         return;
       }
@@ -215,7 +215,7 @@ export default function SocialFeed({
     if (!newCaption.trim()) return;
 
     const imgToUse = uploadedImage || customPhotoInput.trim() || (uploadedVideo ? '' : newPhotoUrl);
-    const bizNameToUse = newBizName.trim() || (user?.displayName) || (currentLang === 'en' ? 'Saku Maku Guest' : currentLang === 'ku' ? 'Ù…ÛŒÙˆØ§Ù†ÛŒ Ø³Ø§ÙƒÛ† Ù…Ø§ÙƒÛ†' : 'Ø¶ÙŠÙ Ø´ÙƒÙˆ Ù…Ø§ÙƒÙˆ');
+    const bizNameToUse = newBizName.trim() || (user?.displayName) || (currentLang === 'en' ? 'Saku Maku Guest' : currentLang === 'ku' ? 'میوانی ساكۆ ماكۆ' : 'ضيف شكو ماكو');
 
     const newPostItem: SocialPost = {
       id: `post-${Date.now()}`,
@@ -389,8 +389,8 @@ export default function SocialFeed({
             {currentLang === 'en'
               ? `Instantly grab, translate, and post real-time social stories about certified Iraqi businesses in ${govNameText}.`
               : currentLang === 'ku'
-              ? `Ú•Ø§Ø³ØªÛ•ÙˆØ®Û† Ø¨Ø§Ø¨Û•ØªÚ¯Û•Ù„ÛŒ Ú•Ø§Ø³ØªÛ•Ù‚ÛŒÙ†Û• Ùˆ ØªÛ•Ø±Ø¬Û•Ù…Û•Ú©Ø±Ø§ÙˆÛŒ ÙÛ•Ø±Ù…ÛŒ Ø¯Û•Ø±Ø¨Ø§Ø±Û•ÛŒ Ø¨Ø§Ø²Ø±Ú¯Ø§Ù†ÛŒÛŒÛ•Ú©Ø§Ù† Ú©Û†Ø¨Ú©Û•Ø±Û•ÙˆÛ• Ù„Û• ${govNameText}.`
-              : `Ø§Ø³Ø­Ø¨ ÙˆØ§Ù†Ø´Ø± ØªØ­Ø¯ÙŠØ«Ø§Ù‹ Ø­ÙŠØ§Ù‹ØŒ Ù…ØªØ±Ø¬Ù…Ø§Ù‹ØŒ ÙˆÙ…ØµÙ…Ù…Ø§Ù‹ Ø¨Ø¯Ù‚Ø© Ù„Ø£Ø¹Ø¸Ù… Ù…Ø­Ù„Ø§Øª ÙˆØ´Ø±ÙƒØ§Øª Ø§Ù„Ø¹Ø±Ø§Ù‚ ÙÙŠ Ù…Ø­Ø§ÙØ¸Ø© ${govNameText}.`}
+              ? `ڕاستەوخۆ بابەتگەلی ڕاستەقینە و تەرجەمەکراوی فەرمی دەربارەی بازرگانییەکان کۆبکەرەوە لە ${govNameText}.`
+              : `اسحب وانشر تحديثاً حياً، مترجماً، ومصمماً بدقة لأعظم محلات وشركات العراق في محافظة ${govNameText}.`}
           </p>
         </div>
 
@@ -407,13 +407,13 @@ export default function SocialFeed({
             </>
           ) : (
             <>
-              <span>âœ¨</span>
+              <span>✨</span>
               <span>
                 {currentLang === 'en' 
                   ? `Pull ${selectedGov === 'all' ? 'Live Story' : `${selectedGov.toUpperCase()} Story`}`
                   : currentLang === 'ku'
-                  ? `Ø¨Ú©ÛŽØ´Û• Ø¨Ø§Ø¨Û•Øª`
-                  : `Ø³Ø­Ø¨ Ù…Ù†Ø´ÙˆØ± Ø­ÙŠ ${selectedGov === 'all' ? 'Ø¹Ø´ÙˆØ§Ø¦ÙŠ' : `Ù„Ù€ ${selectedGov.toUpperCase()}`}`}
+                  ? `بکێشە بابەت`
+                  : `سحب منشور حي ${selectedGov === 'all' ? 'Ø¹Ø´ÙˆØ§Ø¦ÙŠ' : `لـ ${selectedGov.toUpperCase()}`}`}
               </span>
             </>
           )}
@@ -452,8 +452,8 @@ export default function SocialFeed({
                 onClick={() => setShowGovInput(g => !g)}
                 className="mt-0.5 flex items-center gap-1 bg-[#242526] hover:bg-[#3a3b3c] border border-[#2f3031] text-[10px] text-zinc-300 px-2 py-0.5 rounded-full cursor-pointer transition font-sans"
               >
-                <span>ðŸ“ {newGov.toUpperCase()}</span>
-                <span className="text-[8px] opacity-75">â–¼</span>
+                <span>📍 {newGov.toUpperCase()}</span>
+                <span className="text-[8px] opacity-75">▼</span>
               </button>
             </div>
           </div>
@@ -466,8 +466,8 @@ export default function SocialFeed({
                 currentLang === 'en'
                   ? `What's on your mind, ${user?.displayName?.split(' ')[0] || 'Friend'}? Share updates, photos or video trailers...`
                   : currentLang === 'ku'
-                  ? `Ú†ÛŒ Ù„Û• Ù…ÛŽØ´Ú©ØªØ¯Ø§ÛŒÛ•ØŒ ${user?.displayName?.split(' ')[0] || 'Ù‡Ø§ÙˆÚ•ÛŽÙ…'}ØŸ Ø¨Ø§Ø¨Û•ØªÛŽÚ©ÛŒ Ù†ÙˆÛŽØŒ ÙˆÛŽÙ†Û• ÛŒØ§Ù† Ú©Û•Ù„ÛŽÙ† Ø¨ÚµØ§ÙˆØ¨Ú©Û•Ø±Û•ÙˆÛ•...`
-                  : `Ø¨Ù…ÙŽ ØªÙÙƒÙ‘Ø±ØŒ ${user?.displayName?.split(' ')[0] || 'ÙŠØ§ ØµØ¯ÙŠÙ‚Ù†Ø§'}ØŸ Ø£Ù†Ø´Ø± Ø£Ø­Ø¯Ø« Ø§Ù„ØµÙˆØ±ØŒ Ø¹Ø±ÙˆØ¶ ÙƒØ±Ø§Ø³Ø§Øª Ø£Ùˆ ÙÙŠØ¯ÙŠÙˆÙ‡Ø§Øª ØªØ±ÙˆÙŠØ¬ÙŠØ©...`
+                  ? `Ú†ÛŒ Ù„Û• Ù…ÛŽØ´Ú©ØªØ¯Ø§ÛŒÛ•ØŒ ${user?.displayName?.split(' ')[0] || 'هاوڕێم'}ØŸ Ø¨Ø§Ø¨Û•ØªÛŽÚ©ÛŒ Ù†ÙˆÛŽØŒ ÙˆÛŽÙ†Û• ÛŒØ§Ù† Ú©Û•Ù„ÛŽÙ† Ø¨ÚµØ§ÙˆØ¨Ú©Û•Ø±Û•ÙˆÛ•...`
+                  : `Ø¨Ù…ÙŽ ØªÙÙƒÙ‘Ø±ØŒ ${user?.displayName?.split(' ')[0] || 'يا صديقنا'}ØŸ Ø£Ù†Ø´Ø± Ø£Ø­Ø¯Ø« Ø§Ù„ØµÙˆØ±ØŒ Ø¹Ø±ÙˆØ¶ ÙƒØ±Ø§Ø³Ø§Øª Ø£Ùˆ ÙÙŠØ¯ÙŠÙˆÙ‡Ø§Øª ØªØ±ÙˆÙŠØ¬ÙŠØ©...`
               }
               value={newCaption}
               onChange={(e) => setNewCaption(e.target.value)}
@@ -480,7 +480,7 @@ export default function SocialFeed({
         {videoError && (
           <div className="p-3 bg-red-950/20 border border-red-500/30 rounded-xl text-xs text-red-400 font-semibold flex items-center gap-2 animate-fade-in font-sans">
             <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse shrink-0"></span>
-            <span>âš ï¸ {videoError}</span>
+            <span>⚠️ {videoError}</span>
           </div>
         )}
 
@@ -500,7 +500,7 @@ export default function SocialFeed({
               className="absolute top-2.5 right-2.5 z-20 w-6 h-6 rounded-full bg-black/80 hover:bg-black text-white flex items-center justify-center transition active:scale-95 cursor-pointer border border-white/10 text-xs font-bold"
               title="Remove attachment"
             >
-              âœ•
+              ✕
             </button>
 
             {/* Video preview render if video is selected */}
@@ -537,7 +537,7 @@ export default function SocialFeed({
                   </div>
                   <div>
                     <span className="text-xs font-black text-white block truncate max-w-[190px]">{uploadedFile.name}</span>
-                    <span className="text-[10px] text-zinc-400 block font-mono font-medium">{uploadedFile.size} â€¢ Menu Booklet PDF</span>
+                    <span className="text-[10px] text-zinc-400 block font-mono font-medium">{uploadedFile.size} • Menu Booklet PDF</span>
                   </div>
                 </div>
               </div>
@@ -618,7 +618,7 @@ export default function SocialFeed({
                     }`}
                     title={vid.name}
                   >
-                    <span>ðŸŽ¥</span>
+                    <span>🎥</span>
                     <span className="text-[6px] text-white/40 uppercase font-[#2f3031] font-black">Video</span>
                   </button>
                 ))}
@@ -632,7 +632,7 @@ export default function SocialFeed({
             {/* Publisher Brand Input */}
             {showBrandInput && (
               <div className="p-3 bg-[#242526] rounded-lg border border-[#2f3031] space-y-1.5 transition">
-                <span className="text-[10px] text-[#e4e6eb] font-bold block">ðŸ›ï¸ Cafe / Brand Name</span>
+                <span className="text-[10px] text-[#e4e6eb] font-bold block">🏛️ Cafe / Brand Name</span>
                 <input
                   type="text"
                   placeholder="e.g. Costa Cafe Baghdad"
@@ -646,10 +646,10 @@ export default function SocialFeed({
             {/* Promo Badge Input */}
             {showPromoInput && (
               <div className="p-3 bg-[#242526] rounded-lg border border-[#2f3031] space-y-1.5 transition">
-                <span className="text-[10px] text-[#e4e6eb] font-bold block">ðŸŽŸï¸ Promotion Badge (Discount)</span>
+                <span className="text-[10px] text-[#e4e6eb] font-bold block">🎟️ Promotion Badge (Discount)</span>
                 <input
                   type="text"
-                  placeholder="e.g. Free Dessert â€¢ 20% Off"
+                  placeholder="e.g. Free Dessert • 20% Off"
                   value={newPromo}
                   onChange={(e) => setNewPromo(e.target.value)}
                   className="w-full bg-[#18191a] border border-[#3e4042] text-xs px-3 py-2 rounded text-white placeholder-zinc-700 focus:outline-[#1877f2] focus:outline-none"
@@ -660,18 +660,18 @@ export default function SocialFeed({
             {/* Governorate dropdown selection menu */}
             {showGovInput && (
               <div className="p-3 bg-[#242526] rounded-lg border border-[#2f3031] space-y-1.5 transition">
-                <span className="text-[10px] text-[#e4e6eb] font-bold block">ðŸ“ Target Governorate</span>
+                <span className="text-[10px] text-[#e4e6eb] font-bold block">📍 Target Governorate</span>
                 <select
                   value={newGov}
                   onChange={(e) => setNewGov(e.target.value as GovernorateCode)}
                   className="w-full bg-[#18191a] border border-[#3e4042] text-xs px-2.5 py-2 rounded text-white focus:outline-none cursor-pointer"
                 >
-                  <option value="baghdad" className="bg-[#18191a] text-white">Baghdad ðŸ°</option>
-                  <option value="erbil" className="bg-[#18191a] text-white">Erbil ðŸ”ï¸</option>
-                  <option value="basra" className="bg-[#18191a] text-white">Basra ðŸŒ´</option>
-                  <option value="sulaymaniyah" className="bg-[#18191a] text-white">Sulaymaniyah ðŸŒ¸</option>
-                  <option value="mosul" className="bg-[#18191a] text-white">Mosul ðŸ</option>
-                  <option value="najaf" className="bg-[#18191a] text-white">Najaf âœ¨</option>
+                  <option value="baghdad" className="bg-[#18191a] text-white">Baghdad 🏰</option>
+                  <option value="erbil" className="bg-[#18191a] text-white">Erbil 🏔️</option>
+                  <option value="basra" className="bg-[#18191a] text-white">Basra 🌴</option>
+                  <option value="sulaymaniyah" className="bg-[#18191a] text-white">Sulaymaniyah 🌸</option>
+                  <option value="mosul" className="bg-[#18191a] text-white">Mosul 🍏</option>
+                  <option value="najaf" className="bg-[#18191a] text-white">Najaf ✨</option>
                 </select>
               </div>
             )}
@@ -679,7 +679,7 @@ export default function SocialFeed({
             {/* Category selection menu dropdown */}
             {showCategoryInput && (
               <div className="p-3 bg-[#242526] rounded-lg border border-[#2f3031] space-y-1.5 transition">
-                <span className="text-[10px] text-[#e4e6eb] font-bold block">ðŸ“‚ Culinary/Retail Category</span>
+                <span className="text-[10px] text-[#e4e6eb] font-bold block">📂 Culinary/Retail Category</span>
                 <select
                   value={newCategory}
                   onChange={(e) => setNewCategory(e.target.value)}
@@ -699,7 +699,7 @@ export default function SocialFeed({
         {/* Facebook-style 'Add to your post' footer bar with interactive controls */}
         <div className="border border-[#2f3031] rounded-xl p-3 bg-[#18191a] flex items-center justify-between gap-3 flex-wrap">
           <span className="text-xs font-bold text-zinc-350">
-            {currentLang === 'en' ? 'Add to your post' : currentLang === 'ku' ? 'Ø²ÛŒØ§Ø¯ Ø¨Ú©Û• Ø¨Û† Ø¨Ø§Ø¨Û•Øª' : 'Ø¥Ø¶Ø§ÙØ© Ø¥Ù„Ù‰ Ù…Ù†Ø´ÙˆØ±Ùƒ'}
+            {currentLang === 'en' ? 'Add to your post' : currentLang === 'ku' ? 'زیاد بکە بۆ بابەت' : 'إضافة إلى منشورك'}
           </span>
           
           <div className="flex items-center gap-1.5">
@@ -814,7 +814,7 @@ export default function SocialFeed({
           disabled={!newCaption.trim()}
           className="w-full py-2.5 bg-[#1877f2] hover:bg-[#166fe5] disabled:bg-[#505151]/55 disabled:text-zinc-500 text-white font-bold text-sm tracking-wide rounded-md transition duration-150 cursor-pointer flex items-center justify-center gap-2 shadow-md"
         >
-          <span>{currentLang === 'en' ? 'Post' : currentLang === 'ku' ? 'Ø¨Ù„Ø§ÙˆÚ©Ø±Ø¯Ù†Û•ÙˆÛ•' : 'Ù†Ø´Ø±'}</span>
+          <span>{currentLang === 'en' ? 'Post' : currentLang === 'ku' ? 'بلاوکردنەوە' : 'نشر'}</span>
         </button>
 
       </div>
@@ -853,7 +853,7 @@ export default function SocialFeed({
                   </h3>
                   <div className="flex items-center gap-1.5 text-[10px] text-zinc-500 font-bold">
                     <span className="capitalize text-zinc-400">{post.governorate}</span>
-                    <span>â€¢</span>
+                    <span>•</span>
                     <span>{post.timeAgo[currentLang]}</span>
                   </div>
                 </div>
@@ -895,7 +895,7 @@ export default function SocialFeed({
                 />
               ) : (
                 <div className="p-8 text-center text-zinc-500 font-mono text-[11px]">
-                  <span>ðŸ“ Text Announcement Only</span>
+                  <span>📝 Text Announcement Only</span>
                 </div>
               )}
             </div>
@@ -913,7 +913,7 @@ export default function SocialFeed({
                         {post.fileAttachment.name}
                       </span>
                       <span className="text-[10px] text-zinc-500 block font-mono">
-                        {post.fileAttachment.size} â€¢ Verified Menu Flyer File
+                        {post.fileAttachment.size} • Verified Menu Flyer File
                       </span>
                     </div>
                   </div>
@@ -1064,8 +1064,8 @@ export default function SocialFeed({
             onClick={handleLoadMorePosts}
             className="text-xs font-black text-white bg-slate-900/80 hover:bg-slate-800 border border-zinc-800 px-6 py-3 rounded-xl transition cursor-pointer flex items-center gap-2 hover:border-luxury-gold/50"
           >
-            <span>ðŸ”„</span>
-            <span>{currentLang === 'en' ? 'Load More Stories' : currentLang === 'ku' ? 'Ù¾Ø§Ú©Û•ØªÛŒ Ú†ÛŒØ±Û†Ú©ÛŒ Ø²ÛŒØ§ØªØ±' : 'ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ù…Ø²ÙŠØ¯ Ù…Ù† Ø§Ù„Ù‚ØµØµ'}</span>
+            <span>🔄</span>
+            <span>{currentLang === 'en' ? 'Load More Stories' : currentLang === 'ku' ? 'پاکەتی چیرۆکی زیاتر' : 'تحميل المزيد من القصص'}</span>
           </button>
         </div>
       )}
@@ -1075,7 +1075,7 @@ export default function SocialFeed({
         <div className="text-center py-16 bg-slate-900/10 border border-zinc-900/40 rounded-3xl p-8 flex flex-col items-center">
           <ShoppingBag className="w-12 h-12 text-zinc-700 mb-3" />
           <h3 className="text-sm font-bold text-white mb-1">
-            {currentLang === 'en' ? 'No Live Broadcasts' : currentLang === 'ku' ? 'Ù‡ÛŒÚ† Ù¾Û•Ø®Ø´ÛŽÚ©ÛŒ Ú•Ø§Ø³ØªÛ•ÙˆØ®Û† Ù†ÛŒÛŒÛ•' : 'Ù„Ø§ ØªÙˆØ¬Ø¯ Ù…Ù†Ø´ÙˆØ±Ø§Øª Ø­ÙŠØ©'}
+            {currentLang === 'en' ? 'No Live Broadcasts' : currentLang === 'ku' ? 'هیچ پەخشێکی ڕاستەوخۆ نییە' : 'لا توجد منشورات حية'}
           </h3>
           <p className="text-xs text-zinc-500 max-w-sm mb-4 leading-relaxed">
             {currentLang === 'en' 
@@ -1094,11 +1094,11 @@ export default function SocialFeed({
             {isGeneratingLive ? (
               <>
                 <span className="w-3 h-3 border-2 border-white/50 border-t-transparent rounded-full animate-spin"></span>
-                <span>{currentLang === 'en' ? 'Populating...' : 'Ø¬Ø§Ø±ÙŠ Ø§Ù„ØªÙˆÙ„ÙŠØ¯...'}</span>
+                <span>{currentLang === 'en' ? 'Populating...' : 'جاري التوليد...'}</span>
               </>
             ) : (
               <>
-                <span>âœ¨</span>
+                <span>✨</span>
                 <span>
                   {currentLang === 'en'
                     ? `Seed ${govNameText} Feed`

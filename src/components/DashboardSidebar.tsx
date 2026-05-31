@@ -23,12 +23,12 @@ export default function DashboardSidebar({
   const isRtl = currentLang === 'ar' || currentLang === 'ku';
 
   const menuItems = [
-    { key: 'overview', icon: LayoutDashboard, label: { en: 'Dashboard Overview', ar: 'Ù†Ø¸Ø±Ø© Ø¹Ø§Ù…Ø© Ø¹Ù„Ù‰ Ø§Ù„Ù†Ø´Ø§Ø·', ku: 'ØªÛŽÚ•ÙˆØ§Ù†ÛŒÙ†ÛŒ Ú¯Ø´ØªÛŒ' } },
-    { key: 'edit_profile', icon: Edit3, label: { en: 'Edit Business Profile', ar: 'ØªØ¹Ø¯ÙŠÙ„ Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù†Ø´Ø§Ø·', ku: 'Ø¯Û•Ø³ØªÚ©Ø§Ø±ÛŒÚ©Ø±Ø¯Ù†ÛŒ Ø²Ø§Ù†ÛŒØ§Ø±ÛŒ' } },
-    { key: 'media', icon: Image, label: { en: 'Photos & Covering', ar: 'Ù…Ø¹Ø±Ø¶ Ø§Ù„Ø£Ù„Ø¨ÙˆÙ… ÙˆØµÙˆØ± Ø§Ù„ØºÙ„Ø§Ù', ku: 'Ø§Ù„Ø¨ÙˆÙ… Ùˆ ÙˆÛŽÙ†Û•Ú©Ø§Ù†' } },
-    { key: 'social_feed', icon: Flame, label: { en: 'Live Community Offers', ar: 'Ø¨Ø« Ø§Ù„Ø¹Ø±ÙˆØ¶ ÙˆØ§Ù„Ù…Ù†Ø´ÙˆØ±Ø§Øª', ku: 'Ø¨ÚµØ§ÙˆÚ©Ø±Ø¯Ù†Û•ÙˆÛ•ÛŒ Ø¦Û†ÙÛ•Ø±' } },
-    { key: 'contact', icon: Contact, label: { en: 'Contact Channels', ar: 'Ù‚Ù†ÙˆØ§Øª ÙˆØ§ØªØ³Ø§Ø¨ ÙˆØ§Ù„Ø§ØªØµØ§Ù„', ku: 'Ù‡ÛŽÚµÛ•Ú©Ø§Ù†ÛŒ Ù¾Û•ÛŒÙˆÛ•Ù†Ø¯ÛŒ' } },
-    { key: 'analytics', icon: BarChart3, label: { en: 'HQ Views Analytics', ar: 'Ø¥Ø­ØµØ§Ø¦ÙŠØ§Øª Ø§Ù„Ù…Ø´Ø§Ù‡Ø¯Ø§Øª ÙˆØ§Ù„Ù†Ù…Ùˆ', ku: 'Ø¦Ø§Ù…Ø§Ø±Û•Ú©Ø§Ù†ÛŒ Ø¨ÛŒÙ†ÛŒÙ†' } },
+    { key: 'overview', icon: LayoutDashboard, label: { en: 'Dashboard Overview', ar: 'نظرة عامة على النشاط', ku: 'تێڕوانینی گشتی' } },
+    { key: 'edit_profile', icon: Edit3, label: { en: 'Edit Business Profile', ar: 'تعديل بيانات النشاط', ku: 'دەستکاریکردنی زانیاری' } },
+    { key: 'media', icon: Image, label: { en: 'Photos & Covering', ar: 'معرض الألبوم وصور الغلاف', ku: 'البوم و وێنەکان' } },
+    { key: 'social_feed', icon: Flame, label: { en: 'Live Community Offers', ar: 'بث العروض والمنشورات', ku: 'بڵاوکردنەوەی ئۆفەر' } },
+    { key: 'contact', icon: Contact, label: { en: 'Contact Channels', ar: 'قنوات واتساب والاتصال', ku: 'هێڵەکانی پەیوەندی' } },
+    { key: 'analytics', icon: BarChart3, label: { en: 'HQ Views Analytics', ar: 'إحصائيات المشاهدات والنمو', ku: 'ئامارەکانی بینین' } },
   ] as const;
 
   return (
@@ -42,7 +42,7 @@ export default function DashboardSidebar({
         >
           <ArrowLeft className={`w-4 h-4 text-zinc-400 ${isRtl ? 'rotate-180' : ''}`} />
           <span>
-            {currentLang === 'en' ? 'Back to Discovery Lobby' : isRtl ? 'Ø§Ù„Ø±Ø¬ÙˆØ¹ Ø¥Ù„Ù‰ ØµÙØ­Ø© Ø§Ù„Ø§Ø³ØªÙƒØ´Ø§Ù' : 'Ú¯Û•Ú•Ø§Ù†Û•ÙˆÛ• Ø¨Û† Ù„Û†Ø¨ÛŒ'}
+            {currentLang === 'en' ? 'Back to Discovery Lobby' : isRtl ? 'الرجوع إلى صفحة الاستكشاف' : 'گەڕانەوە بۆ لۆبی'}
           </span>
         </button>
       )}

@@ -72,11 +72,11 @@ export default function BusinessOnboarding({
 
   const nextStep = () => {
     if (step === 1 && !name.trim()) {
-      setError(currentLang === 'en' ? 'Business identity title is required.' : 'Ø§Ø³Ù… Ø§Ù„Ù†Ø´Ø§Ø· Ø§Ù„ØªØ¬Ø§Ø±ÙŠ Ù…Ø·Ù„ÙˆØ¨.');
+      setError(currentLang === 'en' ? 'Business identity title is required.' : 'اسم النشاط التجاري مطلوب.');
       return;
     }
     if (step === 2 && (!address.trim() || !phone.trim())) {
-      setError(currentLang === 'en' ? 'Detailed address and phone are critical for Iraqi customers.' : 'Ø§Ù„Ø¹Ù†ÙˆØ§Ù† ÙˆØ±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙ Ù…Ø·Ù„ÙˆØ¨ÙŠÙ† Ù„ØªØ³Ù‡ÙŠÙ„ Ø§Ù„ØªÙˆØ§ØµÙ„ Ù…Ø¹ Ø§Ù„Ø²Ø¨Ø§Ø¦Ù†.');
+      setError(currentLang === 'en' ? 'Detailed address and phone are critical for Iraqi customers.' : 'العنوان ورقم الهاتف مطلوبين لتسهيل التواصل مع الزبائن.');
       return;
     }
     setError('');
@@ -90,7 +90,7 @@ export default function BusinessOnboarding({
 
   const handleFinish = async () => {
     if (!description.trim()) {
-      setError(currentLang === 'en' ? 'Please provide a short social summary/bio of your spot.' : 'ÙŠØ±Ø¬Ù‰ ÙƒØªØ§Ø¨Ø© ÙˆØµÙ Ù‚ØµÙŠØ± Ù„Ø¬Ø°Ø¨ Ø§Ù„Ø²ÙˆØ§Ø±.');
+      setError(currentLang === 'en' ? 'Please provide a short social summary/bio of your spot.' : 'يرجى كتابة وصف قصير لجذب الزوار.');
       return;
     }
 
@@ -149,13 +149,13 @@ export default function BusinessOnboarding({
             </div>
             <div>
               <span className="text-[10px] text-luxury-gold font-bold tracking-widest block uppercase font-mono">
-                {currentLang === 'en' ? `Step ${step} of ${totalSteps}` : `Ø§Ù„Ø®Ø·ÙˆØ© ${step} Ù…Ù† ${totalSteps}`}
+                {currentLang === 'en' ? `Step ${step} of ${totalSteps}` : `الخطوة ${step} من ${totalSteps}`}
               </span>
               <h2 className="text-base sm:text-lg font-black tracking-tight mt-0.5">
-                {step === 1 && (currentLang === 'en' ? 'Launch Your Local Spotlight' : 'Ù‡ÙˆÙŠØ© Ù…ØµÙ„Ø­ØªÙƒ Ø§Ù„ØªØ¬Ø§Ø±ÙŠØ©')}
-                {step === 2 && (currentLang === 'en' ? 'Contact & Navigation Rules' : 'Ø§Ù„ØªÙˆØ§ØµÙ„ ÙˆØ§Ù„Ø¹Ù†ÙˆØ§Ù† Ø¨Ø§Ù„Ø¹Ø±Ø§Ù‚')}
-                {step === 3 && (currentLang === 'en' ? 'Brand Visual Layout' : 'Ø§Ù„Ù…Ø¸Ù‡Ø± Ø§Ù„Ø®Ø§Ø±Ø¬ÙŠ ÙˆØ§Ù„ØµÙˆØ±')}
-                {step === 4 && (currentLang === 'en' ? 'Description & Engagement links' : 'Ø§Ù„ØªÙØ§ØµÙŠÙ„ ÙˆØ±ÙˆØ§Ø¨Ø· Ø§Ù„Ø³ÙˆØ´ÙŠØ§Ù„ Ù…ÙŠØ¯ÙŠØ§')}
+                {step === 1 && (currentLang === 'en' ? 'Launch Your Local Spotlight' : 'هوية مصلحتك التجارية')}
+                {step === 2 && (currentLang === 'en' ? 'Contact & Navigation Rules' : 'التواصل والعنوان بالعراق')}
+                {step === 3 && (currentLang === 'en' ? 'Brand Visual Layout' : 'المظهر الخارجي والصور')}
+                {step === 4 && (currentLang === 'en' ? 'Description & Engagement links' : 'التفاصيل وروابط السوشيال ميديا')}
               </h2>
             </div>
           </div>
@@ -163,7 +163,7 @@ export default function BusinessOnboarding({
             onClick={onCancel}
             className="text-xs font-bold text-zinc-400 hover:text-white transition px-3 py-1.5 rounded-lg bg-white/5 cursor-pointer"
           >
-            {currentLang === 'en' ? 'Exit Builder' : 'Ø¥Ù„ØºØ§Ø¡'}
+            {currentLang === 'en' ? 'Exit Builder' : 'إلغاء'}
           </button>
         </div>
 
@@ -186,7 +186,7 @@ export default function BusinessOnboarding({
               >
                 <div>
                   <label className="text-xs font-extrabold text-[#C8A95F] block mb-2 uppercase tracking-wide">
-                    {currentLang === 'en' ? 'Business Title (Name)' : 'Ø§Ø³Ù… ÙƒØ§ÙÙŠÙ‡Ùƒ Ø£Ùˆ ØµØ§Ù„ÙˆÙ†Ùƒ Ø£Ùˆ Ù…ØªØ¬Ø±Ùƒ'}
+                    {currentLang === 'en' ? 'Business Title (Name)' : 'اسم كافيهك أو صالونك أو متجرك'}
                   </label>
                   <input
                     type="text"
@@ -196,7 +196,7 @@ export default function BusinessOnboarding({
                       setName(e.target.value);
                       setError('');
                     }}
-                    placeholder={currentLang === 'en' ? 'e.g. Damascus Jasmine Cafe' : 'Ù…Ø«Ø§Ù„: ÙƒØ§ÙÙŠÙ‡ ÙŠØ§Ø³Ù…ÙŠÙ† Ø§Ù„Ø´Ø§Ù…'}
+                    placeholder={currentLang === 'en' ? 'e.g. Damascus Jasmine Cafe' : 'مثال: كافيه ياسمين الشام'}
                     className="w-full bg-white/5 border border-white/10 focus:border-luxury-gold/60 focus:outline-none rounded-xl text-xs px-4 py-3 text-white placeholder-zinc-500 font-semibold"
                   />
                 </div>
@@ -204,7 +204,7 @@ export default function BusinessOnboarding({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="text-xs font-extrabold text-[#C8A95F] block mb-2 uppercase tracking-wide">
-                      {currentLang === 'en' ? 'Local Category' : 'Ø§Ù„ÙØ¦Ø© Ø£Ùˆ Ø§Ù„Ù†Ø´Ø§Ø·'}
+                      {currentLang === 'en' ? 'Local Category' : 'الفئة أو النشاط'}
                     </label>
                     <select
                       value={category}
@@ -219,7 +219,7 @@ export default function BusinessOnboarding({
 
                   <div>
                     <label className="text-xs font-extrabold text-[#C8A95F] block mb-2 uppercase tracking-wide">
-                      {currentLang === 'en' ? 'Iraqi Governorate' : 'Ø§Ù„Ù…Ø­Ø§ÙØ¸Ø© Ø§Ù„Ø¹Ø±Ø§Ù‚ÙŠØ©'}
+                      {currentLang === 'en' ? 'Iraqi Governorate' : 'المحافظة العراقية'}
                     </label>
                     <select
                       value={governorate}
@@ -245,7 +245,7 @@ export default function BusinessOnboarding({
               >
                 <div>
                   <label className="text-xs font-extrabold text-[#C8A95F] block mb-2 uppercase tracking-wide">
-                    {currentLang === 'en' ? 'Detailed High-street Address' : 'Ø§Ù„Ø¹Ù†ÙˆØ§Ù† Ø§Ù„ØªÙØµÙŠÙ„ÙŠ Ø§Ù„Ø¯Ù‚ÙŠÙ‚'}
+                    {currentLang === 'en' ? 'Detailed High-street Address' : 'العنوان التفصيلي الدقيق'}
                   </label>
                   <div className="relative">
                     <MapPin className="absolute left-3.5 top-3.5 w-4 h-4 text-luxury-gold" />
@@ -257,7 +257,7 @@ export default function BusinessOnboarding({
                         setAddress(e.target.value);
                         setError('');
                       }}
-                      placeholder={currentLang === 'en' ? 'Baghdad, Karrada Inside, near Kahramana square' : 'Ø¨ØºØ¯Ø§Ø¯ØŒ Ø§Ù„ÙƒØ±Ø§Ø¯Ø© Ø¯Ø§Ø®Ù„ØŒ Ù‚Ø±Ø¨ Ø³Ø§Ø­Ø© ÙƒÙ‡Ø±Ù…Ø§Ù†Ø©'}
+                      placeholder={currentLang === 'en' ? 'Baghdad, Karrada Inside, near Kahramana square' : 'بغداد، الكرادة داخل، قرب ساحة كهرمانة'}
                       className="w-full bg-white/5 border border-white/10 focus:border-luxury-gold/60 focus:outline-none rounded-xl text-xs pl-10 pr-4 py-3.5 text-white placeholder-zinc-500 font-semibold"
                     />
                   </div>
@@ -266,7 +266,7 @@ export default function BusinessOnboarding({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="text-xs font-extrabold text-[#C8A95F] block mb-2 uppercase tracking-wide">
-                      {currentLang === 'en' ? 'Primary Phone Number' : 'Ø±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙ Ù„Ù„ØªÙˆØ§ØµÙ„'}
+                      {currentLang === 'en' ? 'Primary Phone Number' : 'رقم الهاتف للتواصل'}
                     </label>
                     <input
                       type="tel"
@@ -283,7 +283,7 @@ export default function BusinessOnboarding({
 
                   <div>
                     <label className="text-xs font-extrabold text-[#C8A95F] block mb-2 uppercase tracking-wide">
-                      {currentLang === 'en' ? 'WhatsApp (Optional)' : 'Ø±Ù‚Ù… Ø§Ù„ÙˆØ§ØªØ³Ø§Ø¨ Ù„Ù„Ø¹Ø±ÙˆØ¶ Ø§Ù„Ù…ØªÙˆØ§ØµÙ„Ø©'}
+                      {currentLang === 'en' ? 'WhatsApp (Optional)' : 'رقم الواتساب للعروض المتواصلة'}
                     </label>
                     <input
                       type="tel"
@@ -307,7 +307,7 @@ export default function BusinessOnboarding({
               >
                 <div>
                   <label className="text-xs font-extrabold text-[#C8A95F] block mb-2 uppercase tracking-wide">
-                    {currentLang === 'en' ? 'Select or Input Logo/Profile URL' : 'ØµÙˆØ±Ø© Ø§Ù„Ø´Ø¹Ø§Ø± Ø£Ùˆ Ø§Ù„Ù‡ÙˆÙŠØ©'}
+                    {currentLang === 'en' ? 'Select or Input Logo/Profile URL' : 'صورة الشعار أو الهوية'}
                   </label>
                   <input
                     type="url"
@@ -334,7 +334,7 @@ export default function BusinessOnboarding({
 
                 <div>
                   <label className="text-xs font-extrabold text-[#C8A95F] block mb-2 uppercase tracking-wide">
-                    {currentLang === 'en' ? 'Perfect Cover Photo Preset Selection' : 'ØµÙˆØ±Ø© Ø§Ù„ØºÙ„Ø§Ù Ù„Ù„Ù…ØªØ¬Ø± (Ø§Ø®ØªØ± Ù…Ù† Ø§Ù„ØµÙˆØ± Ø§Ù„ÙØ®Ù…Ø© Ø¨Ø§Ù„Ø£Ø³ÙÙ„ Ø£Ùˆ Ø¶Ø¹ Ø±Ø§Ø¨Ø·Ø§Ù‹)'}
+                    {currentLang === 'en' ? 'Perfect Cover Photo Preset Selection' : 'صورة الغلاف للمتجر (اختر من الصور الفخمة بالأسفل أو ضع رابطاً)'}
                   </label>
                   <input
                     type="url"
@@ -375,7 +375,7 @@ export default function BusinessOnboarding({
               >
                 <div>
                   <label className="text-xs font-extrabold text-[#C8A95F] block mb-2 uppercase tracking-wide">
-                    {currentLang === 'en' ? 'Social Pitch / Description line' : 'ÙˆØµÙ Ù…ØµÙ„Ø­ØªÙƒ Ù„Ø¬Ø°Ø¨ Ø§Ù„Ø´Ø¨Ø§Ø¨ ÙˆØ§Ù„Ù…Ø³ØªÙƒØ´ÙÙŠÙ†'}
+                    {currentLang === 'en' ? 'Social Pitch / Description line' : 'وصف مصلحتك لجذب الشباب والمستكشفين'}
                   </label>
                   <textarea
                     required
@@ -385,7 +385,7 @@ export default function BusinessOnboarding({
                       setError('');
                     }}
                     rows={3}
-                    placeholder={currentLang === 'en' ? 'Describe the vibe, specialty and cool elements of your space...' : 'Ø§ÙƒØªØ¨ Ø¹Ù† ØªÙ…ÙŠØ² ÙƒØ§ÙÙŠÙ‡ÙƒØŒ Ø£ÙØ¶Ù„ Ø§Ù„Ø£ÙƒÙ„Ø§ØªØŒ Ø§Ù„Ø¯ÙŠÙƒÙˆØ± ÙˆØ§Ù„Ø£Ø¬ÙˆØ§Ø¡ Ø§Ù„Ø±Ø§Ø¦Ø¹Ø©...'}
+                    placeholder={currentLang === 'en' ? 'Describe the vibe, specialty and cool elements of your space...' : 'اكتب عن تميز كافيهك، أفضل الأكلات، الديكور والأجواء الرائعة...'}
                     className="w-full bg-white/5 border border-white/10 focus:border-luxury-gold/60 focus:outline-none rounded-xl text-xs px-4 py-3 text-white placeholder-zinc-500 font-semibold leading-relaxed"
                   />
                 </div>
@@ -393,7 +393,7 @@ export default function BusinessOnboarding({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="text-xs font-extrabold text-[#C8A95F] block mb-1 uppercase tracking-wide">
-                      {currentLang === 'en' ? 'Instagram Username' : 'Ø±Ø§Ø¨Ø· Ø¥Ù†Ø³ØªØºØ±Ø§Ù… (Ø§Ø®ØªÙŠØ§Ø±ÙŠ)'}
+                      {currentLang === 'en' ? 'Instagram Username' : 'رابط إنستغرام (اختياري)'}
                     </label>
                     <input
                       type="text"
@@ -406,7 +406,7 @@ export default function BusinessOnboarding({
 
                   <div>
                     <label className="text-xs font-extrabold text-[#C8A95F] block mb-1 uppercase tracking-wide">
-                      {currentLang === 'en' ? 'Facebook Page' : 'Ø±Ø§Ø¨Ø· ÙÙŠØ³Ø¨ÙˆÙƒ (Ø§Ø®ØªÙŠØ§Ø±ÙŠ)'}
+                      {currentLang === 'en' ? 'Facebook Page' : 'رابط فيسبوك (اختياري)'}
                     </label>
                     <input
                       type="text"
@@ -431,7 +431,7 @@ export default function BusinessOnboarding({
               step === 1 ? 'opacity-40 cursor-not-allowed' : 'hover:bg-white/5 hover:border-white/20'
             }`}
           >
-            <ArrowLeft className="w-4 h-4" /> {currentLang === 'en' ? 'Previous' : 'Ø§Ù„Ø³Ø§Ø¨Ù‚'}
+            <ArrowLeft className="w-4 h-4" /> {currentLang === 'en' ? 'Previous' : 'السابق'}
           </button>
 
           {step < totalSteps ? (
@@ -439,7 +439,7 @@ export default function BusinessOnboarding({
               onClick={nextStep}
               className="px-6 py-3 bg-[#FF6B4A] hover:bg-orange-600 text-[#1A1A1A] text-xs font-black uppercase tracking-wider rounded-xl transition cursor-pointer flex items-center gap-2 shadow-lg hover:scale-102 active:scale-95"
             >
-              {currentLang === 'en' ? 'Next Stage' : 'Ø§Ù„ØªØ§Ù„ÙŠ'} <ArrowRight className="w-4 h-4" />
+              {currentLang === 'en' ? 'Next Stage' : 'التالي'} <ArrowRight className="w-4 h-4" />
             </button>
           ) : (
             <button
@@ -452,7 +452,7 @@ export default function BusinessOnboarding({
               ) : (
                 <>
                   <Sparkles className="w-4 h-4 text-white shrink-0 animate-bounce" />
-                  <span>{currentLang === 'en' ? 'Deploy Live Space! ðŸŽ‰' : 'Ø§Ù†Ø´Ø± Ù…Ø´Ø±ÙˆØ¹Ùƒ Ø­Ø§Ù„Ø§Ù‹! ðŸŽ‰'}</span>
+                  <span>{currentLang === 'en' ? 'Deploy Live Space! 🎉' : 'انشر مشروعك حالاً! 🎉'}</span>
                 </>
               )}
             </button>

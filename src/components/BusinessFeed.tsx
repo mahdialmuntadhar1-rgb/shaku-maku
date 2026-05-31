@@ -89,12 +89,12 @@ export default function BusinessFeed({
     e.preventDefault();
     if (!newReviewComment.trim()) return;
 
-    const reviewer = newReviewerName.trim() || (currentLang === 'en' ? 'Visitor' : currentLang === 'ku' ? 'Ú¯Û•Ø´ØªÛŒØ§Ø±' : 'Ø²Ø§Ø¦Ø±');
+    const reviewer = newReviewerName.trim() || (currentLang === 'en' ? 'Visitor' : currentLang === 'ku' ? 'گەشتیار' : 'زائر');
     const newFeedback = {
       reviewer,
       rating: newReviewRating,
       comment: newReviewComment,
-      date: currentLang === 'en' ? 'Just now' : currentLang === 'ku' ? 'Ø¦ÛŽØ³ØªØ§' : 'Ø§Ù„Ø¢Ù†'
+      date: currentLang === 'en' ? 'Just now' : currentLang === 'ku' ? 'ئێستا' : 'الآن'
     };
 
     setLocalReviews(prev => ({
@@ -168,7 +168,7 @@ export default function BusinessFeed({
                           className="absolute top-2 left-2 z-10 flex items-center gap-1 cursor-pointer bg-[#1A1A1A]/95 backdrop-blur-sm lg:hover:bg-[#0F2E2F] text-[8px] xs:text-[10px] text-luxury-gold font-black px-1.5 xs:px-2.5 py-0.5 xs:py-1 rounded-full border border-luxury-gold/50 animate-pulse transition"
                         >
                           <span className="w-1.5 h-1.5 rounded-full bg-luxury-gold"></span>
-                          <span>{currentLang === 'en' ? 'Live Story' : currentLang === 'ku' ? 'Ø³ØªÛ†Ø±ÛŒ' : 'Ù‚ØµØ© Ø­ÙŠØ©'}</span>
+                          <span>{currentLang === 'en' ? 'Live Story' : currentLang === 'ku' ? 'ستۆری' : 'قصة حية'}</span>
                         </div>
                       )}
 
@@ -320,7 +320,7 @@ export default function BusinessFeed({
                   disabled={loadingCategories[category.id]}
                   className="text-[11px] font-bold text-luxury-teal hover:text-white bg-white hover:bg-luxury-teal px-4 py-1.5 rounded-full border border-luxury-teal/30 transition-all cursor-pointer shadow-sm disabled:opacity-50"
                 >
-                  {loadingCategories[category.id] ? (currentLang === 'en' ? 'Fetching...' : currentLang === 'ku' ? 'ØªÛ†Ù…Ø§Ø±Ú©Ø±Ø¯Ù†...' : 'Ø¬Ø§Ø±ÙŠ Ø§Ù„ØªØ­Ù…ÙŠÙ„...') : (isExpanded ? t.showLess : `${t.loadMore} (${categoryBizs.length - 3}) +`)}
+                  {loadingCategories[category.id] ? (currentLang === 'en' ? 'Fetching...' : currentLang === 'ku' ? 'تۆمارکردن...' : 'جاري التحميل...') : (isExpanded ? t.showLess : `${t.loadMore} (${categoryBizs.length - 3}) +`)}
                 </button>
               </div>
             )}
@@ -338,10 +338,10 @@ export default function BusinessFeed({
           </h3>
           <p className="text-xs text-zinc-500">
             {currentLang === 'en' 
-              ? 'Try switching the governorate back to "All Iraq ðŸ‡®ðŸ‡¶" to see national social hubs!'
+              ? 'Try switching the governorate back to "All Iraq 🇮🇶" to see national social hubs!'
               : currentLang === 'ku'
-                ? 'Ù‡Û•ÙˆÚµ Ø¨Ø¯Û• Ù¾Ø§Ø±ÛŽØ²Ú¯Ø§Ú©Û• Ø¨Ú¯Û†Ú•ÛŒØª Ø¨Û† "Ù‡Û•Ù…ÙˆÙˆ Ø¹ÛŽØ±Ø§Ù‚ ðŸ‡®ðŸ‡¶" ØªØ§ Ø´ÙˆÛŽÙ†Û•Ú©Ø§Ù† Ø¨Ø¨ÛŒÙ†ÛŒ!'
-                : 'Ø­Ø§ÙˆÙ„ ØªØºÙŠÙŠØ± Ø§Ù„Ù…Ø­Ø§ÙØ¸Ø© Ø¥Ù„Ù‰ "ÙƒÙ„ Ø§Ù„Ø¹Ø±Ø§Ù‚ ðŸ‡®ðŸ‡¶" Ù„ØªØ³ØªØ¹Ø±Ø¶ Ø§Ù„Ø£Ù…Ø§ÙƒÙ† ÙˆØ§Ù„Ø´Ø±ÙƒØ§Øª Ø¹Ù„Ù‰ Ù†Ø·Ø§Ù‚ Ø§Ù„ÙˆØ·Ù†!'}
+                ? 'هەوڵ بدە پارێزگاکە بگۆڕیت بۆ "هەموو عێراق 🇮🇶" تا شوێنەکان ببینی!'
+                : 'حاول تغيير المحافظة إلى "كل العراق 🇮🇶" لتستعرض الأماكن والشركات على نطاق الوطن!'}
           </p>
         </div>
       )}
@@ -398,7 +398,7 @@ export default function BusinessFeed({
                   <div className="flex items-center gap-1 text-sm text-yellow-500 font-extrabold bg-slate-950/80 px-2.5 py-1 rounded-xl border border-yellow-500/20">
                     <Star className="w-3.5 h-3.5 fill-yellow-500" />
                     <span>{selectedBiz.rating}</span>
-                    <span className="text-zinc-500 font-normal text-xs">({selectedBiz.reviewsCount} {currentLang === 'en' ? 'reviews' : 'ØªÙ‚ÙŠÙŠÙ…'})</span>
+                    <span className="text-zinc-500 font-normal text-xs">({selectedBiz.reviewsCount} {currentLang === 'en' ? 'reviews' : 'تقييم'})</span>
                   </div>
                 </div>
 
@@ -410,7 +410,7 @@ export default function BusinessFeed({
                 {/* Slogan details and verification status */}
                 <div>
                   <h4 className="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2">
-                    {currentLang === 'en' ? 'Lifestyle Description' : currentLang === 'ku' ? 'ØªØ§ÛŒØ¨Û•ØªÙ…Û•Ù†Ø¯ÛŒ Ø´ÙˆÛŽÙ†Û•Ú©Û•' : 'Ù†Ø¨Ø°Ø© Ø¹Ù† Ø§Ù„Ù…ÙƒØ§Ù† Ø§Ù„ØªØ¬Ø§Ø±ÙŠ'}
+                    {currentLang === 'en' ? 'Lifestyle Description' : currentLang === 'ku' ? 'تایبەتمەندی شوێنەکە' : 'نبذة عن المكان التجاري'}
                   </h4>
                   <p className="text-sm text-zinc-300 leading-relaxed">
                     {selectedBiz.description[currentLang]}
@@ -459,7 +459,7 @@ export default function BusinessFeed({
                       <span>{t.reviewsTitle}</span>
                     </h3>
                     <span className="text-xs text-zinc-400">
-                      {(localReviews[selectedBiz.id] || []).length + 3} {currentLang === 'en' ? 'Reviews posted' : 'Ø±Ø¯ÙˆØ¯'}
+                      {(localReviews[selectedBiz.id] || []).length + 3} {currentLang === 'en' ? 'Reviews posted' : 'ردود'}
                     </span>
                   </div>
 
@@ -468,7 +468,7 @@ export default function BusinessFeed({
                     <div className="grid grid-cols-2 gap-2">
                       <input
                         type="text"
-                        placeholder={currentLang === 'en' ? 'Your Name' : currentLang === 'ku' ? 'Ù†Ø§ÙˆÛŒ ØªÛ†' : 'Ø§Ø³Ù…Ùƒ Ø§Ù„ÙƒØ±ÙŠÙ…'}
+                        placeholder={currentLang === 'en' ? 'Your Name' : currentLang === 'ku' ? 'ناوی تۆ' : 'اسمك الكريم'}
                         value={newReviewerName}
                         onChange={(e) => setNewReviewerName(e.target.value)}
                         className="bg-slate-950 text-white text-xs p-2 rounded-xl border border-zinc-800 focus:outline-none focus:border-cyan-400"
@@ -546,8 +546,8 @@ export default function BusinessFeed({
                           {currentLang === 'en' 
                             ? 'Absolutely breathtaking atmosphere! The staff is super respectful. Recommended for studying.' 
                             : currentLang === 'ku'
-                              ? 'Ø³Û•Ø±Ù†Ø¬Ú•Ø§Ú©ÛŽØ´ Ø¨ÙˆÙˆØŒ Ø®Ø²Ù…Û•ØªÚ¯ÙˆØ²Ø§Ø±ÛŒÛŒÛ•Ú©Ø§Ù† Ø²Û†Ø± Ø¨Ø§Ø´ Ø¨ÙˆÙˆÙ†.'
-                              : 'Ù…ÙƒØ§Ù† Ø®ÙŠØ§Ù„ÙŠ ÙˆØ¬Ù„Ø³Ø© ÙØ¯ Ø´ÙŠ Ø±Ø§Ù‚ÙŠ Ù„Ù„Ø¢Ø®Ø±ØŒ Ù…ÙˆØ¸ÙÙŠÙ† ÙÙŠ ØºØ§ÙŠØ© Ø§Ù„Ø§Ø­ØªØ±Ø§Ù… ÙˆØ§Ù„Ø®Ø¯Ù…Ø© Ø³Ø±ÙŠØ¹Ø©.'}
+                              ? 'سەرنجڕاکێش بوو، خزمەتگوزارییەکان زۆر باش بوون.'
+                              : 'مكان خيالي وجلسة فد شي راقي للآخر، موظفين في غاية الاحترام والخدمة سريعة.'}
                         </p>
                         <span className="text-[10px] text-zinc-500 block">3 days ago</span>
                       </div>
@@ -569,8 +569,8 @@ export default function BusinessFeed({
                           {currentLang === 'en' 
                             ? "Highly recommended! Delicious menu items and wonderful interior layout." 
                             : currentLang === 'ku'
-                              ? 'Ø²Û†Ø± Ø¨Û• ØªØ§Ù… Ø¨ÙˆÙˆ Ùˆ Ø´ÙˆÛŽÙ†Û•Ú©Û• Ù…Û†Ø¯ÛŽØ±Ù†Û•!'
-                              : 'Ø§Ù„ÙˆØ¬Ø¨Ø§Øª Ù…Ù…ØªØ§Ø²Ø© ÙˆØ§Ù„Ù…ÙƒØ§Ù† ÙŠØ³ØªØ­Ù‚ Ø§Ù„Ø²ÙŠØ§Ø±Ø© ÙˆØ§Ù„ØªØ¬Ø±Ø¨Ø© Ù…Ø¹ Ø§Ù„Ø£ØµØ­Ø§Ø¨ ÙˆØ§Ù„Ø£Ù‡Ù„.'}
+                              ? 'زۆر بە تام بوو و شوێنەکە مۆدێرنە!'
+                              : 'الوجبات ممتازة والمكان يستحق الزيارة والتجربة مع الأصحاب والأهل.'}
                         </p>
                         <span className="text-[10px] text-zinc-500 block">1 week ago</span>
                       </div>
