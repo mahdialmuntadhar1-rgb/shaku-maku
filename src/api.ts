@@ -42,8 +42,8 @@ export const businessesApi = {
       const response = await api.get('/businesses', { params });
       return response.data;
     } catch (error: any) {
-      if (error.response?.status === 404) {
-        console.warn('Backend not found, using mock data');
+      if (!error.response || error.response.status === 404) {
+        console.warn('Backend unavailable, using mock data');
         const { MOCK_BUSINESSES } = await import('./mockData');
         let filtered = [...MOCK_BUSINESSES];
         if (params?.governorate) {
@@ -52,7 +52,7 @@ export const businessesApi = {
         if (params?.category) {
           filtered = filtered.filter(b => b.category === params.category);
         }
-        return { businesses: filtered, total: filtered.length };
+        return { data: filtered, businesses: filtered, total: filtered.length };
       }
       throw error;
     }

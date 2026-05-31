@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { Language, GovernorateCode, Business, SocialPost, UserProfile, HeroSlide } from './types';
 import { INITIAL_BUSINESSES, TRANSLATIONS, CATEGORIES, INITIAL_POSTS, GOVERNORATES, HERO_SLIDES } from './data';
+import { MOCK_BUSINESSES } from './mockData';
 import { authApi, businessesApi, postsApi, AuthResponse } from './api';
 
 // Saku Maku Modular Components
@@ -31,7 +32,7 @@ export default function App() {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 
   // Saku Maku core Reactive businesses database
-  const [businesses, setBusinesses] = useState<Business[]>([]);
+  const [businesses, setBusinesses] = useState<Business[]>(MOCK_BUSINESSES);
   
   // Saku Maku elevated Live Social posts stream
   const [posts, setPosts] = useState<SocialPost[]>([]);
@@ -84,7 +85,7 @@ export default function App() {
     try {
       // Try login first
       try {
-        const response = await authApi.login({ email: cleanEmail, password: dummyPassword });
+        const response = await authApi.login(cleanEmail, dummyPassword);
         setUser(response.user);
         localStorage.setItem("user", JSON.stringify(response.user));
         const isAdmin = response.user.email === 'mahdialmuntadhar1@gmail.com' || response.user.email === 'safaribosafar@gmail.com';
@@ -152,6 +153,11 @@ export default function App() {
   // Fetch businesses from Cloudflare API
   useEffect(() => {
     const fetchBusinesses = async () => {
+      if (!import.meta.env.VITE_API_URL) {
+        setBusinesses(MOCK_BUSINESSES);
+        return;
+      }
+
       try {
         const response = await businessesApi.list({ limit: 100 });
         if (response.data && response.data.length > 0) {
@@ -178,11 +184,11 @@ export default function App() {
           }));
           setBusinesses(transformedBusinesses);
         } else {
-          setBusinesses(INITIAL_BUSINESSES);
+          setBusinesses(MOCK_BUSINESSES.length > 0 ? MOCK_BUSINESSES : INITIAL_BUSINESSES);
         }
       } catch (error) {
         console.error("Error fetching businesses from API:", error);
-        setBusinesses(INITIAL_BUSINESSES);
+        setBusinesses(MOCK_BUSINESSES.length > 0 ? MOCK_BUSINESSES : INITIAL_BUSINESSES);
       }
     };
 
@@ -192,6 +198,11 @@ export default function App() {
   // Fetch posts from Cloudflare API
   useEffect(() => {
     const fetchPosts = async () => {
+      if (!import.meta.env.VITE_API_URL) {
+        setPosts(INITIAL_POSTS);
+        return;
+      }
+
       try {
         const response = await postsApi.getAll();
         if (response.data && response.data.length > 0) {
@@ -911,4 +922,3 @@ export default function App() {
     </div>
   );
 }
-
