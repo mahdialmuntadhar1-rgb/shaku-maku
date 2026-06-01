@@ -19,7 +19,7 @@ const label = (lang: Language, en: string, ar: string, ku: string) => {
   return en;
 };
 
-const AddBusinessForm: React.FC<AddBusinessFormProps> = ({ currentLang, onAddBusiness, user, onSignIn }) => {
+const AddBusinessForm: React.FC<AddBusinessFormProps> = ({ currentLang, onAddBusiness, user, userProfile, onSignIn }) => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [address, setAddress] = useState('');
@@ -34,11 +34,19 @@ const AddBusinessForm: React.FC<AddBusinessFormProps> = ({ currentLang, onAddBus
   });
 
   const canSubmit = name.trim() && description.trim() && address.trim() && phone.trim();
+  const isAdmin = userProfile?.role === 'admin';
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!user) {
       onSignIn();
+      return;
+    }
+    if (!isAdmin) {
+      setStatus({
+        type: 'error',
+        message: label(currentLang, 'Only admin can publish businesses directly.', 'فقط المشرف يمكنه نشر الأنشطة مباشرة.', 'تەنها بەڕێوەبەر دەتوانێت ڕاستەوخۆ بازرگانی بڵاوبکاتەوە.')
+      });
       return;
     }
     if (!canSubmit) return;
@@ -101,6 +109,11 @@ const AddBusinessForm: React.FC<AddBusinessFormProps> = ({ currentLang, onAddBus
       ) : (
         <form onSubmit={handleSubmit} className="space-y-4">
           <h2 className="text-2xl font-black text-luxury-bg">{label(currentLang, 'Add Business', 'إضافة نشاط جديد', 'زیادکردنی بازرگانی نوێ')}</h2>
+          {!isAdmin && (
+            <div className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+              {label(currentLang, 'You are signed in but only admins can publish businesses from this panel.', 'أنت مسجل الدخول لكن النشر من هذه اللوحة متاح للمشرف فقط.', 'چوویتە ژوورەوە بەڵام بڵاوکردنەوە لەم پانێلەدا تەنها بۆ بەڕێوەبەرە.')}
+            </div>
+          )}
 
           <input
             value={name}
@@ -162,7 +175,7 @@ const AddBusinessForm: React.FC<AddBusinessFormProps> = ({ currentLang, onAddBus
 
           <button
             type="submit"
-            disabled={!canSubmit || loading}
+            disabled={!canSubmit || loading || !isAdmin}
             className="w-full py-2.5 rounded-lg bg-luxury-teal text-white font-black disabled:opacity-60"
           >
             {loading ? label(currentLang, 'Saving...', 'جاري الحفظ...', 'پاشەکەوتکردن...') : label(currentLang, 'Save Business', 'حفظ النشاط', 'پاشەکەوتکردنی بازرگانی')}

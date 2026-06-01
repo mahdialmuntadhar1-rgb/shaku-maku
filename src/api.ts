@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { clearSession, normalizeEmail, normalizeUser, readSession, writeSession } from './auth/session';
+import { clearSession, isAdminEmail, normalizeEmail, normalizeUser, readSession, writeSession } from './auth/session';
 
 const DEFAULT_API_URL = 'https://iraq-businesses-dashboard.mahdialmuntadhar1.workers.dev/api';
 const rawApiUrl = (import.meta.env.VITE_API_URL || DEFAULT_API_URL).replace(/\/+$/, '');
@@ -58,6 +58,13 @@ const isBackendUnavailable = (error: unknown): boolean => {
   }
 
   return !error.response || error.response.status === 404 || error.code === 'ERR_NETWORK';
+};
+
+const requireAdminMutation = (action: string) => {
+  const email = readSession()?.user.email;
+  if (!isAdminEmail(email)) {
+    throw new Error(`Admin authorization required for ${action}.`);
+  }
 };
 
 const createLocalSession = (email: string, name?: string): AuthResponse => {
@@ -148,16 +155,19 @@ export const businessesApi = {
   },
 
   create: async <T = unknown>(business: Record<string, unknown>): Promise<T> => {
+    requireAdminMutation('business create');
     const response = await api.post<T>('/businesses', business);
     return response.data;
   },
 
   update: async <T = unknown>(id: number | string, business: Record<string, unknown>): Promise<T> => {
+    requireAdminMutation('business update');
     const response = await api.put<T>(`/businesses/${id}`, business);
     return response.data;
   },
 
   delete: async <T = unknown>(id: number | string): Promise<T> => {
+    requireAdminMutation('business delete');
     const response = await api.delete<T>(`/businesses/${id}`);
     return response.data;
   }
@@ -202,11 +212,13 @@ export const postsApi = {
   },
 
   update: async <T = unknown>(id: number | string, post: Record<string, unknown>): Promise<T> => {
+    requireAdminMutation('post update');
     const response = await api.put<T>(`/posts/${id}`, post);
     return response.data;
   },
 
   delete: async <T = unknown>(id: number | string, adminEmail?: string): Promise<T> => {
+    requireAdminMutation('post delete');
     const response = await api.delete<T>(`/posts/${id}`, {
       data: adminEmail ? { adminEmail } : undefined
     });
