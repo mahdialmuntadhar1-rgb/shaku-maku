@@ -120,6 +120,87 @@ function normalizeCategoryId(value: unknown): string {
   return map[key] || 'restaurant';
 }
 
+function buildSeedPostsFromBusinesses(businesses: Business[]): SocialPost[] {
+  const governorates = GOVERNORATES.filter((gov) => gov.code !== 'all');
+  const arCaptions = [
+    'وصلنا عرض اليوم من',
+    'جرّبنا المكان وهذا ملخّص سريع عن',
+    'إذا تبحث عن خيار ممتاز في المحافظة، شوف',
+    'تحديث جديد من',
+    'ترشيحنا لليوم من'
+  ];
+  const kuCaptions = [
+    'ئەمڕۆ پێشنیاری تایبەتمان هەیە بۆ',
+    'تاقیکردنەوەی خێرای ئێمە لە',
+    'ئەگەر بەدوای هەڵبژاردەی باش دەگەڕێیت، سەیری',
+    'نوێکاری ئەمڕۆ لە',
+    'پێشنیاری ڕۆژ لە'
+  ];
+  const arComments = ['ممتاز جدًا 👏', 'الخدمة كانت سريعة', 'السعر مناسب', 'المكان نظيف ومرتب'];
+  const kuComments = ['زۆر باش بوو 👏', 'خزمەتگوزارییەکە خێرا بوو', 'نرخی گونجاوە', 'شوێنەکە پاک و ڕێک بوو'];
+
+  const seeded: SocialPost[] = [];
+
+  governorates.forEach((gov) => {
+    const govBusinesses = businesses.filter((biz) => biz.governorate === gov.code);
+    if (!govBusinesses.length) return;
+
+    const uniqueByCategory = new Map<string, Business>();
+    govBusinesses.forEach((biz) => {
+      if (!uniqueByCategory.has(biz.category)) uniqueByCategory.set(biz.category, biz);
+    });
+
+    const selected: Business[] = [];
+    Array.from(uniqueByCategory.values()).forEach((biz) => {
+      if (selected.length < 5) selected.push(biz);
+    });
+    let cursor = 0;
+    while (selected.length < 5 && govBusinesses.length > 0) {
+      selected.push(govBusinesses[cursor % govBusinesses.length]);
+      cursor += 1;
+    }
+
+    selected.slice(0, 5).forEach((biz, index) => {
+      const comments = Array.from({ length: 2 + (index % 3) }).map((_, commentIndex) => ({
+        id: `seed-comment-${gov.code}-${index}-${commentIndex}`,
+        username: commentIndex % 2 === 0 ? 'baghdad_foodie' : 'kurdish_explorer',
+        text: commentIndex % 2 === 0 ? arComments[(index + commentIndex) % arComments.length] : kuComments[(index + commentIndex) % kuComments.length],
+        time: commentIndex % 2 === 0 ? 'الآن' : 'ئێستا',
+      }));
+
+      seeded.push({
+        id: `seed-${gov.code}-${index}`,
+        businessId: biz.id,
+        businessName: biz.name.ar || biz.name.ku || biz.name.en,
+        businessAvatar: biz.avatar || FALLBACK_AVATAR,
+        category: biz.category,
+        governorate: biz.governorate,
+        mediaUrl: biz.image || FALLBACK_BUSINESS_IMAGE,
+        caption: {
+          ar: `${arCaptions[index % arCaptions.length]} ${biz.name.ar || biz.name.en} — ${gov.name.ar}`,
+          ku: `${kuCaptions[index % kuCaptions.length]} ${biz.name.ku || biz.name.en} — ${gov.name.ku}`,
+          en: `${biz.name.en} update — ${gov.name.en}`
+        },
+        likes: 24 + index * 17,
+        commentsCount: comments.length,
+        shares: 4 + index * 2,
+        views: 180 + index * 70,
+        timeAgo: {
+          ar: `${index + 1} س`,
+          ku: `${index + 1} کاتژمێر`,
+          en: `${index + 1}h`
+        },
+        likedByUser: false,
+        savedByUser: false,
+        comments,
+        status: 'approved'
+      });
+    });
+  });
+
+  return seeded;
+}
+
 export default function App() {
   const [user, setUser] = useState<any>(authApi.getCurrentUser());
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
@@ -134,6 +215,7 @@ export default function App() {
   
   // Saku Maku elevated Live Social posts stream
   const [posts, setPosts] = useState<SocialPost[]>([]);
+  const [hasBackendPosts, setHasBackendPosts] = useState<boolean | null>(null);
   
   // Navigation active tab
   const [activeTab, setActiveTab] = useState<'discover' | 'feed' | 'map' | 'add' | 'about' | 'admin'>('discover');
@@ -179,7 +261,19 @@ export default function App() {
       return;
     }
 
-    setIsAdmin(String(user.email || '').toLowerCase() === 'safaribosafar@gmail.com');
+    const localEmail = String(user.email || '').toLowerCase();
+    const localForcedAdmin = localEmail === 'safaribosafar@gmail.com';
+    setIsAdmin(localForcedAdmin);
+    setUserProfile((prev) => ({
+      uid: String(user.id || prev?.uid || localEmail),
+      displayName: user.name || user.email?.split('@')[0] || 'User',
+      photoURL: '',
+      email: user.email,
+      createdAt: prev?.createdAt || new Date().toISOString(),
+      role: localForcedAdmin ? 'admin' : (user.role || prev?.role || 'user'),
+      onboarded: true,
+      businessId: null
+    }));
     authApi.getMe()
       .then((me) => {
         const email = String(me.email || '').toLowerCase();
@@ -198,8 +292,8 @@ export default function App() {
         });
         setIsAdmin(forcedAdmin || me.role === 'admin');
       })
-      .catch(() => {
-        authApi.logout();
+      .catch((error) => {
+        console.warn('Using local auth profile because /auth/me failed:', error);
       });
   }, [user]);
 
@@ -328,15 +422,24 @@ export default function App() {
           } : undefined,
           authorUid: post.author_id || undefined
         }));
+        setHasBackendPosts(transformedPosts.length > 0);
         setPosts(transformedPosts);
       } catch (error) {
         console.error("Error fetching posts from API:", error);
+        setHasBackendPosts(false);
         setPosts([]);
       }
     };
 
     fetchPosts();
   }, []);
+
+  useEffect(() => {
+    if (hasBackendPosts !== false) return;
+    if (posts.length > 0) return;
+    if (businesses.length === 0) return;
+    setPosts(buildSeedPostsFromBusinesses(businesses));
+  }, [businesses, hasBackendPosts, posts.length]);
 
   // Filter business array based on search input + governorate matches + category
   const filteredBusinesses = useMemo(() => {

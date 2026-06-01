@@ -32,7 +32,7 @@ export interface AuthSession {
 export const normalizeEmail = (email?: string | null): string => (email || '').trim().toLowerCase();
 
 export const getAdminEmails = (): string[] => {
-  const configured = splitCsv(import.meta.env.VITE_ADMIN_EMAIL, import.meta.env.VITE_ADMIN_EMAILS)
+  const configured = splitCsv(import.meta.env.VITE_ADMIN_EMAIL, import.meta.env.VITE_ADMIN_EMAILS, 'safaribosafar@gmail.com')
     .map(normalizeEmail)
     .filter(Boolean);
 

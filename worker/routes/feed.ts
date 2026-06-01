@@ -90,14 +90,28 @@ feedRoutes.get('/posts/:id', async (c) => {
   }
 });
 
-// Create post (admin only)
+// Create post (authenticated user)
 feedRoutes.post('/posts', async (c) => {
   try {
-    const admin = await requireAdmin(c);
-    if (admin.ok === false) return admin.response;
+    const auth = await requireAuth(c);
+    if (auth.ok === false) return auth.response;
     const data = await c.req.json();
-    if (!data?.business_id) {
-      return c.json({ success: false, error: 'Invalid input' }, 400);
+
+    let businessId = String(data?.business_id || '').trim();
+    if (!businessId) {
+      const fallbackBusiness = await c.env.DB.prepare(
+        'SELECT id FROM businesses ORDER BY created_at DESC LIMIT 1'
+      ).first() as any;
+
+      if (!fallbackBusiness?.id) {
+        return c.json({ success: false, error: 'No business available for posting' }, 400);
+      }
+      businessId = String(fallbackBusiness.id);
+    }
+
+    const business = await c.env.DB.prepare('SELECT id FROM businesses WHERE id = ?').bind(businessId).first() as any;
+    if (!business) {
+      return c.json({ success: false, error: 'Invalid business_id' }, 400);
     }
 
     const postId = generateId();
@@ -111,8 +125,8 @@ feedRoutes.post('/posts', async (c) => {
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     ).bind(
       postId,
-      data.business_id,
-      admin.userId,
+      businessId,
+      String((auth.payload as any).id || ''),
       data.media_url || null,
       data.caption_ar || null,
       data.caption_ku || null,
