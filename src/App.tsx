@@ -240,69 +240,6 @@ function normalizeCategoryId(value: unknown): string {
   return compactMap[compact] || 'other';
 }
 
-function buildSeedPostsFromBusinesses(list: Business[]): SocialPost[] {
-  const byGov = new Map<GovernorateCode, Business[]>();
-  for (const b of list) {
-    if (b.governorate === 'all') continue;
-    const arr = byGov.get(b.governorate) || [];
-    arr.push(b);
-    byGov.set(b.governorate, arr);
-  }
-
-  const seeds: SocialPost[] = [];
-  for (const [gov, businessesInGov] of byGov.entries()) {
-    const usedCategories = new Set<string>();
-    const picked: Business[] = [];
-
-    for (const b of businessesInGov) {
-      if (picked.length >= 5) break;
-      if (usedCategories.has(b.category)) continue;
-      usedCategories.add(b.category);
-      picked.push(b);
-    }
-    if (picked.length < 5) {
-      for (const b of businessesInGov) {
-        if (picked.length >= 5) break;
-        if (!picked.find((x) => x.id === b.id)) picked.push(b);
-      }
-    }
-
-    picked.forEach((b, idx) => {
-      seeds.push({
-        id: `seed-${gov}-${b.id}-${idx}`,
-        businessId: b.id,
-        businessName: b.name.ar || b.name.en || b.name.ku || 'Business',
-        businessAvatar: b.avatar || FALLBACK_AVATAR,
-        category: b.category,
-        governorate: gov,
-        mediaUrl: b.image || b.images?.[0] || FALLBACK_BUSINESS_IMAGE,
-        caption: {
-          ar: `✨ جديد من ${b.name.ar || b.name.en}: زورونا اليوم واستفيدوا من عروضنا الخاصة في ${GOVERNORATES.find(g=>g.code===gov)?.name.ar || 'العراق'}.`,
-          ku: `✨ نوێ لە ${b.name.ku || b.name.en}: ئەمڕۆ سەردانمان بکەن و سوود لە ئۆفەرە تایبەتەکانمان وەربگرن.`,
-          en: `✨ New from ${b.name.en || b.name.ar}: Visit today and enjoy our latest offers in ${GOVERNORATES.find(g=>g.code===gov)?.name.en || 'Iraq'}.`
-        },
-        likes: 24 + idx * 7,
-        commentsCount: 3 + idx,
-        shares: 1 + idx,
-        views: 120 + idx * 38,
-        timeAgo: { ar: 'الآن', ku: 'ئێستا', en: 'Just now' },
-        likedByUser: false,
-        savedByUser: false,
-        comments: [
-          { id: `c1-${b.id}`, username: 'local_explorer', text: '🔥', time: 'now' },
-          { id: `c2-${b.id}`, username: 'city_guide', text: 'Looks great!', time: 'now' }
-        ],
-        promotionBadge: {
-          ar: 'عرض حي',
-          ku: 'ئۆفەری زیندوو',
-          en: 'Live Offer'
-        }
-      });
-    });
-  }
-  return seeds;
-}
-
 export default function App() {
   const preferredLang = (localStorage.getItem('preferred_lang') as Language | null);
   const [user, setUser] = useState<any>(authApi.getCurrentUser());
@@ -556,17 +493,6 @@ export default function App() {
 
     fetchPosts();
   }, []);
-
-  // Populate social feed when backend has no posts: 5 real-business posts per governorate, mixed categories.
-  useEffect(() => {
-    if (posts.length > 0) return;
-    if (!businesses.length) return;
-    const seeded = buildSeedPostsFromBusinesses(businesses);
-    if (seeded.length) {
-      setPosts(seeded);
-      setPostsLoadError(null);
-    }
-  }, [posts.length, businesses]);
 
   // Filter business array based on search input + governorate matches + category
   const filteredBusinesses = useMemo(() => {
