@@ -118,69 +118,6 @@ export default function Header({
 
   return (
     <header className="sticky top-0 z-50 flex flex-col w-full shadow-lg">
-      
-      {/* Absolute Supreme Top Access Bar when NOT logged in */}
-      {!user && onCustomEmailLogin && (
-        <div className="bg-gradient-to-r from-luxury-teal/90 via-luxury-gold/80 to-[#FF6B4A]/90 text-white text-[10px] md:text-xs px-4 py-3 border-b border-luxury-gold/30 flex flex-col md:flex-row items-center justify-between gap-3 animate-fade-in relative z-50">
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] bg-red-650 bg-red-500 text-white font-mono font-black py-0.5 px-2 rounded-full animate-pulse shrink-0">
-              🔴 QUICK SESSION ACCESS
-            </span>
-            <span className="font-extrabold text-zinc-100 max-w-sm sm:max-w-md md:max-w-lg leading-tight">
-              {currentLang === 'en' 
-                ? 'Enter email to sign in instantly, or click a direct test account preset:' 
-                : currentLang === 'ku'
-                ? 'ئیمەیڵ بنووسە بۆ چوونەژوورەوەی خێرا، یان کلیک لەسەر یەکێک لە ئەکاونتە تاقیکارییەکان بکە:'
-                : 'أدخل أي بريد إلكتروني للدخول الفوري، أو اضغط على أحد الحسابات الجاهزة للتجربة:'}
-            </span>
-          </div>
-          
-          <div className="flex flex-wrap items-center gap-2.5 w-full md:w-auto justify-end shrink-0">
-            {/* Direct Quick Presets */}
-            <div className="flex items-center gap-1.5 shrink-0">
-              <button 
-                type="button"
-                onClick={() => onCustomEmailLogin('mahdialmuntadhar1@gmail.com')}
-                className="px-2.5 py-1 bg-red-950/40 hover:bg-red-900 border border-red-500/35 text-red-200 text-[9px] font-black transition-all active:scale-95 cursor-pointer flex items-center gap-1 rounded-md"
-              >
-                <span>🛡️</span>
-                <span>{currentLang === 'en' ? 'Click: Admin' : 'مدير (مهدي)'}</span>
-              </button>
-              
-              <button 
-                type="button"
-                onClick={() => onCustomEmailLogin('owner@shkomaku.com')}
-                className="px-2.5 py-1 bg-amber-950/40 hover:bg-amber-900 border border-amber-500/35 text-amber-200 text-[9px] font-black transition-all active:scale-95 cursor-pointer flex items-center gap-1 rounded-md"
-              >
-                <span>🏢</span>
-                <span>{currentLang === 'en' ? 'Click: Owner' : 'صاحب مصلحة'}</span>
-              </button>
-            </div>
-
-            {/* Custom Manual Email Input Form */}
-            <form onSubmit={(e) => {
-              e.preventDefault();
-              const fd = new FormData(e.currentTarget);
-              const email = fd.get('quickEmail') as string;
-              if (email) onCustomEmailLogin(email);
-            }} className="flex items-center gap-1 shrink-0 bg-black/45 rounded-md p-0.5 border border-white/10 w-full sm:w-auto max-w-[240px]">
-              <input 
-                name="quickEmail"
-                required
-                type="email"
-                placeholder={currentLang === 'en' ? 'Enter Gmail/Email' : 'أدخل بريدك الإلكتروني'}
-                className="bg-transparent text-[10px] text-white px-2 py-1 focus:outline-none w-full placeholder-zinc-500 font-bold"
-              />
-              <button 
-                type="submit"
-                className="px-2.5 py-1 rounded-sm bg-gradient-to-r from-luxury-teal to-luxury-gold text-white text-[9px] font-black uppercase shrink-0 hover:opacity-85 active:scale-95 transition cursor-pointer"
-              >
-                {currentLang === 'en' ? 'Sign In' : 'دخول'}
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
 
       <div className="backdrop-blur-md bg-luxury-bg/90 border-b border-luxury-gold/20 pb-3 pt-3.5 px-3 xs:px-6 w-full flex flex-col md:flex-row items-center justify-between gap-3.5 md:gap-4">
         
