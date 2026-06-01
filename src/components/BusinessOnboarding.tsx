@@ -169,7 +169,7 @@ export default function BusinessOnboarding({
 
         {error && (
           <div className="p-4 rounded-xl bg-red-950/40 border border-red-550/30 text-xs text-red-200 animate-shake">
-            âš ï¸ {error}
+            ⚠️ {error}
           </div>
         )}
 

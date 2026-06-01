@@ -73,7 +73,7 @@ export default function Header({
   const languages = [
     { 
       code: 'ar', 
-      label: 'Ø§Ù„Ø¹Ø±Ø¨ÙŠØ©', 
+      label: 'العربية', 
       flag: (
         <svg viewBox="0 0 3 2" className="w-5 h-3.5 rounded-sm shadow-sm inline-block">
           <rect width="3" height="2" fill="#fff" />
@@ -85,7 +85,7 @@ export default function Header({
     },
     { 
       code: 'ku', 
-      label: 'Ú©ÙˆØ±Ø¯ÛŒ', 
+      label: 'کوردی', 
       flag: (
         <svg viewBox="0 0 3 2" className="w-5 h-3.5 rounded-sm shadow-sm inline-block">
           <rect width="3" height="2" fill="#fff" />
@@ -129,8 +129,8 @@ export default function Header({
               {currentLang === 'en' 
                 ? 'Enter email to sign in instantly, or click a direct test account preset:' 
                 : currentLang === 'ku'
-                ? 'Ø¦ÛŒÙ…Û•ÛŒÚµ Ø¨Ù†ÙˆÙˆØ³Û• Ø¨Û† Ú†ÙˆÙˆÙ†Û•Ú˜ÙˆÙˆØ±Û•ÙˆÛ•ÛŒ Ø®ÛŽØ±Ø§ØŒ ÛŒØ§Ù† Ú©Ù„ÛŒÚ© Ù„Û•Ø³Û•Ø± ÛŒÛ•Ú©ÛŽÚ© Ù„Û• Ø¦Û•Ú©Ø§ÙˆÙ†ØªÛ• ØªØ§Ù‚ÛŒÚ©Ø§Ø±ÛŒÛŒÛ•Ú©Ø§Ù† Ø¨Ú©Û•:'
-                : 'Ø£Ø¯Ø®Ù„ Ø£ÙŠ Ø¨Ø±ÙŠØ¯ Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ Ù„Ù„Ø¯Ø®ÙˆÙ„ Ø§Ù„ÙÙˆØ±ÙŠØŒ Ø£Ùˆ Ø§Ø¶ØºØ· Ø¹Ù„Ù‰ Ø£Ø­Ø¯ Ø§Ù„Ø­Ø³Ø§Ø¨Ø§Øª Ø§Ù„Ø¬Ø§Ù‡Ø²Ø© Ù„Ù„ØªØ¬Ø±Ø¨Ø©:'}
+                ? 'ئیمەیڵ بنووسە بۆ چوونەژوورەوەی خێرا، یان کلیک لەسەر یەکێک لە ئەکاونتە تاقیکارییەکان بکە:'
+                : 'أدخل أي بريد إلكتروني للدخول الفوري، أو اضغط على أحد الحسابات الجاهزة للتجربة:'}
             </span>
           </div>
           
@@ -143,7 +143,7 @@ export default function Header({
                 className="px-2.5 py-1 bg-red-950/40 hover:bg-red-900 border border-red-500/35 text-red-200 text-[9px] font-black transition-all active:scale-95 cursor-pointer flex items-center gap-1 rounded-md"
               >
                 <span>🛡️</span>
-                <span>{currentLang === 'en' ? 'Click: Admin' : 'Ù…Ø¯ÙŠØ± (Ù…Ù‡Ø¯ÙŠ)'}</span>
+                <span>{currentLang === 'en' ? 'Click: Admin' : 'مدير (مهدي)'}</span>
               </button>
               
               <button 
@@ -152,7 +152,7 @@ export default function Header({
                 className="px-2.5 py-1 bg-amber-950/40 hover:bg-amber-900 border border-amber-500/35 text-amber-200 text-[9px] font-black transition-all active:scale-95 cursor-pointer flex items-center gap-1 rounded-md"
               >
                 <span>🏢</span>
-                <span>{currentLang === 'en' ? 'Click: Owner' : 'ØµØ§Ø­Ø¨ Ù…ØµÙ„Ø­Ø©'}</span>
+                <span>{currentLang === 'en' ? 'Click: Owner' : 'صاحب مصلحة'}</span>
               </button>
             </div>
 
@@ -167,14 +167,14 @@ export default function Header({
                 name="quickEmail"
                 required
                 type="email"
-                placeholder={currentLang === 'en' ? 'Enter Gmail/Email' : 'Ø£Ø¯Ø®Ù„ Ø¨Ø±ÙŠØ¯Ùƒ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ'}
+                placeholder={currentLang === 'en' ? 'Enter Gmail/Email' : 'أدخل بريدك الإلكتروني'}
                 className="bg-transparent text-[10px] text-white px-2 py-1 focus:outline-none w-full placeholder-zinc-500 font-bold"
               />
               <button 
                 type="submit"
                 className="px-2.5 py-1 rounded-sm bg-gradient-to-r from-luxury-teal to-luxury-gold text-white text-[9px] font-black uppercase shrink-0 hover:opacity-85 active:scale-95 transition cursor-pointer"
               >
-                {currentLang === 'en' ? 'Sign In' : 'Ø¯Ø®ÙˆÙ„'}
+                {currentLang === 'en' ? 'Sign In' : 'دخول'}
               </button>
             </form>
           </div>
@@ -190,7 +190,7 @@ export default function Header({
               <div className="absolute -inset-0.5 bg-gradient-to-r from-luxury-teal via-luxury-gold to-white rounded-xl blur opacity-75 group-hover:opacity-100 transition duration-500"></div>
               <div className="relative px-3 py-1.5 bg-[#16161a] rounded-xl leading-none flex items-center border border-luxury-gold/30">
                 <span className="text-base xs:text-lg sm:text-xl font-black bg-gradient-to-r from-luxury-gold to-white bg-clip-text text-transparent tracking-tighter">
-                  {currentLang === 'en' ? 'Shko Maku' : currentLang === 'ku' ? 'Ø´ÙƒÙˆ Ù…Ø§ÙƒÙˆ' : 'Ø´ÙƒÙˆ Ù…Ø§ÙƒÙˆ'}
+                  {currentLang === 'en' ? 'Shko Maku' : currentLang === 'ku' ? 'شكو ماكو' : 'شكو ماكو'}
                 </span>
                 <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 ml-1.5 text-luxury-gold animate-pulse" />
               </div>
@@ -303,9 +303,9 @@ export default function Header({
                          userProfile?.role === 'owner' ? <Award className="w-4 h-4 text-amber-500" /> :
                          <User className="w-4 h-4 text-sky-400" />}
                         <span className="text-[10px] font-black tracking-wider uppercase text-zinc-300">
-                          {userProfile?.role === 'admin' ? (currentLang === 'en' ? 'Platform Admin' : 'Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ù†ØµØ© ðŸ›¡ï¸') :
-                           userProfile?.role === 'owner' ? (currentLang === 'en' ? 'Spot Owner' : 'ØµØ§Ø­Ø¨ Ù…ØµÙ„Ø­Ø© ðŸ¢') :
-                           (currentLang === 'en' ? 'Regular User' : 'Ù…Ø³ØªÙƒØ´Ù Ù†Ø´Ø· ðŸ‘¤')}
+                          {userProfile?.role === 'admin' ? (currentLang === 'en' ? 'Platform Admin' : 'مدير المنصة 🛡️') :
+                           userProfile?.role === 'owner' ? (currentLang === 'en' ? 'Spot Owner' : 'صاحب مصلحة 🏢') :
+                           (currentLang === 'en' ? 'Regular User' : 'مستكشف نشط 👤')}
                         </span>
                       </div>
                       <span className={`w-2 h-2 rounded-full ${userProfile?.role === 'admin' ? 'bg-red-500' : userProfile?.role === 'owner' ? 'bg-amber-400' : 'bg-sky-400'} animate-pulse`}></span>
@@ -366,7 +366,7 @@ export default function Header({
                           }}
                           className="w-full text-left font-black text-[11px] px-3 py-2 rounded-xl text-amber-400 hover:bg-amber-500/10 border border-amber-500/20 flex items-center gap-2 cursor-pointer"
                         >
-                          🏢 {currentLang === 'en' ? 'Manage My Business' : 'Ø¥Ø¯Ø§Ø±Ø© ØµØ§Ù„ÙˆÙ†ÙŠ / Ù…Ø´Ø±ÙˆØ¹ÙŠ'}
+                          🏢 {currentLang === 'en' ? 'Manage My Business' : 'إدارة صالوني / مشروعي'}
                         </button>
                       )}
 
@@ -377,7 +377,7 @@ export default function Header({
                         }}
                         className="w-full text-left text-xs text-zinc-300 hover:bg-white/5 rounded-xl px-3 py-2 flex items-center justify-between transition-all cursor-pointer"
                       >
-                        <span className="font-semibold">{currentLang === 'en' ? 'Our Mission' : 'Ù…Ù‡Ù…Ø© Ø´ÙƒÙˆ Ù…Ø§ÙƒÙˆ'}</span>
+                        <span className="font-semibold">{currentLang === 'en' ? 'Our Mission' : 'مهمة شكو ماكو'}</span>
                         <HelpCircle className="w-3.5 h-3.5 text-zinc-500" />
                       </button>
 
@@ -388,7 +388,7 @@ export default function Header({
                         }}
                         className="w-full text-left text-xs text-red-400 hover:bg-red-500/10 rounded-xl px-3 py-2.5 flex items-center justify-between transition-all font-bold group bg-red-950/20 border border-red-900/10 cursor-pointer mt-1"
                       >
-                        <span>{currentLang === 'en' ? 'Sign Out Session' : 'ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø®Ø±ÙˆØ¬ Ø§Ù„Ø¢Ù…Ù†'}</span>
+                        <span>{currentLang === 'en' ? 'Sign Out Session' : 'تسجيل الخروج الآمن'}</span>
                         <LogOut className="w-3.5 h-3.5 text-red-400 group-hover:translate-x-1 transition-transform" />
                       </button>
                     </div>
@@ -404,7 +404,7 @@ export default function Header({
               id="google-sign-in-hdr"
             >
               <span>🔑</span>
-              <span>{currentLang === 'en' ? 'Access Portal' : currentLang === 'ku' ? 'Ú†ÙˆÙˆÙ†Û•Ú˜ÙˆÙˆØ±' : 'Ø¯Ø®ÙˆÙ„ Ø§Ù„Ù…Ù†ØµØ©'}</span>
+              <span>{currentLang === 'en' ? 'Access Portal' : currentLang === 'ku' ? 'چوونەژوور' : 'دخول المنصة'}</span>
             </button>
           )}
 

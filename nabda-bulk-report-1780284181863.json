@@ -1,0 +1,23 @@
+{
+  "campaignName": "manual-bulk-whatsapp",
+  "source": "script",
+  "dryRun": true,
+  "endpoint": "(dry-run)",
+  "totalInput": 1,
+  "duplicatesSkipped": 0,
+  "invalid": [],
+  "sent": [
+    {
+      "phone": "+9647704413300",
+      "status": "DRY_RUN",
+      "message": "Hello from Shaku Maku\n\nReply STOP to opt out.",
+      "metadata": {
+        "campaignName": "manual-bulk-whatsapp",
+        "tags": [],
+        "source": "script",
+        "recipient": {}
+      }
+    }
+  ],
+  "failed": []
+}

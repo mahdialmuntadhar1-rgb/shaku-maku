@@ -138,7 +138,7 @@ export default function BusinessFeed({
               
               {/* Saku Maku custom decorative accent */}
               <div className="hidden sm:block text-[11px] font-mono text-zinc-500 font-medium">
-                Saku Maku Discover â€¢ {category.id.toUpperCase()}
+                Saku Maku Discover • {category.id.toUpperCase()}
               </div>
             </div>
 
@@ -175,7 +175,7 @@ export default function BusinessFeed({
                       {/* Verified Badge */}
                       {biz.isVerified && (
                         <span className="absolute top-2 right-2 z-10 flex items-center gap-1 bg-[#C8A95F] text-[8px] xs:text-[10px] font-black text-[#1A1A1A] px-1.5 xs:px-2.5 py-0.5 xs:py-1 rounded-full shadow-md border border-[#0F2E2F]/20">
-                          <span>â­ PREMIUM</span>
+                          <span>⭐ PREMIUM</span>
                         </span>
                       )}
 

@@ -432,7 +432,7 @@ export default function App() {
                 className="w-full flex items-center justify-between text-xs font-bold bg-[#16161a] hover:bg-[#1f1f26] text-white px-4 py-3 rounded-xl border border-luxury-gold/30 hover:border-luxury-gold/60 transition-all shadow-xl shadow-black/40 cursor-pointer"
               >
                 <div className="flex items-center gap-2">
-                  <span className="text-base">ðŸ“</span>
+                  <span className="text-base">📍</span>
                   <span>{GOVERNORATES.find(g => g.code === selectedGov)?.name[currentLang]}</span>
                 </div>
                 <ChevronDown className={`w-4 h-4 text-luxury-gold transition-transform duration-300 ${govDropdownOpen ? 'rotate-180' : ''}`} />
@@ -455,7 +455,7 @@ export default function App() {
                       }`}
                     >
                       <span className="truncate">{gov.name[currentLang]}</span>
-                      {selectedGov === gov.code && <span className="text-[9px]">âœ¨</span>}
+                      {selectedGov === gov.code && <span className="text-[9px]">✨</span>}
                     </button>
                   ))}
                 </div>
@@ -503,8 +503,8 @@ export default function App() {
                         : 'text-zinc-300 hover:bg-white/5 font-semibold'
                     }`}
                   >
-                    <span>ðŸ” {currentLang === 'en' ? 'All Categories' : currentLang === 'ku' ? 'هەموو پۆلەکان' : 'جميع الفئات'}</span>
-                    {selectedCategory === null && <span className="text-[9px]">âœ¨</span>}
+                    <span>🍔 {currentLang === 'en' ? 'All Categories' : currentLang === 'ku' ? 'هەموو پۆلەکان' : 'جميع الفئات'}</span>
+                    {selectedCategory === null && <span className="text-[9px]">✨</span>}
                   </button>
 
                   {CATEGORIES.map((cat) => (
@@ -522,7 +522,7 @@ export default function App() {
                       }`}
                     >
                       <span className="truncate">{cat.icon} {cat.name[currentLang]}</span>
-                      {selectedCategory === cat.id && <span className="text-[9px]">âœ¨</span>}
+                      {selectedCategory === cat.id && <span className="text-[9px]">✨</span>}
                     </button>
                   ))}
                 </div>
@@ -549,7 +549,7 @@ export default function App() {
             <div className={`w-11 h-11 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center text-xl sm:text-2xl mb-2 sm:mb-3 transition-colors duration-300 shrink-0 ${
               activeTab === 'discover' ? 'bg-[#0F2E2F]/80 text-luxury-gold' : 'bg-zinc-100 text-zinc-500 group-hover:bg-luxury-gold/10 group-hover:text-luxury-gold'
             }`}>
-              ðŸ¢
+              🏢
             </div>
             
             <span className={`text-xs sm:text-sm md:text-base font-black block leading-tight tracking-tight ${activeTab === 'discover' ? 'text-white' : 'text-[#1A1A1A]'}`}>
@@ -561,7 +561,7 @@ export default function App() {
             </span>
             
             <div className={`absolute bottom-3 text-xs font-bold transition-opacity transition-transform duration-300 ${activeTab === 'discover' ? 'text-luxury-gold opacity-100' : 'text-zinc-400 opacity-0 group-hover:opacity-100 translateY(2px)'}`}>
-              âž”
+              ➔
             </div>
           </button>
 
@@ -581,7 +581,7 @@ export default function App() {
             <div className={`w-11 h-11 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center text-xl sm:text-2xl mb-2 sm:mb-3 relative transition-colors duration-300 shrink-0 ${
               activeTab === 'feed' ? 'bg-[#0F2E2F]/80 text-luxury-gold' : 'bg-zinc-100 text-zinc-500 group-hover:bg-luxury-gold/10 group-hover:text-luxury-gold'
             }`}>
-              ðŸ“¸
+              📸
               <span className="absolute -top-1 -right-1 w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-red-550 bg-red-500 animate-ping"></span>
             </div>
             
@@ -594,7 +594,7 @@ export default function App() {
             </span>
 
             <div className={`absolute bottom-3 text-xs font-bold transition-opacity transition-transform duration-300 ${activeTab === 'feed' ? 'text-luxury-gold opacity-100' : 'text-zinc-400 opacity-0 group-hover:opacity-100 translateY(2px)'}`}>
-              âž”
+              ➔
             </div>
           </button>
         </div>

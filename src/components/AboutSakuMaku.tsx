@@ -99,7 +99,7 @@ export default function AboutSakuMaku({ currentLang }: AboutSakuMakuProps) {
 
       <div className="text-center pt-2">
         <span className="text-[10px] text-zinc-500 font-mono">
-          Saku Maku Platform Version 3.4.0 â€¢ Made with â¤ï¸ in Iraq
+          Saku Maku Platform Version 3.4.0 • Made with ❤️ in Iraq
         </span>
       </div>
 

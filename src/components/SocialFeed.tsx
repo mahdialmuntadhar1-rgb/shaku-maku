@@ -226,8 +226,8 @@ export default function SocialFeed({
       category: newCategory,
       mediaUrl: imgToUse,
       timeAgo: {
-        ar: 'Ø§Ù„Ø¢Ù†',
-        ku: 'Ø¦ÛŽØ³ØªØ§',
+        ar: 'الآن',
+        ku: 'ئێستا',
         en: 'Just Now'
       },
       caption: {
@@ -326,7 +326,7 @@ export default function SocialFeed({
       username: user?.displayName || 'iraqi_explorer_99',
       userAvatar: user?.photoURL || 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&auto=format&fit=crop&q=80',
       text: txt.trim(),
-      time: currentLang === 'en' ? 'Just now' : currentLang === 'ku' ? 'Ø¦ÛŽØ³ØªØ§' : 'Ø§Ù„Ø¢Ù†'
+      time: currentLang === 'en' ? 'Just now' : currentLang === 'ku' ? 'ئێستا' : 'الآن'
     };
 
     setPosts(prev => prev.map(p => p.id === postId ? {
@@ -382,7 +382,7 @@ export default function SocialFeed({
           <h4 className="text-xs font-black text-rose-400 uppercase tracking-widest flex items-center justify-center sm:justify-start gap-1.5 font-sans">
             <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
             <span>
-              {currentLang === 'en' ? 'Live Local Pulse Simulator' : currentLang === 'ku' ? 'Ø³ÛŒØ³ØªÙ…ÛŒ Ù¾Û•ÛŒÙˆÛ•Ù†Ø¯ÛŒ Ø²ÛŒÙ†Ø¯ÙˆÙˆ' : 'Ù…Ø­Ø§ÙƒÙŠ Ø¯ÙÙ‚ Ø§Ù„Ù…Ø´Ø§Ø±ÙƒØ§Øª Ø§Ù„Ø­ÙŠØ© Ù„Ù„Ù…Ø­Ø§ÙØ¸Ø§Øª'}
+              {currentLang === 'en' ? 'Live Local Pulse Simulator' : currentLang === 'ku' ? 'سیستمی پەیوەندی زیندوو' : 'محاكي دفق المشاركات الحية للمحافظات'}
             </span>
           </h4>
           <p className="text-[11.5px] text-zinc-400 font-sans leading-relaxed">
@@ -403,7 +403,7 @@ export default function SocialFeed({
           {isGeneratingLive ? (
             <>
               <span className="w-3 h-3 border-2 border-white/50 border-t-transparent rounded-full animate-spin"></span>
-              <span>{currentLang === 'en' ? 'Simulating...' : 'Ø¬Ø§Ø±ÙŠ Ø§Ù„Ø³Ø­Ø¨...'}</span>
+              <span>{currentLang === 'en' ? 'Simulating...' : 'جاري السحب...'}</span>
             </>
           ) : (
             <>
@@ -413,7 +413,7 @@ export default function SocialFeed({
                   ? `Pull ${selectedGov === 'all' ? 'Live Story' : `${selectedGov.toUpperCase()} Story`}`
                   : currentLang === 'ku'
                   ? `بکێشە بابەت`
-                  : `سحب منشور حي ${selectedGov === 'all' ? 'Ø¹Ø´ÙˆØ§Ø¦ÙŠ' : `لـ ${selectedGov.toUpperCase()}`}`}
+                  : `سحب منشور حي ${selectedGov === 'all' ? 'عشوائي' : `لـ ${selectedGov.toUpperCase()}`}`}
               </span>
             </>
           )}
@@ -441,7 +441,7 @@ export default function SocialFeed({
             <div>
               <div className="flex items-center gap-1.5">
                 <span className="text-xs font-bold text-white block">
-                  {user?.displayName || (currentLang === 'en' ? 'Saku Maku Guest' : currentLang === 'ku' ? 'Ù…ÛŒÙˆØ§Ù†ÛŒ Ø³Ø§ÙƒÛ† Ù…Ø§ÙƒÛ†' : 'Ø¶ÙŠÙ Ø´ÙƒÙˆ Ù…Ø§ÙƒÙˆ')}
+                  {user?.displayName || (currentLang === 'en' ? 'Saku Maku Guest' : currentLang === 'ku' ? 'میوانی ساکۆ ماکۆ' : 'ضيف شكو ماكو')}
                 </span>
                 {user && <CheckCircle2 className="w-3 h-3 text-blue-400" />}
               </div>
@@ -466,8 +466,8 @@ export default function SocialFeed({
                 currentLang === 'en'
                   ? `What's on your mind, ${user?.displayName?.split(' ')[0] || 'Friend'}? Share updates, photos or video trailers...`
                   : currentLang === 'ku'
-                  ? `Ú†ÛŒ Ù„Û• Ù…ÛŽØ´Ú©ØªØ¯Ø§ÛŒÛ•ØŒ ${user?.displayName?.split(' ')[0] || 'هاوڕێم'}ØŸ Ø¨Ø§Ø¨Û•ØªÛŽÚ©ÛŒ Ù†ÙˆÛŽØŒ ÙˆÛŽÙ†Û• ÛŒØ§Ù† Ú©Û•Ù„ÛŽÙ† Ø¨ÚµØ§ÙˆØ¨Ú©Û•Ø±Û•ÙˆÛ•...`
-                  : `Ø¨Ù…ÙŽ ØªÙÙƒÙ‘Ø±ØŒ ${user?.displayName?.split(' ')[0] || 'يا صديقنا'}ØŸ Ø£Ù†Ø´Ø± Ø£Ø­Ø¯Ø« Ø§Ù„ØµÙˆØ±ØŒ Ø¹Ø±ÙˆØ¶ ÙƒØ±Ø§Ø³Ø§Øª Ø£Ùˆ ÙÙŠØ¯ÙŠÙˆÙ‡Ø§Øª ØªØ±ÙˆÙŠØ¬ÙŠØ©...`
+                  ? `چی لە مێشکتدایە، ${user?.displayName?.split(' ')[0] || 'هاوڕێم'}؟ بابەتێکی نوێ، وێنە یان کەڵێن بڵاوبکەرەوە...`
+                  : `بمَ تفكّر، ${user?.displayName?.split(' ')[0] || 'يا صديقنا'}؟ أنشر أحدث الصور، عروض كراسات أو فيديوهات ترويجية...`
               }
               value={newCaption}
               onChange={(e) => setNewCaption(e.target.value)}
@@ -920,7 +920,7 @@ export default function SocialFeed({
 
                   <button
                     onClick={() => {
-                      alert(`ðŸ“¥ Saku Maku Security: Starting download of verified digital menu artifact: "${post.fileAttachment?.name}" (${post.fileAttachment?.size}). Checked secure by Admin panel!`);
+                      alert(`📥 Saku Maku Security: Starting download of verified digital menu artifact: "${post.fileAttachment?.name}" (${post.fileAttachment?.size}). Checked secure by Admin panel!`);
                     }}
                     className="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-[10px] rounded-lg transition tracking-wide uppercase cursor-pointer"
                   >
@@ -1081,8 +1081,8 @@ export default function SocialFeed({
             {currentLang === 'en' 
               ? `No businesses in ${govNameText} have active broadcasts yet. Pull an authentic local update from the database now!`
               : currentLang === 'ku'
-              ? `Ù‡ÛŒÚ† Ú©Û†Ù…Ù¾Ø§Ù†ÛŒØ§ÛŒÛ•Ú© Ù„Û• ${govNameText} Ù¾Û•Ø®Ø´ÛŒ Ø²ÛŒÙ†Ø¯ÙˆÙˆÛŒ Ù†ÛŒÛŒÛ•. Ø¨Ø§Ø¨Û•ØªÛŽÚ©ÛŒ ÙÛ•Ø±Ù…ÛŒ Ú•Ø§Ø³ØªÛ•Ù‚ÛŒÙ†Û• Ù„ÛŽØ±Û•ÙˆÛ• Ù¾Û†Ø³Øª Ø¨Ú©Û•!`
-              : `Ù„Ù… ØªÙ‚Ù… Ø§Ù„Ù…Ø­Ù„Ø§Øª Ø£Ùˆ Ø§Ù„Ø´Ø±ÙƒØ§Øª ÙÙŠ Ù…Ø­Ø§ÙØ¸Ø© ${govNameText} Ø¨Ù†Ø´Ø± Ø­Ù…Ù„Ø§Øª ØªØ±ÙˆÙŠØ¬ÙŠØ© Ø¨Ø¹Ø¯. Ø§Ø³Ø­Ø¨ ÙˆØ§Ù†Ø´Ø± ØªØ­Ø¯ÙŠØ«Ø§Ù‹ Ø­Ù‚ÙŠÙ‚ÙŠØ§Ù‹ ØªÙ„Ù‚Ø§Ø¦ÙŠØ§Ù‹ Ø§Ù„Ø¢Ù†!`}
+              ? `هیچ کۆمپانیایەک لە ${govNameText} پەخشی زیندووی نییە. بابەتێکی فەرمی ڕاستەقینە لێرەوە پۆست بکە!`
+              : `لم تقم المحلات أو الشركات في محافظة ${govNameText} بنشر حملات ترويجية بعد. اسحب وانشر تحديثاً حقيقياً تلقائياً الآن!`}
           </p>
 
           <button
@@ -1103,8 +1103,8 @@ export default function SocialFeed({
                   {currentLang === 'en'
                     ? `Seed ${govNameText} Feed`
                     : currentLang === 'ku'
-                    ? `ØªÙˆÙ„ÛŒØ¯Ú©Ø±Ø¯Ù†ÛŒ Ø¨Ø§Ø¨Û•Øª Ø¨Û† ${govNameText}`
-                    : `ØªÙˆÙ„ÙŠØ¯ Ù…Ù†Ø´ÙˆØ±Ø§Øª Ù„Ù€ ${govNameText} ØªÙ„Ù‚Ø§Ø¦ÙŠØ§Ù‹`}
+                    ? `تولیدکردنی بابەت بۆ ${govNameText}`
+                    : `توليد منشورات لـ ${govNameText} تلقائياً`}
                 </span>
               </>
             )}

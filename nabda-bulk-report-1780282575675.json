@@ -1,0 +1,212 @@
+{
+  "campaignName": "mockdata-50-phone-audit",
+  "source": "mockData.ts",
+  "dryRun": true,
+  "endpoint": "(dry-run)",
+  "totalInput": 50,
+  "duplicatesSkipped": 0,
+  "invalid": [
+    {
+      "phone": "+964 7 946 9545",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 509 4087",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 261 4260",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 304 3492",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 398 1297",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 484 2916",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 403 8070",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 800 2401",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 918 7052",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 656 5260",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 660 1443",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 700 2525",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 641 2346",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 952 3803",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 466 3272",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 406 3928",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 126 7479",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 141 1486",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 409 6363",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 280 5983",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 986 7990",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 488 2498",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 602 5806",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 976 1328",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 728 9260",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 370 2294",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 663 8062",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 697 8188",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 172 4608",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 156 3509",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 914 6010",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 491 2972",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 258 2121",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 661 4566",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 838 7987",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 720 5594",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 467 8083",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 683 7843",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 907 6812",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 612 9701",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 417 9117",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 435 1095",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 229 8716",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 973 5772",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 778 4036",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 947 8197",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 552 8975",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 629 5307",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 829 9483",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    },
+    {
+      "phone": "+964 7 389 7743",
+      "error": "Invalid Iraqi mobile number. Expected +9647XXXXXXXXX."
+    }
+  ],
+  "sent": [],
+  "failed": []
+}

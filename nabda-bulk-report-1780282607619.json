@@ -1,0 +1,122 @@
+{
+  "campaignName": "clean-valid-phone-dry-run",
+  "source": "src/data.ts",
+  "dryRun": true,
+  "endpoint": "(dry-run)",
+  "totalInput": 10,
+  "duplicatesSkipped": 0,
+  "invalid": [],
+  "sent": [
+    {
+      "phone": "+9647701234567",
+      "status": "DRY_RUN",
+      "message": "Hello from Shaku Maku directory\n\nReply STOP to opt out.",
+      "metadata": {
+        "campaignName": "clean-valid-phone-dry-run",
+        "tags": [],
+        "source": "src/data.ts",
+        "recipient": {}
+      }
+    },
+    {
+      "phone": "+9647805556677",
+      "status": "DRY_RUN",
+      "message": "Hello from Shaku Maku directory\n\nReply STOP to opt out.",
+      "metadata": {
+        "campaignName": "clean-valid-phone-dry-run",
+        "tags": [],
+        "source": "src/data.ts",
+        "recipient": {}
+      }
+    },
+    {
+      "phone": "+9647501122334",
+      "status": "DRY_RUN",
+      "message": "Hello from Shaku Maku directory\n\nReply STOP to opt out.",
+      "metadata": {
+        "campaignName": "clean-valid-phone-dry-run",
+        "tags": [],
+        "source": "src/data.ts",
+        "recipient": {}
+      }
+    },
+    {
+      "phone": "+9647719998822",
+      "status": "DRY_RUN",
+      "message": "Hello from Shaku Maku directory\n\nReply STOP to opt out.",
+      "metadata": {
+        "campaignName": "clean-valid-phone-dry-run",
+        "tags": [],
+        "source": "src/data.ts",
+        "recipient": {}
+      }
+    },
+    {
+      "phone": "+9647504449900",
+      "status": "DRY_RUN",
+      "message": "Hello from Shaku Maku directory\n\nReply STOP to opt out.",
+      "metadata": {
+        "campaignName": "clean-valid-phone-dry-run",
+        "tags": [],
+        "source": "src/data.ts",
+        "recipient": {}
+      }
+    },
+    {
+      "phone": "+9647700011122",
+      "status": "DRY_RUN",
+      "message": "Hello from Shaku Maku directory\n\nReply STOP to opt out.",
+      "metadata": {
+        "campaignName": "clean-valid-phone-dry-run",
+        "tags": [],
+        "source": "src/data.ts",
+        "recipient": {}
+      }
+    },
+    {
+      "phone": "+9647480556633",
+      "status": "DRY_RUN",
+      "message": "Hello from Shaku Maku directory\n\nReply STOP to opt out.",
+      "metadata": {
+        "campaignName": "clean-valid-phone-dry-run",
+        "tags": [],
+        "source": "src/data.ts",
+        "recipient": {}
+      }
+    },
+    {
+      "phone": "+9647710002222",
+      "status": "DRY_RUN",
+      "message": "Hello from Shaku Maku directory\n\nReply STOP to opt out.",
+      "metadata": {
+        "campaignName": "clean-valid-phone-dry-run",
+        "tags": [],
+        "source": "src/data.ts",
+        "recipient": {}
+      }
+    },
+    {
+      "phone": "+9647508881234",
+      "status": "DRY_RUN",
+      "message": "Hello from Shaku Maku directory\n\nReply STOP to opt out.",
+      "metadata": {
+        "campaignName": "clean-valid-phone-dry-run",
+        "tags": [],
+        "source": "src/data.ts",
+        "recipient": {}
+      }
+    },
+    {
+      "phone": "+9647811223344",
+      "status": "DRY_RUN",
+      "message": "Hello from Shaku Maku directory\n\nReply STOP to opt out.",
+      "metadata": {
+        "campaignName": "clean-valid-phone-dry-run",
+        "tags": [],
+        "source": "src/data.ts",
+        "recipient": {}
+      }
+    }
+  ],
+  "failed": []
+}

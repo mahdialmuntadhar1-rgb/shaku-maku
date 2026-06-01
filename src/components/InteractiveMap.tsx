@@ -144,7 +144,7 @@ export default function InteractiveMap({
               aria-pressed={viewMode === 'map'}
               aria-label={currentLang === 'en' ? 'Switch to Interactive visual map radar representation' : 'التحويل إلى مظهر الرادار التفاعلي المرئي'}
             >
-              <span>ðŸ§­</span>
+              <span>🧭</span>
               <span className="hidden xs:inline">{currentLang === 'en' ? 'Map Radar' : currentLang === 'ku' ? 'نەخشەی ڕادار' : 'رادار الخارطة'}</span>
             </button>
             <button
@@ -157,7 +157,7 @@ export default function InteractiveMap({
               aria-pressed={viewMode === 'list'}
               aria-label={currentLang === 'en' ? 'Switch to accessibility keyboard and screen reader optimized directories' : 'التحويل للقائمة النصية الميسرة للوحة المفاتيح والمكفوفين'}
             >
-              <span>ðŸ“‹</span>
+              <span>📋</span>
               <span className="hidden xs:inline">{currentLang === 'en' ? 'Keyboard List' : currentLang === 'ku' ? 'لیستی تەختەکلیل' : 'القائمة الميسرة'}</span>
             </button>
           </div>
@@ -182,7 +182,7 @@ export default function InteractiveMap({
               {/* Compass layout pointer */}
               <div className="absolute bottom-3 right-3 flex items-center gap-1.5 bg-slate-900/80 px-2.5 py-1 rounded-lg border border-zinc-805 text-[10px] font-mono text-zinc-500">
                 <Globe className="w-3.5 h-3.5 text-cyan-400 animate-spin" style={{ animationDuration: '10s' }} />
-                <span>N 33.3152Â° / E 44.3661Â°</span>
+                <span>N 33.3152° / E 44.3661°</span>
               </div>
 
               {/* Governorates Bubble Buttons directly plotted onto map frame */}
@@ -283,7 +283,7 @@ export default function InteractiveMap({
                         aria-label={currentLang === 'en' ? `Select governorate: ${pin.name}` : `اختيار محافظة: ${pin.name}`}
                       >
                         <div className="flex items-center gap-1">
-                          <span className="shrink-0 text-xs">ðŸ“</span>
+                          <span className="shrink-0 text-xs">📍</span>
                           <span className="truncate">{pin.name}</span>
                         </div>
                       </button>
@@ -312,13 +312,13 @@ export default function InteractiveMap({
                             className="bg-zinc-950/70 p-2.5 rounded-xl border border-zinc-900 flex items-center justify-between gap-3 hover:border-zinc-800 transition shadow-sm"
                           >
                             <div className="min-w-0 flex-1 flex items-center gap-1.5">
-                              <span className="text-pink-500 shrink-0 text-xs font-mono">â€¢</span>
+                              <span className="text-pink-500 shrink-0 text-xs font-mono">•</span>
                               <div className="min-w-0">
                                 <h5 className="text-[11px] font-extrabold text-white truncate">
                                   {biz.name[currentLang]}
                                 </h5>
                                 <p className="text-[9px] text-zinc-500 truncate">
-                                  {CATEGORIES.find(c => c.id === biz.category)?.name[currentLang]} â€” {biz.address[currentLang]}
+                                  {CATEGORIES.find(c => c.id === biz.category)?.name[currentLang]} — {biz.address[currentLang]}
                                 </p>
                               </div>
                             </div>

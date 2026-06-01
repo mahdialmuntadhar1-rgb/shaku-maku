@@ -8,7 +8,9 @@
     "build": "vite build",
     "preview": "vite preview",
     "clean": "node -e \"const fs=require('fs'); for (const p of ['dist','server.js','node_modules/.vite']) fs.rmSync(p,{recursive:true,force:true});\"",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "whatsapp:bulk": "node scripts/nabda-bulk-whatsapp.mjs",
+    "whatsapp:webhook": "node scripts/nabda-webhook-receiver.mjs"
   },
   "dependencies": {
     "@google/genai": "^1.29.0",

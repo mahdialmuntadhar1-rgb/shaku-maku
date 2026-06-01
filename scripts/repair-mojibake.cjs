@@ -50,15 +50,27 @@ function toWindows1252Bytes(text) {
   return Buffer.from(bytes);
 }
 
-function decodeMojibake(text) {
-  if (!mojibakePattern.test(text)) return text;
-
+function decodeWholeMojibake(text) {
   const bytes = toWindows1252Bytes(text);
   if (!bytes) return text;
 
   const decoded = bytes.toString('utf8');
   if (!decoded) return text;
   return mojibakeScore(decoded) < mojibakeScore(text) ? decoded : text;
+}
+
+function decodeMojibake(text) {
+  if (!mojibakePattern.test(text)) return text;
+
+  const wholeDecoded = decodeWholeMojibake(text);
+  if (wholeDecoded !== text) return wholeDecoded;
+
+  // Some literals mix valid Arabic/Kurdish with mojibake emoji or punctuation.
+  // Repair only the CP1252-compatible spans so valid text remains untouched.
+  return text.replace(/[\u0009\u0020-\u007e\u00a0-\u00ff\u2018-\u201d\u2020-\u2026\u2030\u20ac]+/g, (segment) => {
+    if (!mojibakePattern.test(segment)) return segment;
+    return decodeWholeMojibake(segment);
+  });
 }
 
 function mojibakeScore(text) {

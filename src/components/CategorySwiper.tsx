@@ -124,7 +124,7 @@ export default function CategorySwiper({
             onClick={() => handleSelect(null)}
             className="text-[10px] font-bold text-cyan-400 hover:text-white bg-cyan-950/40 px-2.5 py-1 rounded-full border border-cyan-500/20 transition-all cursor-pointer flex items-center gap-1 shrink-0"
           >
-            <span>{currentLang === 'en' ? 'Reset' : currentLang === 'ku' ? 'پاککردنەوە' : 'إعادة تعيين'} â†º</span>
+            <span>{currentLang === 'en' ? 'Reset' : currentLang === 'ku' ? 'پاککردنەوە' : 'إعادة تعيين'} ↺</span>
           </motion.button>
         )}
       </div>

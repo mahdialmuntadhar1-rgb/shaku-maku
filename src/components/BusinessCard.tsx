@@ -109,7 +109,7 @@ export default function BusinessCard({
           <div className="flex items-start gap-1.5">
             <MapPin className="w-3.5 h-3.5 text-zinc-500 shrink-0 mt-0.5" />
             <span className="font-semibold text-zinc-300 leading-normal">
-              {govLabel} â€” <span className="text-zinc-400 font-normal">{business.address[currentLang] || business.address.en}</span>
+              {govLabel} — <span className="text-zinc-400 font-normal">{business.address[currentLang] || business.address.en}</span>
             </span>
           </div>
 
@@ -144,7 +144,7 @@ export default function BusinessCard({
               className="w-full py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-extrabold text-xs uppercase tracking-wider rounded-2xl transition-all shadow-md active:scale-97 cursor-pointer flex items-center justify-center gap-1.5"
             >
               <span>{actionButtonText}</span>
-              <span>âž”</span>
+              <span>➔</span>
             </button>
           </div>
         )}
