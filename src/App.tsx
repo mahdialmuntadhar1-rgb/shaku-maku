@@ -258,7 +258,7 @@ export default function App() {
     };
 
     try {
-      const response = await businessesApi.create(payload);
+      const response: any = await businessesApi.create(payload);
       const created = response?.data || response;
       if (created?.id) {
         const createdBiz: Business = {

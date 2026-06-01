@@ -274,7 +274,7 @@ export default function SocialFeed({
     try {
       // Add to local state
       setPosts(prev => [newPostItem, ...prev]);
-      postsApi.create(newPostItem).catch((err) => {
+      postsApi.create(newPostItem as unknown as Record<string, unknown>).catch((err) => {
         console.warn('Post saved locally because backend post create is unavailable:', err?.message || err);
       });
 

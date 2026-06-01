@@ -51,7 +51,7 @@ export const InfiniteScrollBusinesses: React.FC<InfiniteScrollBusinessesProps> =
       });
       
       const newBusinesses = response.businesses || response.data || [];
-      const totalCount = response.total || response.count || 0;
+      const totalCount = response.total || 0;
       
       setTotal(totalCount);
       
