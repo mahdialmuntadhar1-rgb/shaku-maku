@@ -17,6 +17,7 @@ const app = new Hono<{ Bindings: Env }>();
 
 // CORS middleware - allow specific origins
 const ALLOWED_ORIGINS = [
+  'https://shakumaku.pages.dev',
   'https://shakumako.pages.dev',
   'https://f9f5f957.shaku-maku2026.pages.dev',
   'https://shaku-maku2026.pages.dev',

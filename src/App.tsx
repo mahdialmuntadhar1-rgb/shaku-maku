@@ -26,73 +26,188 @@ const FALLBACK_BUSINESS_IMAGE =
 const FALLBACK_AVATAR =
   'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=120&h=120&fit=crop&q=80';
 
+function normalizeList(payload: any): any[] {
+  if (Array.isArray(payload)) return payload;
+  if (Array.isArray(payload?.data)) return payload.data;
+  if (Array.isArray(payload?.businesses)) return payload.businesses;
+  if (Array.isArray(payload?.data?.businesses)) return payload.data.businesses;
+  if (Array.isArray(payload?.results)) return payload.results;
+  return [];
+}
+
 function normalizeGovCode(value: unknown): GovernorateCode {
   const raw = String(value || '').toLowerCase().trim();
   if (!raw) return 'all';
-  const compact = raw.replace(/[\s_-]+/g, '');
+  const compact = raw.replace(/[\s_\-،]+/g, '');
 
   const map: Record<string, GovernorateCode> = {
     all: 'all',
     iraq: 'all',
+    العراق: 'all',
+    عێراق: 'all',
     baghdad: 'baghdad',
+    بغداد: 'baghdad',
     erbil: 'erbil',
+    اربيل: 'erbil',
+    أربيل: 'erbil',
+    هەولێر: 'erbil',
     basra: 'basra',
+    البصرة: 'basra',
+    بەسرە: 'basra',
     sulaymaniyah: 'sulaymaniyah',
     sulaymania: 'sulaymaniyah',
     slemani: 'sulaymaniyah',
+    السليمانية: 'sulaymaniyah',
+    سلێمانی: 'sulaymaniyah',
     mosul: 'mosul',
+    الموصل: 'mosul',
     najaf: 'najaf',
+    النجف: 'najaf',
     karbala: 'karbala',
+    كربلاء: 'karbala',
     kirkuk: 'kirkuk',
+    كركوك: 'kirkuk',
     anbar: 'anbar',
+    الأنبار: 'anbar',
     duhok: 'duhok',
+    دهوك: 'duhok',
+    دهوک: 'duhok',
     babil: 'babil',
     babylon: 'babil',
+    بابل: 'babil',
     diyala: 'diyala',
+    ديالى: 'diyala',
     wasit: 'wasit',
+    واسط: 'wasit',
     saladin: 'saladin',
     salahaddin: 'saladin',
     salahaldin: 'saladin',
+    صلاحالدين: 'saladin',
     maysan: 'maysan',
+    ميسان: 'maysan',
     dhiqar: 'dhiqar',
+    ذيقار: 'dhiqar',
+    ذي_قار: 'dhiqar',
     muthanna: 'muthanna',
+    المثنى: 'muthanna',
     qadisiya: 'qadisiya',
     qadisiyah: 'qadisiya',
+    القادسية: 'qadisiya',
     halabja: 'halabja',
+    حلبجة: 'halabja',
   };
 
-  return map[compact] || 'all';
+  if (map[compact]) return map[compact];
+
+  for (const gov of GOVERNORATES) {
+    const codeKey = gov.code.toLowerCase().replace(/[\s_\-،]+/g, '');
+    const englishKey = gov.englishLabel.toLowerCase().replace(/[\s_\-،]+/g, '');
+    const enKey = gov.name.en.toLowerCase().replace(/[\s_\-،]+/g, '');
+    const arKey = gov.name.ar.toLowerCase().replace(/[\s_\-،]+/g, '');
+    const kuKey = gov.name.ku.toLowerCase().replace(/[\s_\-،]+/g, '');
+    if (compact === codeKey || compact === englishKey || compact === enKey || compact === arKey || compact === kuKey) {
+      return gov.code;
+    }
+  }
+
+  return compact as GovernorateCode;
 }
 
 function normalizeCategoryId(value: unknown): string {
   const raw = String(value || '').trim();
-  if (!raw) return 'restaurant';
+  if (!raw) return 'other';
 
-  const exact = CATEGORIES.find((cat) => cat.name.en === raw);
-  if (exact) return exact.id;
+  const compact = raw.toLowerCase().replace(/[\s_\-&/،]+/g, '');
+  const byId = CATEGORIES.find((cat) => cat.id.toLowerCase() === compact || cat.id.toLowerCase() === raw.toLowerCase());
+  if (byId) return byId.id;
 
-  const key = raw.toLowerCase();
+  const byName = CATEGORIES.find((cat) => {
+    const en = cat.name.en.toLowerCase().replace(/[\s_\-&/،]+/g, '');
+    const ar = cat.name.ar.toLowerCase().replace(/[\s_\-&/،]+/g, '');
+    const ku = cat.name.ku.toLowerCase().replace(/[\s_\-&/،]+/g, '');
+    return compact === en || compact === ar || compact === ku;
+  });
+  if (byName) return byName.id;
+
   const map: Record<string, string> = {
+    restaurant: 'restaurant',
     restaurants: 'restaurant',
+    food: 'restaurant',
+    مطعم: 'restaurant',
+    مطاعم: 'restaurant',
+    خواردنگه: 'restaurant',
+    چێشتخانه: 'restaurant',
     'restaurants & cafes': 'restaurant',
+    cafe: 'cafe_bakery',
+    'café': 'cafe_bakery',
+    bakery: 'cafe_bakery',
+    كافيه: 'cafe_bakery',
+    مخبز: 'cafe_bakery',
+    کافێ: 'cafe_bakery',
+    نانەواخانه: 'cafe_bakery',
     'cafés & bakeries': 'cafe_bakery',
     'cafes & bakeries': 'cafe_bakery',
+    supermarket: 'supermarket',
     supermarkets: 'supermarket',
+    market: 'supermarket',
+    shopping: 'mall',
+    mall: 'mall',
+    مول: 'mall',
     'malls & shopping': 'mall',
+    pharmacy: 'pharmacy',
+    صيدلية: 'pharmacy',
+    دەرمانخانه: 'pharmacy',
     pharmacies: 'pharmacy',
+    hospital: 'hospital',
+    مستشفى: 'hospital',
+    نەخۆشخانه: 'hospital',
     hospitals: 'hospital',
+    clinic: 'clinic',
+    عيادة: 'clinic',
+    کلینیک: 'clinic',
     clinics: 'clinic',
+    doctor: 'doctor',
+    طبيب: 'doctor',
+    دکتۆر: 'doctor',
     doctors: 'doctor',
+    dentist: 'dentist',
+    طبيباسنان: 'dentist',
+    پزیشکیددان: 'dentist',
     dentists: 'dentist',
+    salon: 'salon',
+    تجميل: 'salon',
+    ساڵۆن: 'salon',
     'beauty salons': 'salon',
     'beauty & salons': 'salon',
+    gym: 'gym',
+    نادي: 'gym',
+    وەرزش: 'gym',
     'spas & wellness': 'spa',
     'fitness & gyms': 'gym',
     'gyms & fitness': 'gym',
+    hotel: 'hotel',
+    فندق: 'hotel',
+    هۆتێل: 'hotel',
     'hotels & hospitality': 'hotel',
     'hotels & resorts': 'hotel',
     'travel agencies': 'travel_agency',
+    education: 'university',
+    school: 'university',
+    university: 'university',
+    جامعة: 'university',
+    زانکۆ: 'university',
     universities: 'university',
+    electronics: 'mobile_shop',
+    mobile: 'mobile_shop',
+    موبايل: 'mobile_shop',
+    مۆبایل: 'mobile_shop',
+    services: 'other',
+    service: 'other',
+    خدمة: 'other',
+    خدمات: 'other',
+    other: 'other',
+    اخرى: 'other',
+    هیتر: 'other',
     'banks & finance': 'bank',
     'real estate': 'real_estate',
     'lawyers & legal': 'lawyer',
@@ -117,7 +232,12 @@ function normalizeCategoryId(value: unknown): string {
     'health & medical services': 'clinic',
   };
 
-  return map[key] || 'restaurant';
+  const compactMap: Record<string, string> = {};
+  Object.entries(map).forEach(([k, v]) => {
+    compactMap[k.toLowerCase().replace(/[\s_\-&/،]+/g, '')] = v;
+  });
+
+  return compactMap[compact] || 'other';
 }
 
 export default function App() {
@@ -264,17 +384,21 @@ export default function App() {
   useEffect(() => {
     const fetchBusinesses = async () => {
       try {
-        const selectedGovMeta = GOVERNORATES.find((g) => g.code === selectedGov);
-        const govParam =
-          selectedGov === 'all'
-            ? undefined
-            : (selectedGovMeta?.englishLabel || selectedGovMeta?.name.en || selectedGov);
-        
-        const response = await businessesApi.list({ 
-          governorate: govParam
-        });
+        const params: { page: number; limit: number; governorate?: string; category?: string } = { page: 1, limit: 50 };
+        if (selectedGov !== 'all') {
+          const selectedGovMeta = GOVERNORATES.find((g) => g.code === selectedGov);
+          params.governorate = selectedGovMeta?.englishLabel || selectedGovMeta?.name.en || selectedGov;
+        }
+        if (selectedCategory && selectedCategory !== 'other') {
+          params.category = selectedCategory;
+        }
 
-        const transformedBusinesses: Business[] = (response || []).map((biz: any) => ({
+        const response = await businessesApi.list(params);
+        const rows = normalizeList(response);
+        console.log("[ShakuMaku] businesses raw response:", response);
+        console.log("[ShakuMaku] businesses rows:", rows.length);
+
+        const transformedBusinesses: Business[] = rows.map((biz: any) => ({
           id: biz.id,
           name: {
             ar: biz.name_ar || biz.name_en || '',
@@ -317,7 +441,7 @@ export default function App() {
     };
 
     fetchBusinesses();
-  }, [selectedGov]);
+  }, [selectedGov, selectedCategory]);
 
   // Fetch posts from API
   useEffect(() => {
@@ -532,6 +656,11 @@ export default function App() {
         {liveDataError && (
           <div className="mb-5 max-w-3xl mx-auto bg-red-950/85 border border-red-400/40 rounded-xl px-4 py-3 text-red-100 text-xs md:text-sm font-medium">
             {liveDataError}
+          </div>
+        )}
+        {import.meta.env.DEV && (
+          <div className="mb-5 max-w-3xl mx-auto bg-zinc-900/80 border border-zinc-600/40 rounded-xl px-4 py-3 text-zinc-100 text-xs md:text-sm font-medium">
+            {`Loaded ${businesses.length} businesses from API. Visible after filters: ${filteredBusinesses.length}. Selected governorate: ${selectedGov}. Selected category: ${selectedCategory || 'all'}.`}
           </div>
         )}
 

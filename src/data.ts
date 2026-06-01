@@ -503,6 +503,16 @@ export const CATEGORIES: Category[] = [
       en: 'Pet Shops'
     },
     color: 'from-orange-500 to-amber-500'
+  },
+  {
+    id: 'other',
+    icon: '🏢',
+    name: {
+      ar: 'أخرى',
+      ku: 'هیتر',
+      en: 'Other'
+    },
+    color: 'from-zinc-600 to-zinc-500'
   }
 ];
 

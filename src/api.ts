@@ -1,4 +1,4 @@
-const RAW_API_BASE_URL = (import.meta as any).env?.VITE_API_URL || 'https://shaku-maku.mahdialmuntadhar1.workers.dev';
+const RAW_API_BASE_URL = (import.meta as any).env?.VITE_API_URL || 'https://shaku-maku-api.mahdialmuntadhar1.workers.dev';
 export const API_BASE_URL = String(RAW_API_BASE_URL).replace(/\/+$/, '').replace(/\/api$/i, '');
 
 if (!(import.meta as any).env?.VITE_API_URL) {

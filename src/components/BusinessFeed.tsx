@@ -52,13 +52,21 @@ export default function BusinessFeed({
     ? businesses 
     : businesses.filter(b => b.governorate === selectedGov);
 
+  const knownCategoryIds = new Set(CATEGORIES.map((c) => c.id));
+  const groupedBusinesses = govFiltered.reduce<Record<string, Business[]>>((acc, biz) => {
+    const categoryId = knownCategoryIds.has(biz.category) ? biz.category : 'other';
+    if (!acc[categoryId]) acc[categoryId] = [];
+    acc[categoryId].push(biz);
+    return acc;
+  }, {});
+
   // If a specific category chip is active on the header selector, prioritize that category. Otherwise, group by all categories.
-  const categoriesToGroup = selectedCategory 
-    ? CATEGORIES.filter(c => c.id === selectedCategory) 
-    : CATEGORIES;
+  const categoriesToGroup = selectedCategory
+    ? CATEGORIES.filter((c) => c.id === selectedCategory)
+    : CATEGORIES.filter((c) => (groupedBusinesses[c.id] || []).length > 0);
 
   const visibleCount = categoriesToGroup.reduce((count, category) => {
-    return count + govFiltered.filter(business => business.category === category.id).length;
+    return count + (groupedBusinesses[category.id] || []).length;
   }, 0);
 
   const handleToggleCategoryExpand = (catId: string) => {
@@ -134,7 +142,7 @@ export default function BusinessFeed({
       {/* Category Grouping Logic */}
       {categoriesToGroup.map((category) => {
         // Find businesses belonging to this specific category that match the chosen governorate
-        const categoryBizs = govFiltered.filter(b => b.category === category.id);
+        const categoryBizs = groupedBusinesses[category.id] || [];
         
         // Skip rendering category section if there are no matching businesses
         if (categoryBizs.length === 0) return null;
