@@ -21,6 +21,105 @@ import AboutSakuMaku from './components/AboutSakuMaku';
 import AdminPanel from './components/AdminPanel';
 import AuthModal from './components/AuthModal';
 
+const FALLBACK_BUSINESS_IMAGE =
+  'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&auto=format&fit=crop&q=80';
+const FALLBACK_AVATAR =
+  'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=120&h=120&fit=crop&q=80';
+
+function normalizeGovCode(value: unknown): GovernorateCode {
+  const raw = String(value || '').toLowerCase().trim();
+  if (!raw) return 'all';
+  const compact = raw.replace(/[\s_-]+/g, '');
+
+  const map: Record<string, GovernorateCode> = {
+    all: 'all',
+    iraq: 'all',
+    baghdad: 'baghdad',
+    erbil: 'erbil',
+    basra: 'basra',
+    sulaymaniyah: 'sulaymaniyah',
+    sulaymania: 'sulaymaniyah',
+    slemani: 'sulaymaniyah',
+    mosul: 'mosul',
+    najaf: 'najaf',
+    karbala: 'karbala',
+    kirkuk: 'kirkuk',
+    anbar: 'anbar',
+    duhok: 'duhok',
+    babil: 'babil',
+    babylon: 'babil',
+    diyala: 'diyala',
+    wasit: 'wasit',
+    saladin: 'saladin',
+    salahaddin: 'saladin',
+    salahaldin: 'saladin',
+    maysan: 'maysan',
+    dhiqar: 'dhiqar',
+    muthanna: 'muthanna',
+    qadisiya: 'qadisiya',
+    qadisiyah: 'qadisiya',
+    halabja: 'halabja',
+  };
+
+  return map[compact] || 'all';
+}
+
+function normalizeCategoryId(value: unknown): string {
+  const raw = String(value || '').trim();
+  if (!raw) return 'restaurant';
+
+  const exact = CATEGORIES.find((cat) => cat.name.en === raw);
+  if (exact) return exact.id;
+
+  const key = raw.toLowerCase();
+  const map: Record<string, string> = {
+    restaurants: 'restaurant',
+    'restaurants & cafes': 'restaurant',
+    'cafés & bakeries': 'cafe_bakery',
+    'cafes & bakeries': 'cafe_bakery',
+    supermarkets: 'supermarket',
+    'malls & shopping': 'mall',
+    pharmacies: 'pharmacy',
+    hospitals: 'hospital',
+    clinics: 'clinic',
+    doctors: 'doctor',
+    dentists: 'dentist',
+    'beauty salons': 'salon',
+    'beauty & salons': 'salon',
+    'spas & wellness': 'spa',
+    'fitness & gyms': 'gym',
+    'gyms & fitness': 'gym',
+    'hotels & hospitality': 'hotel',
+    'hotels & resorts': 'hotel',
+    'travel agencies': 'travel_agency',
+    universities: 'university',
+    'banks & finance': 'bank',
+    'real estate': 'real_estate',
+    'lawyers & legal': 'lawyer',
+    'car dealers': 'car_dealer',
+    'car rental': 'car_rental',
+    'mobile shops': 'mobile_shop',
+    'electronics & tech shops': 'mobile_shop',
+    furniture: 'furniture',
+    'clothing stores': 'clothing_store',
+    'tech & software': 'software_company',
+    'it & software services': 'software_company',
+    'marketing agencies': 'marketing_agency',
+    construction: 'construction_company',
+    'construction & contractors': 'construction_company',
+    'architecture & design': 'architecture',
+    photography: 'photography',
+    'cinema & theatres': 'cinema',
+    'gaming centers': 'gaming_center',
+    'sports clubs': 'sports_club',
+    'pet shops': 'pet_shop',
+    'education & training centers': 'university',
+    'health & medical services': 'clinic',
+  };
+
+  return map[key] || 'restaurant';
+}
+
 export default function App() {
   const [user, setUser] = useState<any>(authApi.getCurrentUser());
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
@@ -120,8 +219,11 @@ export default function App() {
   useEffect(() => {
     const fetchBusinesses = async () => {
       try {
-        // Map governorate code to backend format (capitalize first letter)
-        const govParam = selectedGov === 'all' ? undefined : selectedGov.charAt(0).toUpperCase() + selectedGov.slice(1);
+        const selectedGovMeta = GOVERNORATES.find((g) => g.code === selectedGov);
+        const govParam =
+          selectedGov === 'all'
+            ? undefined
+            : (selectedGovMeta?.englishLabel || selectedGovMeta?.name.en || selectedGov);
         
         const response = await businessesApi.list({ 
           governorate: govParam
@@ -139,13 +241,13 @@ export default function App() {
             ku: biz.description_ku || '',
             en: biz.description_en || ''
           },
-          category: (CATEGORIES.find((cat) => cat.name.en === biz.category)?.id || 'restaurant'),
-          governorate: (String(biz.governorate || 'all').toLowerCase() as GovernorateCode),
+          category: normalizeCategoryId(biz.category),
+          governorate: normalizeGovCode(biz.governorate),
           rating: Number(biz.rating || 0),
           reviewsCount: Number(biz.reviews_count || 0),
-          image: biz.image || '',
-          images: biz.images ? String(biz.images).split(',').filter(Boolean) : (biz.image ? [biz.image] : []),
-          avatar: biz.avatar || '',
+          image: biz.image || FALLBACK_BUSINESS_IMAGE,
+          images: biz.images ? String(biz.images).split(',').filter(Boolean) : (biz.image ? [biz.image] : [FALLBACK_BUSINESS_IMAGE]),
+          avatar: biz.avatar || FALLBACK_AVATAR,
           isVerified: Boolean(biz.is_verified),
           phoneNumber: biz.phone_number || '',
           address: {
@@ -179,9 +281,9 @@ export default function App() {
           id: post.id,
           businessId: post.business_id,
           businessName: post.business_name_ar || post.business_name_en || '',
-          businessAvatar: post.business_avatar || '',
-          category: CATEGORIES.find((cat) => cat.name.en === post.category)?.id || 'restaurant',
-          governorate: (String(post.governorate || 'all').toLowerCase() as GovernorateCode),
+          businessAvatar: post.business_avatar || FALLBACK_AVATAR,
+          category: normalizeCategoryId(post.category),
+          governorate: normalizeGovCode(post.governorate),
           mediaUrl: post.media_url || '',
           caption: {
             ar: post.caption_ar || '',
