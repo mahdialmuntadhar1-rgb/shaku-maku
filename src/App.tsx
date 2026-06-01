@@ -6,7 +6,7 @@ import {
   ChevronDown, MapPin
 } from 'lucide-react';
 import { Language, GovernorateCode, Business, SocialPost, UserProfile, HeroSlide } from './types';
-import { INITIAL_BUSINESSES, TRANSLATIONS, CATEGORIES, INITIAL_POSTS, GOVERNORATES, HERO_SLIDES } from './data';
+import { TRANSLATIONS, CATEGORIES, GOVERNORATES, HERO_SLIDES } from './data';
 import { MOCK_BUSINESSES } from './mockData';
 import { businessesApi, postsApi } from './api';
 import { useAuth } from './contexts/AuthContext';
@@ -132,7 +132,11 @@ export default function App() {
   useEffect(() => {
     const fetchBusinesses = async () => {
       try {
-        const response = await businessesApi.list({ limit: 100 });
+        const response = await businessesApi.list({
+          limit: 500,
+          ...(selectedGov !== 'all' ? { governorate: selectedGov } : {}),
+          ...(selectedCategory ? { category: selectedCategory } : {})
+        });
         if (response.data && response.data.length > 0) {
           // Transform API data to match Business type
           const transformedBusinesses: Business[] = response.data.map((biz: any) => ({
@@ -157,35 +161,39 @@ export default function App() {
           }));
           setBusinesses(transformedBusinesses);
         } else {
-          setBusinesses(MOCK_BUSINESSES.length > 0 ? MOCK_BUSINESSES : INITIAL_BUSINESSES);
+          setBusinesses([]);
         }
       } catch (error) {
         console.error("Error fetching businesses from API:", error);
-        setBusinesses(MOCK_BUSINESSES.length > 0 ? MOCK_BUSINESSES : INITIAL_BUSINESSES);
+        setBusinesses(MOCK_BUSINESSES.length > 0 ? MOCK_BUSINESSES : []);
       }
     };
 
     fetchBusinesses();
-  }, []);
+  }, [selectedGov, selectedCategory]);
 
   // Fetch posts from Cloudflare API
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await postsApi.getAll();
+        const response = await postsApi.getAll({
+          limit: 200,
+          ...(selectedGov !== 'all' ? { governorate: selectedGov } : {}),
+          ...(selectedCategory ? { category: selectedCategory } : {})
+        });
         if (response.data && response.data.length > 0) {
           setPosts(response.data);
         } else {
-          setPosts(INITIAL_POSTS);
+          setPosts([]);
         }
       } catch (error) {
         console.error("Error fetching posts from API:", error);
-        setPosts(INITIAL_POSTS);
+        setPosts([]);
       }
     };
 
     fetchPosts();
-  }, []);
+  }, [selectedGov, selectedCategory]);
 
   // Filter business array based on search input + governorate matches + category
   const filteredBusinesses = useMemo(() => {
@@ -235,10 +243,50 @@ export default function App() {
     // TODO: Call API to persist save
   };
 
-  // Callback to add a new business (API support needed)
+  // Callback to add a new business
   const handleAddLiveBusiness = async (newBiz: Omit<Business, 'rating' | 'reviewsCount' | 'likes' | 'saves'>) => {
-    console.log("Add business not implemented in backend yet");
-    // TODO: Call API to create business
+    const payload = {
+      name: newBiz.name[currentLang] || newBiz.name.en || newBiz.name.ar,
+      description: newBiz.description[currentLang] || newBiz.description.en || '',
+      category: newBiz.category,
+      governorate: newBiz.governorate,
+      address: newBiz.address[currentLang] || newBiz.address.en || '',
+      phone: newBiz.phoneNumber || '',
+      logoUrl: newBiz.avatar || '',
+      coverImageUrl: newBiz.image || '',
+      verified: Boolean(newBiz.isVerified)
+    };
+
+    try {
+      const response = await businessesApi.create(payload);
+      const created = response?.data || response;
+      if (created?.id) {
+        const createdBiz: Business = {
+          id: String(created.id),
+          name: { ar: created.name || payload.name, ku: created.name || payload.name, en: created.name || payload.name },
+          description: { ar: created.description || payload.description, ku: created.description || payload.description, en: created.description || payload.description },
+          category: created.category || payload.category,
+          governorate: created.governorate || payload.governorate,
+          rating: created.rating || 0,
+          reviewsCount: created.reviewCount || 0,
+          image: created.coverImageUrl || payload.coverImageUrl,
+          images: [created.coverImageUrl || payload.coverImageUrl],
+          avatar: created.logoUrl || payload.logoUrl,
+          isVerified: Boolean(created.verified),
+          phoneNumber: created.phone || payload.phone,
+          address: { ar: created.address || payload.address, ku: created.address || payload.address, en: created.address || payload.address },
+          likes: created.likes || 0,
+          saves: created.saves || 0,
+          mapCoords: { x: 0, y: 0 }
+        };
+        setBusinesses(prev => [createdBiz, ...prev]);
+      } else {
+        setBusinesses(prev => [{ ...newBiz, rating: 0, reviewsCount: 0, likes: 0, saves: 0 }, ...prev]);
+      }
+    } catch (error) {
+      console.error("Failed to create business on backend; saved locally.", error);
+      setBusinesses(prev => [{ ...newBiz, rating: 0, reviewsCount: 0, likes: 0, saves: 0 }, ...prev]);
+    }
   };
 
   // Stories auto advancing timer handler
@@ -603,6 +651,7 @@ export default function App() {
                 <SocialFeed
                   currentLang={currentLang}
                   selectedGov={selectedGov}
+                  selectedCategory={selectedCategory}
                   posts={posts}
                   setPosts={setPosts}
                   user={user}

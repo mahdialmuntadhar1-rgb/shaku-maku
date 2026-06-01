@@ -164,20 +164,19 @@ export const businessesApi = {
 };
 
 export const postsApi = {
-  getAll: async <T = unknown>(): Promise<ApiListResponse<T>> => {
+  getAll: async <T = unknown>(params?: Record<string, unknown>): Promise<ApiListResponse<T>> => {
     try {
-      const response = await api.get<ApiListResponse<T>>('/feed/business-posts');
+      const response = await api.get<ApiListResponse<T>>('/feed/business-posts', { params });
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 404) {
         try {
-          const fallbackResponse = await api.get<ApiListResponse<T>>('/posts');
+          const fallbackResponse = await api.get<ApiListResponse<T>>('/posts', { params });
           return fallbackResponse.data;
         } catch (fallbackError) {
           if (!isBackendUnavailable(fallbackError)) {
             throw fallbackError;
           }
-
           return { data: [], posts: [] };
         }
       }
@@ -189,8 +188,8 @@ export const postsApi = {
       throw error;
     }
   },
-
-  list: async <T = unknown>(): Promise<ApiListResponse<T>> => postsApi.getAll<T>(),
+  list: async <T = unknown>(params?: Record<string, unknown>): Promise<ApiListResponse<T>> =>
+    postsApi.getAll<T>(params),
 
   getById: async <T = unknown>(id: number | string): Promise<T> => {
     const response = await api.get<T>(`/posts/${id}`);

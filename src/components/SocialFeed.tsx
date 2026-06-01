@@ -13,6 +13,7 @@ import { postsApi } from '../api';
 interface SocialFeedProps {
   currentLang: Language;
   selectedGov: GovernorateCode;
+  selectedCategory: string | null;
   posts: SocialPost[];
   setPosts: React.Dispatch<React.SetStateAction<SocialPost[]>>;
   user: any;
@@ -23,6 +24,7 @@ interface SocialFeedProps {
 export default function SocialFeed({ 
   currentLang, 
   selectedGov,
+  selectedCategory,
   posts,
   setPosts,
   user,
@@ -207,9 +209,11 @@ export default function SocialFeed({
   };
 
   // Filter posts by chosen Governorate
-  const filteredPosts = selectedGov === 'all' 
-    ? posts 
-    : posts.filter(p => p.governorate === selectedGov);
+  const filteredPosts = posts.filter((post) => {
+    const govMatch = selectedGov === 'all' || post.governorate === selectedGov;
+    const categoryMatch = !selectedCategory || post.category === selectedCategory;
+    return govMatch && categoryMatch;
+  });
   const visiblePosts = filteredPosts.filter(post => isAdmin || !post.status || post.status === 'approved');
 
   const handleCreatePost = async (e: React.FormEvent) => {
