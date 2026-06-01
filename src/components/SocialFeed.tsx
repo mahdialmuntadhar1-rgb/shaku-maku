@@ -7,8 +7,7 @@ import {
 } from 'lucide-react';
 import { SocialPost, Language, GovernorateCode } from '../types';
 import { TRANSLATIONS, CATEGORIES, GOVERNORATES } from '../data';
-import { generateLivePostFromCSV } from '../csvBusinesses';
-import { postsApi } from '../api';
+import { API_BASE_URL, postsApi } from '../api';
 
 interface SocialFeedProps {
   currentLang: Language;
@@ -33,43 +32,23 @@ export default function SocialFeed({
   // Custom Pagination States for Social Feed
   const [visibleCount, setVisibleCount] = useState(3);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [isGeneratingLive, setIsGeneratingLive] = useState(false);
+  const [apiConnected, setApiConnected] = useState<boolean | null>(null);
 
-  const handleStimulateLivePost = async () => {
-    setIsGeneratingLive(true);
-    
-    // Pick the governorate code to use
-    let govToUse = selectedGov;
-    if (selectedGov === 'all') {
-      const validGovs: GovernorateCode[] = [
-        'baghdad', 'erbil', 'basra', 'sulaymaniyah', 'najaf', 'mosul', 
-        'karbala', 'kirkuk', 'anbar', 'duhok', 'babil', 'diyala', 
-        'wasit', 'saladin', 'maysan', 'muthanna', 'qadisiya', 'halabja'
-      ];
-      govToUse = validGovs[Math.floor(Math.random() * validGovs.length)];
-    }
-
-    try {
-      const newLivePost = generateLivePostFromCSV(govToUse);
-      
-      // Add to local state
-      setPosts(prev => [newLivePost, ...prev]);
-
-      // Show a quick transient overlay or alert
-      const bizNameText = newLivePost.businessName;
-      alert(
-        currentLang === 'en' 
-          ? `🎉 Success! Handpicked and populated a new simulated live update for "${bizNameText}" from the Iraqi Database.`
-          : currentLang === 'ku'
-          ? `🎉 سەرکەوتوو بوو! بابەتێکی نوێ دەربارەی "${bizNameText}" لە پارێزگای دیاریکراو بڵاوکرایەوە.`
-          : `🎉 تم بنجاح! سحب وتوليد تحديث حي لمشروع "${bizNameText}" من قاعدة البيانات العراقية.`
-      );
-    } catch (err) {
-      console.error("Error generating simulated live post: ", err);
-    } finally {
-      setIsGeneratingLive(false);
-    }
-  };
+  useEffect(() => {
+    let cancelled = false;
+    const probe = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/health`);
+        if (!cancelled) setApiConnected(response.ok);
+      } catch {
+        if (!cancelled) setApiConnected(false);
+      }
+    };
+    probe();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // Reset page pagination state when governorate/filters change
   React.useEffect(() => {
@@ -403,6 +382,14 @@ export default function SocialFeed({
       
       {/* Immersive Refined Social Composer */}
       <div className="bg-[#18191a] border border-[#2f3031]/80 rounded-[20px] p-5 space-y-4.5 shadow-2xl relative overflow-hidden font-sans">
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-black text-white">
+            {currentLang === 'en' ? 'Create Post' : currentLang === 'ku' ? 'دروستکردنی بابەت' : 'إنشاء منشور'}
+          </h3>
+          <span className={`text-[10px] font-bold px-2 py-1 rounded-full ${apiConnected ? 'bg-emerald-500/20 text-emerald-300' : 'bg-red-500/20 text-red-300'}`}>
+            {apiConnected ? 'Backend Connected' : 'Backend Offline'}
+          </span>
+        </div>
         
         <div className="space-y-3.5">
           {/* User Row Option */}
@@ -445,10 +432,10 @@ export default function SocialFeed({
               rows={3}
               placeholder={
                 currentLang === 'en'
-                  ? `What's on your mind, ${user?.displayName?.split(' ')[0] || 'Friend'}? Share updates, photos or video trailers...`
+                  ? 'What do you want to share?'
                   : currentLang === 'ku'
-                  ? `چی لە مێشکتدایە، ${user?.displayName?.split(' ')[0] || 'هاوڕێم'}؟ بابەتێکی نوێ، وێنە یان کەلێن بڵاوبکەرەوە...`
-                  : `بمَ تفكّر، ${user?.displayName?.split(' ')[0] || 'يا صديقنا'}؟ أنشر أحدث الصور، عروض كراسات أو فيديوهات ترويجية...`
+                  ? 'چی دەتەوێت هاوبەش بکەیت؟'
+                  : 'ماذا تريد أن تشارك؟'
               }
               value={newCaption}
               onChange={(e) => setNewCaption(e.target.value)}
@@ -1058,36 +1045,11 @@ export default function SocialFeed({
           </h3>
           <p className="text-xs text-zinc-500 max-w-sm mb-4 leading-relaxed">
             {currentLang === 'en' 
-              ? `No businesses in ${govNameText} have active broadcasts yet. Pull an authentic local update from the database now!`
+              ? `No posts were returned by backend for ${govNameText} yet.`
               : currentLang === 'ku'
-              ? `هیچ کۆمپانیایەک لە ${govNameText} پەخشی زیندووی نییە. بابەتێکی فەرمی ڕاستەقینە لێرەوە پۆست بکە!`
-              : `لم تقم المحلات أو الشركات في محافظة ${govNameText} بنشر حملات ترويجية بعد. اسحب وانشر تحديثاً حقيقياً تلقائياً الآن!`}
+              ? `هێشتا هیچ بابەتێک لەلایەن باکەندەوە بۆ ${govNameText} نەگەیشتووە.`
+              : `لم تُرجِع واجهة الخلفية أي منشورات لمحافظة ${govNameText} حتى الآن.`}
           </p>
-
-          <button
-            type="button"
-            onClick={handleStimulateLivePost}
-            disabled={isGeneratingLive}
-            className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 font-extrabold text-white text-xs rounded-xl transition cursor-pointer flex items-center justify-center gap-1.5 active:scale-95 shadow-lg shadow-indigo-600/10 disabled:opacity-50"
-          >
-            {isGeneratingLive ? (
-              <>
-                <span className="w-3 h-3 border-2 border-white/50 border-t-transparent rounded-full animate-spin"></span>
-                <span>{currentLang === 'en' ? 'Populating...' : 'جاري التوليد...'}</span>
-              </>
-            ) : (
-              <>
-                <span>✨</span>
-                <span>
-                  {currentLang === 'en'
-                    ? `Seed ${govNameText} Feed`
-                    : currentLang === 'ku'
-                    ? `تولیدکردنی بابەت بۆ ${govNameText}`
-                    : `توليد منشورات لـ ${govNameText} تلقائياً`}
-                </span>
-              </>
-            )}
-          </button>
         </div>
       )}
 

@@ -239,7 +239,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
     );
     await capture('Filter probe (governorate+category)', () =>
       api.get('/businesses', {
-        params: { governorate: 'baghdad', category: 'restaurant', page: 1, limit: 5 }
+        params: { governorate: 'Baghdad', category: 'Restaurants', page: 1, limit: 5 }
       })
     );
     await capture('Write route probe (OPTIONS /api/businesses)', () => api.options('/businesses'));
@@ -316,7 +316,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
           {t(currentLang, 'Hero Editor', 'تعديل الواجهة الرئيسية', 'دەستکاری هیرو')}
         </h2>
         <p className="text-xs text-amber-300">
-          Local-only editor: these hero changes are not persisted to backend yet.
+          Hero edits save to this app immediately and persist in browser storage.
         </p>
         <div className="grid lg:grid-cols-2 gap-4">
           {heroSlides.map((slide) => (

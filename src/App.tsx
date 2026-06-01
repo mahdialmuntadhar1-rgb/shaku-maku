@@ -152,8 +152,17 @@ export default function App() {
   const t = TRANSLATIONS[currentLang];
   const isRtl = currentLang === 'ar' || currentLang === 'ku';
 
-  // Hero Slides (static for now, can be moved to backend later)
-  const [heroSlides, setHeroSlides] = useState<HeroSlide[]>(HERO_SLIDES);
+  // Hero slides persisted locally so admin edits survive refreshes.
+  const [heroSlides, setHeroSlides] = useState<HeroSlide[]>(() => {
+    try {
+      const saved = localStorage.getItem('hero_slides');
+      if (!saved) return HERO_SLIDES;
+      const parsed = JSON.parse(saved);
+      return Array.isArray(parsed) && parsed.length ? parsed : HERO_SLIDES;
+    } catch {
+      return HERO_SLIDES;
+    }
+  });
 
   const handleCustomEmailLogin = async (_customEmail: string) => {};
 
@@ -173,22 +182,30 @@ export default function App() {
     setIsAdmin(String(user.email || '').toLowerCase() === 'safaribosafar@gmail.com');
     authApi.getMe()
       .then((me) => {
+        const email = String(me.email || '').toLowerCase();
+        const forcedAdmin = email === 'safaribosafar@gmail.com';
+        const role = forcedAdmin ? 'admin' : ((me.role as any) || 'user');
+
         setUserProfile({
           uid: me.id,
           displayName: me.name || me.email.split('@')[0],
           photoURL: '',
           email: me.email,
           createdAt: new Date().toISOString(),
-          role: (me.role as any) || 'user',
+          role,
           onboarded: true,
           businessId: null
         });
-        setIsAdmin(String(me.email || '').toLowerCase() === 'safaribosafar@gmail.com' || me.role === 'admin');
+        setIsAdmin(forcedAdmin || me.role === 'admin');
       })
       .catch(() => {
         authApi.logout();
       });
   }, [user]);
+
+  useEffect(() => {
+    localStorage.setItem('hero_slides', JSON.stringify(heroSlides));
+  }, [heroSlides]);
 
   // Secure logout
   const handleSecureLogout = async () => {
@@ -810,7 +827,8 @@ export default function App() {
                   posts={posts}
                   setPosts={setPosts}
                   userProfile={userProfile}
-                  user={user}
+                  heroSlides={heroSlides}
+                  setHeroSlides={setHeroSlides}
                 />
               </motion.div>
             )}
