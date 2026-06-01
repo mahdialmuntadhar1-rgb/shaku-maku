@@ -1,0 +1,16 @@
+name = "shaku-maku-api"
+main = "worker/index.ts"
+compatibility_date = "2024-01-01"
+account_id = "81ee673bbeb157f09443fab6e1a11fd5"
+
+[vars]
+ENVIRONMENT = "production"
+CORS_ORIGIN = "https://shaku-maku2026.pages.dev"
+JWT_SECRET = "change-this-in-production"
+FRONTEND_URL = "https://shaku-maku2026.pages.dev"
+ADMIN_EMAILS = "safaribosafar@gmail.com"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "shaku_maku_db"
+database_id = "6e1cf3c7-0b05-4e85-bae8-83e96044a864"

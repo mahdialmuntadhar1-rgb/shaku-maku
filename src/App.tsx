@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Compass, Flame, Map, PlusCircle, BookOpen, Search, X, 
@@ -7,10 +7,7 @@ import {
 } from 'lucide-react';
 import { Language, GovernorateCode, Business, SocialPost, UserProfile, HeroSlide } from './types';
 import { TRANSLATIONS, CATEGORIES, GOVERNORATES, HERO_SLIDES } from './data';
-import { MOCK_BUSINESSES } from './mockData';
-import { businessesApi, postsApi } from './api';
-import { useAuth } from './contexts/AuthContext';
-import { isAdminEmail, normalizeEmail, toUserProfile } from './auth/session';
+import { authApi, businessesApi, postsApi } from './api';
 
 // Saku Maku Modular Components
 import Header from './components/Header';
@@ -25,15 +22,16 @@ import AdminPanel from './components/AdminPanel';
 import AuthModal from './components/AuthModal';
 
 export default function App() {
-  const { user, login: authLogin, register: authRegister, logout: authLogout } = useAuth();
+  const [user, setUser] = useState<any>(authApi.getCurrentUser());
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  
   const [currentLang, setCurrentLang] = useState<Language>('ar'); // Default: Arabic
   const [selectedGov, setSelectedGov] = useState<GovernorateCode>('all'); // Default: All Iraq
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 
   // Saku Maku core Reactive businesses database
-  const [businesses, setBusinesses] = useState<Business[]>(MOCK_BUSINESSES);
+  const [businesses, setBusinesses] = useState<Business[]>([]);
   
   // Saku Maku elevated Live Social posts stream
   const [posts, setPosts] = useState<SocialPost[]>([]);
@@ -56,56 +54,50 @@ export default function App() {
   const isRtl = currentLang === 'ar' || currentLang === 'ku';
 
   // Hero Slides (static for now, can be moved to backend later)
-  const [heroSlides, setHeroSlides] = useState<HeroSlide[]>(() => {
-    try {
-      const savedSlides = localStorage.getItem('shaku_maku_hero_slides');
-      return savedSlides ? JSON.parse(savedSlides) : HERO_SLIDES;
-    } catch {
-      return HERO_SLIDES;
-    }
-  });
+  const [heroSlides, setHeroSlides] = useState<HeroSlide[]>(HERO_SLIDES);
 
-  // Keep document and stored auth state aligned across refreshes and language changes.
+  const handleCustomEmailLogin = async (_customEmail: string) => {};
+
   useEffect(() => {
-    document.documentElement.lang = currentLang === 'ku' ? 'ku' : currentLang;
-    document.documentElement.dir = isRtl ? 'rtl' : 'ltr';
-  }, [currentLang, isRtl]);
+    const syncAuthState = () => setUser(authApi.getCurrentUser());
+    window.addEventListener('auth-changed', syncAuthState);
+    return () => window.removeEventListener('auth-changed', syncAuthState);
+  }, []);
 
   useEffect(() => {
     if (!user) {
       setUserProfile(null);
-      if (activeTab === 'admin') setActiveTab('discover');
+      setIsAdmin(false);
       return;
     }
-    setUserProfile(toUserProfile(user));
-  }, [user, activeTab]);
 
-  useEffect(() => {
-    localStorage.setItem('shaku_maku_hero_slides', JSON.stringify(heroSlides));
-  }, [heroSlides]);
-
-  const handleCustomEmailLogin = async (customEmail: string) => {
-    const cleanEmail = normalizeEmail(customEmail);
-    if (!cleanEmail) return;
-
-    const dummyPassword = "SandboxPassword123!";
-
-    try {
-      const loginResponse = await authLogin(cleanEmail, dummyPassword);
-      if (!loginResponse.success) {
-        await authRegister({ email: cleanEmail, password: dummyPassword, name: cleanEmail.split('@')[0] });
-      }
-      console.log("Auth session authenticated successfully for: ", cleanEmail);
-    } catch (err) {
-      console.error("Error setting custom user: ", err);
-    }
-  };
+    setIsAdmin(String(user.email || '').toLowerCase() === 'safaribosafar@gmail.com');
+    authApi.getMe()
+      .then((me) => {
+        setUserProfile({
+          uid: me.id,
+          displayName: me.name || me.email.split('@')[0],
+          photoURL: '',
+          email: me.email,
+          createdAt: new Date().toISOString(),
+          role: (me.role as any) || 'user',
+          onboarded: true,
+          businessId: null
+        });
+        setIsAdmin(String(me.email || '').toLowerCase() === 'safaribosafar@gmail.com' || me.role === 'admin');
+      })
+      .catch(() => {
+        authApi.logout();
+      });
+  }, [user]);
 
   // Secure logout
   const handleSecureLogout = async () => {
     try {
-      authLogout();
+      await authApi.logout();
+      setUser(null);
       setUserProfile(null);
+      setIsAdmin(false);
       setActiveTab('discover');
       sessionStorage.clear();
       console.log("Session terminated.");
@@ -115,81 +107,109 @@ export default function App() {
   };
 
   const handleUpdateRole = async (newRole: 'user' | 'owner' | 'admin') => {
-    if (newRole === 'admin' && !isAdminEmail(user?.email)) {
-      console.warn("Blocked local admin role switch for non-admin user");
-      return;
-    }
-    if (!userProfile) return;
-    setUserProfile(prev => prev ? { ...prev, role: newRole } : prev);
+    // Role updates would need Firestore support
+    console.log("Role update not implemented yet");
   };
 
   const handleUpdateProfile = async (updatedFields: Partial<UserProfile>) => {
-    // Profile updates would need backend API support
-    console.log("Profile update not implemented in backend yet");
+    // Profile updates would need Firestore support
+    console.log("Profile update not implemented yet");
   };
 
-  // Fetch businesses from Cloudflare API
+  // Fetch businesses from API
   useEffect(() => {
     const fetchBusinesses = async () => {
       try {
-        const response = await businessesApi.list({
-          page: 1,
-          limit: 500,
-          ...(searchQuery.trim() ? { search: searchQuery.trim() } : {}),
-          ...(selectedGov !== 'all' ? { governorate: selectedGov } : {}),
-          ...(selectedCategory ? { category: selectedCategory } : {})
+        // Map governorate code to backend format (capitalize first letter)
+        const govParam = selectedGov === 'all' ? undefined : selectedGov.charAt(0).toUpperCase() + selectedGov.slice(1);
+        
+        const response = await businessesApi.list({ 
+          governorate: govParam
         });
-        if (response.data && response.data.length > 0) {
-          // Transform API data to match Business type
-          const transformedBusinesses: Business[] = response.data.map((biz: any) => ({
-            id: biz.id,
-            name: { ar: biz.name, ku: biz.name, en: biz.name },
-            description: { ar: biz.description || '', ku: biz.description || '', en: biz.description || '' },
-            category: biz.category,
-            governorate: biz.governorate,
-            rating: biz.rating || 0,
-            reviewsCount: biz.reviewCount || 0,
-            image: biz.coverImageUrl || '',
-            images: [biz.coverImageUrl || ''],
-            avatar: biz.logoUrl || '',
-            isVerified: biz.verified,
-            phoneNumber: biz.phone || '',
-            address: { ar: biz.address || '', ku: biz.address || '', en: biz.address || '' },
-            likes: biz.likes || 0,
-            saves: biz.saves || 0,
-            mapCoords: { x: 0, y: 0 },
-            likedByUser: false,
-            savedByUser: false
-          }));
-          setBusinesses(transformedBusinesses);
-        } else {
-          setBusinesses([]);
-        }
+
+        const transformedBusinesses: Business[] = (response || []).map((biz: any) => ({
+          id: biz.id,
+          name: {
+            ar: biz.name_ar || biz.name_en || '',
+            ku: biz.name_ku || biz.name_en || '',
+            en: biz.name_en || ''
+          },
+          description: {
+            ar: biz.description_ar || '',
+            ku: biz.description_ku || '',
+            en: biz.description_en || ''
+          },
+          category: (CATEGORIES.find((cat) => cat.name.en === biz.category)?.id || 'restaurant'),
+          governorate: (String(biz.governorate || 'all').toLowerCase() as GovernorateCode),
+          rating: Number(biz.rating || 0),
+          reviewsCount: Number(biz.reviews_count || 0),
+          image: biz.image || '',
+          images: biz.images ? String(biz.images).split(',').filter(Boolean) : (biz.image ? [biz.image] : []),
+          avatar: biz.avatar || '',
+          isVerified: Boolean(biz.is_verified),
+          phoneNumber: biz.phone_number || '',
+          address: {
+            ar: biz.address_ar || '',
+            ku: biz.address_ku || '',
+            en: biz.address_en || ''
+          },
+          likes: Number(biz.likes || biz.like_count || 0),
+          saves: Number(biz.saves || biz.save_count || 0),
+          mapCoords: { x: Number(biz.map_coords_x || 0), y: Number(biz.map_coords_y || 0) },
+          likedByUser: false,
+          savedByUser: false
+        }));
+
+        setBusinesses(transformedBusinesses);
       } catch (error) {
         console.error("Error fetching businesses from API:", error);
-        setBusinesses(MOCK_BUSINESSES.length > 0 ? MOCK_BUSINESSES : []);
+        setBusinesses([]);
       }
     };
 
     fetchBusinesses();
-  }, [selectedGov, selectedCategory, searchQuery]);
+  }, [selectedGov]);
 
-  // Fetch posts from Cloudflare API
+  // Fetch posts from API
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await postsApi.getAll({
-          page: 1,
-          limit: 200,
-          ...(searchQuery.trim() ? { search: searchQuery.trim() } : {}),
-          ...(selectedGov !== 'all' ? { governorate: selectedGov } : {}),
-          ...(selectedCategory ? { category: selectedCategory } : {})
-        });
-        if (response.data && response.data.length > 0) {
-          setPosts(response.data);
-        } else {
-          setPosts([]);
-        }
+        const response = await postsApi.list({ limit: 50 });
+        const transformedPosts: SocialPost[] = (response || []).map((post: any) => ({
+          id: post.id,
+          businessId: post.business_id,
+          businessName: post.business_name_ar || post.business_name_en || '',
+          businessAvatar: post.business_avatar || '',
+          category: CATEGORIES.find((cat) => cat.name.en === post.category)?.id || 'restaurant',
+          governorate: (String(post.governorate || 'all').toLowerCase() as GovernorateCode),
+          mediaUrl: post.media_url || '',
+          caption: {
+            ar: post.caption_ar || '',
+            ku: post.caption_ku || '',
+            en: post.caption_en || ''
+          },
+          likes: Number(post.likes || 0),
+          commentsCount: Number(post.comments_count || 0),
+          shares: Number(post.shares || 0),
+          views: Number(post.views || 0),
+          timeAgo: { ar: 'الآن', ku: 'ئێستا', en: 'Just now' },
+          likedByUser: false,
+          savedByUser: false,
+          comments: [],
+          promotionBadge: post.promotion_badge_en || post.promotion_badge_ar || post.promotion_badge_ku ? {
+            ar: post.promotion_badge_ar || '',
+            ku: post.promotion_badge_ku || '',
+            en: post.promotion_badge_en || ''
+          } : undefined,
+          videoUrl: post.video_url || undefined,
+          fileAttachment: post.file_attachment_name ? {
+            name: post.file_attachment_name,
+            size: String(post.file_attachment_size || ''),
+            type: post.file_attachment_type || undefined
+          } : undefined,
+          authorUid: post.author_id || undefined
+        }));
+        setPosts(transformedPosts);
       } catch (error) {
         console.error("Error fetching posts from API:", error);
         setPosts([]);
@@ -197,7 +217,7 @@ export default function App() {
     };
 
     fetchPosts();
-  }, [selectedGov, selectedCategory, searchQuery]);
+  }, []);
 
   // Filter business array based on search input + governorate matches + category
   const filteredBusinesses = useMemo(() => {
@@ -247,46 +267,10 @@ export default function App() {
     // TODO: Call API to persist save
   };
 
-  // Callback to add a new business
+  // Callback to add a new business (API support needed)
   const handleAddLiveBusiness = async (newBiz: Omit<Business, 'rating' | 'reviewsCount' | 'likes' | 'saves'>) => {
-    const payload = {
-      name: newBiz.name[currentLang] || newBiz.name.en || newBiz.name.ar,
-      description: newBiz.description[currentLang] || newBiz.description.en || '',
-      category: newBiz.category,
-      governorate: newBiz.governorate,
-      address: newBiz.address[currentLang] || newBiz.address.en || '',
-      phone: newBiz.phoneNumber || '',
-      logoUrl: newBiz.avatar || '',
-      coverImageUrl: newBiz.image || '',
-      verified: Boolean(newBiz.isVerified)
-    };
-
-    try {
-      const response: any = await businessesApi.create(payload);
-      const created = response?.data || response;
-      const createdBiz: Business = {
-        id: String(created?.id || `created-${Date.now()}`),
-        name: { ar: created?.name || payload.name, ku: created?.name || payload.name, en: created?.name || payload.name },
-        description: { ar: created?.description || payload.description, ku: created?.description || payload.description, en: created?.description || payload.description },
-        category: created?.category || payload.category,
-        governorate: created?.governorate || payload.governorate,
-        rating: created?.rating || 0,
-        reviewsCount: created?.reviewCount || 0,
-        image: created?.coverImageUrl || payload.coverImageUrl,
-        images: [created?.coverImageUrl || payload.coverImageUrl],
-        avatar: created?.logoUrl || payload.logoUrl,
-        isVerified: Boolean(created?.verified),
-        phoneNumber: created?.phone || payload.phone,
-        address: { ar: created?.address || payload.address, ku: created?.address || payload.address, en: created?.address || payload.address },
-        likes: created?.likes || 0,
-        saves: created?.saves || 0,
-        mapCoords: { x: 0, y: 0 }
-      };
-      setBusinesses(prev => [createdBiz, ...prev]);
-    } catch (error) {
-      console.error('Failed to create business on backend.', error);
-      throw error;
-    }
+    console.log("Add business not implemented in backend yet");
+    // TODO: Call API to create business
   };
 
   // Stories auto advancing timer handler
@@ -332,7 +316,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-luxury-neutral pb-28 text-[#1A1A1A] flex flex-col selection:bg-luxury-gold selection:text-[#1A1A1A] relative overflow-hidden" dir={isRtl ? 'rtl' : 'ltr'} lang={currentLang === 'ku' ? 'ku' : currentLang}>
+    <div className="min-h-screen bg-luxury-neutral pb-28 text-[#1A1A1A] flex flex-col selection:bg-luxury-gold selection:text-[#1A1A1A] relative overflow-hidden" dir={isRtl ? 'rtl' : 'ltr'}>
       
       {/* Elegant Warm Luxury Atmosphere Glow */}
       <div className="absolute inset-0 z-0 pointer-events-none">
@@ -345,8 +329,9 @@ export default function App() {
         currentLang={currentLang}
         onChangeLang={(lang) => {
           setCurrentLang(lang);
-          // Sync HTML document direction parameter for responsive RTL/LTR transition support
+          // Sync HTML document direction and language attributes for responsive RTL/LTR transition support
           document.documentElement.dir = lang === 'en' ? 'ltr' : 'rtl';
+          document.documentElement.lang = lang;
         }}
         selectedGov={selectedGov}
         onChangeGov={(gov) => {
@@ -367,9 +352,8 @@ export default function App() {
       <AuthModal
         isOpen={authModalOpen}
         onClose={() => setAuthModalOpen(false)}
-        onAuthSuccess={(userObj) => {
-          setUserProfile(toUserProfile(userObj));
-        }}
+        currentLang={currentLang}
+        onCustomEmailLogin={handleCustomEmailLogin}
       />
 
       <main className="flex-grow max-w-7xl w-full mx-auto px-4 py-6">
@@ -651,12 +635,10 @@ export default function App() {
                 <SocialFeed
                   currentLang={currentLang}
                   selectedGov={selectedGov}
-                  selectedCategory={selectedCategory}
                   posts={posts}
                   setPosts={setPosts}
-                  user={user}
-                  userProfile={userProfile}
                   onSignIn={() => setAuthModalOpen(true)}
+                  user={user}
                 />
               </motion.div>
             )}
@@ -718,41 +700,16 @@ export default function App() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -15 }}
               >
-                {userProfile?.role === 'admin' ? (
-                  <AdminPanel
-                    currentLang={currentLang}
-                    businesses={businesses}
-                    setBusinesses={setBusinesses}
-                    posts={posts}
-                    setPosts={setPosts}
-                    userProfile={userProfile}
-                    heroSlides={heroSlides}
-                    setHeroSlides={setHeroSlides}
-                  />
-                ) : (
-                  <div className="max-w-3xl mx-auto bg-[#18191a] border border-red-500/25 rounded-2xl p-8 text-center shadow-xl">
-                    <Lock className="w-10 h-10 text-red-400 mx-auto mb-3" />
-                    <h2 className="text-xl font-black text-white mb-2">
-                      {currentLang === 'en' ? 'Admin access required' : currentLang === 'ku' ? 'دەسەڵاتی بەڕێوەبەر پێویستە' : 'يلزم تسجيل دخول المدير'}
-                    </h2>
-                    <p className="text-sm text-zinc-400 mb-4">
-                      {currentLang === 'en'
-                        ? 'Only safaribosafar@gmail.com and configured platform admins can access this area.'
-                        : currentLang === 'ku'
-                        ? 'تەنها ئەژمێری بەڕێوەبەر دەتوانێت ئەم بەشە ببینێت.'
-                        : 'هذه المنطقة محمية ولا تظهر إلا لحسابات الإدارة المصرح بها.'}
-                    </p>
-                    {!user && (
-                      <button
-                        type="button"
-                        onClick={() => setAuthModalOpen(true)}
-                        className="px-5 py-2 rounded-lg bg-luxury-gold text-black text-sm font-black"
-                      >
-                        {currentLang === 'en' ? 'Sign in' : currentLang === 'ku' ? 'چوونەژوورەوە' : 'تسجيل الدخول'}
-                      </button>
-                    )}
-                  </div>
-                )}
+                {/* Admin moderation control tower */}
+                <AdminPanel
+                  currentLang={currentLang}
+                  businesses={businesses}
+                  setBusinesses={setBusinesses}
+                  posts={posts}
+                  setPosts={setPosts}
+                  userProfile={userProfile}
+                  user={user}
+                />
               </motion.div>
             )}
           </AnimatePresence>
@@ -833,13 +790,7 @@ export default function App() {
         </button>
 
         <button
-          onClick={() => {
-            if (!user) {
-              setAuthModalOpen(true);
-              return;
-            }
-            setActiveTab('admin');
-          }}
+          onClick={() => setActiveTab('admin')}
           className={`flex flex-col items-center justify-center flex-1 py-1 px-2.5 rounded-xl transition-all duration-300 cursor-pointer ${
             activeTab === 'admin'
               ? 'text-luxury-gold font-bold bg-white/5 border border-luxury-gold/25'

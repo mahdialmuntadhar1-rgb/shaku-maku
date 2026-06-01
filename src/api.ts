@@ -1,391 +1,293 @@
-import axios from 'axios';
-import { clearSession, isAdminEmail, normalizeEmail, normalizeUser, readSession, writeSession } from './auth/session';
+// API Client for Cloudflare Workers Backend
+const API_BASE_URL = (import.meta as any).env?.VITE_API_URL || 'https://shaku-maku-api.mahdialmuntadhar1.workers.dev';
 
-const DEFAULT_API_URL = 'https://iraq-businesses-dashboard.mahdialmuntadhar1.workers.dev/api';
-const rawApiUrl = (import.meta.env.VITE_API_URL || DEFAULT_API_URL).replace(/\/+$/, '');
-export const API_BASE_URL = rawApiUrl.endsWith('/api') ? rawApiUrl : `${rawApiUrl}/api`;
-
-const allowLocalAuthFallback =
-  import.meta.env.DEV && import.meta.env.VITE_ALLOW_LOCAL_AUTH_FALLBACK === 'true';
-
-if (import.meta.env.DEV) {
-  console.info('[ShakuMaku] API_BASE_URL:', API_BASE_URL);
-}
-
-export const api = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json; charset=utf-8',
-    Accept: 'application/json'
-  },
-  timeout: 15000
-});
-
-api.interceptors.request.use((config) => {
-  const token = readSession()?.token;
-
-  if (token && !config.headers.Authorization) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-
-  return config;
-});
-
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    console.error('API error:', error.response?.data || error.message);
-    return Promise.reject(error);
-  }
-);
-
-export interface AuthResponse {
+interface ApiResponse<T> {
   success: boolean;
-  token?: string;
-  user?: Record<string, unknown>;
+  data: T;
   error?: string;
   message?: string;
 }
 
-interface ApiListResponse<T> {
-  data?: T[];
-  businesses?: T[];
-  posts?: T[];
-  total?: number;
-  success?: boolean;
-  message?: string;
+// Auth token helper
+function getAuthToken(): string {
+  return localStorage.getItem('auth_token') || '';
 }
 
-const isBackendUnavailable = (error: unknown): boolean => {
-  if (!axios.isAxiosError(error)) {
-    return false;
-  }
+function setAuthToken(token: string): void {
+  localStorage.setItem('auth_token', token);
+}
 
-  return !error.response || error.response.status === 404 || error.code === 'ERR_NETWORK';
-};
+function clearAuthToken(): void {
+  localStorage.removeItem('auth_token');
+}
 
-export const getApiErrorMessage = (error: unknown): string => {
-  if (!axios.isAxiosError(error)) {
-    return 'Backend update failed. Changes were not saved.';
-  }
+// Auth Types
+interface LoginCredentials {
+  email: string;
+  password: string;
+}
 
-  if (!error.response || error.code === 'ERR_NETWORK') {
-    return 'Cannot reach backend API.';
-  }
+interface SignupCredentials {
+  email: string;
+  password: string;
+  name?: string;
+}
 
-  if (error.response.status === 401) {
-    return 'Authentication required. Please log in again.';
-  }
+export interface AuthResponse {
+  user: {
+    id: string;
+    email: string;
+    name?: string;
+    role?: string;
+  };
+  token: string;
+}
 
-  if (error.response.status === 403) {
-    return 'Admin authorization required. Backend rejected this action.';
-  }
+function emitAuthChanged(): void {
+  window.dispatchEvent(new CustomEvent('auth-changed'));
+}
 
-  if (error.response.status === 404) {
-    return 'Backend endpoint not found.';
-  }
-
-  const backendMessage =
-    (typeof error.response.data?.error === 'string' && error.response.data.error) ||
-    (typeof error.response.data?.message === 'string' && error.response.data.message);
-
-  if (backendMessage) {
-    return `${backendMessage} (HTTP ${error.response.status})`;
-  }
-
-  return `Backend update failed. Changes were not saved. (HTTP ${error.response.status})`;
-};
-
-const requireAdminMutation = (action: string) => {
-  const email = readSession()?.user.email;
-  if (!isAdminEmail(email)) {
-    throw new Error(`Admin authorization required for ${action}.`);
-  }
-};
-
-const createLocalSession = (email: string, name?: string): AuthResponse => {
-  if (!allowLocalAuthFallback) {
-    return {
-      success: false,
-      error: 'Authentication backend is unavailable and local fallback is disabled.'
-    };
-  }
-
-  const cleanEmail = normalizeEmail(email);
-
-  const user = normalizeUser({
-    id: `local-${cleanEmail}`,
-    email: cleanEmail,
-    name: name || cleanEmail.split('@')[0],
-    user_type: 'explorer'
-  });
-
-  if (!user) {
-    return { success: false, error: 'Unable to create local session' };
-  }
-
-  const token = `local_${Date.now()}`;
-  const session = writeSession(token, user);
-
-  return session
-    ? {
-        success: true,
-        user: session.user,
-        token: session.token,
-        message: 'Local session created because backend auth is unavailable.'
-      }
-    : { success: false, error: 'Unable to persist local session' };
-};
-
-const unwrapList = <T>(payload: ApiListResponse<T> | undefined, ...keys: Array<keyof ApiListResponse<T>>): T[] => {
-  if (!payload) {
-    return [];
-  }
-
-  for (const key of keys) {
-    const value = payload[key];
-    if (Array.isArray(value)) {
-      return value;
+function unwrap<T>(payload: T | ApiResponse<T>): T {
+  if (payload && typeof payload === 'object' && 'success' in (payload as any)) {
+    const response = payload as ApiResponse<T>;
+    if (!response.success) {
+      throw new Error(response.error || 'Request failed');
     }
+    return response.data;
+  }
+  return payload as T;
+}
+
+// Generic API wrapper
+async function apiRequest<T>(
+  endpoint: string,
+  options: RequestInit = {},
+  returnFullResponse = false
+): Promise<T> {
+  const url = `${API_BASE_URL}${endpoint}`;
+  
+  const defaultOptions: RequestInit = {
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  };
+
+  // Add auth token if available
+  const token = getAuthToken();
+  if (token) {
+    (defaultOptions.headers as Record<string, string>)['Authorization'] = `Bearer ${token}`;
   }
 
-  return [];
-};
-
-export const businessesApi = {
-  getAll: async <T = unknown>(params?: Record<string, unknown>): Promise<ApiListResponse<T>> => {
+  const response = await fetch(url, { ...defaultOptions, ...options });
+  
+  if (!response.ok) {
+    const text = await response.text();
+    let message = `HTTP error! status: ${response.status}`;
     try {
-      const response = await api.get<ApiListResponse<T>>('/businesses', { params });
-      return response.data;
-    } catch (error) {
-      if (!isBackendUnavailable(error)) {
-        throw error;
-      }
-
-      console.warn('Businesses backend unavailable, using mock data');
-      const { MOCK_BUSINESSES } = await import('./mockData');
-      let filtered = [...MOCK_BUSINESSES];
-
-      if (typeof params?.governorate === 'string') {
-        filtered = filtered.filter((business) => business.governorate === params.governorate);
-      }
-
-      if (typeof params?.category === 'string') {
-        filtered = filtered.filter((business) => business.category === params.category);
-      }
-
-      return {
-        data: filtered as T[],
-        businesses: filtered as T[],
-        total: filtered.length
-      };
+      const json = JSON.parse(text);
+      const errorText = typeof json.error === 'object' && json.error !== null
+        ? json.error.message || JSON.stringify(json.error)
+        : json.error;
+      message = errorText || json.message || message;
+    } catch {
+      if (text) message = text;
     }
-  },
-
-  list: async <T = unknown>(params?: Record<string, unknown>): Promise<ApiListResponse<T>> =>
-    businessesApi.getAll<T>(params),
-
-  getById: async <T = unknown>(id: number | string): Promise<T> => {
-    const response = await api.get<T>(`/businesses/${id}`);
-    return response.data;
-  },
-
-  create: async <T = unknown>(business: Record<string, unknown>): Promise<T> => {
-    requireAdminMutation('business create');
-    const response = await api.post<T>('/businesses', business);
-    return response.data;
-  },
-
-  update: async <T = unknown>(id: number | string, business: Record<string, unknown>): Promise<T> => {
-    requireAdminMutation('business update');
-    const response = await api.put<T>(`/businesses/${id}`, business);
-    return response.data;
-  },
-
-  delete: async <T = unknown>(id: number | string): Promise<T> => {
-    requireAdminMutation('business delete');
-    const response = await api.delete<T>(`/businesses/${id}`);
-    return response.data;
+    throw new Error(message);
   }
-};
 
-export const postsApi = {
-  getAll: async <T = unknown>(params?: Record<string, unknown>): Promise<ApiListResponse<T>> => {
-    try {
-      const response = await api.get<ApiListResponse<T>>('/feed/business-posts', { params });
-      return response.data;
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.status === 404) {
-        try {
-          const fallbackResponse = await api.get<ApiListResponse<T>>('/posts', { params });
-          return fallbackResponse.data;
-        } catch (fallbackError) {
-          if (!isBackendUnavailable(fallbackError)) {
-            throw fallbackError;
-          }
-          return { data: [], posts: [] };
-        }
-      }
-
-      if (isBackendUnavailable(error)) {
-        return { data: [], posts: [] };
-      }
-
-      throw error;
-    }
-  },
-  list: async <T = unknown>(params?: Record<string, unknown>): Promise<ApiListResponse<T>> =>
-    postsApi.getAll<T>(params),
-
-  getById: async <T = unknown>(id: number | string): Promise<T> => {
-    const response = await api.get<T>(`/posts/${id}`);
-    return response.data;
-  },
-
-  create: async <T = unknown>(post: Record<string, unknown>): Promise<T> => {
-    const response = await api.post<T>('/posts', post);
-    return response.data;
-  },
-
-  update: async <T = unknown>(id: number | string, post: Record<string, unknown>): Promise<T> => {
-    requireAdminMutation('post update');
-    const response = await api.put<T>(`/posts/${id}`, post);
-    return response.data;
-  },
-
-  delete: async <T = unknown>(id: number | string): Promise<T> => {
-    requireAdminMutation('post delete');
-    const response = await api.delete<T>(`/posts/${id}`);
-    return response.data;
+  const data = await response.json();
+  
+  if (returnFullResponse) {
+    return data as T;
   }
-};
+  
+  return (data as ApiResponse<T>).data as T;
+}
 
+// Auth API
 export const authApi = {
-  login: async (email: string, password: string): Promise<AuthResponse> => {
+  async login(credentials: LoginCredentials): Promise<AuthResponse> {
+    const response = await apiRequest<ApiResponse<AuthResponse>>('/api/auth/login', {
+      method: 'POST',
+      body: JSON.stringify(credentials),
+    }, true);
+
+    const data = unwrap<AuthResponse>(response);
+    if (data.token) {
+      setAuthToken(data.token);
+      authApi.setCurrentUser(data.user);
+    }
+    return data;
+  },
+
+  async signup(credentials: SignupCredentials): Promise<AuthResponse> {
+    const response = await apiRequest<ApiResponse<AuthResponse>>('/api/auth/register', {
+      method: 'POST',
+      body: JSON.stringify(credentials),
+    }, true);
+
+    const data = unwrap<AuthResponse>(response);
+    if (data.token) {
+      setAuthToken(data.token);
+      authApi.setCurrentUser(data.user);
+    }
+    return data;
+  },
+
+  async logout(): Promise<void> {
+    clearAuthToken();
+    authApi.clearCurrentUser();
+    emitAuthChanged();
     try {
-      const response = await api.post('/auth/login', {
-        email: normalizeEmail(email),
-        password
-      });
-
-      const token = response.data.token;
-      const user = normalizeUser(response.data.user || response.data.data || response.data);
-
-      if (token && user) {
-        writeSession(token, user);
-        return { success: true, ...response.data, user, token };
-      }
-
-      return {
-        success: false,
-        error: response.data.error || response.data.message || 'Login response did not include a valid session.'
-      };
+      await apiRequest<void>('/api/auth/logout', { method: 'POST' }, true);
     } catch (error) {
-      if (isBackendUnavailable(error) && allowLocalAuthFallback) {
-        return createLocalSession(email);
-      }
-
-      return {
-        success: false,
-        error: getApiErrorMessage(error)
-      };
+      console.error('Logout error:', error);
     }
   },
 
-  register: async (userData: Record<string, unknown>): Promise<AuthResponse> => {
-    try {
-      const response = await api.post('/auth/register', {
-        ...userData,
-        email: normalizeEmail(String(userData.email || ''))
-      });
-
-      const token = response.data.token;
-      const user = normalizeUser(response.data.user || response.data.data || response.data);
-
-      if (token && user) {
-        writeSession(token, user);
-        return { success: true, ...response.data, user, token };
-      }
-
-      return {
-        success: false,
-        error:
-          response.data.error || response.data.message || 'Registration response did not include a valid session.'
-      };
-    } catch (error) {
-      if (isBackendUnavailable(error) && allowLocalAuthFallback) {
-        return createLocalSession(String(userData.email || ''), String(userData.name || ''));
-      }
-
-      return {
-        success: false,
-        error: getApiErrorMessage(error)
-      };
-    }
+  async getMe(): Promise<AuthResponse['user']> {
+    const response = await apiRequest<ApiResponse<AuthResponse['user']>>('/api/auth/me', {}, true);
+    return unwrap<AuthResponse['user']>(response);
   },
 
-  logout: (): void => {
-    clearSession();
+  async forgotPassword(email: string): Promise<{ token?: string; message: string }> {
+    const response = await apiRequest<any>('/api/auth/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    }, true);
+    if (response?.data) return response.data;
+    return { token: response?.token, message: response?.message || 'Password reset requested' };
   },
 
-  getCurrentUser: () => readSession()?.user || null,
-  isAuthenticated: () => Boolean(readSession()),
-
-  setCurrentUser: (user: Record<string, unknown>): void => {
-    const token = readSession()?.token || `local_${Date.now()}`;
-    writeSession(token, user);
+  async resetPassword(email: string, token: string, newPassword: string): Promise<{ message: string }> {
+    const response = await apiRequest<any>('/api/auth/reset-password', {
+      method: 'POST',
+      body: JSON.stringify({ email, token, newPassword }),
+    }, true);
+    if (response?.data) return response.data;
+    return { message: response?.message || 'Password updated successfully' };
   },
 
-  signup: async (userData: Record<string, unknown>): Promise<AuthResponse> => authApi.register(userData)
-};
+  isAuthenticated(): boolean {
+    return !!getAuthToken();
+  },
 
-export const requestPasswordReset = async (identifier: string): Promise<Record<string, unknown>> => {
-  const cleanIdentifier = normalizeEmail(identifier);
+  getCurrentUser(): AuthResponse['user'] | null {
+    const userStr = localStorage.getItem('current_user');
+    return userStr ? JSON.parse(userStr) : null;
+  },
 
-  try {
-    const response = await api.post('/auth/forgot-password', {
-      email: cleanIdentifier,
-      username: cleanIdentifier
-    });
-    return response.data;
-  } catch (error) {
-    if (!(axios.isAxiosError(error) && error.response?.status === 404)) {
-      throw error;
-    }
+  setCurrentUser(user: AuthResponse['user']): void {
+    localStorage.setItem('current_user', JSON.stringify(user));
+    emitAuthChanged();
+  },
 
-    const response = await api.post('/auth/request-reset', {
-      username: cleanIdentifier
-    });
-
-    return response.data;
+  clearCurrentUser(): void {
+    localStorage.removeItem('current_user');
+    emitAuthChanged();
   }
 };
 
-export const resetPassword = async (token: string, newPassword: string): Promise<Record<string, unknown>> => {
-  const response = await api.post('/auth/reset-password', { token, newPassword });
-  return response.data;
+// Maps frontend category chip IDs → DB category strings (exact DB values)
+export const CATEGORY_DB_MAP: Record<string, string> = {
+  restaurant: 'Restaurants',
+  cafe_bakery: 'Cafés & Bakeries',
+  supermarket: 'Supermarkets',
+  mall: 'Malls & Shopping',
+  pharmacy: 'Pharmacies',
+  hospital: 'Hospitals',
+  clinic: 'Clinics',
+  doctor: 'Doctors',
+  dentist: 'Dentists',
+  salon: 'Beauty Salons',
+  gym: 'Fitness & Gyms',
+  hotel: 'Hotels & Hospitality',
+  education: 'Education & Training Centers',
+  real_estate: 'Real Estate',
+  construction: 'Construction & Contractors',
+  electronics: 'Electronics & Tech Shops',
+  it_software: 'IT & Software Services',
 };
 
-export const getBusinesses = businessesApi.getAll;
-export const login = authApi.login;
-export const register = authApi.register;
-export const logout = authApi.logout;
+// Businesses API
+export const businessesApi = {
+  async list(params?: { cursor?: string; page?: number; limit?: number; governorate?: string; category?: string; search?: string }): Promise<any> {
+    const queryParams = new URLSearchParams();
+    if (params?.cursor) queryParams.append('cursor', params.cursor);
+    if (params?.page) queryParams.append('page', params.page.toString());
+    if (params?.limit) queryParams.append('limit', params.limit.toString());
+    if (params?.governorate) queryParams.append('governorate', params.governorate);
+    // Translate frontend chip ID to exact DB category string
+    if (params?.category) {
+      const dbCat = CATEGORY_DB_MAP[params.category] || params.category;
+      queryParams.append('category', dbCat);
+    }
+    if (params?.search) queryParams.append('search', params.search);
 
-export const selectors = {
-  unwrapBusinesses: <T = unknown>(payload: ApiListResponse<T>): T[] => unwrapList(payload, 'data', 'businesses'),
-  unwrapPosts: <T = unknown>(payload: ApiListResponse<T>): T[] => unwrapList(payload, 'data', 'posts')
+    const queryString = queryParams.toString();
+    const endpoint = `/api/businesses${queryString ? `?${queryString}` : ''}`;
+
+    const response = await apiRequest<ApiResponse<any[]>>(endpoint, {}, true);
+    return unwrap<any[]>(response);
+  },
+
+  async get(id: string): Promise<any> {
+    const response = await apiRequest<ApiResponse<any>>(`/api/businesses/${id}`, {}, true);
+    return unwrap<any>(response);
+  }
 };
 
-export default {
-  api,
-  authApi,
-  businessesApi,
-  postsApi,
-  getBusinesses,
-  login,
-  register,
-  logout,
-  requestPasswordReset,
-  resetPassword,
-  selectors
+// Posts API
+export const postsApi = {
+  async list(params?: { page?: number; limit?: number; governorate?: string; category?: string; search?: string }): Promise<any> {
+    const queryParams = new URLSearchParams();
+    if (params?.page) queryParams.append('page', params.page.toString());
+    if (params?.limit) queryParams.append('limit', params.limit.toString());
+    if (params?.governorate) queryParams.append('governorate', params.governorate);
+    if (params?.category) queryParams.append('category', params.category);
+    if (params?.search) queryParams.append('search', params.search);
+    
+    const queryString = queryParams.toString();
+    const endpoint = `/api/feed/business-posts${queryString ? `?${queryString}` : ''}`;
+    
+    const response = await apiRequest<ApiResponse<any[]>>(endpoint, {}, true);
+    return unwrap<any[]>(response);
+  },
+
+  async create(post: any): Promise<any> {
+    return apiRequest<any>('/api/feed/posts', {
+      method: 'POST',
+      body: JSON.stringify(post),
+    });
+  },
+
+  async like(postId: string): Promise<any> {
+    return apiRequest<any>('/api/feed/posts/like', {
+      method: 'POST',
+      body: JSON.stringify({ postId }),
+    });
+  }
+};
+
+// Admin API
+export const adminApi = {
+  async login(credentials: LoginCredentials): Promise<AuthResponse> {
+    const response = await apiRequest<ApiResponse<AuthResponse>>('/api/admin/login', {
+      method: 'POST',
+      body: JSON.stringify(credentials),
+    }, true);
+
+    const data = unwrap<AuthResponse>(response);
+    if (data.token) {
+      setAuthToken(data.token);
+      authApi.setCurrentUser(data.user);
+    }
+    return data;
+  },
+
+  async getStats(): Promise<any> {
+    const response = await apiRequest<ApiResponse<any>>('/api/admin/stats', {}, true);
+    return unwrap<any>(response);
+  }
 };
