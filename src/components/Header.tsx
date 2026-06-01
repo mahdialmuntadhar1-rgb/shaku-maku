@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Sparkles, Clock, MapPin, Check, User, LogOut, Shield, ChevronDown, Award, HelpCircle } from 'lucide-react';
 import PWAInstallButton from './PWAInstallButton';
 import { motion, AnimatePresence } from 'motion/react';
@@ -329,10 +329,11 @@ export default function Header({
             </button>
           )}
 
-          <PWAInstallButton />
+          <PWAInstallButton currentLang={currentLang} />
 
         </div>
       </div>
     </header>
   );
 }
+

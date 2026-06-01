@@ -7,7 +7,7 @@
     "dev": "vite --host=0.0.0.0 --port=5173 --strictPort",
     "build": "vite build",
     "preview": "vite preview",
-    "deploy:pages": "npm run build && npx wrangler pages deploy dist --project-name shaku-maku2026",
+    "deploy:pages": "npm run build && npx wrangler pages deploy dist --project-name shaku-maku2026 --config wrangler.pages.toml",
     "deploy:worker": "npx wrangler deploy",
     "clean": "node -e \"const fs=require('fs'); for (const p of ['dist','coverage','node_modules/.vite']) fs.rmSync(p,{recursive:true,force:true});\"",
     "typecheck": "tsc --noEmit",

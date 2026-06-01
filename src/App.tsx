@@ -121,11 +121,13 @@ function normalizeCategoryId(value: unknown): string {
 }
 
 export default function App() {
+  const preferredLang = (localStorage.getItem('preferred_lang') as Language | null);
   const [user, setUser] = useState<any>(authApi.getCurrentUser());
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   
-  const [currentLang, setCurrentLang] = useState<Language>('ar'); // Default: Arabic
+  const [currentLang, setCurrentLang] = useState<Language>(preferredLang || 'ar');
+  const [showLanguageGate, setShowLanguageGate] = useState<boolean>(!preferredLang);
   const [selectedGov, setSelectedGov] = useState<GovernorateCode>('all'); // Default: All Iraq
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
@@ -174,6 +176,11 @@ export default function App() {
   });
 
   const handleCustomEmailLogin = async (_customEmail: string) => {};
+
+  useEffect(() => {
+    document.documentElement.dir = currentLang === 'en' ? 'ltr' : 'rtl';
+    document.documentElement.lang = currentLang;
+  }, [currentLang]);
 
   useEffect(() => {
     const syncAuthState = () => setUser(authApi.getCurrentUser());
@@ -459,6 +466,26 @@ export default function App() {
     }
   };
 
+  const chooseLanguage = (lang: Language) => {
+    setCurrentLang(lang);
+    localStorage.setItem('preferred_lang', lang);
+    setShowLanguageGate(false);
+  };
+
+  if (showLanguageGate) {
+    return (
+      <div className="min-h-screen bg-[#1A1A1A] flex items-center justify-center p-6">
+        <div className="w-full max-w-md bg-[#111] border border-luxury-gold/30 rounded-3xl p-6 space-y-4 text-center">
+          <h2 className="text-white font-black text-xl">Choose Language</h2>
+          <p className="text-zinc-400 text-sm">اختر لغتك / زمانەکەت هەڵبژێرە</p>
+          <button onClick={() => chooseLanguage('ar')} className="w-full py-3 rounded-2xl bg-gradient-to-r from-luxury-teal to-luxury-gold text-white font-black cursor-pointer">العربية</button>
+          <button onClick={() => chooseLanguage('ku')} className="w-full py-3 rounded-2xl bg-gradient-to-r from-luxury-teal to-luxury-gold text-white font-black cursor-pointer">کوردی</button>
+          <button onClick={() => chooseLanguage('en')} className="w-full py-3 rounded-2xl bg-gradient-to-r from-luxury-teal to-luxury-gold text-white font-black cursor-pointer">English</button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-luxury-neutral pb-28 text-[#1A1A1A] flex flex-col selection:bg-luxury-gold selection:text-[#1A1A1A] relative overflow-hidden" dir={isRtl ? 'rtl' : 'ltr'}>
       
@@ -473,6 +500,7 @@ export default function App() {
         currentLang={currentLang}
         onChangeLang={(lang) => {
           setCurrentLang(lang);
+          localStorage.setItem('preferred_lang', lang);
           // Sync HTML document direction and language attributes for responsive RTL/LTR transition support
           document.documentElement.dir = lang === 'en' ? 'ltr' : 'rtl';
           document.documentElement.lang = lang;
