@@ -1,57 +1,202 @@
-﻿import React, { useState, useEffect } from 'react';
-import { Language } from '../types';
-import { businessesApi, postsApi } from '../api';
+import React, { useState } from 'react';
+import { Check, Edit3, Image as ImageIcon, Lock, Save, Trash2 } from 'lucide-react';
+import { Business, HeroSlide, Language, SocialPost, UserProfile } from '../types';
+import { postsApi } from '../api';
 
 interface AdminPanelProps {
   currentLang: Language;
+  businesses: Business[];
+  setBusinesses: React.Dispatch<React.SetStateAction<Business[]>>;
+  posts: SocialPost[];
+  setPosts: React.Dispatch<React.SetStateAction<SocialPost[]>>;
+  userProfile: UserProfile | null;
+  heroSlides: HeroSlide[];
+  setHeroSlides: React.Dispatch<React.SetStateAction<HeroSlide[]>>;
 }
 
-const AdminPanel: React.FC<AdminPanelProps> = ({ currentLang }) => {
-  const [businesses, setBusinesses] = useState<any[]>([]);
-  const [posts, setPosts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+const t = (lang: Language, en: string, ar: string, ku: string) => {
+  if (lang === 'ar') return ar;
+  if (lang === 'ku') return ku;
+  return en;
+};
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [bizData, postData] = await Promise.all([
-          businessesApi.getAll(),
-          postsApi.getAll()
-        ]);
-        setBusinesses(bizData.businesses || bizData.data || []);
-        setPosts(postData.posts || postData.data || []);
-      } catch (error) {
-        console.error('Failed to load admin data', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+const AdminPanel: React.FC<AdminPanelProps> = ({
+  currentLang,
+  businesses,
+  setBusinesses,
+  posts,
+  setPosts,
+  userProfile,
+  heroSlides,
+  setHeroSlides
+}) => {
+  const [editingPostId, setEditingPostId] = useState<string | null>(null);
+  const [editingPostText, setEditingPostText] = useState('');
 
-  const t = (en: string, ar: string, ku: string) => {
-    if (currentLang === 'ar') return ar;
-    if (currentLang === 'ku') return ku;
-    return en;
+  if (userProfile?.role !== 'admin') {
+    return (
+      <div className="max-w-3xl mx-auto bg-[#18191a] border border-red-500/25 rounded-2xl p-8 text-center shadow-xl">
+        <Lock className="w-10 h-10 text-red-400 mx-auto mb-3" />
+        <h1 className="text-xl font-black text-white">
+          {t(currentLang, 'Admin access required', 'يلزم حساب مدير', 'هەژماری بەڕێوەبەر پێویستە')}
+        </h1>
+      </div>
+    );
+  }
+
+  const updateHeroField = (slideId: string, field: 'slogan' | 'badge', value: string) => {
+    setHeroSlides(prev => prev.map(slide => slide.id === slideId
+      ? { ...slide, [field]: { ...slide[field], [currentLang]: value } }
+      : slide));
   };
 
-  if (loading) return <div className="p-8 text-center">{t('Loading...', 'جاري التحميل...', 'بارکردن...')}</div>;
+  const updateHeroImage = (slideId: string, file: File | null) => {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      setHeroSlides(prev => prev.map(slide => slide.id === slideId
+        ? { ...slide, image: String(reader.result) }
+        : slide));
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const approvePost = (postId: string) => {
+    setPosts(prev => prev.map(post => post.id === postId ? { ...post, status: 'approved', updatedAt: new Date().toISOString() } : post));
+    postsApi.update(postId, { status: 'approved' }).catch(() => undefined);
+  };
+
+  const deletePost = (postId: string) => {
+    setPosts(prev => prev.filter(post => post.id !== postId));
+    postsApi.delete(postId, userProfile.email).catch(() => undefined);
+  };
+
+  const savePost = (postId: string) => {
+    const caption = editingPostText.trim();
+    if (!caption) return;
+    setPosts(prev => prev.map(post => post.id === postId
+      ? { ...post, caption: { ar: caption, ku: caption, en: caption }, updatedAt: new Date().toISOString() }
+      : post));
+    postsApi.update(postId, { caption }).catch(() => undefined);
+    setEditingPostId(null);
+    setEditingPostText('');
+  };
+
+  const toggleBusinessVerification = (businessId: string) => {
+    setBusinesses(prev => prev.map(business => business.id === businessId
+      ? { ...business, isVerified: !business.isVerified }
+      : business));
+  };
+
+  const pendingPosts = posts.filter(post => post.status === 'pending').length;
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">{t('Admin Panel', 'لوحة التحكم', 'پانێلی بەڕێوەبردن')}</h1>
-      <div className="grid md:grid-cols-2 gap-6">
-        <div className="border rounded-lg p-4">
-          <h2 className="text-xl font-semibold mb-3">{t('Businesses', 'المتاجر', 'بازرگانییەکان')}</h2>
-          <p className="text-gray-600">{t('Total:', 'المجموع:', 'کۆی گشتی:')} {businesses.length}</p>
-          <button className="mt-3 text-sm text-emerald-600">Manage →</button>
-        </div>
-        <div className="border rounded-lg p-4">
-          <h2 className="text-xl font-semibold mb-3">{t('Posts', 'المنشورات', 'بڵاوکراوەکان')}</h2>
-          <p className="text-gray-600">{t('Total:', 'المجموع:', 'کۆی گشتی:')} {posts.length}</p>
-          <button className="mt-3 text-sm text-emerald-600">Manage →</button>
+    <div className="max-w-6xl mx-auto p-4 md:p-6 space-y-6" dir={currentLang === 'en' ? 'ltr' : 'rtl'}>
+      <div className="bg-[#18191a] border border-white/10 rounded-2xl p-5 text-white">
+        <h1 className="text-2xl font-black mb-2">{t(currentLang, 'Admin Control Center', 'مركز تحكم الإدارة', 'ناوەندی کۆنترۆڵی بەڕێوەبەر')}</h1>
+        <p className="text-sm text-zinc-400">{userProfile.email}</p>
+        <div className="grid sm:grid-cols-3 gap-3 mt-5">
+          <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+            <span className="text-xs text-zinc-400">{t(currentLang, 'Businesses', 'الأعمال', 'بازرگانییەکان')}</span>
+            <strong className="block text-2xl">{businesses.length}</strong>
+          </div>
+          <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+            <span className="text-xs text-zinc-400">{t(currentLang, 'Posts', 'المنشورات', 'بابەتەکان')}</span>
+            <strong className="block text-2xl">{posts.length}</strong>
+          </div>
+          <div className="bg-white/5 rounded-xl p-4 border border-amber-500/25">
+            <span className="text-xs text-zinc-400">{t(currentLang, 'Pending Approval', 'بانتظار الموافقة', 'چاوەڕوانی پەسەندکردن')}</span>
+            <strong className="block text-2xl text-amber-300">{pendingPosts}</strong>
+          </div>
         </div>
       </div>
+
+      <section className="bg-[#18191a] border border-white/10 rounded-2xl p-5 text-white space-y-4">
+        <h2 className="text-lg font-black flex items-center gap-2">
+          <ImageIcon className="w-5 h-5 text-luxury-gold" />
+          {t(currentLang, 'Hero Editor', 'تعديل الواجهة الرئيسية', 'دەستکاری هیرو')}
+        </h2>
+        <div className="grid lg:grid-cols-2 gap-4">
+          {heroSlides.map(slide => (
+            <div key={slide.id} className="bg-white/5 border border-white/10 rounded-xl p-4 space-y-3">
+              <img src={slide.image} alt="" className="w-full h-36 object-cover rounded-lg bg-black" />
+              <input
+                value={slide.slogan[currentLang]}
+                onChange={(event) => updateHeroField(slide.id, 'slogan', event.target.value)}
+                className="w-full bg-black/35 border border-white/10 rounded-lg px-3 py-2 text-sm"
+                dir={currentLang === 'en' ? 'ltr' : 'rtl'}
+              />
+              <input
+                value={slide.badge[currentLang]}
+                onChange={(event) => updateHeroField(slide.id, 'badge', event.target.value)}
+                className="w-full bg-black/35 border border-white/10 rounded-lg px-3 py-2 text-sm"
+                dir={currentLang === 'en' ? 'ltr' : 'rtl'}
+              />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(event) => updateHeroImage(slide.id, event.target.files?.[0] || null)}
+                className="block w-full text-xs text-zinc-300 file:mr-3 file:rounded-lg file:border-0 file:bg-luxury-gold file:px-3 file:py-2 file:text-black file:font-bold"
+              />
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="bg-[#18191a] border border-white/10 rounded-2xl p-5 text-white space-y-4">
+        <h2 className="text-lg font-black">{t(currentLang, 'Social Feed Moderation', 'إدارة المنشورات', 'بەڕێوەبردنی بابەتەکان')}</h2>
+        <div className="space-y-3">
+          {posts.length === 0 && <p className="text-sm text-zinc-400">{t(currentLang, 'No posts yet.', 'لا توجد منشورات بعد.', 'هێشتا هیچ بابەتێک نییە.')}</p>}
+          {posts.map(post => (
+            <div key={post.id} className="bg-white/5 border border-white/10 rounded-xl p-4 space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <strong className="block text-sm">{post.businessName}</strong>
+                  <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${post.status === 'pending' ? 'bg-amber-500/15 text-amber-300' : 'bg-emerald-500/15 text-emerald-300'}`}>
+                    {post.status || 'approved'}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  {post.status === 'pending' && (
+                    <button type="button" onClick={() => approvePost(post.id)} className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400"><Check className="w-4 h-4" /></button>
+                  )}
+                  <button type="button" onClick={() => { setEditingPostId(post.id); setEditingPostText(post.caption[currentLang] || post.caption.en); }} className="p-2 rounded-lg bg-blue-500/10 text-blue-400"><Edit3 className="w-4 h-4" /></button>
+                  <button type="button" onClick={() => deletePost(post.id)} className="p-2 rounded-lg bg-red-500/10 text-red-400"><Trash2 className="w-4 h-4" /></button>
+                </div>
+              </div>
+              {editingPostId === post.id ? (
+                <div className="space-y-2">
+                  <textarea value={editingPostText} onChange={(event) => setEditingPostText(event.target.value)} rows={3} className="w-full bg-black/35 border border-white/10 rounded-lg px-3 py-2 text-sm" dir={currentLang === 'en' ? 'ltr' : 'rtl'} />
+                  <button type="button" onClick={() => savePost(post.id)} className="px-3 py-2 rounded-lg bg-luxury-gold text-black text-xs font-black flex items-center gap-2"><Save className="w-4 h-4" /> Save</button>
+                </div>
+              ) : (
+                <p className="text-sm text-zinc-300" dir={currentLang === 'en' ? 'ltr' : 'rtl'}><bdi>{post.caption[currentLang]}</bdi></p>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="bg-[#18191a] border border-white/10 rounded-2xl p-5 text-white space-y-4">
+        <h2 className="text-lg font-black">{t(currentLang, 'Business Listings', 'قوائم الأعمال', 'لیستی بازرگانییەکان')}</h2>
+        <div className="grid md:grid-cols-2 gap-3">
+          {businesses.slice(0, 12).map(business => (
+            <div key={business.id} className="bg-white/5 border border-white/10 rounded-xl p-3 flex items-center justify-between gap-3">
+              <div className="min-w-0">
+                <strong className="block text-sm truncate">{business.name[currentLang]}</strong>
+                <span className="text-[11px] text-zinc-500">{business.governorate}</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => toggleBusinessVerification(business.id)}
+                className={`px-3 py-1.5 rounded-lg text-[10px] font-black ${business.isVerified ? 'bg-emerald-500/15 text-emerald-300' : 'bg-white/10 text-zinc-300'}`}
+              >
+                {business.isVerified ? 'Verified' : 'Verify'}
+              </button>
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
   );
 };

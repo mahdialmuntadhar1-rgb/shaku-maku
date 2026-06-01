@@ -139,3 +139,56 @@ Supported events:
 - `message.ack`
 
 For production Nabda webhooks, use a public HTTPS URL. Localhost only works through a secure tunnel or deployed backend.
+
+## HTML Dashboard With Live Send
+
+The upgraded dashboard is stored at:
+
+```text
+C:\Users\HB LAPTOP STORE\Documents\bulk-message-claudeai-scriptholly\nabda_whatsapp_bulk_platform_upgraded.html
+```
+
+It does not expose `NABDA_API_KEY`. For live sends, start the secure local backend first:
+
+```powershell
+cd "C:\Users\HB LAPTOP STORE\Documents\puython-pro-scraper\shaku-maku"
+npm run whatsapp:server
+```
+
+Backend endpoints:
+
+```text
+GET  http://localhost:5050/api/whatsapp/health
+POST http://localhost:5050/api/whatsapp/dry-run
+POST http://localhost:5050/api/whatsapp/test-send
+POST http://localhost:5050/api/whatsapp/bulk-send
+```
+
+Required live-send environment:
+
+```env
+NABDA_API_URL="https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+NABDA_API_KEY="YOUR_ROTATED_NABDA_API_KEY"
+NABDA_INSTANCE_ID="4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+NABDA_SEND_PATH="/api/v1/messages/send"
+WHATSAPP_DAILY_LIMIT="200"
+WHATSAPP_MAX_BATCH_SIZE="50"
+WHATSAPP_DEFAULT_DELAY_SECONDS="5"
+```
+
+Dashboard CSV columns:
+
+```csv
+phone_number,business_name,contact_name,governorate,city,category,language,opt_in,notes
++9647701234567,Example Business,Ali,Baghdad,Baghdad,Restaurants,en,yes,opted-in
+```
+
+Live sending rules enforced by the backend:
+
+- `NABDA_API_KEY` must exist server-side
+- dry-run must be passed before live send
+- `opt_in` must be `true`, `yes`, or `1`
+- invalid, padded, short, duplicate, or unsupported-prefix numbers are skipped
+- `WHATSAPP_DAILY_LIMIT` and `WHATSAPP_MAX_BATCH_SIZE` are enforced
+- messages are sent through Nabda one at a time with delay
+- result reports are saved in the repo `reports` folder

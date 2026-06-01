@@ -1,4 +1,5 @@
-﻿import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { AUTH_CHANGE_EVENT, isAdminEmail, readSession } from '../auth/session';
 
 interface AdminContextType {
   isAdmin: boolean;
@@ -18,34 +19,25 @@ interface AdminProviderProps {
   children: ReactNode;
 }
 
-const ADMIN_EMAILS = ['mahdialmuntadhar1@gmail.com', 'admin@aku-maku.com'];
-
 export const AdminProvider: React.FC<AdminProviderProps> = ({ children }) => {
   const [isAdmin, setIsAdmin] = useState(false);
 
   const checkAdmin = () => {
-    const userStr = localStorage.getItem('user');
-    if (userStr) {
-      try {
-        const user = JSON.parse(userStr);
-        const email = user.email || user.user?.email;
-        setIsAdmin(ADMIN_EMAILS.includes(email));
-      } catch (e) {
-        setIsAdmin(false);
-      }
-    } else {
-      setIsAdmin(false);
-    }
+    setIsAdmin(isAdminEmail(readSession()?.user.email));
   };
 
   const setAdminByEmail = (email: string) => {
-    setIsAdmin(ADMIN_EMAILS.includes(email));
+    setIsAdmin(isAdminEmail(email));
   };
 
   useEffect(() => {
     checkAdmin();
     window.addEventListener('storage', checkAdmin);
-    return () => window.removeEventListener('storage', checkAdmin);
+    window.addEventListener(AUTH_CHANGE_EVENT, checkAdmin);
+    return () => {
+      window.removeEventListener('storage', checkAdmin);
+      window.removeEventListener(AUTH_CHANGE_EVENT, checkAdmin);
+    };
   }, []);
 
   return (

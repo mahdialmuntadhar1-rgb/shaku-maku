@@ -1,6 +1,6 @@
-// Admin configuration
-export const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL || '';
+import { getAdminEmails, isAdminEmail } from '../auth/session';
 
-export const isAdmin = (email: string): boolean => {
-  return email === ADMIN_EMAIL;
-};
+export const ADMIN_EMAIL = 'safaribosafar@gmail.com';
+export const ADMIN_EMAILS = getAdminEmails();
+
+export const isAdmin = (email: string): boolean => isAdminEmail(email);

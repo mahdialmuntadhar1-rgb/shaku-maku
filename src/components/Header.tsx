@@ -69,6 +69,7 @@ export default function Header({
 
   const t = TRANSLATIONS[currentLang];
   const isRtl = currentLang === 'ar' || currentLang === 'ku';
+  const canUseRoleSwitcher = import.meta.env.DEV && userProfile?.role === 'admin';
 
   const languages = [
     { 
@@ -311,50 +312,33 @@ export default function Header({
                       <span className={`w-2 h-2 rounded-full ${userProfile?.role === 'admin' ? 'bg-red-500' : userProfile?.role === 'owner' ? 'bg-amber-400' : 'bg-sky-400'} animate-pulse`}></span>
                     </div>
 
-                    {/* Developer / Tester Switcher block (highly user-friendly testability) */}
-                    <div className="bg-white/5 rounded-2xl p-2.5 border border-white/10 space-y-2">
-                      <span className="text-[9px] font-black text-amber-400 uppercase tracking-widest block font-mono">
-                        🛠️ Dynamic Role Swapper
-                      </span>
-                      <p className="text-[8px] text-zinc-400 leading-normal">
-                        Switch roles instantly on the fly to test custom dashboards & claimant workflows:
-                      </p>
-                      <div className="grid grid-cols-3 gap-1">
-                        <button
-                          onClick={() => {
-                            onUpdateRole('user');
-                            setProfileOpen(false);
-                          }}
-                          className={`px-1.5 py-1.5 text-[8px] font-extrabold rounded-lg tracking-wider transition uppercase cursor-pointer ${
-                            userProfile?.role === 'user' ? 'bg-sky-500 text-slate-950 font-black' : 'bg-white/5 text-zinc-300 hover:bg-white/10'
-                          }`}
-                        >
-                          User
-                        </button>
-                        <button
-                          onClick={() => {
-                            onUpdateRole('owner');
-                            setProfileOpen(false);
-                          }}
-                          className={`px-1.5 py-1.5 text-[8px] font-extrabold rounded-lg tracking-wider transition uppercase cursor-pointer ${
-                            userProfile?.role === 'owner' ? 'bg-amber-500 text-slate-950 font-black' : 'bg-white/5 text-zinc-300 hover:bg-white/10'
-                          }`}
-                        >
-                          Owner
-                        </button>
-                        <button
-                          onClick={() => {
-                            onUpdateRole('admin');
-                            setProfileOpen(false);
-                          }}
-                          className={`px-1.5 py-1.5 text-[8px] font-extrabold rounded-lg tracking-wider transition uppercase cursor-pointer ${
-                            userProfile?.role === 'admin' ? 'bg-red-500 text-white font-black' : 'bg-white/5 text-zinc-300 hover:bg-white/10'
-                          }`}
-                        >
-                          Admin
-                        </button>
+                    {canUseRoleSwitcher && (
+                      <div className="bg-white/5 rounded-2xl p-2.5 border border-white/10 space-y-2">
+                        <span className="text-[9px] font-black text-amber-400 uppercase tracking-widest block font-mono">
+                          Developer Role Tester
+                        </span>
+                        <div className="grid grid-cols-2 gap-1">
+                          <button
+                            onClick={() => {
+                              onUpdateRole('user');
+                              setProfileOpen(false);
+                            }}
+                            className="px-1.5 py-1.5 text-[8px] font-extrabold rounded-lg tracking-wider transition uppercase cursor-pointer bg-white/5 text-zinc-300 hover:bg-white/10"
+                          >
+                            User
+                          </button>
+                          <button
+                            onClick={() => {
+                              onUpdateRole('owner');
+                              setProfileOpen(false);
+                            }}
+                            className="px-1.5 py-1.5 text-[8px] font-extrabold rounded-lg tracking-wider transition uppercase cursor-pointer bg-white/5 text-zinc-300 hover:bg-white/10"
+                          >
+                            Owner
+                          </button>
+                        </div>
                       </div>
-                    </div>
+                    )}
 
                     {/* Shortcut Options */}
                     <div className="flex flex-col gap-1.5">

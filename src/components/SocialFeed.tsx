@@ -3,9 +3,9 @@ import { motion, AnimatePresence } from 'motion/react';
 import { 
   Heart, MessageCircle, Send, Bookmark, Share2, 
   Sparkles, CheckCircle2, SlidersHorizontal, Eye, Gift, ShoppingBag,
-  Image as ImageIcon, Video, FileText, File
+  Image as ImageIcon, Video, FileText, File, Trash2, Edit3, Check, X
 } from 'lucide-react';
-import { SocialPost, Language, GovernorateCode } from '../types';
+import { SocialPost, Language, GovernorateCode, UserProfile } from '../types';
 import { TRANSLATIONS, CATEGORIES, GOVERNORATES } from '../data';
 import { generateLivePostFromCSV } from '../csvBusinesses';
 import { postsApi } from '../api';
@@ -16,6 +16,7 @@ interface SocialFeedProps {
   posts: SocialPost[];
   setPosts: React.Dispatch<React.SetStateAction<SocialPost[]>>;
   user: any;
+  userProfile: UserProfile | null;
   onSignIn: () => void;
 }
 
@@ -25,6 +26,7 @@ export default function SocialFeed({
   posts,
   setPosts,
   user,
+  userProfile,
   onSignIn
 }: SocialFeedProps) {
   const [commentInputs, setCommentInputs] = useState<Record<string, string>>({});
@@ -90,7 +92,7 @@ export default function SocialFeed({
   const [newCategory, setNewCategory] = useState('coffee');
   const [newGov, setNewGov] = useState<GovernorateCode>('baghdad');
   const [newPromo, setNewPromo] = useState('');
-  const [newPhotoUrl, setNewPhotoUrl] = useState('https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&auto=format&fit=crop&q=80');
+  const [newPhotoUrl, setNewPhotoUrl] = useState('');
   const [customPhotoInput, setCustomPhotoInput] = useState('');
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   
@@ -108,6 +110,9 @@ export default function SocialFeed({
 
   const t = TRANSLATIONS[currentLang];
   const isRtl = currentLang === 'ar' || currentLang === 'ku';
+  const isAdmin = userProfile?.role === 'admin';
+  const [editingPostId, setEditingPostId] = useState<string | null>(null);
+  const [editingText, setEditingText] = useState('');
 
   const PRESET_PHOTOS = [
     { name: 'Classic Cafe', url: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&auto=format&fit=crop&q=80' },
@@ -205,6 +210,7 @@ export default function SocialFeed({
   const filteredPosts = selectedGov === 'all' 
     ? posts 
     : posts.filter(p => p.governorate === selectedGov);
+  const visiblePosts = filteredPosts.filter(post => isAdmin || !post.status || post.status === 'approved');
 
   const handleCreatePost = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -242,7 +248,9 @@ export default function SocialFeed({
       savedByUser: false,
       shares: 0,
       views: 1,
-      authorUid: user?.uid || 'anonymous'
+      authorUid: user?.uid || user?.id || 'anonymous',
+      authorEmail: user?.email,
+      status: isAdmin ? 'approved' : 'pending'
     };
 
     if (uploadedVideo) {
@@ -262,6 +270,9 @@ export default function SocialFeed({
     try {
       // Add to local state
       setPosts(prev => [newPostItem, ...prev]);
+      postsApi.create(newPostItem).catch((err) => {
+        console.warn('Post saved locally because backend post create is unavailable:', err?.message || err);
+      });
 
       // Reset fields & collapse
       setNewBizName('');
@@ -281,6 +292,37 @@ export default function SocialFeed({
     } catch (err) {
       console.error("Error creating post: ", err);
     }
+  };
+
+  const handleApprovePost = (postId: string) => {
+    if (!isAdmin) return;
+    setPosts(prev => prev.map(p => p.id === postId ? { ...p, status: 'approved', updatedAt: new Date().toISOString() } : p));
+    postsApi.update(postId, { status: 'approved' }).catch(() => undefined);
+  };
+
+  const handleDeletePost = (postId: string) => {
+    if (!isAdmin) return;
+    setPosts(prev => prev.filter(p => p.id !== postId));
+    postsApi.delete(postId, userProfile?.email).catch(() => undefined);
+  };
+
+  const startEditPost = (post: SocialPost) => {
+    if (!isAdmin) return;
+    setEditingPostId(post.id);
+    setEditingText(post.caption[currentLang] || post.caption.en || '');
+  };
+
+  const saveEditedPost = (postId: string) => {
+    if (!isAdmin || !editingText.trim()) return;
+    const caption = editingText.trim();
+    setPosts(prev => prev.map(p => p.id === postId ? {
+      ...p,
+      caption: { ar: caption, ku: caption, en: caption },
+      updatedAt: new Date().toISOString()
+    } : p));
+    postsApi.update(postId, { caption }).catch(() => undefined);
+    setEditingPostId(null);
+    setEditingText('');
   };
 
   const handleLike = (postId: string) => {
@@ -372,455 +414,118 @@ export default function SocialFeed({
         </div>
         
         <span className="text-[10px] text-white/60 bg-white/5 border border-white/10 px-2.5 py-1 rounded-full font-bold">
-          {filteredPosts.length} Active Feeds
+          {visiblePosts.length} Active Feeds
         </span>
       </div>
 
-      {/* Live Local Pulse Simulator Banner */}
-      <div className="bg-gradient-to-br from-[#12121a] via-[#14141d] to-[#181825] border border-indigo-500/10 rounded-[20px] p-5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl">
-        <div className="space-y-1 text-center sm:text-left">
-          <h4 className="text-xs font-black text-rose-400 uppercase tracking-widest flex items-center justify-center sm:justify-start gap-1.5 font-sans">
-            <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
-            <span>
-              {currentLang === 'en' ? 'Live Local Pulse Simulator' : currentLang === 'ku' ? 'سیستمی پەیوەندی زیندوو' : 'محاكي دفق المشاركات الحية للمحافظات'}
-            </span>
-          </h4>
-          <p className="text-[11.5px] text-zinc-400 font-sans leading-relaxed">
-            {currentLang === 'en'
-              ? `Instantly grab, translate, and post real-time social stories about certified Iraqi businesses in ${govNameText}.`
-              : currentLang === 'ku'
-              ? `ڕاستەوخۆ بابەتگەلی ڕاستەقینە و تەرجەمەکراوی فەرمی دەربارەی بازرگانییەکان کۆبکەرەوە لە ${govNameText}.`
-              : `اسحب وانشر تحديثاً حياً، مترجماً، ومصمماً بدقة لأعظم محلات وشركات العراق في محافظة ${govNameText}.`}
-          </p>
-        </div>
-
-        <button
-          type="button"
-          onClick={handleStimulateLivePost}
-          disabled={isGeneratingLive}
-          className="relative px-4 py-2.5 bg-gradient-to-r from-rose-500 to-indigo-600 hover:from-rose-400 hover:to-indigo-500 text-white font-extrabold text-xs rounded-xl cursor-pointer transition active:scale-95 flex items-center gap-1.5 shadow-lg shadow-indigo-500/10 shrink-0 font-sans disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isGeneratingLive ? (
-            <>
-              <span className="w-3 h-3 border-2 border-white/50 border-t-transparent rounded-full animate-spin"></span>
-              <span>{currentLang === 'en' ? 'Simulating...' : 'جاري السحب...'}</span>
-            </>
-          ) : (
-            <>
-              <span>✨</span>
-              <span>
-                {currentLang === 'en' 
-                  ? `Pull ${selectedGov === 'all' ? 'Live Story' : `${selectedGov.toUpperCase()} Story`}`
-                  : currentLang === 'ku'
-                  ? `بکێشە بابەت`
-                  : `سحب منشور حي ${selectedGov === 'all' ? 'عشوائي' : `لـ ${selectedGov.toUpperCase()}`}`}
-              </span>
-            </>
-          )}
-        </button>
-      </div>
-
-      {/* Immersive Refined Social Composer */}
-      <div className="bg-[#18191a] border border-[#2f3031]/80 rounded-[20px] p-5 space-y-4.5 shadow-2xl relative overflow-hidden font-sans">
-        
-        <div className="space-y-3.5">
-          {/* User Row Option */}
-          <div className="flex items-center gap-3">
-            <div className="relative w-10 h-10 rounded-full bg-[#242526] p-[1.5px] shrink-0 border border-[#3e4042]">
-              <div className="w-full h-full rounded-full bg-[#0a0a0f] overflow-hidden flex items-center justify-center">
-                <img
-                  src={user?.photoURL || "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&auto=format&fit=crop&q=80"}
-                  alt={user?.displayName || "Guest user avatar"}
-                  className="w-full h-full object-cover"
-                  referrerPolicy="no-referrer"
-                />
-              </div>
-              {user && <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border border-slate-950 rounded-full animate-pulse"></span>}
-            </div>
-
-            <div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-xs font-bold text-white block">
-                  {user?.displayName || (currentLang === 'en' ? 'Saku Maku Guest' : currentLang === 'ku' ? 'میوانی ساکۆ ماکۆ' : 'ضيف شكو ماكو')}
-                </span>
-                {user && <CheckCircle2 className="w-3 h-3 text-blue-400" />}
-              </div>
-              
-              {/* Facebook-style quick privacy/governorate selector badge */}
-              <button 
-                type="button"
-                onClick={() => setShowGovInput(g => !g)}
-                className="mt-0.5 flex items-center gap-1 bg-[#242526] hover:bg-[#3a3b3c] border border-[#2f3031] text-[10px] text-zinc-300 px-2 py-0.5 rounded-full cursor-pointer transition font-sans"
-              >
-                <span>📍 {newGov.toUpperCase()}</span>
-                <span className="text-[8px] opacity-75">▼</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Facebook style Main input Area */}
-          <div className="space-y-1">
-            <textarea
-              rows={3}
-              placeholder={
-                currentLang === 'en'
-                  ? `What's on your mind, ${user?.displayName?.split(' ')[0] || 'Friend'}? Share updates, photos or video trailers...`
-                  : currentLang === 'ku'
-                  ? `چی لە مێشکتدایە، ${user?.displayName?.split(' ')[0] || 'هاوڕێم'}؟ بابەتێکی نوێ، وێنە یان کەڵێن بڵاوبکەرەوە...`
-                  : `بمَ تفكّر، ${user?.displayName?.split(' ')[0] || 'يا صديقنا'}؟ أنشر أحدث الصور، عروض كراسات أو فيديوهات ترويجية...`
-              }
-              value={newCaption}
-              onChange={(e) => setNewCaption(e.target.value)}
-              className="w-full bg-transparent text-sm text-white placeholder-[#8a8d91] focus:outline-none transition leading-relaxed resize-none border-0 p-0 focus:ring-0"
-              required
-            />
-          </div>
-        </div>
-
-        {videoError && (
-          <div className="p-3 bg-red-950/20 border border-red-500/30 rounded-xl text-xs text-red-400 font-semibold flex items-center gap-2 animate-fade-in font-sans">
-            <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse shrink-0"></span>
-            <span>⚠️ {videoError}</span>
-          </div>
-        )}
-
-        {/* Visual Multi-Upload Active Previews in a clean box */}
-        {(uploadedImage || newPhotoUrl || uploadedVideo || uploadedFile) && (
-          <div className="relative border border-[#2f3031] rounded-xl overflow-hidden bg-[#242526]/40 p-2">
-            
-            {/* Unified circular close button in the top right corner */}
-            <button
-              type="button"
-              onClick={() => {
-                setUploadedImage(null);
-                setUploadedVideo(null);
-                setUploadedFile(null);
-                setNewPhotoUrl('');
-              }}
-              className="absolute top-2.5 right-2.5 z-20 w-6 h-6 rounded-full bg-black/80 hover:bg-black text-white flex items-center justify-center transition active:scale-95 cursor-pointer border border-white/10 text-xs font-bold"
-              title="Remove attachment"
-            >
-              ✕
+      <form onSubmit={handleCreatePost} className="bg-[#18191a] border border-[#2f3031]/80 rounded-[16px] p-4 space-y-4 shadow-xl font-sans">
+        {!user ? (
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+            <p className="text-sm text-zinc-300">
+              {currentLang === 'en'
+                ? 'Sign in to create a post.'
+                : currentLang === 'ku'
+                ? 'بۆ دروستکردنی بابەت بچۆ ژوورەوە.'
+                : 'سجّل الدخول لإنشاء منشور.'}
+            </p>
+            <button type="button" onClick={onSignIn} className="px-4 py-2 rounded-lg bg-luxury-gold text-black text-xs font-black">
+              {currentLang === 'en' ? 'Sign in' : currentLang === 'ku' ? 'چوونەژوورەوە' : 'تسجيل الدخول'}
             </button>
-
-            {/* Video preview render if video is selected */}
-            {uploadedVideo ? (
-              <div className="relative w-full rounded-lg overflow-hidden bg-black flex flex-col items-center justify-center p-1.5 min-h-[140px]">
-                <video src={uploadedVideo} style={{ maxHeight: '160px' }} controls className="w-full h-auto rounded-lg object-contain" />
-                <div className="absolute bottom-2.5 left-2.5 flex items-center gap-1 bg-black/85 backdrop-blur-md px-2.5 py-1 rounded-full border border-pink-500/20 text-[10px] text-pink-400 font-extrabold shadow-md">
-                  <Video className="w-3.5 h-3.5" />
-                  <span>VIDEO ATTACHED</span>
-                </div>
-              </div>
-            ) : uploadedImage || newPhotoUrl ? (
-              /* Photo preview render */
-              <div className="relative w-full rounded-lg overflow-hidden bg-black/45 flex items-center justify-center p-1.5 min-h-[140px]">
-                <img
-                  src={uploadedImage || newPhotoUrl}
-                  alt="Story attachment"
-                  className="max-h-[160px] w-auto max-w-full rounded-lg object-contain"
-                  referrerPolicy="no-referrer"
-                />
-                <div className="absolute bottom-2.5 left-2.5 flex items-center gap-1 bg-black/85 backdrop-blur-md px-2.5 py-1 rounded-full border border-cyan-500/20 text-[10px] text-cyan-400 font-extrabold shadow-md">
-                  <ImageIcon className="w-3.5 h-3.5" />
-                  <span>IMAGE ATTACHED</span>
-                </div>
-              </div>
-            ) : null}
-
-            {/* General document attachment preview */}
-            {uploadedFile && (
-              <div className="p-3 bg-zinc-850 border border-zinc-700 rounded-xl flex items-center justify-between gap-3 font-sans">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-lg bg-zinc-900 flex items-center justify-center text-zinc-400 border border-zinc-700 shadow-md">
-                    <FileText className="w-4.5 h-4.5" />
-                  </div>
-                  <div>
-                    <span className="text-xs font-black text-white block truncate max-w-[190px]">{uploadedFile.name}</span>
-                    <span className="text-[10px] text-zinc-400 block font-mono font-medium">{uploadedFile.size} • Menu Booklet PDF</span>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
-        )}
+        ) : (
+          <>
+            <div className="flex items-start gap-3">
+              <img
+                src={user?.photoURL || "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&auto=format&fit=crop&q=80"}
+                alt={user?.displayName || 'User avatar'}
+                className="w-10 h-10 rounded-full object-cover border border-white/10"
+                referrerPolicy="no-referrer"
+              />
+              <textarea
+                rows={3}
+                placeholder="What do you want to share?"
+                value={newCaption}
+                onChange={(e) => setNewCaption(e.target.value)}
+                dir={isRtl ? 'rtl' : 'ltr'}
+                lang={currentLang === 'ku' ? 'ku' : currentLang}
+                className="flex-1 min-h-[84px] bg-[#242526] border border-[#3e4042] rounded-xl px-4 py-3 text-sm text-white placeholder-[#8a8d91] focus:outline-none focus:border-luxury-gold/60 resize-none"
+                required
+              />
+            </div>
 
-        {/* Hidden inputs to trigger actual native file select browser prompts */}
-        <input
-          type="file"
-          id="social-photo-loader-input"
-          accept="image/*"
-          onChange={handleImageFileChange}
-          className="hidden"
-        />
-        <input
-          type="file"
-          id="social-video-loader-input"
-          accept="video/*"
-          onChange={handleVideoFileChange}
-          className="hidden"
-        />
-        <input
-          type="file"
-          id="social-doc-loader-input"
-          accept=".pdf,.doc,.docx,.png,.txt,.xlsx"
-          onChange={handleAttachedFileChange}
-          className="hidden"
-        />
-
-        {/* Collapsible Panels Container */}
-        <div className="space-y-2">
-          
-          {/* Preset templates panel */}
-          {showPresetGallery && (
-            <div className="p-3 bg-[#242526] border border-[#2f3031] rounded-xl animate-fade-in space-y-2">
-              <span className="text-[9px] text-[#e4e6eb] font-extrabold uppercase tracking-widest block">Choose Quick mockup media or upload custom:</span>
-              <div className="flex items-center gap-2 flex-wrap">
-                {/* Custom upload button inside preset list */}
+            {(uploadedImage || uploadedVideo || uploadedFile) && (
+              <div className="relative border border-[#2f3031] rounded-xl overflow-hidden bg-[#242526]/40 p-2">
                 <button
                   type="button"
-                  onClick={() => document.getElementById('social-photo-loader-input')?.click()}
-                  className="w-12 h-12 bg-[#18191a] hover:bg-zinc-800 border border-[#3e4042] rounded-lg flex flex-col items-center justify-center text-zinc-400 hover:text-white transition duration-200 cursor-pointer"
-                  title="Upload Custom Image File"
+                  onClick={() => {
+                    setUploadedImage(null);
+                    setUploadedVideo(null);
+                    setUploadedFile(null);
+                    setVideoError(null);
+                  }}
+                  className="absolute top-2 right-2 z-20 w-7 h-7 rounded-full bg-black/80 hover:bg-black text-white flex items-center justify-center"
+                  title="Remove attachment"
                 >
-                  <span className="text-xs font-bold font-mono">+ Add</span>
+                  <X className="w-4 h-4" />
                 </button>
-
-                {PRESET_PHOTOS.map((photo) => (
-                  <button
-                    type="button"
-                    key={photo.url}
-                    onClick={() => {
-                      setUploadedImage(photo.url);
-                      setUploadedVideo(null);
-                      setNewPhotoUrl('');
-                    }}
-                    className={`w-12 h-12 rounded-lg border overflow-hidden transition relative cursor-pointer ${
-                      uploadedImage === photo.url ? 'border-amber-500 scale-105 shadow-md shadow-amber-500/10' : 'border-[#2f3031] opacity-70 hover:opacity-100'
-                    }`}
-                    title={photo.name}
-                  >
-                    <img src={photo.url} alt={photo.name} className="w-full h-full object-cover" />
-                  </button>
-                ))}
-
-                {PRESET_VIDEOS.map((vid) => (
-                  <button
-                    type="button"
-                    key={vid.url}
-                    onClick={() => {
-                      setUploadedVideo(vid.url);
-                      setUploadedImage(null);
-                      setNewPhotoUrl('');
-                    }}
-                    className={`w-12 h-12 rounded-lg border bg-[#18191a] flex flex-col items-center justify-center text-[11px] transition relative cursor-pointer ${
-                      uploadedVideo === vid.url ? 'border-amber-500 scale-105' : 'border-[#2f3031] opacity-70 hover:opacity-100'
-                    }`}
-                    title={vid.name}
-                  >
-                    <span>🎥</span>
-                    <span className="text-[6px] text-white/40 uppercase font-[#2f3031] font-black">Video</span>
-                  </button>
-                ))}
+                {uploadedVideo ? (
+                  <video src={uploadedVideo} controls className="w-full max-h-64 rounded-lg object-contain bg-black" />
+                ) : uploadedImage ? (
+                  <img src={uploadedImage} alt="Upload preview" className="w-full max-h-64 rounded-lg object-contain bg-black" />
+                ) : uploadedFile ? (
+                  <div className="p-3 flex items-center gap-3 text-white">
+                    <FileText className="w-5 h-5 text-zinc-300" />
+                    <span className="text-xs font-bold truncate">{uploadedFile.name}</span>
+                  </div>
+                ) : null}
               </div>
+            )}
+
+            {videoError && (
+              <div className="p-3 bg-red-950/20 border border-red-500/30 rounded-xl text-xs text-red-400 font-semibold">
+                {videoError}
+              </div>
+            )}
+
+            <input type="file" id="social-photo-loader-input" accept="image/*" onChange={handleImageFileChange} className="hidden" />
+            <input type="file" id="social-video-loader-input" accept="video/*" onChange={handleVideoFileChange} className="hidden" />
+            <input type="file" id="social-doc-loader-input" accept=".pdf,.doc,.docx,.png,.txt,.xlsx" onChange={handleAttachedFileChange} className="hidden" />
+
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 border-t border-white/5 pt-3">
+              <div className="flex items-center gap-2">
+                <button type="button" onClick={() => document.getElementById('social-photo-loader-input')?.click()} className="px-3 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-zinc-200 text-xs font-bold flex items-center gap-2">
+                  <ImageIcon className="w-4 h-4 text-[#45bd62]" />
+                  {currentLang === 'en' ? 'Photo' : currentLang === 'ku' ? 'وێنە' : 'صورة'}
+                </button>
+                <button type="button" onClick={() => document.getElementById('social-video-loader-input')?.click()} className="px-3 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-zinc-200 text-xs font-bold flex items-center gap-2">
+                  <Video className="w-4 h-4 text-[#f02849]" />
+                  {currentLang === 'en' ? 'Media' : currentLang === 'ku' ? 'میدیا' : 'وسائط'}
+                </button>
+              </div>
+              <button
+                type="submit"
+                disabled={!newCaption.trim()}
+                className="px-5 py-2.5 bg-[#1877f2] hover:bg-[#166fe5] disabled:bg-[#505151]/55 disabled:text-zinc-500 text-white font-bold text-sm rounded-lg transition cursor-pointer"
+              >
+                {currentLang === 'en' ? 'Post' : currentLang === 'ku' ? 'بڵاوکردنەوە' : 'نشر'}
+              </button>
             </div>
-          )}
 
-          {/* Dynamic input fields depending on chosen control toggles */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-w-full font-sans">
-            
-            {/* Publisher Brand Input */}
-            {showBrandInput && (
-              <div className="p-3 bg-[#242526] rounded-lg border border-[#2f3031] space-y-1.5 transition">
-                <span className="text-[10px] text-[#e4e6eb] font-bold block">🏛️ Cafe / Brand Name</span>
-                <input
-                  type="text"
-                  placeholder="e.g. Costa Cafe Baghdad"
-                  value={newBizName}
-                  onChange={(e) => setNewBizName(e.target.value)}
-                  className="w-full bg-[#18191a] border border-[#3e4042] text-xs px-3 py-2 rounded text-white placeholder-zinc-700 focus:outline-[#1877f2] focus:outline-none"
-                />
-              </div>
+            {!isAdmin && (
+              <p className="text-[11px] text-zinc-500">
+                {currentLang === 'en'
+                  ? 'New posts are held for admin approval before they appear publicly.'
+                  : currentLang === 'ku'
+                  ? 'بابەتە نوێیەکان پێش دەرکەوتنی گشتی پێویستیان بە پەسەندی بەڕێوەبەر هەیە.'
+                  : 'المنشورات الجديدة تنتظر موافقة الإدارة قبل الظهور للعامة.'}
+              </p>
             )}
-
-            {/* Promo Badge Input */}
-            {showPromoInput && (
-              <div className="p-3 bg-[#242526] rounded-lg border border-[#2f3031] space-y-1.5 transition">
-                <span className="text-[10px] text-[#e4e6eb] font-bold block">🎟️ Promotion Badge (Discount)</span>
-                <input
-                  type="text"
-                  placeholder="e.g. Free Dessert • 20% Off"
-                  value={newPromo}
-                  onChange={(e) => setNewPromo(e.target.value)}
-                  className="w-full bg-[#18191a] border border-[#3e4042] text-xs px-3 py-2 rounded text-white placeholder-zinc-700 focus:outline-[#1877f2] focus:outline-none"
-                />
-              </div>
-            )}
-
-            {/* Governorate dropdown selection menu */}
-            {showGovInput && (
-              <div className="p-3 bg-[#242526] rounded-lg border border-[#2f3031] space-y-1.5 transition">
-                <span className="text-[10px] text-[#e4e6eb] font-bold block">📍 Target Governorate</span>
-                <select
-                  value={newGov}
-                  onChange={(e) => setNewGov(e.target.value as GovernorateCode)}
-                  className="w-full bg-[#18191a] border border-[#3e4042] text-xs px-2.5 py-2 rounded text-white focus:outline-none cursor-pointer"
-                >
-                  <option value="baghdad" className="bg-[#18191a] text-white">Baghdad 🏰</option>
-                  <option value="erbil" className="bg-[#18191a] text-white">Erbil 🏔️</option>
-                  <option value="basra" className="bg-[#18191a] text-white">Basra 🌴</option>
-                  <option value="sulaymaniyah" className="bg-[#18191a] text-white">Sulaymaniyah 🌸</option>
-                  <option value="mosul" className="bg-[#18191a] text-white">Mosul 🍏</option>
-                  <option value="najaf" className="bg-[#18191a] text-white">Najaf ✨</option>
-                </select>
-              </div>
-            )}
-
-            {/* Category selection menu dropdown */}
-            {showCategoryInput && (
-              <div className="p-3 bg-[#242526] rounded-lg border border-[#2f3031] space-y-1.5 transition">
-                <span className="text-[10px] text-[#e4e6eb] font-bold block">📂 Culinary/Retail Category</span>
-                <select
-                  value={newCategory}
-                  onChange={(e) => setNewCategory(e.target.value)}
-                  className="w-full bg-[#18191a] border border-[#3e4042] text-xs px-2.5 py-2 rounded text-white focus:outline-none cursor-pointer"
-                >
-                  {CATEGORIES.map(c => (
-                    <option key={c.id} value={c.id} className="bg-[#18191a] text-white">{c.icon} {c.name[currentLang]}</option>
-                  ))}
-                </select>
-              </div>
-            )}
-
-          </div>
-
-        </div>
-
-        {/* Facebook-style 'Add to your post' footer bar with interactive controls */}
-        <div className="border border-[#2f3031] rounded-xl p-3 bg-[#18191a] flex items-center justify-between gap-3 flex-wrap">
-          <span className="text-xs font-bold text-zinc-350">
-            {currentLang === 'en' ? 'Add to your post' : currentLang === 'ku' ? 'زیاد بکە بۆ بابەت' : 'إضافة إلى منشورك'}
-          </span>
-          
-          <div className="flex items-center gap-1.5">
-            {/* Gallery Picker Mode (Presets) */}
-            <button
-              type="button"
-              onClick={() => setShowPresetGallery(p => !p)}
-              className={`p-2 rounded-full transition cursor-pointer flex items-center justify-center border hover:bg-[#242526] active:scale-90 ${
-                showPresetGallery 
-                  ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' 
-                  : 'bg-transparent text-[#45bd62] border-transparent'
-              }`}
-              title="Add Image or Preset Photos"
-            >
-              <ImageIcon className="w-4.5 h-4.5" />
-            </button>
-
-            {/* Video file loader trigger button */}
-            <button
-              type="button"
-              onClick={() => {
-                document.getElementById('social-video-loader-input')?.click();
-              }}
-              className={`p-2 rounded-full transition cursor-pointer flex items-center justify-center border hover:bg-[#242526] active:scale-90 ${
-                uploadedVideo 
-                  ? 'bg-red-500/10 text-red-400 border-red-500/20' 
-                  : 'bg-transparent text-[#f02849] border-transparent'
-              }`}
-              title="Upload Custom Video"
-            >
-              <Video className="w-4.5 h-4.5" />
-            </button>
-
-            {/* Document booklet attachment trigger button */}
-            <button
-              type="button"
-              onClick={() => {
-                document.getElementById('social-doc-loader-input')?.click();
-              }}
-              className={`p-2 rounded-full transition cursor-pointer flex items-center justify-center border hover:bg-[#242526] active:scale-90 ${
-                uploadedFile 
-                  ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' 
-                  : 'bg-transparent text-zinc-400 border-transparent'
-              }`}
-              title="Attach Campaign PDF/Flyer"
-            >
-              <File className="w-4.5 h-4.5" />
-            </button>
-
-            {/* Discount Code Input Toggle button */}
-            <button
-              type="button"
-              onClick={() => setShowPromoInput(!showPromoInput)}
-              className={`p-2 rounded-full transition cursor-pointer flex items-center justify-center border hover:bg-[#242526] active:scale-90 ${
-                showPromoInput || newPromo 
-                  ? 'bg-orange-500/10 text-orange-400 border-orange-500/20' 
-                  : 'bg-transparent text-[#f7b928] border-transparent'
-              }`}
-              title="Add campaign discount badge"
-            >
-              <Sparkles className="w-4.5 h-4.5" />
-            </button>
-
-            {/* Toggle Governorate dropdown selector */}
-            <button
-              type="button"
-              onClick={() => setShowGovInput(!showGovInput)}
-              className={`p-2 rounded-full transition cursor-pointer flex items-center justify-center border hover:bg-[#242526] active:scale-90 ${
-                showGovInput 
-                  ? 'bg-green-500/10 text-green-400 border-green-500/20' 
-                  : 'bg-transparent text-[#45bd62] border-transparent'
-              }`}
-              title="Target Iraqi Governorate"
-            >
-              <SlidersHorizontal className="w-4.5 h-4.5" />
-            </button>
-
-            {/* Toggle category tag dropdown */}
-            <button
-              type="button"
-              onClick={() => setShowCategoryInput(!showCategoryInput)}
-              className={`p-2 rounded-full transition cursor-pointer flex items-center justify-center border hover:bg-[#242526] active:scale-90 ${
-                showCategoryInput 
-                  ? 'bg-purple-500/10 text-purple-400 border-purple-500/20' 
-                  : 'bg-transparent text-purple-400 border-transparent'
-              }`}
-              title="Categorize spot location"
-            >
-              <ShoppingBag className="w-4.5 h-4.5" />
-            </button>
-
-            {/* Interactive signature brand creator toggle */}
-            <button
-              type="button"
-              onClick={() => setShowBrandInput(!showBrandInput)}
-              className={`p-2 rounded-full transition cursor-pointer flex items-center justify-center border hover:bg-[#242526] active:scale-90 ${
-                showBrandInput || newBizName 
-                  ? 'bg-pink-500/10 text-pink-400 border-pink-500/20' 
-                  : 'bg-transparent text-pink-500 border-transparent'
-              }`}
-              title="Override brand signature name"
-            >
-              <CheckCircle2 className="w-4.5 h-4.5" />
-            </button>
-          </div>
-        </div>
-
-        {/* Post Submit Button - Styled exactly like Facebook's prominent rectangular blue button */}
-        <button
-          type="button"
-          onClick={handleCreatePost}
-          disabled={!newCaption.trim()}
-          className="w-full py-2.5 bg-[#1877f2] hover:bg-[#166fe5] disabled:bg-[#505151]/55 disabled:text-zinc-500 text-white font-bold text-sm tracking-wide rounded-md transition duration-150 cursor-pointer flex items-center justify-center gap-2 shadow-md"
-        >
-          <span>{currentLang === 'en' ? 'Post' : currentLang === 'ku' ? 'بلاوکردنەوە' : 'نشر'}</span>
-        </button>
-
-      </div>
+          </>
+        )}
+      </form>
 
       {/* Main post stream list */}
-      {filteredPosts.slice(0, visibleCount).map((post) => {
+      {visiblePosts.slice(0, visibleCount).map((post) => {
         const categoryDetails = CATEGORIES.find(c => c.id === post.category);
         return (
           <motion.div
@@ -860,10 +565,49 @@ export default function SocialFeed({
 
               </div>
 
-              {/* Tag / Category Badge */}
-              <div className="flex items-center gap-1 bg-slate-900 py-1 px-2.5 rounded-full border border-slate-800">
-                <span className="text-xs">{categoryDetails?.icon}</span>
-                <span className="text-[10px] font-bold text-zinc-400">{categoryDetails?.name[currentLang]}</span>
+              <div className="flex items-center gap-2">
+                {isAdmin && (
+                  <div className="flex items-center gap-1">
+                    {post.status === 'pending' && (
+                      <button
+                        type="button"
+                        onClick={() => handleApprovePost(post.id)}
+                        className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20"
+                        title="Approve post"
+                      >
+                        <Check className="w-4 h-4" />
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => startEditPost(post)}
+                      className="p-1.5 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20"
+                      title="Edit post"
+                    >
+                      <Edit3 className="w-4 h-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleDeletePost(post.id)}
+                      className="p-1.5 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20"
+                      title="Delete post"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+
+                {isAdmin && post.status === 'pending' && (
+                  <span className="text-[10px] font-black px-2 py-1 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/20">
+                    Pending
+                  </span>
+                )}
+
+                {/* Tag / Category Badge */}
+                <div className="flex items-center gap-1 bg-slate-900 py-1 px-2.5 rounded-full border border-slate-800">
+                  <span className="text-xs">{categoryDetails?.icon}</span>
+                  <span className="text-[10px] font-bold text-zinc-400">{categoryDetails?.name[currentLang]}</span>
+                </div>
               </div>
             </div>
 
@@ -994,9 +738,26 @@ export default function SocialFeed({
               {/* Caption text */}
               <div className="space-y-1.5">
                 <span className="text-xs font-black text-white hover:underline cursor-pointer block">{post.businessName}</span>
-                <p className="text-xs leading-relaxed text-zinc-300">
-                  {post.caption[currentLang]}
-                </p>
+                {editingPostId === post.id ? (
+                  <div className="space-y-2">
+                    <textarea
+                      value={editingText}
+                      onChange={(e) => setEditingText(e.target.value)}
+                      dir={isRtl ? 'rtl' : 'ltr'}
+                      lang={currentLang === 'ku' ? 'ku' : currentLang}
+                      className="w-full bg-[#020205]/45 text-xs px-4 py-2.5 rounded-xl border border-white/10 text-white focus:outline-none focus:border-blue-400 resize-none"
+                      rows={3}
+                    />
+                    <div className="flex items-center gap-2">
+                      <button type="button" onClick={() => saveEditedPost(post.id)} className="px-3 py-1.5 rounded-lg bg-emerald-500 text-black text-[10px] font-black">Save</button>
+                      <button type="button" onClick={() => setEditingPostId(null)} className="px-3 py-1.5 rounded-lg bg-white/10 text-white text-[10px] font-bold">Cancel</button>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-xs leading-relaxed text-zinc-300" dir={isRtl ? 'rtl' : 'ltr'} lang={currentLang === 'ku' ? 'ku' : currentLang}>
+                    <bdi>{post.caption[currentLang]}</bdi>
+                  </p>
+                )}
               </div>
 
               {/* Active list stream of comments */}
@@ -1018,6 +779,8 @@ export default function SocialFeed({
                   placeholder={t.addComment}
                   value={commentInputs[post.id] || ''}
                   onChange={(e) => setCommentInputs(prev => ({ ...prev, [post.id]: e.target.value }))}
+                  dir={isRtl ? 'rtl' : 'ltr'}
+                  lang={currentLang === 'ku' ? 'ku' : currentLang}
                   className="w-full bg-[#020205]/45 hover:bg-[#020205]/85 text-xs px-4 py-2.5 rounded-xl border border-white/10 text-white focus:outline-none focus:border-blue-400"
                   required
                 />
@@ -1058,7 +821,7 @@ export default function SocialFeed({
       )}
 
       {/* Load More Trigger Button */}
-      {filteredPosts.length > visibleCount && !isLoadingMore && (
+      {visiblePosts.length > visibleCount && !isLoadingMore && (
         <div className="flex justify-center pt-2">
           <button
             onClick={handleLoadMorePosts}
@@ -1071,7 +834,7 @@ export default function SocialFeed({
       )}
 
       {/* If absolutely no post fits governorate */}
-      {filteredPosts.length === 0 && (
+      {visiblePosts.length === 0 && (
         <div className="text-center py-16 bg-slate-900/10 border border-zinc-900/40 rounded-3xl p-8 flex flex-col items-center">
           <ShoppingBag className="w-12 h-12 text-zinc-700 mb-3" />
           <h3 className="text-sm font-bold text-white mb-1">
@@ -1079,36 +842,11 @@ export default function SocialFeed({
           </h3>
           <p className="text-xs text-zinc-500 max-w-sm mb-4 leading-relaxed">
             {currentLang === 'en' 
-              ? `No businesses in ${govNameText} have active broadcasts yet. Pull an authentic local update from the database now!`
+              ? `No approved posts are available for ${govNameText} yet.`
               : currentLang === 'ku'
-              ? `هیچ کۆمپانیایەک لە ${govNameText} پەخشی زیندووی نییە. بابەتێکی فەرمی ڕاستەقینە لێرەوە پۆست بکە!`
-              : `لم تقم المحلات أو الشركات في محافظة ${govNameText} بنشر حملات ترويجية بعد. اسحب وانشر تحديثاً حقيقياً تلقائياً الآن!`}
+              ? `هێشتا هیچ بابەتێکی پەسەندکراو بۆ ${govNameText} نییە.`
+              : `لا توجد منشورات معتمدة في ${govNameText} حالياً.`}
           </p>
-
-          <button
-            type="button"
-            onClick={handleStimulateLivePost}
-            disabled={isGeneratingLive}
-            className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 font-extrabold text-white text-xs rounded-xl transition cursor-pointer flex items-center justify-center gap-1.5 active:scale-95 shadow-lg shadow-indigo-600/10 disabled:opacity-50"
-          >
-            {isGeneratingLive ? (
-              <>
-                <span className="w-3 h-3 border-2 border-white/50 border-t-transparent rounded-full animate-spin"></span>
-                <span>{currentLang === 'en' ? 'Populating...' : 'جاري التوليد...'}</span>
-              </>
-            ) : (
-              <>
-                <span>✨</span>
-                <span>
-                  {currentLang === 'en'
-                    ? `Seed ${govNameText} Feed`
-                    : currentLang === 'ku'
-                    ? `تولیدکردنی بابەت بۆ ${govNameText}`
-                    : `توليد منشورات لـ ${govNameText} تلقائياً`}
-                </span>
-              </>
-            )}
-          </button>
         </div>
       )}
 

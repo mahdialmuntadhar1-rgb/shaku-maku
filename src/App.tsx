@@ -8,7 +8,9 @@ import {
 import { Language, GovernorateCode, Business, SocialPost, UserProfile, HeroSlide } from './types';
 import { INITIAL_BUSINESSES, TRANSLATIONS, CATEGORIES, INITIAL_POSTS, GOVERNORATES, HERO_SLIDES } from './data';
 import { MOCK_BUSINESSES } from './mockData';
-import { authApi, businessesApi, postsApi, AuthResponse } from './api';
+import { businessesApi, postsApi } from './api';
+import { useAuth } from './contexts/AuthContext';
+import { isAdminEmail, normalizeEmail, toUserProfile } from './auth/session';
 
 // Saku Maku Modular Components
 import Header from './components/Header';
@@ -23,12 +25,11 @@ import AdminPanel from './components/AdminPanel';
 import AuthModal from './components/AuthModal';
 
 export default function App() {
+  const { user, login: authLogin, register: authRegister, logout: authLogout } = useAuth();
   const [currentLang, setCurrentLang] = useState<Language>('ar'); // Default: Arabic
   const [selectedGov, setSelectedGov] = useState<GovernorateCode>('all'); // Default: All Iraq
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   
-  // Authenticated User state from Cloudflare API
-  const [user, setUser] = useState<AuthResponse['user'] | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 
   // Saku Maku core Reactive businesses database
@@ -55,70 +56,44 @@ export default function App() {
   const isRtl = currentLang === 'ar' || currentLang === 'ku';
 
   // Hero Slides (static for now, can be moved to backend later)
-  const [heroSlides, setHeroSlides] = useState<HeroSlide[]>(HERO_SLIDES);
-
-  // Check for existing auth on mount
-  useEffect(() => {
-    const currentUser = authApi.getCurrentUser();
-    if (currentUser) {
-      setUser(currentUser);
-      const isAdmin = currentUser.email === 'safaribosafar@gmail.com' || currentUser.email === 'mahdialmuntadhar1@gmail.com';
-      setUserProfile({
-        uid: currentUser.id,
-        displayName: currentUser.name || currentUser.email.split('@')[0],
-        photoURL: '',
-        email: currentUser.email,
-        createdAt: new Date().toISOString(),
-        role: isAdmin ? 'admin' : 'user',
-        onboarded: false,
-        businessId: null
-      });
+  const [heroSlides, setHeroSlides] = useState<HeroSlide[]>(() => {
+    try {
+      const savedSlides = localStorage.getItem('shaku_maku_hero_slides');
+      return savedSlides ? JSON.parse(savedSlides) : HERO_SLIDES;
+    } catch {
+      return HERO_SLIDES;
     }
-  }, []);
+  });
+
+  // Keep document and stored auth state aligned across refreshes and language changes.
+  useEffect(() => {
+    document.documentElement.lang = currentLang === 'ku' ? 'ku' : currentLang;
+    document.documentElement.dir = isRtl ? 'rtl' : 'ltr';
+  }, [currentLang, isRtl]);
+
+  useEffect(() => {
+    if (!user) {
+      setUserProfile(null);
+      if (activeTab === 'admin') setActiveTab('discover');
+      return;
+    }
+    setUserProfile(toUserProfile(user));
+  }, [user, activeTab]);
+
+  useEffect(() => {
+    localStorage.setItem('shaku_maku_hero_slides', JSON.stringify(heroSlides));
+  }, [heroSlides]);
 
   const handleCustomEmailLogin = async (customEmail: string) => {
-    const cleanEmail = customEmail.trim().toLowerCase();
+    const cleanEmail = normalizeEmail(customEmail);
     if (!cleanEmail) return;
 
     const dummyPassword = "SandboxPassword123!";
 
     try {
-      // Try login first
-      try {
-        const response = await authApi.login(cleanEmail, dummyPassword);
-        setUser(response.user);
-        localStorage.setItem("user", JSON.stringify(response.user));
-        const isAdmin = response.user.email === 'mahdialmuntadhar1@gmail.com' || response.user.email === 'safaribosafar@gmail.com';
-        setUserProfile({
-          uid: response.user.id,
-          displayName: response.user.name || cleanEmail.split('@')[0],
-          photoURL: '',
-          email: cleanEmail,
-          createdAt: new Date().toISOString(),
-          role: isAdmin ? 'admin' : 'user',
-          onboarded: false,
-          businessId: null
-        });
-      } catch (loginErr: any) {
-        // If login fails, try signup
-        try {
-          const response = await authApi.signup({ email: cleanEmail, password: dummyPassword, name: cleanEmail.split('@')[0] });
-          setUser(response.user);
-          localStorage.setItem("user", JSON.stringify(response.user));
-          const isAdmin = response.user.email === 'mahdialmuntadhar1@gmail.com' || response.user.email === 'safaribosafar@gmail.com';
-          setUserProfile({
-            uid: response.user.id,
-            displayName: response.user.name || cleanEmail.split('@')[0],
-            photoURL: '',
-            email: cleanEmail,
-            createdAt: new Date().toISOString(),
-            role: isAdmin ? 'admin' : 'user',
-            onboarded: false,
-            businessId: null
-          });
-        } catch (signupErr) {
-          throw signupErr;
-        }
+      const loginResponse = await authLogin(cleanEmail, dummyPassword);
+      if (!loginResponse.success) {
+        await authRegister({ email: cleanEmail, password: dummyPassword, name: cleanEmail.split('@')[0] });
       }
       console.log("Auth session authenticated successfully for: ", cleanEmail);
     } catch (err) {
@@ -129,8 +104,7 @@ export default function App() {
   // Secure logout
   const handleSecureLogout = async () => {
     try {
-      await authApi.logout();
-      setUser(null);
+      authLogout();
       setUserProfile(null);
       setActiveTab('discover');
       sessionStorage.clear();
@@ -141,8 +115,12 @@ export default function App() {
   };
 
   const handleUpdateRole = async (newRole: 'user' | 'owner' | 'admin') => {
-    // Role updates would need backend API support
-    console.log("Role update not implemented in backend yet");
+    if (newRole === 'admin' && !isAdminEmail(user?.email)) {
+      console.warn("Blocked local admin role switch for non-admin user");
+      return;
+    }
+    if (!userProfile) return;
+    setUserProfile(prev => prev ? { ...prev, role: newRole } : prev);
   };
 
   const handleUpdateProfile = async (updatedFields: Partial<UserProfile>) => {
@@ -153,11 +131,6 @@ export default function App() {
   // Fetch businesses from Cloudflare API
   useEffect(() => {
     const fetchBusinesses = async () => {
-      if (!import.meta.env.VITE_API_URL) {
-        setBusinesses(MOCK_BUSINESSES);
-        return;
-      }
-
       try {
         const response = await businessesApi.list({ limit: 100 });
         if (response.data && response.data.length > 0) {
@@ -198,11 +171,6 @@ export default function App() {
   // Fetch posts from Cloudflare API
   useEffect(() => {
     const fetchPosts = async () => {
-      if (!import.meta.env.VITE_API_URL) {
-        setPosts(INITIAL_POSTS);
-        return;
-      }
-
       try {
         const response = await postsApi.getAll();
         if (response.data && response.data.length > 0) {
@@ -316,7 +284,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-luxury-neutral pb-28 text-[#1A1A1A] flex flex-col selection:bg-luxury-gold selection:text-[#1A1A1A] relative overflow-hidden" dir={isRtl ? 'rtl' : 'ltr'}>
+    <div className="min-h-screen bg-luxury-neutral pb-28 text-[#1A1A1A] flex flex-col selection:bg-luxury-gold selection:text-[#1A1A1A] relative overflow-hidden" dir={isRtl ? 'rtl' : 'ltr'} lang={currentLang === 'ku' ? 'ku' : currentLang}>
       
       {/* Elegant Warm Luxury Atmosphere Glow */}
       <div className="absolute inset-0 z-0 pointer-events-none">
@@ -352,18 +320,7 @@ export default function App() {
         isOpen={authModalOpen}
         onClose={() => setAuthModalOpen(false)}
         onAuthSuccess={(userObj) => {
-          setUser(userObj);
-          const isAdmin = userObj.email === 'mahdialmuntadhar1@gmail.com' || userObj.email === 'safaribosafar@gmail.com';
-          setUserProfile({
-            uid: userObj.id,
-            displayName: userObj.name || userObj.email.split('@')[0],
-            photoURL: '',
-            email: userObj.email,
-            createdAt: new Date().toISOString(),
-            role: isAdmin ? 'admin' : 'user',
-            onboarded: false,
-            businessId: null
-          });
+          setUserProfile(toUserProfile(userObj));
         }}
       />
 
@@ -649,6 +606,7 @@ export default function App() {
                   posts={posts}
                   setPosts={setPosts}
                   user={user}
+                  userProfile={userProfile}
                   onSignIn={() => setAuthModalOpen(true)}
                 />
               </motion.div>
@@ -711,15 +669,41 @@ export default function App() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -15 }}
               >
-                {/* Admin moderation control tower */}
-                <AdminPanel
-                  currentLang={currentLang}
-                  businesses={businesses}
-                  setBusinesses={setBusinesses}
-                  posts={posts}
-                  setPosts={setPosts}
-                  userProfile={userProfile}
-                />
+                {userProfile?.role === 'admin' ? (
+                  <AdminPanel
+                    currentLang={currentLang}
+                    businesses={businesses}
+                    setBusinesses={setBusinesses}
+                    posts={posts}
+                    setPosts={setPosts}
+                    userProfile={userProfile}
+                    heroSlides={heroSlides}
+                    setHeroSlides={setHeroSlides}
+                  />
+                ) : (
+                  <div className="max-w-3xl mx-auto bg-[#18191a] border border-red-500/25 rounded-2xl p-8 text-center shadow-xl">
+                    <Lock className="w-10 h-10 text-red-400 mx-auto mb-3" />
+                    <h2 className="text-xl font-black text-white mb-2">
+                      {currentLang === 'en' ? 'Admin access required' : currentLang === 'ku' ? 'دەسەڵاتی بەڕێوەبەر پێویستە' : 'يلزم تسجيل دخول المدير'}
+                    </h2>
+                    <p className="text-sm text-zinc-400 mb-4">
+                      {currentLang === 'en'
+                        ? 'Only safaribosafar@gmail.com and configured platform admins can access this area.'
+                        : currentLang === 'ku'
+                        ? 'تەنها ئەژمێری بەڕێوەبەر دەتوانێت ئەم بەشە ببینێت.'
+                        : 'هذه المنطقة محمية ولا تظهر إلا لحسابات الإدارة المصرح بها.'}
+                    </p>
+                    {!user && (
+                      <button
+                        type="button"
+                        onClick={() => setAuthModalOpen(true)}
+                        className="px-5 py-2 rounded-lg bg-luxury-gold text-black text-sm font-black"
+                      >
+                        {currentLang === 'en' ? 'Sign in' : currentLang === 'ku' ? 'چوونەژوورەوە' : 'تسجيل الدخول'}
+                      </button>
+                    )}
+                  </div>
+                )}
               </motion.div>
             )}
           </AnimatePresence>
@@ -800,7 +784,13 @@ export default function App() {
         </button>
 
         <button
-          onClick={() => setActiveTab('admin')}
+          onClick={() => {
+            if (!user) {
+              setAuthModalOpen(true);
+              return;
+            }
+            setActiveTab('admin');
+          }}
           className={`flex flex-col items-center justify-center flex-1 py-1 px-2.5 rounded-xl transition-all duration-300 cursor-pointer ${
             activeTab === 'admin'
               ? 'text-luxury-gold font-bold bg-white/5 border border-luxury-gold/25'

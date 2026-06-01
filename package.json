@@ -10,7 +10,8 @@
     "clean": "node -e \"const fs=require('fs'); for (const p of ['dist','server.js','node_modules/.vite']) fs.rmSync(p,{recursive:true,force:true});\"",
     "lint": "tsc --noEmit",
     "whatsapp:bulk": "node scripts/nabda-bulk-whatsapp.mjs",
-    "whatsapp:webhook": "node scripts/nabda-webhook-receiver.mjs"
+    "whatsapp:webhook": "node scripts/nabda-webhook-receiver.mjs",
+    "whatsapp:server": "node scripts/nabda-whatsapp-server.mjs"
   },
   "dependencies": {
     "@google/genai": "^1.29.0",

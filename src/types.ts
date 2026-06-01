@@ -100,6 +100,9 @@ export interface SocialPost {
     type?: string;
   };
   authorUid?: string; // Firebase Authentication author ID
+  authorEmail?: string;
+  status?: 'pending' | 'approved' | 'rejected';
+  updatedAt?: string;
 }
 
 export interface UserProfile {

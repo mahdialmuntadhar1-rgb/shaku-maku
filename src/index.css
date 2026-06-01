@@ -2,7 +2,7 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Cairo", "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-sans: "Cairo", "Noto Naskh Arabic", "Noto Sans Arabic", "Plus Jakarta Sans", "Segoe UI", Tahoma, ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
   
   --color-luxury-bg: #1A1A1A;
@@ -20,6 +20,33 @@ body {
   color: #1A1A1A; /* Deep Charcoal primary text */
   font-family: var(--font-sans);
   overflow-x: hidden;
+}
+
+html {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+:lang(ar),
+:lang(ku),
+[dir="rtl"] {
+  font-family: "Cairo", "Noto Naskh Arabic", "Noto Sans Arabic", "Segoe UI", Tahoma, Arial, sans-serif;
+}
+
+bdi,
+.bidi-isolate {
+  unicode-bidi: isolate;
+}
+
+textarea,
+input,
+[contenteditable="true"] {
+  unicode-bidi: plaintext;
+}
+
+[dir="rtl"] textarea,
+[dir="rtl"] input {
+  text-align: right;
 }
 
 /* Stunning custom dark-glass scrollbar for smooth scrolling feeds */
