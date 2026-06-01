@@ -11,8 +11,8 @@ This repo should be deployed with a single, explicit setup:
 
 Set these in your Cloudflare Pages project:
 
-- `VITE_API_URL`
-- `VITE_ADMIN_EMAILS`
+- `VITE_API_URL=https://shaku-maku.mahdialmuntadhar1.workers.dev`
+- `VITE_ADMIN_EMAILS=mahdialmuntadhar1@gmail.com`
 - `VITE_ALLOW_LOCAL_AUTH_FALLBACK=false` (dev-only; production ignores fallback)
 
 Do **not** expose server-only variables such as `NABDA_API_KEY` in frontend runtime config.

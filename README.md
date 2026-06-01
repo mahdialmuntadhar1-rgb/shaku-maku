@@ -48,8 +48,8 @@ cp .env.example .env.local
 
 Required frontend variables:
 
-- `VITE_API_URL` (example: `https://shaku-maku-api.mahdialmuntadhar1.workers.dev`)
-- `VITE_ADMIN_EMAILS`
+- `VITE_API_URL` (example: `https://shaku-maku.mahdialmuntadhar1.workers.dev`)
+- `VITE_ADMIN_EMAILS` (example: `mahdialmuntadhar1@gmail.com`)
 
 Optional:
 - `VITE_ALLOW_LOCAL_AUTH_FALLBACK=false` (dev-only, ignored in production)
