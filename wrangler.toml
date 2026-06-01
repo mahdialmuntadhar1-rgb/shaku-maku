@@ -5,10 +5,10 @@ account_id = "81ee673bbeb157f09443fab6e1a11fd5"
 
 [vars]
 ENVIRONMENT = "production"
-CORS_ORIGIN = "https://shaku-maku2026.pages.dev"
+CORS_ORIGIN = "https://shakumako.pages.dev"
 JWT_SECRET = "change-this-in-production"
-FRONTEND_URL = "https://shaku-maku2026.pages.dev"
-ADMIN_EMAILS = "safaribosafar@gmail.com"
+FRONTEND_URL = "https://shakumako.pages.dev"
+ADMIN_EMAILS = "mahdialmuntadhar1@gmail.com,safaribosafar@gmail.com"
 
 [[d1_databases]]
 binding = "DB"
