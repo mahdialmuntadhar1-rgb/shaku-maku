@@ -6,6 +6,11 @@ coverage/
 *.log
 .env*
 !.env.example
-
 .vercel
 .env*.local
+.vite/
+.idea/
+.vscode/
+*.tmp
+*.cache
+nabda-bulk-report-*.json

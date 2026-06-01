@@ -4,10 +4,11 @@ export const AUTH_TOKEN_KEY = 'auth_token';
 export const AUTH_USER_KEY = 'user';
 export const AUTH_CHANGE_EVENT = 'shaku-maku-auth-change';
 
-const BUILTIN_ADMIN_EMAILS = [
-  'safaribosafar@gmail.com',
-  'mahdialmuntadhar1@gmail.com'
-];
+const splitCsv = (...values: Array<string | undefined>): string[] =>
+  values
+    .flatMap((value) => String(value ?? '').split(','))
+    .map((value) => value.trim())
+    .filter(Boolean);
 
 export interface SessionUser {
   id: string;
@@ -17,6 +18,9 @@ export interface SessionUser {
   photoURL?: string;
   role?: 'user' | 'owner' | 'admin';
   user_type?: string;
+  createdAt?: string;
+  onboarded?: boolean;
+  businessId?: string | null;
   [key: string]: unknown;
 }
 
@@ -25,49 +29,44 @@ export interface AuthSession {
   user: SessionUser;
 }
 
-export const normalizeEmail = (email?: string | null) =>
-  (email || '').trim().toLowerCase();
+export const normalizeEmail = (email?: string | null): string => (email || '').trim().toLowerCase();
 
-export const getAdminEmails = () => {
-  const configured = [
-    import.meta.env.VITE_ADMIN_EMAIL,
-    import.meta.env.VITE_ADMIN_EMAILS
-  ]
-    .filter(Boolean)
-    .join(',');
-
-  return Array.from(new Set([
-    ...BUILTIN_ADMIN_EMAILS,
-    ...configured.split(',')
-  ]
+export const getAdminEmails = (): string[] => {
+  const configured = splitCsv(import.meta.env.VITE_ADMIN_EMAIL, import.meta.env.VITE_ADMIN_EMAILS)
     .map(normalizeEmail)
-    .filter(Boolean)));
+    .filter(Boolean);
+
+  return Array.from(new Set(configured));
 };
 
-export const isAdminEmail = (email?: string | null) =>
-  getAdminEmails().includes(normalizeEmail(email));
+export const isAdminEmail = (email?: string | null): boolean => getAdminEmails().includes(normalizeEmail(email));
 
-const notifyAuthChange = () => {
+const notifyAuthChange = (): void => {
   window.dispatchEvent(new Event(AUTH_CHANGE_EVENT));
 };
 
 export const normalizeUser = (raw: unknown): SessionUser | null => {
-  if (!raw || typeof raw !== 'object') return null;
+  if (!raw || typeof raw !== 'object') {
+    return null;
+  }
 
-  const source = ('user' in raw && raw.user && typeof raw.user === 'object')
-    ? raw.user as Record<string, unknown>
-    : raw as Record<string, unknown>;
+  const source =
+    'user' in raw && raw.user && typeof raw.user === 'object'
+      ? (raw.user as Record<string, unknown>)
+      : (raw as Record<string, unknown>);
 
   const email = normalizeEmail(String(source.email || ''));
-  if (!email) return null;
+  if (!email) {
+    return null;
+  }
 
-  const backendRole = source.role === 'owner' || source.role === 'admin' || source.role === 'user'
-    ? source.role
-    : source.user_type === 'business'
-      ? 'owner'
-      : 'user';
+  const backendRole =
+    source.role === 'owner' || source.role === 'admin' || source.role === 'user'
+      ? source.role
+      : source.user_type === 'business'
+        ? 'owner'
+        : 'user';
 
-  const role = isAdminEmail(email) ? 'admin' : backendRole === 'admin' ? 'user' : backendRole;
   const displayName = String(source.displayName || source.name || email.split('@')[0]);
 
   return {
@@ -77,7 +76,7 @@ export const normalizeUser = (raw: unknown): SessionUser | null => {
     name: displayName,
     displayName,
     photoURL: String(source.photoURL || ''),
-    role
+    role: isAdminEmail(email) ? 'admin' : backendRole
   };
 };
 
@@ -95,7 +94,10 @@ export const toUserProfile = (user: SessionUser): UserProfile => ({
 export const readSession = (): AuthSession | null => {
   const token = localStorage.getItem(AUTH_TOKEN_KEY);
   const savedUser = localStorage.getItem(AUTH_USER_KEY);
-  if (!token || !savedUser) return null;
+
+  if (!token || !savedUser) {
+    return null;
+  }
 
   try {
     const user = normalizeUser(JSON.parse(savedUser));
@@ -103,6 +105,7 @@ export const readSession = (): AuthSession | null => {
       clearSession();
       return null;
     }
+
     return { token, user };
   } catch {
     clearSession();
@@ -112,15 +115,19 @@ export const readSession = (): AuthSession | null => {
 
 export const writeSession = (token: string, rawUser: unknown): AuthSession | null => {
   const user = normalizeUser(rawUser);
-  if (!token || !user) return null;
+
+  if (!token || !user) {
+    return null;
+  }
 
   localStorage.setItem(AUTH_TOKEN_KEY, token);
   localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
   notifyAuthChange();
+
   return { token, user };
 };
 
-export const clearSession = () => {
+export const clearSession = (): void => {
   localStorage.removeItem(AUTH_TOKEN_KEY);
   localStorage.removeItem(AUTH_USER_KEY);
   sessionStorage.removeItem(AUTH_TOKEN_KEY);
