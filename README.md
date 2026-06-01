@@ -13,7 +13,9 @@ Shaku Maku is a multilingual React + Vite app for discovering Iraqi businesses, 
 
 ## Recommended architecture
 
-This repository is best treated as a **frontend application** that talks to an external API.
+This repository contains both:
+- a React frontend (`src/`)
+- a Cloudflare Worker API (`worker/`)
 
 ### Frontend
 - React 19
@@ -22,9 +24,9 @@ This repository is best treated as a **frontend application** that talks to an e
 - Tailwind CSS
 
 ### Backend
-- Configured through `VITE_API_URL`
-- Default repo configuration points to a Cloudflare Workers API
-- Firestore rules and security docs are included, but the backend itself is not fully contained in this repo
+- Worker source: `worker/index.ts` and `worker/routes/*`
+- Wrangler config: `wrangler.toml`
+- Frontend API target: `VITE_API_URL` (must point to the deployed Worker origin, not `/api`)
 
 ## Getting started
 
@@ -46,7 +48,7 @@ cp .env.example .env.local
 
 Required frontend variables:
 
-- `VITE_API_URL`
+- `VITE_API_URL` (example: `https://shaku-maku-api.mahdialmuntadhar1.workers.dev`)
 - `VITE_ADMIN_EMAILS`
 
 Optional:
@@ -78,12 +80,22 @@ npm run check
 
 ## Deployment
 
-The recommended deployment target is:
+The deployment target is:
 
-- **Frontend**: Cloudflare Pages
-- **API**: Cloudflare Workers or another external API behind `VITE_API_URL`
+- **Frontend**: Cloudflare Pages (`shaku-maku2026.pages.dev`)
+- **API**: Cloudflare Worker (`shaku-maku-api.mahdialmuntadhar1.workers.dev`)
+- **Legacy frontend host**: `shaku-maku.mahdialmuntadhar1.workers.dev` (do not use as API base)
 
 See [`deployment-steps.md`](./deployment-steps.md) for the cleaned-up deployment path.
+
+Minimal deploy commands:
+
+```bash
+npm run deploy:worker
+npm run deploy:pages
+```
+
+Important: Pages must deploy `dist/` output. If Pages serves `/src/main.tsx`, build config is wrong.
 
 ## Security notes
 
