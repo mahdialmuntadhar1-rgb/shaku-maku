@@ -237,7 +237,7 @@ export default function SocialFeed({
           </div>
         ) : (
           filteredPosts.map((post) => (
-            <article key={post.id} className="bg-white/5 border border-white/10 rounded-xl p-4">
+            <article key={post.id} className="bg-white border border-zinc-200 rounded-xl p-4 shadow-sm">
               <div className="flex items-center gap-3 mb-3">
                 <img
                   src={post.businessAvatar || FALLBACK_AVATAR}
@@ -246,19 +246,23 @@ export default function SocialFeed({
                   referrerPolicy="no-referrer"
                 />
                 <div>
-                  <p className="text-sm font-semibold text-white">{post.businessName}</p>
-                  <p className="text-[11px] text-zinc-400">{post.timeAgo[currentLang]}</p>
+                  <p className="text-sm font-semibold text-zinc-900">{post.businessName}</p>
+                  <p className="text-[11px] text-zinc-500">{post.timeAgo[currentLang]}</p>
                 </div>
               </div>
 
-              <p className="text-sm text-zinc-200 leading-relaxed mb-3" lang={currentLang === 'ku' ? 'ku' : currentLang}>
+              <p className="text-sm text-zinc-900 leading-relaxed mb-3" lang={currentLang === 'ku' ? 'ku' : currentLang}>
                 {post.caption[currentLang] || post.caption.en || post.caption.ar}
               </p>
 
               {post.videoUrl ? (
-                <video src={post.videoUrl} controls className="w-full max-h-96 rounded-lg object-contain bg-black/30" />
+                <div className="w-full aspect-[4/3] rounded-lg overflow-hidden bg-zinc-100 border border-zinc-200">
+                  <video src={post.videoUrl} controls className="w-full h-full object-cover" />
+                </div>
               ) : post.mediaUrl ? (
-                <img src={post.mediaUrl} alt="post media" className="w-full max-h-96 rounded-lg object-contain bg-black/20" />
+                <div className="w-full aspect-[4/3] rounded-lg overflow-hidden bg-zinc-100 border border-zinc-200">
+                  <img src={post.mediaUrl} alt="post media" className="w-full h-full object-cover" />
+                </div>
               ) : null}
 
               {post.comments?.length ? (
@@ -268,8 +272,8 @@ export default function SocialFeed({
                       key={comment.id}
                       className={`rounded-lg px-3 py-2 text-xs border ${
                         index % 2 === 0
-                          ? 'bg-[#0f2e2f]/40 border-[#2aa198]/40 text-emerald-100'
-                          : 'bg-[#3b2a12]/35 border-[#c8a95f]/40 text-amber-100'
+                          ? 'bg-emerald-50 border-emerald-200 text-emerald-900'
+                          : 'bg-amber-50 border-amber-200 text-amber-900'
                       }`}
                     >
                       <span className="font-bold me-1">@{comment.username}</span>

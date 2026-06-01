@@ -45,6 +45,7 @@ picked AS (
       business_id,
       governorate,
       category,
+      LOWER(category) AS category_lc,
       name_ar,
       name_ku,
       name_en,
@@ -74,10 +75,63 @@ SELECT
   'seed-post-' || REPLACE(business_id, ' ', '_') AS id,
   business_id,
   NULL AS author_id,
-  COALESCE(
-    image,
-    'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&auto=format&fit=crop&q=80'
-  ) AS media_url,
+  CASE
+      WHEN category_lc LIKE '%restaurant%' OR category_lc LIKE '%cafe%' OR category_lc LIKE '%bakery%' OR category_lc LIKE '%food%'
+        THEN CASE (ABS(RANDOM()) % 3)
+          WHEN 0 THEN 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1400&auto=format&fit=crop&q=80'
+          WHEN 1 THEN 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1400&auto=format&fit=crop&q=80'
+          ELSE 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1400&auto=format&fit=crop&q=80'
+        END
+      WHEN category_lc LIKE '%clinic%' OR category_lc LIKE '%hospital%' OR category_lc LIKE '%health%' OR category_lc LIKE '%doctor%' OR category_lc LIKE '%dentist%' OR category_lc LIKE '%pharmacy%'
+        THEN CASE (ABS(RANDOM()) % 3)
+          WHEN 0 THEN 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=1400&auto=format&fit=crop&q=80'
+          WHEN 1 THEN 'https://images.unsplash.com/photo-1584515933487-779824d29309?w=1400&auto=format&fit=crop&q=80'
+          ELSE 'https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?w=1400&auto=format&fit=crop&q=80'
+        END
+      WHEN category_lc LIKE '%law%' OR category_lc LIKE '%lawyer%' OR category_lc LIKE '%legal%'
+        THEN CASE (ABS(RANDOM()) % 2)
+          WHEN 0 THEN 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=1400&auto=format&fit=crop&q=80'
+          ELSE 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=1400&auto=format&fit=crop&q=80'
+        END
+      WHEN category_lc LIKE '%real estate%' OR category_lc LIKE '%construction%' OR category_lc LIKE '%architecture%'
+        THEN CASE (ABS(RANDOM()) % 3)
+          WHEN 0 THEN 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1400&auto=format&fit=crop&q=80'
+          WHEN 1 THEN 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1400&auto=format&fit=crop&q=80'
+          ELSE 'https://images.unsplash.com/photo-1460472178825-e5240623afd5?w=1400&auto=format&fit=crop&q=80'
+        END
+      WHEN category_lc LIKE '%software%' OR category_lc LIKE '%tech%' OR category_lc LIKE '%it%' OR category_lc LIKE '%mobile%' OR category_lc LIKE '%electronics%'
+        THEN CASE (ABS(RANDOM()) % 3)
+          WHEN 0 THEN 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=1400&auto=format&fit=crop&q=80'
+          WHEN 1 THEN 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1400&auto=format&fit=crop&q=80'
+          ELSE 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1400&auto=format&fit=crop&q=80'
+        END
+      WHEN category_lc LIKE '%education%' OR category_lc LIKE '%school%' OR category_lc LIKE '%university%'
+        THEN CASE (ABS(RANDOM()) % 2)
+          WHEN 0 THEN 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1400&auto=format&fit=crop&q=80'
+          ELSE 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=1400&auto=format&fit=crop&q=80'
+        END
+      WHEN category_lc LIKE '%hotel%' OR category_lc LIKE '%travel%'
+        THEN CASE (ABS(RANDOM()) % 2)
+          WHEN 0 THEN 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1400&auto=format&fit=crop&q=80'
+          ELSE 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=1400&auto=format&fit=crop&q=80'
+        END
+      WHEN category_lc LIKE '%beauty%' OR category_lc LIKE '%salon%' OR category_lc LIKE '%spa%'
+        THEN CASE (ABS(RANDOM()) % 2)
+          WHEN 0 THEN 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=1400&auto=format&fit=crop&q=80'
+          ELSE 'https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?w=1400&auto=format&fit=crop&q=80'
+        END
+      WHEN category_lc LIKE '%gym%' OR category_lc LIKE '%sports%'
+        THEN CASE (ABS(RANDOM()) % 2)
+          WHEN 0 THEN 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1400&auto=format&fit=crop&q=80'
+          ELSE 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=1400&auto=format&fit=crop&q=80'
+        END
+      WHEN category_lc LIKE '%bank%' OR category_lc LIKE '%finance%'
+        THEN CASE (ABS(RANDOM()) % 2)
+          WHEN 0 THEN 'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=1400&auto=format&fit=crop&q=80'
+          ELSE 'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=1400&auto=format&fit=crop&q=80'
+        END
+      ELSE 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1400&auto=format&fit=crop&q=80'
+    END AS media_url,
   '📍 ' || name_ar || ' - ' || governorate || ' | تجربة موصى بها اليوم ✨' AS caption_ar,
   '📍 ' || name_ku || ' - ' || governorate || ' | ئەمڕۆ زۆر پێشنیار دەکرێت ✨' AS caption_ku,
   '📍 ' || name_en || ' - ' || governorate || ' | A top local pick today ✨' AS caption_en,
