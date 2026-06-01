@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { AUTH_CHANGE_EVENT, isAdminEmail, readSession } from '../auth/session';
 
 interface AdminContextType {
@@ -9,40 +9,51 @@ interface AdminContextType {
 
 const AdminContext = createContext<AdminContextType | undefined>(undefined);
 
-export const useAdmin = () => {
+export const useAdmin = (): AdminContextType => {
   const context = useContext(AdminContext);
-  if (!context) throw new Error('useAdmin must be used within AdminProvider');
+
+  if (!context) {
+    throw new Error('useAdmin must be used within AdminProvider');
+  }
+
   return context;
 };
 
 interface AdminProviderProps {
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
 export const AdminProvider: React.FC<AdminProviderProps> = ({ children }) => {
   const [isAdmin, setIsAdmin] = useState(false);
 
-  const checkAdmin = () => {
+  const checkAdmin = (): void => {
     setIsAdmin(isAdminEmail(readSession()?.user.email));
   };
 
-  const setAdminByEmail = (email: string) => {
+  const setAdminByEmail = (email: string): void => {
     setIsAdmin(isAdminEmail(email));
   };
 
   useEffect(() => {
     checkAdmin();
+
     window.addEventListener('storage', checkAdmin);
     window.addEventListener(AUTH_CHANGE_EVENT, checkAdmin);
+
     return () => {
       window.removeEventListener('storage', checkAdmin);
       window.removeEventListener(AUTH_CHANGE_EVENT, checkAdmin);
     };
   }, []);
 
-  return (
-    <AdminContext.Provider value={{ isAdmin, setAdminByEmail, checkAdmin }}>
-      {children}
-    </AdminContext.Provider>
+  const value = useMemo<AdminContextType>(
+    () => ({
+      isAdmin,
+      setAdminByEmail,
+      checkAdmin
+    }),
+    [isAdmin]
   );
+
+  return <AdminContext.Provider value={value}>{children}</AdminContext.Provider>;
 };

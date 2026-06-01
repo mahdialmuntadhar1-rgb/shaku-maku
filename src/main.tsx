@@ -1,11 +1,14 @@
-﻿import React from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import { AuthProvider } from './contexts/AuthContext';
 import { AdminProvider } from './contexts/AdminContext';
+import { registerServiceWorker } from './registerServiceWorker';
 import './index.css';
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+registerServiceWorker();
+
+ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <AuthProvider>
       <AdminProvider>

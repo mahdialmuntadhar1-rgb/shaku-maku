@@ -5,6 +5,9 @@ const DEFAULT_API_URL = 'https://iraq-businesses-dashboard.mahdialmuntadhar1.wor
 const rawApiUrl = (import.meta.env.VITE_API_URL || DEFAULT_API_URL).replace(/\/+$/, '');
 const API_BASE_URL = rawApiUrl.endsWith('/api') ? rawApiUrl : `${rawApiUrl}/api`;
 
+const allowLocalAuthFallback =
+  import.meta.env.DEV || import.meta.env.VITE_ALLOW_LOCAL_AUTH_FALLBACK === 'true';
+
 export const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
@@ -16,16 +19,18 @@ export const api = axios.create({
 
 api.interceptors.request.use((config) => {
   const token = readSession()?.token;
+
   if (token && !config.headers.Authorization) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+
   return config;
 });
 
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.error('API Error:', error.response?.data || error.message);
+    console.error('API error:', error.response?.data || error.message);
     return Promise.reject(error);
   }
 );
@@ -33,103 +38,177 @@ api.interceptors.response.use(
 export interface AuthResponse {
   success: boolean;
   token?: string;
-  user?: any;
+  user?: Record<string, unknown>;
   error?: string;
   message?: string;
 }
 
-const isBackendUnavailable = (error: any) =>
-  !error.response || error.response.status === 404 || error.code === 'ERR_NETWORK';
+interface ApiListResponse<T> {
+  data?: T[];
+  businesses?: T[];
+  posts?: T[];
+  total?: number;
+  success?: boolean;
+  message?: string;
+}
 
-const createLocalSession = (email: string, name?: string, message = 'Local session created while backend auth is unavailable'): AuthResponse => {
+const isBackendUnavailable = (error: unknown): boolean => {
+  if (!axios.isAxiosError(error)) {
+    return false;
+  }
+
+  return !error.response || error.response.status === 404 || error.code === 'ERR_NETWORK';
+};
+
+const createLocalSession = (email: string, name?: string): AuthResponse => {
+  if (!allowLocalAuthFallback) {
+    return {
+      success: false,
+      error: 'Authentication backend is unavailable and local fallback is disabled.'
+    };
+  }
+
   const cleanEmail = normalizeEmail(email);
+
   const user = normalizeUser({
     id: `local-${cleanEmail}`,
     email: cleanEmail,
     name: name || cleanEmail.split('@')[0],
     user_type: 'explorer'
   });
+
+  if (!user) {
+    return { success: false, error: 'Unable to create local session' };
+  }
+
   const token = `local_${Date.now()}`;
-  const session = user ? writeSession(token, user) : null;
+  const session = writeSession(token, user);
+
   return session
-    ? { success: true, user: session.user, token: session.token, message }
-    : { success: false, error: 'Unable to create local session' };
+    ? {
+        success: true,
+        user: session.user,
+        token: session.token,
+        message: 'Local session created because backend auth is unavailable.'
+      }
+    : { success: false, error: 'Unable to persist local session' };
+};
+
+const unwrapList = <T>(payload: ApiListResponse<T> | undefined, ...keys: Array<keyof ApiListResponse<T>>): T[] => {
+  if (!payload) {
+    return [];
+  }
+
+  for (const key of keys) {
+    const value = payload[key];
+    if (Array.isArray(value)) {
+      return value;
+    }
+  }
+
+  return [];
 };
 
 export const businessesApi = {
-  getAll: async (params?: any) => {
+  getAll: async <T = unknown>(params?: Record<string, unknown>): Promise<ApiListResponse<T>> => {
     try {
-      const response = await api.get('/businesses', { params });
+      const response = await api.get<ApiListResponse<T>>('/businesses', { params });
       return response.data;
-    } catch (error: any) {
-      if (isBackendUnavailable(error)) {
-        console.warn('Backend unavailable, using mock data');
-        const { MOCK_BUSINESSES } = await import('./mockData');
-        let filtered = [...MOCK_BUSINESSES];
-        if (params?.governorate) {
-          filtered = filtered.filter(b => b.governorate === params.governorate);
-        }
-        if (params?.category) {
-          filtered = filtered.filter(b => b.category === params.category);
-        }
-        return { data: filtered, businesses: filtered, total: filtered.length };
+    } catch (error) {
+      if (!isBackendUnavailable(error)) {
+        throw error;
       }
-      throw error;
+
+      console.warn('Businesses backend unavailable, using mock data');
+      const { MOCK_BUSINESSES } = await import('./mockData');
+      let filtered = [...MOCK_BUSINESSES];
+
+      if (typeof params?.governorate === 'string') {
+        filtered = filtered.filter((business) => business.governorate === params.governorate);
+      }
+
+      if (typeof params?.category === 'string') {
+        filtered = filtered.filter((business) => business.category === params.category);
+      }
+
+      return {
+        data: filtered as T[],
+        businesses: filtered as T[],
+        total: filtered.length
+      };
     }
   },
-  list: async (params?: any) => businessesApi.getAll(params),
-  getById: async (id: number | string) => {
-    const response = await api.get(`/businesses/${id}`);
+
+  list: async <T = unknown>(params?: Record<string, unknown>): Promise<ApiListResponse<T>> =>
+    businessesApi.getAll<T>(params),
+
+  getById: async <T = unknown>(id: number | string): Promise<T> => {
+    const response = await api.get<T>(`/businesses/${id}`);
     return response.data;
   },
-  create: async (business: any) => {
-    const response = await api.post('/businesses', business);
+
+  create: async <T = unknown>(business: Record<string, unknown>): Promise<T> => {
+    const response = await api.post<T>('/businesses', business);
     return response.data;
   },
-  update: async (id: number | string, business: any) => {
-    const response = await api.put(`/businesses/${id}`, business);
+
+  update: async <T = unknown>(id: number | string, business: Record<string, unknown>): Promise<T> => {
+    const response = await api.put<T>(`/businesses/${id}`, business);
     return response.data;
   },
-  delete: async (id: number | string) => {
-    const response = await api.delete(`/businesses/${id}`);
+
+  delete: async <T = unknown>(id: number | string): Promise<T> => {
+    const response = await api.delete<T>(`/businesses/${id}`);
     return response.data;
   }
 };
 
 export const postsApi = {
-  getAll: async () => {
+  getAll: async <T = unknown>(): Promise<ApiListResponse<T>> => {
     try {
-      const response = await api.get('/feed/business-posts');
+      const response = await api.get<ApiListResponse<T>>('/feed/business-posts');
       return response.data;
-    } catch (error: any) {
-      if (error.response?.status === 404) {
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 404) {
         try {
-          const response = await api.get('/posts');
-          return response.data;
-        } catch (fallbackError: any) {
-          if (isBackendUnavailable(fallbackError)) return { data: [], posts: [] };
-          throw fallbackError;
+          const fallbackResponse = await api.get<ApiListResponse<T>>('/posts');
+          return fallbackResponse.data;
+        } catch (fallbackError) {
+          if (!isBackendUnavailable(fallbackError)) {
+            throw fallbackError;
+          }
+
+          return { data: [], posts: [] };
         }
       }
-      if (isBackendUnavailable(error)) return { data: [], posts: [] };
+
+      if (isBackendUnavailable(error)) {
+        return { data: [], posts: [] };
+      }
+
       throw error;
     }
   },
-  list: async () => postsApi.getAll(),
-  getById: async (id: number | string) => {
-    const response = await api.get(`/posts/${id}`);
+
+  list: async <T = unknown>(): Promise<ApiListResponse<T>> => postsApi.getAll<T>(),
+
+  getById: async <T = unknown>(id: number | string): Promise<T> => {
+    const response = await api.get<T>(`/posts/${id}`);
     return response.data;
   },
-  create: async (post: any) => {
-    const response = await api.post('/posts', post);
+
+  create: async <T = unknown>(post: Record<string, unknown>): Promise<T> => {
+    const response = await api.post<T>('/posts', post);
     return response.data;
   },
-  update: async (id: number | string, post: any) => {
-    const response = await api.put(`/posts/${id}`, post);
+
+  update: async <T = unknown>(id: number | string, post: Record<string, unknown>): Promise<T> => {
+    const response = await api.put<T>(`/posts/${id}`, post);
     return response.data;
   },
-  delete: async (id: number | string, adminEmail?: string) => {
-    const response = await api.delete(`/posts/${id}`, {
+
+  delete: async <T = unknown>(id: number | string, adminEmail?: string): Promise<T> => {
+    const response = await api.delete<T>(`/posts/${id}`, {
       data: adminEmail ? { adminEmail } : undefined
     });
     return response.data;
@@ -139,66 +218,107 @@ export const postsApi = {
 export const authApi = {
   login: async (email: string, password: string): Promise<AuthResponse> => {
     try {
-      const response = await api.post('/auth/login', { email: normalizeEmail(email), password });
+      const response = await api.post('/auth/login', {
+        email: normalizeEmail(email),
+        password
+      });
+
       const token = response.data.token;
       const user = normalizeUser(response.data.user || response.data.data || response.data);
+
       if (token && user) {
         writeSession(token, user);
         return { success: true, ...response.data, user, token };
       }
-      return { success: false, error: response.data.error || response.data.message || 'Login response did not include a valid session' };
-    } catch (error: any) {
+
+      return {
+        success: false,
+        error: response.data.error || response.data.message || 'Login response did not include a valid session.'
+      };
+    } catch (error) {
       if (isBackendUnavailable(error)) {
-        return createLocalSession(email, undefined, 'Local login because backend auth route is unavailable');
+        return createLocalSession(email);
       }
-      return { success: false, error: error.response?.data?.error || 'Login failed' };
+
+      return {
+        success: false,
+        error: axios.isAxiosError(error) ? error.response?.data?.error || 'Login failed' : 'Login failed'
+      };
     }
   },
-  register: async (userData: any): Promise<AuthResponse> => {
+
+  register: async (userData: Record<string, unknown>): Promise<AuthResponse> => {
     try {
       const response = await api.post('/auth/register', {
         ...userData,
-        email: normalizeEmail(userData.email)
+        email: normalizeEmail(String(userData.email || ''))
       });
+
       const token = response.data.token;
       const user = normalizeUser(response.data.user || response.data.data || response.data);
+
       if (token && user) {
         writeSession(token, user);
         return { success: true, ...response.data, user, token };
       }
-      return { success: false, error: response.data.error || response.data.message || 'Registration response did not include a valid session' };
-    } catch (error: any) {
+
+      return {
+        success: false,
+        error:
+          response.data.error || response.data.message || 'Registration response did not include a valid session.'
+      };
+    } catch (error) {
       if (isBackendUnavailable(error)) {
-        return createLocalSession(userData.email, userData.name, 'Local account created because backend auth route is unavailable');
+        return createLocalSession(String(userData.email || ''), String(userData.name || ''));
       }
-      return { success: false, error: error.response?.data?.error || 'Registration failed' };
+
+      return {
+        success: false,
+        error: axios.isAxiosError(error)
+          ? error.response?.data?.error || 'Registration failed'
+          : 'Registration failed'
+      };
     }
   },
-  logout: () => {
+
+  logout: (): void => {
     clearSession();
   },
+
   getCurrentUser: () => readSession()?.user || null,
-  isAuthenticated: () => !!readSession(),
-  setCurrentUser: (user: any) => {
+  isAuthenticated: () => Boolean(readSession()),
+
+  setCurrentUser: (user: Record<string, unknown>): void => {
     const token = readSession()?.token || `local_${Date.now()}`;
     writeSession(token, user);
   },
-  signup: async (userData: any) => authApi.register(userData)
+
+  signup: async (userData: Record<string, unknown>): Promise<AuthResponse> => authApi.register(userData)
 };
 
-export const requestPasswordReset = async (identifier: string) => {
+export const requestPasswordReset = async (identifier: string): Promise<Record<string, unknown>> => {
   const cleanIdentifier = normalizeEmail(identifier);
+
   try {
-    const response = await api.post('/auth/forgot-password', { email: cleanIdentifier, username: cleanIdentifier });
+    const response = await api.post('/auth/forgot-password', {
+      email: cleanIdentifier,
+      username: cleanIdentifier
+    });
     return response.data;
-  } catch (error: any) {
-    if (error.response?.status !== 404) throw error;
-    const response = await api.post('/auth/request-reset', { username: cleanIdentifier });
+  } catch (error) {
+    if (!(axios.isAxiosError(error) && error.response?.status === 404)) {
+      throw error;
+    }
+
+    const response = await api.post('/auth/request-reset', {
+      username: cleanIdentifier
+    });
+
     return response.data;
   }
 };
 
-export const resetPassword = async (token: string, newPassword: string) => {
+export const resetPassword = async (token: string, newPassword: string): Promise<Record<string, unknown>> => {
   const response = await api.post('/auth/reset-password', { token, newPassword });
   return response.data;
 };
@@ -207,6 +327,11 @@ export const getBusinesses = businessesApi.getAll;
 export const login = authApi.login;
 export const register = authApi.register;
 export const logout = authApi.logout;
+
+export const selectors = {
+  unwrapBusinesses: <T = unknown>(payload: ApiListResponse<T>): T[] => unwrapList(payload, 'data', 'businesses'),
+  unwrapPosts: <T = unknown>(payload: ApiListResponse<T>): T[] => unwrapList(payload, 'data', 'posts')
+};
 
 export default {
   api,
@@ -218,5 +343,6 @@ export default {
   register,
   logout,
   requestPasswordReset,
-  resetPassword
+  resetPassword,
+  selectors
 };
