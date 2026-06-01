@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Check, Edit3, Image as ImageIcon, Lock, Save, Trash2 } from 'lucide-react';
 import { Business, HeroSlide, Language, SocialPost, UserProfile } from '../types';
-import { postsApi } from '../api';
+import { businessesApi, postsApi } from '../api';
 
 interface AdminPanelProps {
   currentLang: Language;
@@ -32,6 +32,16 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
 }) => {
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
   const [editingPostText, setEditingPostText] = useState('');
+  const [editingBusinessId, setEditingBusinessId] = useState<string | null>(null);
+  const [businessDraft, setBusinessDraft] = useState({
+    name: '',
+    description: '',
+    address: '',
+    phoneNumber: '',
+    category: '',
+    governorate: ''
+  });
+  const [businessStatus, setBusinessStatus] = useState('');
 
   if (userProfile?.role !== 'admin') {
     return (
@@ -86,6 +96,60 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
     setBusinesses(prev => prev.map(business => business.id === businessId
       ? { ...business, isVerified: !business.isVerified }
       : business));
+  };
+
+  const startEditBusiness = (business: Business) => {
+    setEditingBusinessId(business.id);
+    setBusinessDraft({
+      name: business.name[currentLang] || business.name.en,
+      description: business.description[currentLang] || business.description.en,
+      address: business.address[currentLang] || business.address.en,
+      phoneNumber: business.phoneNumber || '',
+      category: business.category,
+      governorate: business.governorate
+    });
+  };
+
+  const saveBusiness = async (businessId: string) => {
+    const payload = {
+      name: businessDraft.name.trim(),
+      description: businessDraft.description.trim(),
+      address: businessDraft.address.trim(),
+      phone: businessDraft.phoneNumber.trim(),
+      category: businessDraft.category.trim(),
+      governorate: businessDraft.governorate.trim()
+    };
+
+    setBusinesses(prev => prev.map(business => business.id === businessId
+      ? {
+          ...business,
+          name: { ar: payload.name, ku: payload.name, en: payload.name },
+          description: { ar: payload.description, ku: payload.description, en: payload.description },
+          address: { ar: payload.address, ku: payload.address, en: payload.address },
+          phoneNumber: payload.phone,
+          category: payload.category,
+          governorate: payload.governorate as any
+        }
+      : business));
+
+    try {
+      await businessesApi.update(businessId, payload);
+      setBusinessStatus(t(currentLang, 'Business saved.', 'تم حفظ النشاط.', 'بازرگانی پاشەکەوت کرا.'));
+    } catch {
+      setBusinessStatus(t(currentLang, 'Saved locally (backend update failed).', 'تم الحفظ محلياً (فشل تحديث الخادم).', 'تەنها ناوخۆیی پاشەکەوت کرا (نوێکردنەوەی باکێند شکستی هێنا).'));
+    }
+
+    setEditingBusinessId(null);
+  };
+
+  const deleteBusiness = async (businessId: string) => {
+    setBusinesses(prev => prev.filter(business => business.id !== businessId));
+    try {
+      await businessesApi.delete(businessId);
+      setBusinessStatus(t(currentLang, 'Business deleted.', 'تم حذف النشاط.', 'بازرگانی سڕایەوە.'));
+    } catch {
+      setBusinessStatus(t(currentLang, 'Deleted locally (backend delete failed).', 'تم الحذف محلياً (فشل الحذف من الخادم).', 'تەنها ناوخۆیی سڕایەوە (سڕینەوەی باکێند شکستی هێنا).'));
+    }
   };
 
   const pendingPosts = posts.filter(post => post.status === 'pending').length;
@@ -179,20 +243,40 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
 
       <section className="bg-[#18191a] border border-white/10 rounded-2xl p-5 text-white space-y-4">
         <h2 className="text-lg font-black">{t(currentLang, 'Business Listings', 'قوائم الأعمال', 'لیستی بازرگانییەکان')}</h2>
+        {businessStatus && <p className="text-xs text-zinc-300">{businessStatus}</p>}
         <div className="grid md:grid-cols-2 gap-3">
           {businesses.slice(0, 12).map(business => (
-            <div key={business.id} className="bg-white/5 border border-white/10 rounded-xl p-3 flex items-center justify-between gap-3">
-              <div className="min-w-0">
-                <strong className="block text-sm truncate">{business.name[currentLang]}</strong>
-                <span className="text-[11px] text-zinc-500">{business.governorate}</span>
-              </div>
-              <button
-                type="button"
-                onClick={() => toggleBusinessVerification(business.id)}
-                className={`px-3 py-1.5 rounded-lg text-[10px] font-black ${business.isVerified ? 'bg-emerald-500/15 text-emerald-300' : 'bg-white/10 text-zinc-300'}`}
-              >
-                {business.isVerified ? 'Verified' : 'Verify'}
-              </button>
+            <div key={business.id} className="bg-white/5 border border-white/10 rounded-xl p-3 space-y-2">
+              {editingBusinessId === business.id ? (
+                <div className="space-y-2">
+                  <input value={businessDraft.name} onChange={(event) => setBusinessDraft(prev => ({ ...prev, name: event.target.value }))} className="w-full bg-black/35 border border-white/10 rounded-lg px-3 py-2 text-xs" />
+                  <textarea value={businessDraft.description} onChange={(event) => setBusinessDraft(prev => ({ ...prev, description: event.target.value }))} className="w-full bg-black/35 border border-white/10 rounded-lg px-3 py-2 text-xs" rows={2} />
+                  <input value={businessDraft.address} onChange={(event) => setBusinessDraft(prev => ({ ...prev, address: event.target.value }))} className="w-full bg-black/35 border border-white/10 rounded-lg px-3 py-2 text-xs" />
+                  <input value={businessDraft.phoneNumber} onChange={(event) => setBusinessDraft(prev => ({ ...prev, phoneNumber: event.target.value }))} className="w-full bg-black/35 border border-white/10 rounded-lg px-3 py-2 text-xs" />
+                  <div className="flex items-center gap-2">
+                    <button type="button" onClick={() => saveBusiness(business.id)} className="px-3 py-1.5 rounded-lg bg-luxury-gold text-black text-[10px] font-black flex items-center gap-1"><Save className="w-3 h-3" />Save</button>
+                    <button type="button" onClick={() => setEditingBusinessId(null)} className="px-3 py-1.5 rounded-lg bg-white/10 text-zinc-200 text-[10px] font-bold">Cancel</button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <strong className="block text-sm truncate">{business.name[currentLang]}</strong>
+                    <span className="text-[11px] text-zinc-500">{business.governorate}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <button type="button" onClick={() => startEditBusiness(business)} className="p-1.5 rounded-lg bg-blue-500/10 text-blue-400"><Edit3 className="w-3.5 h-3.5" /></button>
+                    <button type="button" onClick={() => deleteBusiness(business.id)} className="p-1.5 rounded-lg bg-red-500/10 text-red-400"><Trash2 className="w-3.5 h-3.5" /></button>
+                    <button
+                      type="button"
+                      onClick={() => toggleBusinessVerification(business.id)}
+                      className={`px-2 py-1.5 rounded-lg text-[10px] font-black ${business.isVerified ? 'bg-emerald-500/15 text-emerald-300' : 'bg-white/10 text-zinc-300'}`}
+                    >
+                      {business.isVerified ? 'Verified' : 'Verify'}
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           ))}
         </div>
