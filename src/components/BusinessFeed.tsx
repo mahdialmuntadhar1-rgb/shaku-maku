@@ -57,6 +57,10 @@ export default function BusinessFeed({
     ? CATEGORIES.filter(c => c.id === selectedCategory) 
     : CATEGORIES;
 
+  const visibleCount = categoriesToGroup.reduce((count, category) => {
+    return count + govFiltered.filter(business => business.category === category.id).length;
+  }, 0);
+
   const handleToggleCategoryExpand = (catId: string) => {
     const isCurrentlyExpanded = expandedCategories[catId] || false;
     
@@ -106,6 +110,23 @@ export default function BusinessFeed({
     setNewReviewerName('');
     setNewReviewRating(5);
   };
+
+  if (visibleCount === 0) {
+    return (
+      <div className="text-center py-14 bg-white/55 rounded-2xl border border-luxury-teal/20">
+        <h3 className="text-base font-black text-luxury-bg mb-1">
+          {currentLang === 'en' ? 'No businesses found' : currentLang === 'ku' ? 'هیچ بازرگانییەک نەدۆزرایەوە' : 'لم يتم العثور على أنشطة'}
+        </h3>
+        <p className="text-sm text-zinc-600">
+          {currentLang === 'en'
+            ? 'Try changing governorate or category filters.'
+            : currentLang === 'ku'
+            ? 'تکایە پارێزگا یان جۆری بازرگانی بگۆڕە.'
+            : 'جرّب تغيير فلاتر المحافظة أو التصنيف.'}
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-12">
