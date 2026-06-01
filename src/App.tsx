@@ -26,6 +26,100 @@ const FALLBACK_BUSINESS_IMAGE =
 const FALLBACK_AVATAR =
   'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=120&h=120&fit=crop&q=80';
 
+const CATEGORY_IMAGE_POOLS: Record<string, string[]> = {
+  restaurant: [
+    'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1200&auto=format&fit=crop&q=80'
+  ],
+  cafe_bakery: [
+    'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=1200&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1200&auto=format&fit=crop&q=80'
+  ],
+  clinic: [
+    'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=1200&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1584982751601-97dcc096659c?w=1200&auto=format&fit=crop&q=80'
+  ],
+  hospital: [
+    'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=1200&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1538108149393-fbbd81895907?w=1200&auto=format&fit=crop&q=80'
+  ],
+  doctor: [
+    'https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=1200&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1631217868264-e6b90bb7e133?w=1200&auto=format&fit=crop&q=80'
+  ],
+  dentist: [
+    'https://images.unsplash.com/photo-1588776814546-daab30f310ce?w=1200&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1606811971618-4486d14f3f99?w=1200&auto=format&fit=crop&q=80'
+  ],
+  pharmacy: [
+    'https://images.unsplash.com/photo-1471864190281-a93a3070b6de?w=1200&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=1200&auto=format&fit=crop&q=80'
+  ],
+  lawyer: [
+    'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=1200&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1453945619913-79ec89a82c51?w=1200&auto=format&fit=crop&q=80'
+  ],
+  salon: [
+    'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=1200&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?w=1200&auto=format&fit=crop&q=80'
+  ],
+  gym: [
+    'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1200&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=1200&auto=format&fit=crop&q=80'
+  ],
+  hotel: [
+    'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=1200&auto=format&fit=crop&q=80'
+  ],
+  supermarket: [
+    'https://images.unsplash.com/photo-1542838132-92c53300491e?w=1200&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1579113800032-c38bd7635818?w=1200&auto=format&fit=crop&q=80'
+  ],
+  mall: [
+    'https://images.unsplash.com/photo-1519567241046-7f570eee3ce6?w=1200&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?w=1200&auto=format&fit=crop&q=80'
+  ],
+  mobile_shop: [
+    'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=1200&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1556656793-08538906a9f8?w=1200&auto=format&fit=crop&q=80'
+  ],
+  real_estate: [
+    'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&auto=format&fit=crop&q=80'
+  ],
+  university: [
+    'https://images.unsplash.com/photo-1562774053-701939374585?w=1200&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&auto=format&fit=crop&q=80'
+  ],
+  other: [
+    'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&auto=format&fit=crop&q=80'
+  ]
+};
+
+function hashSeed(value: string): number {
+  let hash = 0;
+  for (let i = 0; i < value.length; i += 1) {
+    hash = (hash << 5) - hash + value.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash);
+}
+
+function isLikelyGenericBusinessImage(url: string): boolean {
+  const normalized = url.toLowerCase();
+  return normalized.includes('photo-1441986300917-64674bd600d8');
+}
+
+function resolveBusinessCardImage(rawImage: unknown, categoryId: string, businessId: unknown): string {
+  const original = String(rawImage || '').trim();
+  if (original && !isLikelyGenericBusinessImage(original)) return original;
+
+  const pool = CATEGORY_IMAGE_POOLS[categoryId] || CATEGORY_IMAGE_POOLS.other;
+  const index = hashSeed(`${businessId || ''}-${categoryId}`) % pool.length;
+  return pool[index];
+}
+
 function normalizeList(payload: any): any[] {
   if (Array.isArray(payload)) return payload;
   if (Array.isArray(payload?.data)) return payload.data;
@@ -398,38 +492,47 @@ export default function App() {
         console.log("[ShakuMaku] businesses raw response:", response);
         console.log("[ShakuMaku] businesses rows:", rows.length);
 
-        const transformedBusinesses: Business[] = rows.map((biz: any) => ({
-          id: biz.id,
-          name: {
-            ar: biz.name_ar || biz.name_en || '',
-            ku: biz.name_ku || biz.name_en || '',
-            en: biz.name_en || ''
-          },
-          description: {
-            ar: biz.description_ar || '',
-            ku: biz.description_ku || '',
-            en: biz.description_en || ''
-          },
-          category: normalizeCategoryId(biz.category),
-          governorate: normalizeGovCode(biz.governorate),
-          rating: Number(biz.rating || 0),
-          reviewsCount: Number(biz.reviews_count || 0),
-          image: biz.image || FALLBACK_BUSINESS_IMAGE,
-          images: biz.images ? String(biz.images).split(',').filter(Boolean) : (biz.image ? [biz.image] : [FALLBACK_BUSINESS_IMAGE]),
-          avatar: biz.avatar || FALLBACK_AVATAR,
-          isVerified: Boolean(biz.is_verified),
-          phoneNumber: biz.phone_number || '',
-          address: {
-            ar: biz.address_ar || '',
-            ku: biz.address_ku || '',
-            en: biz.address_en || ''
-          },
-          likes: Number(biz.likes || biz.like_count || 0),
-          saves: Number(biz.saves || biz.save_count || 0),
-          mapCoords: { x: Number(biz.map_coords_x || 0), y: Number(biz.map_coords_y || 0) },
-          likedByUser: false,
-          savedByUser: false
-        }));
+        const transformedBusinesses: Business[] = rows.map((biz: any) => {
+          const category = normalizeCategoryId(biz.category);
+          const governorate = normalizeGovCode(biz.governorate);
+          const sourceImages = biz.images ? String(biz.images).split(',').map((value) => value.trim()).filter(Boolean) : [];
+          const cleanSourceImages = sourceImages.filter((value) => !isLikelyGenericBusinessImage(value));
+          const mainImage = resolveBusinessCardImage(biz.image || cleanSourceImages[0], category, biz.id);
+          const gallery = [mainImage, ...cleanSourceImages.filter((value) => value !== mainImage)];
+
+          return {
+            id: biz.id,
+            name: {
+              ar: biz.name_ar || biz.name_en || '',
+              ku: biz.name_ku || biz.name_en || '',
+              en: biz.name_en || ''
+            },
+            description: {
+              ar: biz.description_ar || '',
+              ku: biz.description_ku || '',
+              en: biz.description_en || ''
+            },
+            category,
+            governorate,
+            rating: Number(biz.rating || 0),
+            reviewsCount: Number(biz.reviews_count || 0),
+            image: mainImage,
+            images: gallery.length > 0 ? gallery : [FALLBACK_BUSINESS_IMAGE],
+            avatar: biz.avatar || FALLBACK_AVATAR,
+            isVerified: Boolean(biz.is_verified),
+            phoneNumber: biz.phone_number || '',
+            address: {
+              ar: biz.address_ar || '',
+              ku: biz.address_ku || '',
+              en: biz.address_en || ''
+            },
+            likes: Number(biz.likes || biz.like_count || 0),
+            saves: Number(biz.saves || biz.save_count || 0),
+            mapCoords: { x: Number(biz.map_coords_x || 0), y: Number(biz.map_coords_y || 0) },
+            likedByUser: false,
+            savedByUser: false
+          };
+        });
 
         setBusinesses(transformedBusinesses);
         setBusinessesLoadError(null);

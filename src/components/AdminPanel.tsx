@@ -53,8 +53,11 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
   const [postStatus, setPostStatus] = useState('');
   const [diagnostics, setDiagnostics] = useState<DiagnosticItem[]>([]);
   const [diagnosticsLoading, setDiagnosticsLoading] = useState(false);
+  const session = readSession();
+  const signedInEmail = (userProfile?.email || session?.user?.email || '').toLowerCase();
+  const hasAdminAccess = userProfile?.role === 'admin' || isAdminEmail(signedInEmail);
 
-  if (userProfile?.role !== 'admin') {
+  if (!hasAdminAccess) {
     return (
       <div className="max-w-3xl mx-auto bg-[#18191a] border border-red-500/25 rounded-2xl p-8 text-center shadow-xl">
         <Lock className="w-10 h-10 text-red-400 mx-auto mb-3" />
@@ -224,7 +227,6 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
       }
     };
 
-    const session = readSession();
     next.push({
       label: 'Auth/session',
       ok: Boolean(session?.token && session?.user?.email),
@@ -249,7 +251,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
   };
 
   const pendingPosts = posts.filter((post) => post.status === 'pending').length;
-  const signedInEmail = userProfile?.email || '';
+  const displayEmail = userProfile?.email || session?.user?.email || 'admin@shaku-maku';
 
   return (
     <div className="max-w-6xl mx-auto p-4 md:p-6 space-y-6" dir={currentLang === 'en' ? 'ltr' : 'rtl'}>
@@ -257,7 +259,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
         <h1 className="text-2xl font-black mb-2">
           {t(currentLang, 'Admin Control Center', 'مركز تحكم الإدارة', 'ناوەندی کۆنترۆڵی بەڕێوەبەر')}
         </h1>
-        <p className="text-sm text-zinc-400">{userProfile.email}</p>
+        <p className="text-sm text-zinc-400">{displayEmail}</p>
         <div className="grid sm:grid-cols-3 gap-3 mt-5">
           <div className="bg-white/5 rounded-xl p-4 border border-white/10">
             <span className="text-xs text-zinc-400">{t(currentLang, 'Businesses', 'الأعمال', 'بازرگانییەکان')}</span>
