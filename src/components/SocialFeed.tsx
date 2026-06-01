@@ -8,7 +8,7 @@ import {
 import { SocialPost, Language, GovernorateCode, UserProfile } from '../types';
 import { TRANSLATIONS, CATEGORIES, GOVERNORATES } from '../data';
 import { generateLivePostFromCSV } from '../csvBusinesses';
-import { postsApi } from '../api';
+import { getApiErrorMessage, postsApi } from '../api';
 
 interface SocialFeedProps {
   currentLang: Language;
@@ -115,6 +115,7 @@ export default function SocialFeed({
   const isAdmin = userProfile?.role === 'admin';
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
   const [editingText, setEditingText] = useState('');
+  const [mutationStatus, setMutationStatus] = useState('');
 
   const PRESET_PHOTOS = [
     { name: 'Classic Cafe', url: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&auto=format&fit=crop&q=80' },
@@ -272,11 +273,20 @@ export default function SocialFeed({
     }
 
     try {
-      // Add to local state
-      setPosts(prev => [newPostItem, ...prev]);
-      postsApi.create(newPostItem as unknown as Record<string, unknown>).catch((err) => {
-        console.warn('Post saved locally because backend post create is unavailable:', err?.message || err);
-      });
+      const createdPost: any = await postsApi.create(newPostItem as unknown as Record<string, unknown>);
+      const persistedPost: SocialPost = {
+        ...newPostItem,
+        id: String(createdPost?.id || newPostItem.id),
+        status: createdPost?.status || newPostItem.status
+      };
+      setPosts((prev) => [persistedPost, ...prev]);
+      setMutationStatus(
+        currentLang === 'en'
+          ? 'Post created successfully.'
+          : currentLang === 'ku'
+            ? 'بابەتەکە بە سەرکەوتوویی دروستکرا.'
+            : 'تم إنشاء المنشور بنجاح.'
+      );
 
       // Reset fields & collapse
       setNewBizName('');
@@ -294,20 +304,44 @@ export default function SocialFeed({
       setShowCategoryInput(false);
       setShowPresetGallery(false);
     } catch (err) {
-      console.error("Error creating post: ", err);
+      setMutationStatus(getApiErrorMessage(err));
     }
   };
 
-  const handleApprovePost = (postId: string) => {
+  const handleApprovePost = async (postId: string) => {
     if (!isAdmin) return;
-    setPosts(prev => prev.map(p => p.id === postId ? { ...p, status: 'approved', updatedAt: new Date().toISOString() } : p));
-    postsApi.update(postId, { status: 'approved' }).catch(() => undefined);
+    try {
+      await postsApi.update(postId, { status: 'approved' });
+      setPosts((prev) =>
+        prev.map((p) => (p.id === postId ? { ...p, status: 'approved', updatedAt: new Date().toISOString() } : p))
+      );
+      setMutationStatus(
+        currentLang === 'en'
+          ? 'Post approved.'
+          : currentLang === 'ku'
+            ? 'بابەتەکە پەسەندکرا.'
+            : 'تمت الموافقة على المنشور.'
+      );
+    } catch (error) {
+      setMutationStatus(getApiErrorMessage(error));
+    }
   };
 
-  const handleDeletePost = (postId: string) => {
+  const handleDeletePost = async (postId: string) => {
     if (!isAdmin) return;
-    setPosts(prev => prev.filter(p => p.id !== postId));
-    postsApi.delete(postId, userProfile?.email).catch(() => undefined);
+    try {
+      await postsApi.delete(postId);
+      setPosts((prev) => prev.filter((p) => p.id !== postId));
+      setMutationStatus(
+        currentLang === 'en'
+          ? 'Post deleted.'
+          : currentLang === 'ku'
+            ? 'بابەتەکە سڕایەوە.'
+            : 'تم حذف المنشور.'
+      );
+    } catch (error) {
+      setMutationStatus(getApiErrorMessage(error));
+    }
   };
 
   const startEditPost = (post: SocialPost) => {
@@ -316,17 +350,34 @@ export default function SocialFeed({
     setEditingText(post.caption[currentLang] || post.caption.en || '');
   };
 
-  const saveEditedPost = (postId: string) => {
+  const saveEditedPost = async (postId: string) => {
     if (!isAdmin || !editingText.trim()) return;
     const caption = editingText.trim();
-    setPosts(prev => prev.map(p => p.id === postId ? {
-      ...p,
-      caption: { ar: caption, ku: caption, en: caption },
-      updatedAt: new Date().toISOString()
-    } : p));
-    postsApi.update(postId, { caption }).catch(() => undefined);
-    setEditingPostId(null);
-    setEditingText('');
+    try {
+      await postsApi.update(postId, { caption });
+      setPosts((prev) =>
+        prev.map((p) =>
+          p.id === postId
+            ? {
+                ...p,
+                caption: { ar: caption, ku: caption, en: caption },
+                updatedAt: new Date().toISOString()
+              }
+            : p
+        )
+      );
+      setEditingPostId(null);
+      setEditingText('');
+      setMutationStatus(
+        currentLang === 'en'
+          ? 'Post updated.'
+          : currentLang === 'ku'
+            ? 'بابەتەکە نوێکرایەوە.'
+            : 'تم تحديث المنشور.'
+      );
+    } catch (error) {
+      setMutationStatus(getApiErrorMessage(error));
+    }
   };
 
   const handleLike = (postId: string) => {
@@ -423,6 +474,11 @@ export default function SocialFeed({
       </div>
 
       <form onSubmit={handleCreatePost} className="bg-[#18191a] border border-[#2f3031]/80 rounded-[16px] p-4 space-y-4 shadow-xl font-sans">
+        {mutationStatus && (
+          <div className="text-xs text-zinc-300 bg-white/5 border border-white/10 rounded-lg px-3 py-2">
+            {mutationStatus}
+          </div>
+        )}
         {!user ? (
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
             <p className="text-sm text-zinc-300">
@@ -575,7 +631,7 @@ export default function SocialFeed({
                     {post.status === 'pending' && (
                       <button
                         type="button"
-                        onClick={() => handleApprovePost(post.id)}
+                      onClick={() => void handleApprovePost(post.id)}
                         className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20"
                         title="Approve post"
                       >
@@ -592,7 +648,7 @@ export default function SocialFeed({
                     </button>
                     <button
                       type="button"
-                      onClick={() => handleDeletePost(post.id)}
+                      onClick={() => void handleDeletePost(post.id)}
                       className="p-1.5 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20"
                       title="Delete post"
                     >
@@ -753,7 +809,7 @@ export default function SocialFeed({
                       rows={3}
                     />
                     <div className="flex items-center gap-2">
-                      <button type="button" onClick={() => saveEditedPost(post.id)} className="px-3 py-1.5 rounded-lg bg-emerald-500 text-black text-[10px] font-black">Save</button>
+                      <button type="button" onClick={() => void saveEditedPost(post.id)} className="px-3 py-1.5 rounded-lg bg-emerald-500 text-black text-[10px] font-black">Save</button>
                       <button type="button" onClick={() => setEditingPostId(null)} className="px-3 py-1.5 rounded-lg bg-white/10 text-white text-[10px] font-bold">Cancel</button>
                     </div>
                   </div>

@@ -26,11 +26,22 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url);
 
   if (request.mode === 'navigate') {
-    event.respondWith(fetch(request).catch(() => caches.match('/')));
+    event.respondWith(fetch(request).catch(() => caches.match('/') || Response.error()));
     return;
   }
 
   if (url.origin !== self.location.origin) {
+    return;
+  }
+
+  // Never serve HTML fallback for module scripts or dev server resources.
+  if (
+    request.destination === 'script' ||
+    request.destination === 'manifest' ||
+    url.pathname.startsWith('/src/') ||
+    url.pathname.startsWith('/@vite/')
+  ) {
+    event.respondWith(fetch(request));
     return;
   }
 
@@ -42,11 +53,13 @@ self.addEventListener('fetch', (event) => {
 
       return fetch(request)
         .then((networkResponse) => {
-          const responseClone = networkResponse.clone();
-          void caches.open(CACHE_NAME).then((cache) => cache.put(request, responseClone));
+          if (networkResponse.ok) {
+            const responseClone = networkResponse.clone();
+            void caches.open(CACHE_NAME).then((cache) => cache.put(request, responseClone));
+          }
           return networkResponse;
         })
-        .catch(() => caches.match('/'));
+        .catch(() => Response.error());
     })
   );
 });

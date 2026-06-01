@@ -8,7 +8,7 @@ interface DeletePostButtonProps {
 }
 
 const DeletePostButton: React.FC<DeletePostButtonProps> = ({ postId, onDelete }) => {
-  const { isAdmin, adminEmail, loading } = useAdmin();
+  const { isAdmin, loading } = useAdmin();
 
   const handleDelete = async () => {
     if (!window.confirm('Are you sure you want to delete this post?')) {
@@ -16,7 +16,7 @@ const DeletePostButton: React.FC<DeletePostButtonProps> = ({ postId, onDelete })
     }
 
     try {
-      await postsApi.delete(postId, adminEmail);
+      await postsApi.delete(postId);
       onDelete(postId);
     } catch (error) {
       console.error('Failed to delete post:', error);

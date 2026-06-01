@@ -50,7 +50,7 @@ Required frontend variables:
 - `VITE_ADMIN_EMAILS`
 
 Optional:
-- `VITE_ALLOW_LOCAL_AUTH_FALLBACK=false`
+- `VITE_ALLOW_LOCAL_AUTH_FALLBACK=false` (dev-only, ignored in production)
 - server-only Nabda / WhatsApp variables for local scripts
 
 ### Run locally
@@ -89,7 +89,7 @@ See [`deployment-steps.md`](./deployment-steps.md) for the cleaned-up deployment
 
 - Do not expose `NABDA_API_KEY` in frontend code.
 - Do not hardcode admin emails in source files.
-- Keep local auth fallback disabled in production unless you explicitly need it.
+- Local auth fallback is only allowed in local development when explicitly enabled.
 - Treat frontend role checks as UX only; backend authorization must remain authoritative.
 
 ## Repository cleanup applied in this fix pack

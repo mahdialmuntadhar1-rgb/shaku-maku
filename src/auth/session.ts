@@ -99,6 +99,12 @@ export const readSession = (): AuthSession | null => {
     return null;
   }
 
+  // Never restore dev-only local fallback sessions in production builds.
+  if (!import.meta.env.DEV && token.startsWith('local_')) {
+    clearSession();
+    return null;
+  }
+
   try {
     const user = normalizeUser(JSON.parse(savedUser));
     if (!user) {

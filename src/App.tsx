@@ -133,7 +133,9 @@ export default function App() {
     const fetchBusinesses = async () => {
       try {
         const response = await businessesApi.list({
+          page: 1,
           limit: 500,
+          ...(searchQuery.trim() ? { search: searchQuery.trim() } : {}),
           ...(selectedGov !== 'all' ? { governorate: selectedGov } : {}),
           ...(selectedCategory ? { category: selectedCategory } : {})
         });
@@ -170,14 +172,16 @@ export default function App() {
     };
 
     fetchBusinesses();
-  }, [selectedGov, selectedCategory]);
+  }, [selectedGov, selectedCategory, searchQuery]);
 
   // Fetch posts from Cloudflare API
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         const response = await postsApi.getAll({
+          page: 1,
           limit: 200,
+          ...(searchQuery.trim() ? { search: searchQuery.trim() } : {}),
           ...(selectedGov !== 'all' ? { governorate: selectedGov } : {}),
           ...(selectedCategory ? { category: selectedCategory } : {})
         });
@@ -193,7 +197,7 @@ export default function App() {
     };
 
     fetchPosts();
-  }, [selectedGov, selectedCategory]);
+  }, [selectedGov, selectedCategory, searchQuery]);
 
   // Filter business array based on search input + governorate matches + category
   const filteredBusinesses = useMemo(() => {
@@ -260,32 +264,28 @@ export default function App() {
     try {
       const response: any = await businessesApi.create(payload);
       const created = response?.data || response;
-      if (created?.id) {
-        const createdBiz: Business = {
-          id: String(created.id),
-          name: { ar: created.name || payload.name, ku: created.name || payload.name, en: created.name || payload.name },
-          description: { ar: created.description || payload.description, ku: created.description || payload.description, en: created.description || payload.description },
-          category: created.category || payload.category,
-          governorate: created.governorate || payload.governorate,
-          rating: created.rating || 0,
-          reviewsCount: created.reviewCount || 0,
-          image: created.coverImageUrl || payload.coverImageUrl,
-          images: [created.coverImageUrl || payload.coverImageUrl],
-          avatar: created.logoUrl || payload.logoUrl,
-          isVerified: Boolean(created.verified),
-          phoneNumber: created.phone || payload.phone,
-          address: { ar: created.address || payload.address, ku: created.address || payload.address, en: created.address || payload.address },
-          likes: created.likes || 0,
-          saves: created.saves || 0,
-          mapCoords: { x: 0, y: 0 }
-        };
-        setBusinesses(prev => [createdBiz, ...prev]);
-      } else {
-        setBusinesses(prev => [{ ...newBiz, rating: 0, reviewsCount: 0, likes: 0, saves: 0 }, ...prev]);
-      }
+      const createdBiz: Business = {
+        id: String(created?.id || `created-${Date.now()}`),
+        name: { ar: created?.name || payload.name, ku: created?.name || payload.name, en: created?.name || payload.name },
+        description: { ar: created?.description || payload.description, ku: created?.description || payload.description, en: created?.description || payload.description },
+        category: created?.category || payload.category,
+        governorate: created?.governorate || payload.governorate,
+        rating: created?.rating || 0,
+        reviewsCount: created?.reviewCount || 0,
+        image: created?.coverImageUrl || payload.coverImageUrl,
+        images: [created?.coverImageUrl || payload.coverImageUrl],
+        avatar: created?.logoUrl || payload.logoUrl,
+        isVerified: Boolean(created?.verified),
+        phoneNumber: created?.phone || payload.phone,
+        address: { ar: created?.address || payload.address, ku: created?.address || payload.address, en: created?.address || payload.address },
+        likes: created?.likes || 0,
+        saves: created?.saves || 0,
+        mapCoords: { x: 0, y: 0 }
+      };
+      setBusinesses(prev => [createdBiz, ...prev]);
     } catch (error) {
-      console.error("Failed to create business on backend; saved locally.", error);
-      setBusinesses(prev => [{ ...newBiz, rating: 0, reviewsCount: 0, likes: 0, saves: 0 }, ...prev]);
+      console.error('Failed to create business on backend.', error);
+      throw error;
     }
   };
 

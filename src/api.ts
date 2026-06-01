@@ -3,10 +3,14 @@ import { clearSession, isAdminEmail, normalizeEmail, normalizeUser, readSession,
 
 const DEFAULT_API_URL = 'https://iraq-businesses-dashboard.mahdialmuntadhar1.workers.dev/api';
 const rawApiUrl = (import.meta.env.VITE_API_URL || DEFAULT_API_URL).replace(/\/+$/, '');
-const API_BASE_URL = rawApiUrl.endsWith('/api') ? rawApiUrl : `${rawApiUrl}/api`;
+export const API_BASE_URL = rawApiUrl.endsWith('/api') ? rawApiUrl : `${rawApiUrl}/api`;
 
 const allowLocalAuthFallback =
-  import.meta.env.DEV || import.meta.env.VITE_ALLOW_LOCAL_AUTH_FALLBACK === 'true';
+  import.meta.env.DEV && import.meta.env.VITE_ALLOW_LOCAL_AUTH_FALLBACK === 'true';
+
+if (import.meta.env.DEV) {
+  console.info('[ShakuMaku] API_BASE_URL:', API_BASE_URL);
+}
 
 export const api = axios.create({
   baseURL: API_BASE_URL,
@@ -58,6 +62,38 @@ const isBackendUnavailable = (error: unknown): boolean => {
   }
 
   return !error.response || error.response.status === 404 || error.code === 'ERR_NETWORK';
+};
+
+export const getApiErrorMessage = (error: unknown): string => {
+  if (!axios.isAxiosError(error)) {
+    return 'Backend update failed. Changes were not saved.';
+  }
+
+  if (!error.response || error.code === 'ERR_NETWORK') {
+    return 'Cannot reach backend API.';
+  }
+
+  if (error.response.status === 401) {
+    return 'Authentication required. Please log in again.';
+  }
+
+  if (error.response.status === 403) {
+    return 'Admin authorization required. Backend rejected this action.';
+  }
+
+  if (error.response.status === 404) {
+    return 'Backend endpoint not found.';
+  }
+
+  const backendMessage =
+    (typeof error.response.data?.error === 'string' && error.response.data.error) ||
+    (typeof error.response.data?.message === 'string' && error.response.data.message);
+
+  if (backendMessage) {
+    return `${backendMessage} (HTTP ${error.response.status})`;
+  }
+
+  return `Backend update failed. Changes were not saved. (HTTP ${error.response.status})`;
 };
 
 const requireAdminMutation = (action: string) => {
@@ -217,11 +253,9 @@ export const postsApi = {
     return response.data;
   },
 
-  delete: async <T = unknown>(id: number | string, adminEmail?: string): Promise<T> => {
+  delete: async <T = unknown>(id: number | string): Promise<T> => {
     requireAdminMutation('post delete');
-    const response = await api.delete<T>(`/posts/${id}`, {
-      data: adminEmail ? { adminEmail } : undefined
-    });
+    const response = await api.delete<T>(`/posts/${id}`);
     return response.data;
   }
 };
@@ -247,13 +281,13 @@ export const authApi = {
         error: response.data.error || response.data.message || 'Login response did not include a valid session.'
       };
     } catch (error) {
-      if (isBackendUnavailable(error)) {
+      if (isBackendUnavailable(error) && allowLocalAuthFallback) {
         return createLocalSession(email);
       }
 
       return {
         success: false,
-        error: axios.isAxiosError(error) ? error.response?.data?.error || 'Login failed' : 'Login failed'
+        error: getApiErrorMessage(error)
       };
     }
   },
@@ -279,15 +313,13 @@ export const authApi = {
           response.data.error || response.data.message || 'Registration response did not include a valid session.'
       };
     } catch (error) {
-      if (isBackendUnavailable(error)) {
+      if (isBackendUnavailable(error) && allowLocalAuthFallback) {
         return createLocalSession(String(userData.email || ''), String(userData.name || ''));
       }
 
       return {
         success: false,
-        error: axios.isAxiosError(error)
-          ? error.response?.data?.error || 'Registration failed'
-          : 'Registration failed'
+        error: getApiErrorMessage(error)
       };
     }
   },

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Check, Edit3, Image as ImageIcon, Lock, Save, Trash2 } from 'lucide-react';
+import { api, API_BASE_URL, businessesApi, getApiErrorMessage, postsApi } from '../api';
+import { isAdminEmail, readSession } from '../auth/session';
 import { Business, HeroSlide, Language, SocialPost, UserProfile } from '../types';
-import { businessesApi, postsApi } from '../api';
 
 interface AdminPanelProps {
   currentLang: Language;
@@ -12,6 +13,13 @@ interface AdminPanelProps {
   userProfile: UserProfile | null;
   heroSlides: HeroSlide[];
   setHeroSlides: React.Dispatch<React.SetStateAction<HeroSlide[]>>;
+}
+
+interface DiagnosticItem {
+  label: string;
+  ok: boolean;
+  status: string;
+  detail: string;
 }
 
 const t = (lang: Language, en: string, ar: string, ku: string) => {
@@ -42,6 +50,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
     governorate: ''
   });
   const [businessStatus, setBusinessStatus] = useState('');
+  const [postStatus, setPostStatus] = useState('');
+  const [diagnostics, setDiagnostics] = useState<DiagnosticItem[]>([]);
+  const [diagnosticsLoading, setDiagnosticsLoading] = useState(false);
 
   if (userProfile?.role !== 'admin') {
     return (
@@ -55,47 +66,77 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
   }
 
   const updateHeroField = (slideId: string, field: 'slogan' | 'badge', value: string) => {
-    setHeroSlides(prev => prev.map(slide => slide.id === slideId
-      ? { ...slide, [field]: { ...slide[field], [currentLang]: value } }
-      : slide));
+    setHeroSlides((prev) =>
+      prev.map((slide) =>
+        slide.id === slideId
+          ? { ...slide, [field]: { ...slide[field], [currentLang]: value } }
+          : slide
+      )
+    );
   };
 
   const updateHeroImage = (slideId: string, file: File | null) => {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = () => {
-      setHeroSlides(prev => prev.map(slide => slide.id === slideId
-        ? { ...slide, image: String(reader.result) }
-        : slide));
+      setHeroSlides((prev) =>
+        prev.map((slide) => (slide.id === slideId ? { ...slide, image: String(reader.result) } : slide))
+      );
     };
     reader.readAsDataURL(file);
   };
 
-  const approvePost = (postId: string) => {
-    setPosts(prev => prev.map(post => post.id === postId ? { ...post, status: 'approved', updatedAt: new Date().toISOString() } : post));
-    postsApi.update(postId, { status: 'approved' }).catch(() => undefined);
+  const approvePost = async (postId: string) => {
+    try {
+      await postsApi.update(postId, { status: 'approved' });
+      setPosts((prev) =>
+        prev.map((post) =>
+          post.id === postId ? { ...post, status: 'approved', updatedAt: new Date().toISOString() } : post
+        )
+      );
+      setPostStatus(t(currentLang, 'Post approved.', 'تمت الموافقة على المنشور.', 'بابەتەکە پەسەندکرا.'));
+    } catch (error) {
+      setPostStatus(getApiErrorMessage(error));
+    }
   };
 
-  const deletePost = (postId: string) => {
-    setPosts(prev => prev.filter(post => post.id !== postId));
-    postsApi.delete(postId, userProfile.email).catch(() => undefined);
+  const deletePost = async (postId: string) => {
+    try {
+      await postsApi.delete(postId);
+      setPosts((prev) => prev.filter((post) => post.id !== postId));
+      setPostStatus(t(currentLang, 'Post deleted.', 'تم حذف المنشور.', 'بابەتەکە سڕایەوە.'));
+    } catch (error) {
+      setPostStatus(getApiErrorMessage(error));
+    }
   };
 
-  const savePost = (postId: string) => {
+  const savePost = async (postId: string) => {
     const caption = editingPostText.trim();
     if (!caption) return;
-    setPosts(prev => prev.map(post => post.id === postId
-      ? { ...post, caption: { ar: caption, ku: caption, en: caption }, updatedAt: new Date().toISOString() }
-      : post));
-    postsApi.update(postId, { caption }).catch(() => undefined);
-    setEditingPostId(null);
-    setEditingPostText('');
+
+    try {
+      await postsApi.update(postId, { caption });
+      setPosts((prev) =>
+        prev.map((post) =>
+          post.id === postId
+            ? { ...post, caption: { ar: caption, ku: caption, en: caption }, updatedAt: new Date().toISOString() }
+            : post
+        )
+      );
+      setEditingPostId(null);
+      setEditingPostText('');
+      setPostStatus(t(currentLang, 'Post updated.', 'تم تحديث المنشور.', 'بابەتەکە نوێکرایەوە.'));
+    } catch (error) {
+      setPostStatus(getApiErrorMessage(error));
+    }
   };
 
   const toggleBusinessVerification = (businessId: string) => {
-    setBusinesses(prev => prev.map(business => business.id === businessId
-      ? { ...business, isVerified: !business.isVerified }
-      : business));
+    setBusinesses((prev) =>
+      prev.map((business) =>
+        business.id === businessId ? { ...business, isVerified: !business.isVerified } : business
+      )
+    );
   };
 
   const startEditBusiness = (business: Business) => {
@@ -120,44 +161,102 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
       governorate: businessDraft.governorate.trim()
     };
 
-    setBusinesses(prev => prev.map(business => business.id === businessId
-      ? {
-          ...business,
-          name: { ar: payload.name, ku: payload.name, en: payload.name },
-          description: { ar: payload.description, ku: payload.description, en: payload.description },
-          address: { ar: payload.address, ku: payload.address, en: payload.address },
-          phoneNumber: payload.phone,
-          category: payload.category,
-          governorate: payload.governorate as any
-        }
-      : business));
-
     try {
       await businessesApi.update(businessId, payload);
+      setBusinesses((prev) =>
+        prev.map((business) =>
+          business.id === businessId
+            ? {
+                ...business,
+                name: { ar: payload.name, ku: payload.name, en: payload.name },
+                description: {
+                  ar: payload.description,
+                  ku: payload.description,
+                  en: payload.description
+                },
+                address: { ar: payload.address, ku: payload.address, en: payload.address },
+                phoneNumber: payload.phone,
+                category: payload.category,
+                governorate: payload.governorate as any
+              }
+            : business
+        )
+      );
       setBusinessStatus(t(currentLang, 'Business saved.', 'تم حفظ النشاط.', 'بازرگانی پاشەکەوت کرا.'));
-    } catch {
-      setBusinessStatus(t(currentLang, 'Saved locally (backend update failed).', 'تم الحفظ محلياً (فشل تحديث الخادم).', 'تەنها ناوخۆیی پاشەکەوت کرا (نوێکردنەوەی باکێند شکستی هێنا).'));
+      setEditingBusinessId(null);
+    } catch (error) {
+      setBusinessStatus(getApiErrorMessage(error));
     }
-
-    setEditingBusinessId(null);
   };
 
   const deleteBusiness = async (businessId: string) => {
-    setBusinesses(prev => prev.filter(business => business.id !== businessId));
     try {
       await businessesApi.delete(businessId);
+      setBusinesses((prev) => prev.filter((business) => business.id !== businessId));
       setBusinessStatus(t(currentLang, 'Business deleted.', 'تم حذف النشاط.', 'بازرگانی سڕایەوە.'));
-    } catch {
-      setBusinessStatus(t(currentLang, 'Deleted locally (backend delete failed).', 'تم الحذف محلياً (فشل الحذف من الخادم).', 'تەنها ناوخۆیی سڕایەوە (سڕینەوەی باکێند شکستی هێنا).'));
+    } catch (error) {
+      setBusinessStatus(getApiErrorMessage(error));
     }
   };
 
-  const pendingPosts = posts.filter(post => post.status === 'pending').length;
+  const runDiagnostics = async () => {
+    setDiagnosticsLoading(true);
+    const next: DiagnosticItem[] = [];
+
+    const capture = async (label: string, call: () => Promise<{ status: number; data: any }>) => {
+      try {
+        const response = await call();
+        const preview = JSON.stringify(response.data).slice(0, 180);
+        next.push({
+          label,
+          ok: response.status >= 200 && response.status < 400,
+          status: String(response.status),
+          detail: preview || 'OK'
+        });
+      } catch (error: any) {
+        const status = error?.response?.status ? String(error.response.status) : 'NETWORK';
+        next.push({
+          label,
+          ok: false,
+          status,
+          detail: getApiErrorMessage(error)
+        });
+      }
+    };
+
+    const session = readSession();
+    next.push({
+      label: 'Auth/session',
+      ok: Boolean(session?.token && session?.user?.email),
+      status: session ? 'ACTIVE' : 'NONE',
+      detail: session ? `Signed in as ${session.user.email}` : 'No active session'
+    });
+
+    await capture('GET /api/businesses', () => api.get('/businesses', { params: { page: 1, limit: 1 } }));
+    await capture('GET /api/posts', () => api.get('/posts', { params: { page: 1, limit: 1 } }));
+    await capture('GET /api/feed/business-posts', () =>
+      api.get('/feed/business-posts', { params: { page: 1, limit: 1 } })
+    );
+    await capture('Filter probe (governorate+category)', () =>
+      api.get('/businesses', {
+        params: { governorate: 'baghdad', category: 'restaurant', page: 1, limit: 5 }
+      })
+    );
+    await capture('Write route probe (OPTIONS /api/businesses)', () => api.options('/businesses'));
+
+    setDiagnostics(next);
+    setDiagnosticsLoading(false);
+  };
+
+  const pendingPosts = posts.filter((post) => post.status === 'pending').length;
+  const signedInEmail = userProfile?.email || '';
 
   return (
     <div className="max-w-6xl mx-auto p-4 md:p-6 space-y-6" dir={currentLang === 'en' ? 'ltr' : 'rtl'}>
       <div className="bg-[#18191a] border border-white/10 rounded-2xl p-5 text-white">
-        <h1 className="text-2xl font-black mb-2">{t(currentLang, 'Admin Control Center', 'مركز تحكم الإدارة', 'ناوەندی کۆنترۆڵی بەڕێوەبەر')}</h1>
+        <h1 className="text-2xl font-black mb-2">
+          {t(currentLang, 'Admin Control Center', 'مركز تحكم الإدارة', 'ناوەندی کۆنترۆڵی بەڕێوەبەر')}
+        </h1>
         <p className="text-sm text-zinc-400">{userProfile.email}</p>
         <div className="grid sm:grid-cols-3 gap-3 mt-5">
           <div className="bg-white/5 rounded-xl p-4 border border-white/10">
@@ -169,19 +268,58 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
             <strong className="block text-2xl">{posts.length}</strong>
           </div>
           <div className="bg-white/5 rounded-xl p-4 border border-amber-500/25">
-            <span className="text-xs text-zinc-400">{t(currentLang, 'Pending Approval', 'بانتظار الموافقة', 'چاوەڕوانی پەسەندکردن')}</span>
+            <span className="text-xs text-zinc-400">
+              {t(currentLang, 'Pending Approval', 'بانتظار الموافقة', 'چاوەڕوانی پەسەندکردن')}
+            </span>
             <strong className="block text-2xl text-amber-300">{pendingPosts}</strong>
           </div>
         </div>
       </div>
+
+      <section className="bg-[#18191a] border border-white/10 rounded-2xl p-5 text-white space-y-3">
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="text-lg font-black">Admin API Diagnostics</h2>
+          <button
+            type="button"
+            onClick={runDiagnostics}
+            disabled={diagnosticsLoading}
+            className="px-3 py-2 rounded-lg bg-luxury-gold text-black text-xs font-black disabled:opacity-60"
+          >
+            {diagnosticsLoading ? 'Running...' : 'Run checks'}
+          </button>
+        </div>
+        <div className="text-xs text-zinc-400 space-y-1">
+          <p>API base: {API_BASE_URL}</p>
+          <p>Signed-in email: {signedInEmail || 'none'}</p>
+          <p>Frontend allowlist admin: {isAdminEmail(signedInEmail) ? 'yes' : 'no'}</p>
+        </div>
+        {diagnostics.length > 0 && (
+          <div className="space-y-2">
+            {diagnostics.map((item) => (
+              <div key={item.label} className="bg-white/5 border border-white/10 rounded-lg p-3">
+                <div className="flex items-center justify-between gap-2 text-xs">
+                  <span className="font-bold">{item.label}</span>
+                  <span className={item.ok ? 'text-emerald-300' : 'text-red-300'}>
+                    {item.ok ? 'OK' : 'FAIL'} ({item.status})
+                  </span>
+                </div>
+                <p className="text-[11px] text-zinc-400 mt-1 break-all">{item.detail}</p>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
 
       <section className="bg-[#18191a] border border-white/10 rounded-2xl p-5 text-white space-y-4">
         <h2 className="text-lg font-black flex items-center gap-2">
           <ImageIcon className="w-5 h-5 text-luxury-gold" />
           {t(currentLang, 'Hero Editor', 'تعديل الواجهة الرئيسية', 'دەستکاری هیرو')}
         </h2>
+        <p className="text-xs text-amber-300">
+          Local-only editor: these hero changes are not persisted to backend yet.
+        </p>
         <div className="grid lg:grid-cols-2 gap-4">
-          {heroSlides.map(slide => (
+          {heroSlides.map((slide) => (
             <div key={slide.id} className="bg-white/5 border border-white/10 rounded-xl p-4 space-y-3">
               <img src={slide.image} alt="" className="w-full h-36 object-cover rounded-lg bg-black" />
               <input
@@ -208,33 +346,81 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
       </section>
 
       <section className="bg-[#18191a] border border-white/10 rounded-2xl p-5 text-white space-y-4">
-        <h2 className="text-lg font-black">{t(currentLang, 'Social Feed Moderation', 'إدارة المنشورات', 'بەڕێوەبردنی بابەتەکان')}</h2>
+        <h2 className="text-lg font-black">
+          {t(currentLang, 'Social Feed Moderation', 'إدارة المنشورات', 'بەڕێوەبردنی بابەتەکان')}
+        </h2>
+        {postStatus && <p className="text-xs text-zinc-300">{postStatus}</p>}
         <div className="space-y-3">
-          {posts.length === 0 && <p className="text-sm text-zinc-400">{t(currentLang, 'No posts yet.', 'لا توجد منشورات بعد.', 'هێشتا هیچ بابەتێک نییە.')}</p>}
-          {posts.map(post => (
+          {posts.length === 0 && (
+            <p className="text-sm text-zinc-400">
+              {t(currentLang, 'No posts yet.', 'لا توجد منشورات بعد.', 'هێشتا هیچ بابەتێک نییە.')}
+            </p>
+          )}
+          {posts.map((post) => (
             <div key={post.id} className="bg-white/5 border border-white/10 rounded-xl p-4 space-y-3">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                   <strong className="block text-sm">{post.businessName}</strong>
-                  <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${post.status === 'pending' ? 'bg-amber-500/15 text-amber-300' : 'bg-emerald-500/15 text-emerald-300'}`}>
+                  <span
+                    className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
+                      post.status === 'pending'
+                        ? 'bg-amber-500/15 text-amber-300'
+                        : 'bg-emerald-500/15 text-emerald-300'
+                    }`}
+                  >
                     {post.status || 'approved'}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
                   {post.status === 'pending' && (
-                    <button type="button" onClick={() => approvePost(post.id)} className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400"><Check className="w-4 h-4" /></button>
+                    <button
+                      type="button"
+                      onClick={() => void approvePost(post.id)}
+                      className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400"
+                    >
+                      <Check className="w-4 h-4" />
+                    </button>
                   )}
-                  <button type="button" onClick={() => { setEditingPostId(post.id); setEditingPostText(post.caption[currentLang] || post.caption.en); }} className="p-2 rounded-lg bg-blue-500/10 text-blue-400"><Edit3 className="w-4 h-4" /></button>
-                  <button type="button" onClick={() => deletePost(post.id)} className="p-2 rounded-lg bg-red-500/10 text-red-400"><Trash2 className="w-4 h-4" /></button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingPostId(post.id);
+                      setEditingPostText(post.caption[currentLang] || post.caption.en);
+                    }}
+                    className="p-2 rounded-lg bg-blue-500/10 text-blue-400"
+                  >
+                    <Edit3 className="w-4 h-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => void deletePost(post.id)}
+                    className="p-2 rounded-lg bg-red-500/10 text-red-400"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
                 </div>
               </div>
               {editingPostId === post.id ? (
                 <div className="space-y-2">
-                  <textarea value={editingPostText} onChange={(event) => setEditingPostText(event.target.value)} rows={3} className="w-full bg-black/35 border border-white/10 rounded-lg px-3 py-2 text-sm" dir={currentLang === 'en' ? 'ltr' : 'rtl'} />
-                  <button type="button" onClick={() => savePost(post.id)} className="px-3 py-2 rounded-lg bg-luxury-gold text-black text-xs font-black flex items-center gap-2"><Save className="w-4 h-4" /> Save</button>
+                  <textarea
+                    value={editingPostText}
+                    onChange={(event) => setEditingPostText(event.target.value)}
+                    rows={3}
+                    className="w-full bg-black/35 border border-white/10 rounded-lg px-3 py-2 text-sm"
+                    dir={currentLang === 'en' ? 'ltr' : 'rtl'}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => void savePost(post.id)}
+                    className="px-3 py-2 rounded-lg bg-luxury-gold text-black text-xs font-black flex items-center gap-2"
+                  >
+                    <Save className="w-4 h-4" /> Save
+                  </button>
                 </div>
               ) : (
-                <p className="text-sm text-zinc-300" dir={currentLang === 'en' ? 'ltr' : 'rtl'}><bdi>{post.caption[currentLang]}</bdi></p>
+                <p className="text-sm text-zinc-300" dir={currentLang === 'en' ? 'ltr' : 'rtl'}>
+                  <bdi>{post.caption[currentLang]}</bdi>
+                </p>
               )}
             </div>
           ))}
@@ -242,20 +428,56 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
       </section>
 
       <section className="bg-[#18191a] border border-white/10 rounded-2xl p-5 text-white space-y-4">
-        <h2 className="text-lg font-black">{t(currentLang, 'Business Listings', 'قوائم الأعمال', 'لیستی بازرگانییەکان')}</h2>
+        <h2 className="text-lg font-black">
+          {t(currentLang, 'Business Listings', 'قوائم الأعمال', 'لیستی بازرگانییەکان')}
+        </h2>
         {businessStatus && <p className="text-xs text-zinc-300">{businessStatus}</p>}
         <div className="grid md:grid-cols-2 gap-3">
-          {businesses.slice(0, 12).map(business => (
+          {businesses.slice(0, 12).map((business) => (
             <div key={business.id} className="bg-white/5 border border-white/10 rounded-xl p-3 space-y-2">
               {editingBusinessId === business.id ? (
                 <div className="space-y-2">
-                  <input value={businessDraft.name} onChange={(event) => setBusinessDraft(prev => ({ ...prev, name: event.target.value }))} className="w-full bg-black/35 border border-white/10 rounded-lg px-3 py-2 text-xs" />
-                  <textarea value={businessDraft.description} onChange={(event) => setBusinessDraft(prev => ({ ...prev, description: event.target.value }))} className="w-full bg-black/35 border border-white/10 rounded-lg px-3 py-2 text-xs" rows={2} />
-                  <input value={businessDraft.address} onChange={(event) => setBusinessDraft(prev => ({ ...prev, address: event.target.value }))} className="w-full bg-black/35 border border-white/10 rounded-lg px-3 py-2 text-xs" />
-                  <input value={businessDraft.phoneNumber} onChange={(event) => setBusinessDraft(prev => ({ ...prev, phoneNumber: event.target.value }))} className="w-full bg-black/35 border border-white/10 rounded-lg px-3 py-2 text-xs" />
+                  <input
+                    value={businessDraft.name}
+                    onChange={(event) => setBusinessDraft((prev) => ({ ...prev, name: event.target.value }))}
+                    className="w-full bg-black/35 border border-white/10 rounded-lg px-3 py-2 text-xs"
+                  />
+                  <textarea
+                    value={businessDraft.description}
+                    onChange={(event) =>
+                      setBusinessDraft((prev) => ({ ...prev, description: event.target.value }))
+                    }
+                    className="w-full bg-black/35 border border-white/10 rounded-lg px-3 py-2 text-xs"
+                    rows={2}
+                  />
+                  <input
+                    value={businessDraft.address}
+                    onChange={(event) => setBusinessDraft((prev) => ({ ...prev, address: event.target.value }))}
+                    className="w-full bg-black/35 border border-white/10 rounded-lg px-3 py-2 text-xs"
+                  />
+                  <input
+                    value={businessDraft.phoneNumber}
+                    onChange={(event) =>
+                      setBusinessDraft((prev) => ({ ...prev, phoneNumber: event.target.value }))
+                    }
+                    className="w-full bg-black/35 border border-white/10 rounded-lg px-3 py-2 text-xs"
+                  />
                   <div className="flex items-center gap-2">
-                    <button type="button" onClick={() => saveBusiness(business.id)} className="px-3 py-1.5 rounded-lg bg-luxury-gold text-black text-[10px] font-black flex items-center gap-1"><Save className="w-3 h-3" />Save</button>
-                    <button type="button" onClick={() => setEditingBusinessId(null)} className="px-3 py-1.5 rounded-lg bg-white/10 text-zinc-200 text-[10px] font-bold">Cancel</button>
+                    <button
+                      type="button"
+                      onClick={() => void saveBusiness(business.id)}
+                      className="px-3 py-1.5 rounded-lg bg-luxury-gold text-black text-[10px] font-black flex items-center gap-1"
+                    >
+                      <Save className="w-3 h-3" />
+                      Save
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditingBusinessId(null)}
+                      className="px-3 py-1.5 rounded-lg bg-white/10 text-zinc-200 text-[10px] font-bold"
+                    >
+                      Cancel
+                    </button>
                   </div>
                 </div>
               ) : (
@@ -265,12 +487,28 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
                     <span className="text-[11px] text-zinc-500">{business.governorate}</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <button type="button" onClick={() => startEditBusiness(business)} className="p-1.5 rounded-lg bg-blue-500/10 text-blue-400"><Edit3 className="w-3.5 h-3.5" /></button>
-                    <button type="button" onClick={() => deleteBusiness(business.id)} className="p-1.5 rounded-lg bg-red-500/10 text-red-400"><Trash2 className="w-3.5 h-3.5" /></button>
+                    <button
+                      type="button"
+                      onClick={() => startEditBusiness(business)}
+                      className="p-1.5 rounded-lg bg-blue-500/10 text-blue-400"
+                    >
+                      <Edit3 className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => void deleteBusiness(business.id)}
+                      className="p-1.5 rounded-lg bg-red-500/10 text-red-400"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
                     <button
                       type="button"
                       onClick={() => toggleBusinessVerification(business.id)}
-                      className={`px-2 py-1.5 rounded-lg text-[10px] font-black ${business.isVerified ? 'bg-emerald-500/15 text-emerald-300' : 'bg-white/10 text-zinc-300'}`}
+                      className={`px-2 py-1.5 rounded-lg text-[10px] font-black ${
+                        business.isVerified
+                          ? 'bg-emerald-500/15 text-emerald-300'
+                          : 'bg-white/10 text-zinc-300'
+                      }`}
                     >
                       {business.isVerified ? 'Verified' : 'Verify'}
                     </button>

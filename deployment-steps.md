@@ -13,7 +13,7 @@ Set these in your Cloudflare Pages project:
 
 - `VITE_API_URL`
 - `VITE_ADMIN_EMAILS`
-- `VITE_ALLOW_LOCAL_AUTH_FALLBACK=false`
+- `VITE_ALLOW_LOCAL_AUTH_FALLBACK=false` (dev-only; production ignores fallback)
 
 Do **not** expose server-only variables such as `NABDA_API_KEY` in frontend runtime config.
 
