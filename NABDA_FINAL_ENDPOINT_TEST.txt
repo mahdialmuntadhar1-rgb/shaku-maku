@@ -1,0 +1,6605 @@
+﻿
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message
+Header: Authorization Bearer
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message
+Header: Authorization Bearer
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message
+Header: Authorization Bearer
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message
+Header: Authorization Bearer
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message
+Header: Authorization Bearer
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message
+Header: Authorization Bearer
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message
+Header: Authorization Bearer
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message
+Header: Authorization Bearer
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message
+Header: Authorization Raw
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message
+Header: Authorization Raw
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message
+Header: Authorization Raw
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message
+Header: Authorization Raw
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message
+Header: Authorization Raw
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message
+Header: Authorization Raw
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message
+Header: Authorization Raw
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message
+Header: Authorization Raw
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message
+Header: X-API-Key
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message
+Header: X-API-Key
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message
+Header: X-API-Key
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message
+Header: X-API-Key
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message
+Header: X-API-Key
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message
+Header: X-API-Key
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message
+Header: X-API-Key
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message
+Header: X-API-Key
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message
+Header: apiKey header
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message
+Header: apiKey header
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message
+Header: apiKey header
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message
+Header: apiKey header
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message
+Header: apiKey header
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message
+Header: apiKey header
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message
+Header: apiKey header
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message
+Header: apiKey header
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message.php
+Header: Authorization Bearer
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message.php
+Header: Authorization Bearer
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message.php
+Header: Authorization Bearer
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message.php
+Header: Authorization Bearer
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message.php
+Header: Authorization Bearer
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message.php
+Header: Authorization Bearer
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message.php
+Header: Authorization Bearer
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message.php
+Header: Authorization Bearer
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message.php
+Header: Authorization Raw
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message.php
+Header: Authorization Raw
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message.php
+Header: Authorization Raw
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message.php
+Header: Authorization Raw
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message.php
+Header: Authorization Raw
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message.php
+Header: Authorization Raw
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message.php
+Header: Authorization Raw
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message.php
+Header: Authorization Raw
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message.php
+Header: X-API-Key
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message.php
+Header: X-API-Key
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message.php
+Header: X-API-Key
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message.php
+Header: X-API-Key
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message.php
+Header: X-API-Key
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message.php
+Header: X-API-Key
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message.php
+Header: X-API-Key
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message.php
+Header: X-API-Key
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message.php
+Header: apiKey header
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message.php
+Header: apiKey header
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message.php
+Header: apiKey header
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message.php
+Header: apiKey header
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message.php
+Header: apiKey header
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message.php
+Header: apiKey header
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message.php
+Header: apiKey header
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-message.php
+Header: apiKey header
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message
+Header: Authorization Bearer
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message
+Header: Authorization Bearer
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message
+Header: Authorization Bearer
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message
+Header: Authorization Bearer
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message
+Header: Authorization Bearer
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message
+Header: Authorization Bearer
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message
+Header: Authorization Bearer
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message
+Header: Authorization Bearer
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message
+Header: Authorization Raw
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message
+Header: Authorization Raw
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message
+Header: Authorization Raw
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message
+Header: Authorization Raw
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message
+Header: Authorization Raw
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message
+Header: Authorization Raw
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message
+Header: Authorization Raw
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message
+Header: Authorization Raw
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message
+Header: X-API-Key
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message
+Header: X-API-Key
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message
+Header: X-API-Key
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message
+Header: X-API-Key
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message
+Header: X-API-Key
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message
+Header: X-API-Key
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message
+Header: X-API-Key
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message
+Header: X-API-Key
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message
+Header: apiKey header
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message
+Header: apiKey header
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message
+Header: apiKey header
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message
+Header: apiKey header
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message
+Header: apiKey header
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message
+Header: apiKey header
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message
+Header: apiKey header
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message
+Header: apiKey header
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message.php
+Header: Authorization Bearer
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message.php
+Header: Authorization Bearer
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message.php
+Header: Authorization Bearer
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message.php
+Header: Authorization Bearer
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message.php
+Header: Authorization Bearer
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message.php
+Header: Authorization Bearer
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message.php
+Header: Authorization Bearer
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message.php
+Header: Authorization Bearer
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message.php
+Header: Authorization Raw
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message.php
+Header: Authorization Raw
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message.php
+Header: Authorization Raw
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message.php
+Header: Authorization Raw
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message.php
+Header: Authorization Raw
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message.php
+Header: Authorization Raw
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message.php
+Header: Authorization Raw
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message.php
+Header: Authorization Raw
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message.php
+Header: X-API-Key
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message.php
+Header: X-API-Key
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message.php
+Header: X-API-Key
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message.php
+Header: X-API-Key
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message.php
+Header: X-API-Key
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message.php
+Header: X-API-Key
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message.php
+Header: X-API-Key
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message.php
+Header: X-API-Key
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message.php
+Header: apiKey header
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message.php
+Header: apiKey header
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message.php
+Header: apiKey header
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message.php
+Header: apiKey header
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message.php
+Header: apiKey header
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message.php
+Header: apiKey header
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message.php
+Header: apiKey header
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send_message.php
+Header: apiKey header
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/sendText
+Header: Authorization Bearer
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/sendText
+Header: Authorization Bearer
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/sendText
+Header: Authorization Bearer
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/sendText
+Header: Authorization Bearer
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/sendText
+Header: Authorization Bearer
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/sendText
+Header: Authorization Bearer
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/sendText
+Header: Authorization Bearer
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/sendText
+Header: Authorization Bearer
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/sendText
+Header: Authorization Raw
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/sendText
+Header: Authorization Raw
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/sendText
+Header: Authorization Raw
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/sendText
+Header: Authorization Raw
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/sendText
+Header: Authorization Raw
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/sendText
+Header: Authorization Raw
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/sendText
+Header: Authorization Raw
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/sendText
+Header: Authorization Raw
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/sendText
+Header: X-API-Key
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/sendText
+Header: X-API-Key
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/sendText
+Header: X-API-Key
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/sendText
+Header: X-API-Key
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/sendText
+Header: X-API-Key
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/sendText
+Header: X-API-Key
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/sendText
+Header: X-API-Key
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/sendText
+Header: X-API-Key
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/sendText
+Header: apiKey header
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/sendText
+Header: apiKey header
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/sendText
+Header: apiKey header
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/sendText
+Header: apiKey header
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/sendText
+Header: apiKey header
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/sendText
+Header: apiKey header
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/sendText
+Header: apiKey header
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/sendText
+Header: apiKey header
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-text
+Header: Authorization Bearer
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-text
+Header: Authorization Bearer
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-text
+Header: Authorization Bearer
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-text
+Header: Authorization Bearer
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-text
+Header: Authorization Bearer
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-text
+Header: Authorization Bearer
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-text
+Header: Authorization Bearer
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-text
+Header: Authorization Bearer
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-text
+Header: Authorization Raw
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-text
+Header: Authorization Raw
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-text
+Header: Authorization Raw
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-text
+Header: Authorization Raw
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-text
+Header: Authorization Raw
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-text
+Header: Authorization Raw
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-text
+Header: Authorization Raw
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-text
+Header: Authorization Raw
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-text
+Header: X-API-Key
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-text
+Header: X-API-Key
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-text
+Header: X-API-Key
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-text
+Header: X-API-Key
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-text
+Header: X-API-Key
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-text
+Header: X-API-Key
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-text
+Header: X-API-Key
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-text
+Header: X-API-Key
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-text
+Header: apiKey header
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-text
+Header: apiKey header
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-text
+Header: apiKey header
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-text
+Header: apiKey header
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-text
+Header: apiKey header
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-text
+Header: apiKey header
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-text
+Header: apiKey header
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send-text
+Header: apiKey header
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send
+Header: Authorization Bearer
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send
+Header: Authorization Bearer
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send
+Header: Authorization Bearer
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send
+Header: Authorization Bearer
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send
+Header: Authorization Bearer
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send
+Header: Authorization Bearer
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send
+Header: Authorization Bearer
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send
+Header: Authorization Bearer
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send
+Header: Authorization Raw
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send
+Header: Authorization Raw
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send
+Header: Authorization Raw
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send
+Header: Authorization Raw
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send
+Header: Authorization Raw
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send
+Header: Authorization Raw
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send
+Header: Authorization Raw
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send
+Header: Authorization Raw
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send
+Header: X-API-Key
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send
+Header: X-API-Key
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send
+Header: X-API-Key
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send
+Header: X-API-Key
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send
+Header: X-API-Key
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send
+Header: X-API-Key
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send
+Header: X-API-Key
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send
+Header: X-API-Key
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send
+Header: apiKey header
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send
+Header: apiKey header
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send
+Header: apiKey header
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send
+Header: apiKey header
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send
+Header: apiKey header
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send
+Header: apiKey header
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send
+Header: apiKey header
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/send
+Header: apiKey header
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/message/send
+Header: Authorization Bearer
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/message/send
+Header: Authorization Bearer
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/message/send
+Header: Authorization Bearer
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/message/send
+Header: Authorization Bearer
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/message/send
+Header: Authorization Bearer
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/message/send
+Header: Authorization Bearer
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/message/send
+Header: Authorization Bearer
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/message/send
+Header: Authorization Bearer
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/message/send
+Header: Authorization Raw
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/message/send
+Header: Authorization Raw
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/message/send
+Header: Authorization Raw
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/message/send
+Header: Authorization Raw
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/message/send
+Header: Authorization Raw
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/message/send
+Header: Authorization Raw
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/message/send
+Header: Authorization Raw
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/message/send
+Header: Authorization Raw
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/message/send
+Header: X-API-Key
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/message/send
+Header: X-API-Key
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/message/send
+Header: X-API-Key
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/message/send
+Header: X-API-Key
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/message/send
+Header: X-API-Key
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/message/send
+Header: X-API-Key
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/message/send
+Header: X-API-Key
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/message/send
+Header: X-API-Key
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/message/send
+Header: apiKey header
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/message/send
+Header: apiKey header
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/message/send
+Header: apiKey header
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/message/send
+Header: apiKey header
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/message/send
+Header: apiKey header
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/message/send
+Header: apiKey header
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/message/send
+Header: apiKey header
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/message/send
+Header: apiKey header
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/messages/send
+Header: Authorization Bearer
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/messages/send
+Header: Authorization Bearer
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/messages/send
+Header: Authorization Bearer
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/messages/send
+Header: Authorization Bearer
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/messages/send
+Header: Authorization Bearer
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/messages/send
+Header: Authorization Bearer
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/messages/send
+Header: Authorization Bearer
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/messages/send
+Header: Authorization Bearer
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/messages/send
+Header: Authorization Raw
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/messages/send
+Header: Authorization Raw
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/messages/send
+Header: Authorization Raw
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/messages/send
+Header: Authorization Raw
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/messages/send
+Header: Authorization Raw
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/messages/send
+Header: Authorization Raw
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/messages/send
+Header: Authorization Raw
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/messages/send
+Header: Authorization Raw
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/messages/send
+Header: X-API-Key
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/messages/send
+Header: X-API-Key
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/messages/send
+Header: X-API-Key
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/messages/send
+Header: X-API-Key
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/messages/send
+Header: X-API-Key
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/messages/send
+Header: X-API-Key
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/messages/send
+Header: X-API-Key
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/messages/send
+Header: X-API-Key
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/messages/send
+Header: apiKey header
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/messages/send
+Header: apiKey header
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/messages/send
+Header: apiKey header
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/messages/send
+Header: apiKey header
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/messages/send
+Header: apiKey header
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/messages/send
+Header: apiKey header
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/messages/send
+Header: apiKey header
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/messages/send
+Header: apiKey header
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/whatsapp/send
+Header: Authorization Bearer
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/whatsapp/send
+Header: Authorization Bearer
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/whatsapp/send
+Header: Authorization Bearer
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/whatsapp/send
+Header: Authorization Bearer
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/whatsapp/send
+Header: Authorization Bearer
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/whatsapp/send
+Header: Authorization Bearer
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/whatsapp/send
+Header: Authorization Bearer
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/whatsapp/send
+Header: Authorization Bearer
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/whatsapp/send
+Header: Authorization Raw
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/whatsapp/send
+Header: Authorization Raw
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/whatsapp/send
+Header: Authorization Raw
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/whatsapp/send
+Header: Authorization Raw
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/whatsapp/send
+Header: Authorization Raw
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/whatsapp/send
+Header: Authorization Raw
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/whatsapp/send
+Header: Authorization Raw
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/whatsapp/send
+Header: Authorization Raw
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/whatsapp/send
+Header: X-API-Key
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/whatsapp/send
+Header: X-API-Key
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/whatsapp/send
+Header: X-API-Key
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/whatsapp/send
+Header: X-API-Key
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/whatsapp/send
+Header: X-API-Key
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/whatsapp/send
+Header: X-API-Key
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/whatsapp/send
+Header: X-API-Key
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/whatsapp/send
+Header: X-API-Key
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/whatsapp/send
+Header: apiKey header
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/whatsapp/send
+Header: apiKey header
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/whatsapp/send
+Header: apiKey header
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/whatsapp/send
+Header: apiKey header
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/whatsapp/send
+Header: apiKey header
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/whatsapp/send
+Header: apiKey header
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/whatsapp/send
+Header: apiKey header
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/whatsapp/send
+Header: apiKey header
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/send
+Header: Authorization Bearer
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/send
+Header: Authorization Bearer
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/send
+Header: Authorization Bearer
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/send
+Header: Authorization Bearer
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/send
+Header: Authorization Bearer
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/send
+Header: Authorization Bearer
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/send
+Header: Authorization Bearer
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/send
+Header: Authorization Bearer
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/send
+Header: Authorization Raw
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/send
+Header: Authorization Raw
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/send
+Header: Authorization Raw
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/send
+Header: Authorization Raw
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/send
+Header: Authorization Raw
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/send
+Header: Authorization Raw
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/send
+Header: Authorization Raw
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/send
+Header: Authorization Raw
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/send
+Header: X-API-Key
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/send
+Header: X-API-Key
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/send
+Header: X-API-Key
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/send
+Header: X-API-Key
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/send
+Header: X-API-Key
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/send
+Header: X-API-Key
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/send
+Header: X-API-Key
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/send
+Header: X-API-Key
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/send
+Header: apiKey header
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/send
+Header: apiKey header
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/send
+Header: apiKey header
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/send
+Header: apiKey header
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/send
+Header: apiKey header
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/send
+Header: apiKey header
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/send
+Header: apiKey header
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/send
+Header: apiKey header
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/message/send
+Header: Authorization Bearer
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/message/send
+Header: Authorization Bearer
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/message/send
+Header: Authorization Bearer
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/message/send
+Header: Authorization Bearer
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/message/send
+Header: Authorization Bearer
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/message/send
+Header: Authorization Bearer
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/message/send
+Header: Authorization Bearer
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/message/send
+Header: Authorization Bearer
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/message/send
+Header: Authorization Raw
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/message/send
+Header: Authorization Raw
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/message/send
+Header: Authorization Raw
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/message/send
+Header: Authorization Raw
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/message/send
+Header: Authorization Raw
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/message/send
+Header: Authorization Raw
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/message/send
+Header: Authorization Raw
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/message/send
+Header: Authorization Raw
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/message/send
+Header: X-API-Key
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/message/send
+Header: X-API-Key
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/message/send
+Header: X-API-Key
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/message/send
+Header: X-API-Key
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/message/send
+Header: X-API-Key
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/message/send
+Header: X-API-Key
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/message/send
+Header: X-API-Key
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/message/send
+Header: X-API-Key
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/message/send
+Header: apiKey header
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/message/send
+Header: apiKey header
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/message/send
+Header: apiKey header
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/message/send
+Header: apiKey header
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/message/send
+Header: apiKey header
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/message/send
+Header: apiKey header
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/message/send
+Header: apiKey header
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/message/send
+Header: apiKey header
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/messages/send
+Header: Authorization Bearer
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/messages/send
+Header: Authorization Bearer
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/messages/send
+Header: Authorization Bearer
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/messages/send
+Header: Authorization Bearer
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/messages/send
+Header: Authorization Bearer
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/messages/send
+Header: Authorization Bearer
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/messages/send
+Header: Authorization Bearer
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/messages/send
+Header: Authorization Bearer
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/messages/send
+Header: Authorization Raw
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/messages/send
+Header: Authorization Raw
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/messages/send
+Header: Authorization Raw
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/messages/send
+Header: Authorization Raw
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/messages/send
+Header: Authorization Raw
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/messages/send
+Header: Authorization Raw
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/messages/send
+Header: Authorization Raw
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/messages/send
+Header: Authorization Raw
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/messages/send
+Header: X-API-Key
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/messages/send
+Header: X-API-Key
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/messages/send
+Header: X-API-Key
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/messages/send
+Header: X-API-Key
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/messages/send
+Header: X-API-Key
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/messages/send
+Header: X-API-Key
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/messages/send
+Header: X-API-Key
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/messages/send
+Header: X-API-Key
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/messages/send
+Header: apiKey header
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/messages/send
+Header: apiKey header
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/messages/send
+Header: apiKey header
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/messages/send
+Header: apiKey header
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/messages/send
+Header: apiKey header
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/messages/send
+Header: apiKey header
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/messages/send
+Header: apiKey header
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/inst/4b56a3b6-72e3-4ee5-94ec-c1758bef8b98/api/messages/send
+Header: apiKey header
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message
+Header: Authorization Bearer
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message
+Header: Authorization Bearer
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message
+Header: Authorization Bearer
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message
+Header: Authorization Bearer
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message
+Header: Authorization Bearer
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message
+Header: Authorization Bearer
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message
+Header: Authorization Bearer
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message
+Header: Authorization Bearer
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message
+Header: Authorization Raw
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message
+Header: Authorization Raw
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message
+Header: Authorization Raw
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message
+Header: Authorization Raw
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message
+Header: Authorization Raw
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message
+Header: Authorization Raw
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message
+Header: Authorization Raw
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message
+Header: Authorization Raw
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message
+Header: X-API-Key
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message
+Header: X-API-Key
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message
+Header: X-API-Key
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message
+Header: X-API-Key
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message
+Header: X-API-Key
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message
+Header: X-API-Key
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message
+Header: X-API-Key
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message
+Header: X-API-Key
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message
+Header: apiKey header
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message
+Header: apiKey header
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message
+Header: apiKey header
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message
+Header: apiKey header
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message
+Header: apiKey header
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message
+Header: apiKey header
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message
+Header: apiKey header
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message
+Header: apiKey header
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message.php
+Header: Authorization Bearer
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message.php
+Header: Authorization Bearer
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message.php
+Header: Authorization Bearer
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message.php
+Header: Authorization Bearer
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message.php
+Header: Authorization Bearer
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message.php
+Header: Authorization Bearer
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message.php
+Header: Authorization Bearer
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message.php
+Header: Authorization Bearer
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message.php
+Header: Authorization Raw
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message.php
+Header: Authorization Raw
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message.php
+Header: Authorization Raw
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message.php
+Header: Authorization Raw
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message.php
+Header: Authorization Raw
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message.php
+Header: Authorization Raw
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message.php
+Header: Authorization Raw
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message.php
+Header: Authorization Raw
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message.php
+Header: X-API-Key
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message.php
+Header: X-API-Key
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message.php
+Header: X-API-Key
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message.php
+Header: X-API-Key
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message.php
+Header: X-API-Key
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message.php
+Header: X-API-Key
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message.php
+Header: X-API-Key
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message.php
+Header: X-API-Key
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message.php
+Header: apiKey header
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message.php
+Header: apiKey header
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message.php
+Header: apiKey header
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message.php
+Header: apiKey header
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message.php
+Header: apiKey header
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message.php
+Header: apiKey header
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message.php
+Header: apiKey header
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-message.php
+Header: apiKey header
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message
+Header: Authorization Bearer
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message
+Header: Authorization Bearer
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message
+Header: Authorization Bearer
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message
+Header: Authorization Bearer
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message
+Header: Authorization Bearer
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message
+Header: Authorization Bearer
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message
+Header: Authorization Bearer
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message
+Header: Authorization Bearer
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message
+Header: Authorization Raw
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message
+Header: Authorization Raw
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message
+Header: Authorization Raw
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message
+Header: Authorization Raw
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message
+Header: Authorization Raw
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message
+Header: Authorization Raw
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message
+Header: Authorization Raw
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message
+Header: Authorization Raw
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message
+Header: X-API-Key
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message
+Header: X-API-Key
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message
+Header: X-API-Key
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message
+Header: X-API-Key
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message
+Header: X-API-Key
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message
+Header: X-API-Key
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message
+Header: X-API-Key
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message
+Header: X-API-Key
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message
+Header: apiKey header
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message
+Header: apiKey header
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message
+Header: apiKey header
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message
+Header: apiKey header
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message
+Header: apiKey header
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message
+Header: apiKey header
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message
+Header: apiKey header
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message
+Header: apiKey header
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message.php
+Header: Authorization Bearer
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message.php
+Header: Authorization Bearer
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message.php
+Header: Authorization Bearer
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message.php
+Header: Authorization Bearer
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message.php
+Header: Authorization Bearer
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message.php
+Header: Authorization Bearer
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message.php
+Header: Authorization Bearer
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message.php
+Header: Authorization Bearer
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message.php
+Header: Authorization Raw
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message.php
+Header: Authorization Raw
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message.php
+Header: Authorization Raw
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message.php
+Header: Authorization Raw
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message.php
+Header: Authorization Raw
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message.php
+Header: Authorization Raw
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message.php
+Header: Authorization Raw
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message.php
+Header: Authorization Raw
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message.php
+Header: X-API-Key
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message.php
+Header: X-API-Key
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message.php
+Header: X-API-Key
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message.php
+Header: X-API-Key
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message.php
+Header: X-API-Key
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message.php
+Header: X-API-Key
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message.php
+Header: X-API-Key
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message.php
+Header: X-API-Key
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message.php
+Header: apiKey header
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message.php
+Header: apiKey header
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message.php
+Header: apiKey header
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message.php
+Header: apiKey header
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message.php
+Header: apiKey header
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message.php
+Header: apiKey header
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message.php
+Header: apiKey header
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send_message.php
+Header: apiKey header
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/sendText
+Header: Authorization Bearer
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/sendText
+Header: Authorization Bearer
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/sendText
+Header: Authorization Bearer
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/sendText
+Header: Authorization Bearer
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/sendText
+Header: Authorization Bearer
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/sendText
+Header: Authorization Bearer
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/sendText
+Header: Authorization Bearer
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/sendText
+Header: Authorization Bearer
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/sendText
+Header: Authorization Raw
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/sendText
+Header: Authorization Raw
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/sendText
+Header: Authorization Raw
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/sendText
+Header: Authorization Raw
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/sendText
+Header: Authorization Raw
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/sendText
+Header: Authorization Raw
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/sendText
+Header: Authorization Raw
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/sendText
+Header: Authorization Raw
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/sendText
+Header: X-API-Key
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/sendText
+Header: X-API-Key
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/sendText
+Header: X-API-Key
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/sendText
+Header: X-API-Key
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/sendText
+Header: X-API-Key
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/sendText
+Header: X-API-Key
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/sendText
+Header: X-API-Key
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/sendText
+Header: X-API-Key
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/sendText
+Header: apiKey header
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/sendText
+Header: apiKey header
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/sendText
+Header: apiKey header
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/sendText
+Header: apiKey header
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/sendText
+Header: apiKey header
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/sendText
+Header: apiKey header
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/sendText
+Header: apiKey header
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/sendText
+Header: apiKey header
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-text
+Header: Authorization Bearer
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-text
+Header: Authorization Bearer
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-text
+Header: Authorization Bearer
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-text
+Header: Authorization Bearer
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-text
+Header: Authorization Bearer
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-text
+Header: Authorization Bearer
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-text
+Header: Authorization Bearer
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-text
+Header: Authorization Bearer
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-text
+Header: Authorization Raw
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-text
+Header: Authorization Raw
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-text
+Header: Authorization Raw
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-text
+Header: Authorization Raw
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-text
+Header: Authorization Raw
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-text
+Header: Authorization Raw
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-text
+Header: Authorization Raw
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-text
+Header: Authorization Raw
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-text
+Header: X-API-Key
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-text
+Header: X-API-Key
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-text
+Header: X-API-Key
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-text
+Header: X-API-Key
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-text
+Header: X-API-Key
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-text
+Header: X-API-Key
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-text
+Header: X-API-Key
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-text
+Header: X-API-Key
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-text
+Header: apiKey header
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-text
+Header: apiKey header
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-text
+Header: apiKey header
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-text
+Header: apiKey header
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-text
+Header: apiKey header
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-text
+Header: apiKey header
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-text
+Header: apiKey header
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send-text
+Header: apiKey header
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send
+Header: Authorization Bearer
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send
+Header: Authorization Bearer
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send
+Header: Authorization Bearer
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send
+Header: Authorization Bearer
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send
+Header: Authorization Bearer
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send
+Header: Authorization Bearer
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send
+Header: Authorization Bearer
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send
+Header: Authorization Bearer
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send
+Header: Authorization Raw
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send
+Header: Authorization Raw
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send
+Header: Authorization Raw
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send
+Header: Authorization Raw
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send
+Header: Authorization Raw
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send
+Header: Authorization Raw
+Body: instance_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send
+Header: Authorization Raw
+Body: instance_to_message
+JSON:
+{
+    "to":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send
+Header: Authorization Raw
+Body: api_key_body_phone_message
+JSON:
+{
+    "phone":  "9647704413300",
+    "message":  "Nabda OTP PowerShell final test",
+    "apiKey":  "sk_7d376a7fa3fd4e87b8caf07f14a13bd7",
+    "instanceId":  "4b56a3b6-72e3-4ee5-94ec-c1758bef8b98"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send
+Header: X-API-Key
+Body: phone_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send
+Header: X-API-Key
+Body: phoneNumber_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "phoneNumber":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send
+Header: X-API-Key
+Body: to_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "to":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send
+Header: X-API-Key
+Body: number_message
+JSON:
+{
+    "message":  "Nabda OTP PowerShell final test",
+    "number":  "9647704413300"
+}
+FAILED HTTP 404 
+========================================
+URL: https://api.nabdaotp.com/send
+Header: X-API-Key
+Body: phone_text
+JSON:
+{
+    "text":  "Nabda OTP PowerShell final test",
+    "phone":  "9647704413300"
+}
+FAILED HTTP 404 
+
+No endpoint worked. Need exact CURL from Nabda API Docs.

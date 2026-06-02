@@ -1,0 +1,43 @@
+﻿SHAKU MAKU AUTH FIX CHECKLIST
+
+Admin email:
+safaribosafar@gmail.com
+
+Required:
+1. Normal user registration works.
+2. Normal user login works.
+3. Logout clears token/session.
+4. Forgot password creates reset token.
+5. Reset password accepts token and saves new password.
+6. Business owner role should be removed if no longer needed.
+7. Admin must come from database, not only frontend email/name.
+8. safaribosafar@gmail.com must have role='admin' or is_admin=1.
+9. Admin should be able to edit:
+   - hero section
+   - sales section
+   - social feed
+   - business cards
+   - images
+   - app content sections
+
+Frontend:
+- Login page must call real backend.
+- Register page must call real backend.
+- Forgot password page must call real backend.
+- Reset password page must read token from URL.
+- Admin dashboard must verify role from backend.
+
+Backend:
+- /api/auth/register
+- /api/auth/login
+- /api/auth/logout
+- /api/auth/forgot-password
+- /api/auth/reset-password
+- CORS must allow https://shakumaku.pages.dev
+- Passwords must be hashed.
+- Reset tokens must expire.
+
+Generated files:
+- AUTH_DOCTOR_REPORT.txt
+- AUTH_FIX_CHECKLIST.txt
+- migrations/999_make_safaribosafar_admin.sql

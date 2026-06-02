@@ -1,0 +1,2 @@
+﻿"Index","Phone","Governorate","Status","HttpStatus","Note","Time"
+"1","+9647704413300","TEST","SENT","200","{""statusCode"":200,""success"":true,""message"":""Message sent successfully"",""data"":{""success"":true,""instanceId"":""4b56a3b6-72e3-4ee5-94ec-c1758bef8b98""}}","2026-06-02 15:48:02"
