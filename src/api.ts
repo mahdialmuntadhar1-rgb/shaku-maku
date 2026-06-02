@@ -1,4 +1,4 @@
-const RAW_API_BASE_URL = (import.meta as any).env?.VITE_API_URL || 'https://shaku-maku.mahdialmuntadhar1.workers.dev';
+﻿const RAW_API_BASE_URL = (import.meta as any).env?.VITE_API_URL || 'https://shaku-maku.mahdialmuntadhar1.workers.dev';
 export const API_BASE_URL = String(RAW_API_BASE_URL).replace(/\/+$/, '').replace(/\/api$/i, '');
 
 if (!(import.meta as any).env?.VITE_API_URL) {
@@ -275,7 +275,7 @@ export const authApi = {
 
 export const CATEGORY_DB_MAP: Record<string, string> = {
   restaurant: 'Restaurants',
-  cafe_bakery: 'Cafés & Bakeries',
+  cafe_bakery: 'Caf├⌐s & Bakeries',
   supermarket: 'Supermarkets',
   mall: 'Malls & Shopping',
   pharmacy: 'Pharmacies',

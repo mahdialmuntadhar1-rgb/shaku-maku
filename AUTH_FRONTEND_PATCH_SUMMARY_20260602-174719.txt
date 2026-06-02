@@ -1,0 +1,13 @@
+﻿Auth frontend patch: 20260602-174719
+
+Files targeted:
+- .\src\api.ts
+- .\src\contexts\AuthContext.tsx
+- .\src\components\AuthModal.tsx
+
+Intent:
+- add credentials: include
+- stop hard fail on missing session field
+- reduce mixed auth messages
+- keep rollback backup in:
+  .\auth-ui-fix-20260602-174719

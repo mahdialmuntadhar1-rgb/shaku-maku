@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+﻿import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Compass, Flame, Map, PlusCircle, BookOpen, Search, X, 
@@ -207,6 +207,33 @@ function normalizeGovCode(value: unknown): GovernorateCode {
   return compact as GovernorateCode;
 }
 
+function toDatabaseGovernorateValue(value: unknown): string | null {
+  const code = normalizeGovCode(value);
+  const map: Record<string, string> = {
+    all: '',
+    baghdad: 'Baghdad',
+    basra: 'Basra',
+    erbil: 'Erbil',
+    sulaymaniyah: 'Sulaymaniyah',
+    duhok: 'Duhok',
+    mosul: 'Nineveh',
+    najaf: 'Najaf',
+    karbala: 'Karbala',
+    kirkuk: 'Kirkuk',
+    anbar: 'Anbar',
+    babil: 'Babil',
+    diyala: 'Diyala',
+    wasit: 'Wasit',
+    saladin: 'Salahaddin',
+    maysan: 'Maysan',
+    dhiqar: 'Dhi Qar',
+    muthanna: 'Muthanna',
+    qadisiya: 'Qadisiyyah',
+    halabja: 'Halabja'
+  };
+
+  return map[code] || String(value || '').trim() || null;
+}
 function normalizeCategoryId(value: unknown): string {
   const raw = String(value || '').trim();
   if (!raw) return 'other';
@@ -475,14 +502,17 @@ export default function App() {
   useEffect(() => {
     const fetchBusinesses = async () => {
       try {
-        const params: { page: number; limit: number; governorate?: string; category?: string } = { page: 1, limit: 50 };
+        const params: { page: number; limit: number; governorate?: string } = { page: 1, limit: 500 };
+
         if (selectedGov !== 'all') {
-          const selectedGovMeta = GOVERNORATES.find((g) => g.code === selectedGov);
-          params.governorate = selectedGovMeta?.englishLabel || selectedGovMeta?.name.en || selectedGov;
+          const dbGovernorate = toDatabaseGovernorateValue(selectedGov);
+          if (dbGovernorate) {
+            params.governorate = dbGovernorate;
+          }
         }
-        if (selectedCategory && selectedCategory !== 'other') {
-          params.category = selectedCategory;
-        }
+
+        // Do not send category to backend here.
+        // Fetch by governorate, normalize categories, then filter locally.
 
         const response = await businessesApi.list(params);
         const rows = normalizeList(response);
@@ -601,7 +631,7 @@ export default function App() {
       const govMatch = selectedGov === 'all' || b.governorate === selectedGov;
 
       // Category Match
-      const catMatch = !selectedCategory || b.category === selectedCategory;
+      const catMatch = !selectedCategory || selectedCategory === 'other' || b.category === selectedCategory;
       
       // Keyword Match (case-insensitive across translated fields)
       const keyword = searchQuery.toLowerCase().trim();
@@ -1318,3 +1348,5 @@ export default function App() {
     </div>
   );
 }
+
+

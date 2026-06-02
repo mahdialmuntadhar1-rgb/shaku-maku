@@ -1,58 +1,30 @@
-﻿# LOCK STATUS
+﻿# SHAKU MAKU LOCK STATUS
 
-This checkpoint locks the current working level.
+Date: 20260602-203532
 
-## Bulk messaging
+## Confirmed working
 
-Status:
-WORKING
+Frontend:
+https://shakumaku.pages.dev/
 
-Correct Nabda send format:
+Backend:
+https://shaku-maku.mahdialmuntadhar1.workers.dev/
+
+Database:
+shaku_maku_db
+
+Admin email:
+safaribosafar@gmail.com
+
+Auth:
+Login was fixed by deploying Worker secret version to 100%.
+
+Do not rotate Worker secrets again unless needed.
+
+Nabda WhatsApp API:
 POST https://api.nabdaotp.com/api/v1/messages/send
 
-Header:
-Authorization: raw API key only
+Nabda header:
+Authorization: RAW_API_KEY
 
-Do not use:
-Bearer
-
-Body:
-{
-  "phone": "+964...",
-  "message": "..."
-}
-
-Local dashboard:
-nabda-local-dashboard
-
-Start:
-START-DASHBOARD.bat
-
-Open:
-http://localhost:8787
-
-## Main application
-
-Current known status:
-- Frontend live
-- Backend live
-- Backend health connected to database
-- Businesses endpoint returns real data
-
-Still pending:
-- Auth/login/register/logout/reset password
-- Admin role for safaribosafar@gmail.com
-- Admin edit sections
-- Social feed
-- Category images
-- Governorate/category filters
-
-## Next priority
-
-Do not touch Nabda API again.
-Next work should be:
-1. Auth and admin
-2. Social feed
-3. Business data loading
-4. Category images
-5. Filters
+No Bearer.

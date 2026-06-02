@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+﻿import React, { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   X, Lock, Mail, User, Shield, Sparkles, AlertCircle, Key, 
@@ -91,111 +91,111 @@ export default function AuthModal({
       pwd_mismatch: "Passwords do not match"
     },
     ar: {
-      title_login: "الدخول لمنصة شكو ماكو",
-      title_signup: "إنشاء حساب جديد",
-      desc_login: "سجّل الدخول ببريدك الإلكتروني لحفظ الأماكن المفضلة ونشر المنشورات والتواصل مع أصحاب المصالح.",
-      desc_signup: "انضم إلى الدليل التجاري العراقي والمنصة الأسرع نمواً للتواصل الاجتماعي والأعمال.",
-      email: "البريد الإلكتروني",
-      email_placeholder: "مثال: ali@gmail.com",
-      pwd: "كلمة المرور",
-      pwd_placeholder: "لا تقل عن 6 أحرف",
-      name: "الاسم الكامل",
-      name_placeholder: "مثال: علي البغدادي",
-      role_label: "التسجيل كـ",
-      explorer: "مستكشف نشط (زائر)",
-      explorer_desc: "تصفح المتاجر، واكتب مراجعات، واحفظ مصلحتك المفضلة.",
-      merchant: "صاحب مصلحة / متجر محلي",
-      merchant_desc: "أضف متجرك الخاص، وانشر عروض الحافلة، ووثّق علامتك.",
-      google_btn: "الدخول باستخدام حساب Google / جوميل",
-      submit_login: "تسجيل الدخول",
-      submit_signup: "إنشاء حساب وبدء الاستخدام",
-      create_prompt: "ليس لديك حساب؟ سجل حساباً مجانياً الآن",
-      login_prompt: "لديك حساب بالفعل؟ سجل دخولك",
-      preset_title: "حسابات تجريبية سريعة ومباشرة",
-      preset_desc: "اضغط لتجربة المنصة فوراً برتب مختلفة من دون الحاجة لإدخال بيانات أو كلمات مرور:",
-      preset_admin: "حساب المدير العام (مهدي المستشار)",
-      preset_owner: "حساب صاحب محل تجاري ومقاهي",
-      preset_explorer: "حساب زائر ومستكشف عراقي",
-      or: "أو",
-      loading: "جاري معالجة الطلب بأمان...",
-      success_registered: "تم إنشاء الحساب بنجاح! أهلاً بك في منصة شكو ماكو.",
-      success_logged: "أهلاً ومرحباً بك مجدداً! تم تسجيل الدخول.",
-      forgot_title: "إعادة تعيين كلمة المرور",
-      forgot_desc: "أدخل بريدك الإلكتروني وسنرسل لك رابط إعادة التعيين.",
-      forgot_btn: "إرسال رابط إعادة التعيين",
-      forgot_success: "إذا كان البريد موجوداً، فسيتم إرسال رابط إعادة التعيين.",
-      reset_title: "أدخل كلمة المرور الجديدة",
-      reset_desc: "أدخل كلمة المرور الجديدة أدناه.",
-      reset_btn: "تحديث كلمة المرور",
-      reset_success: "تم تحديث كلمة المرور بنجاح! يمكنك الآن تسجيل الدخول.",
-      forgot_link: "نسيت كلمة المرور؟",
-      back_to_login: "العودة لتسجيل الدخول",
-      token_label: "رمز إعادة التعيين",
-      new_pwd: "كلمة المرور الجديدة",
-      confirm_pwd: "تأكيد كلمة المرور",
-      pwd_mismatch: "كلمات المرور غير متطابقة"
+      title_login: "╪º┘ä╪»╪«┘ê┘ä ┘ä┘à┘å╪╡╪⌐ ╪┤┘â┘ê ┘à╪º┘â┘ê",
+      title_signup: "╪Ñ┘å╪┤╪º╪í ╪¡╪│╪º╪¿ ╪¼╪»┘è╪»",
+      desc_login: "╪│╪¼┘æ┘ä ╪º┘ä╪»╪«┘ê┘ä ╪¿╪¿╪▒┘è╪»┘â ╪º┘ä╪Ñ┘ä┘â╪¬╪▒┘ê┘å┘è ┘ä╪¡┘ü╪╕ ╪º┘ä╪ú┘à╪º┘â┘å ╪º┘ä┘à┘ü╪╢┘ä╪⌐ ┘ê┘å╪┤╪▒ ╪º┘ä┘à┘å╪┤┘ê╪▒╪º╪¬ ┘ê╪º┘ä╪¬┘ê╪º╪╡┘ä ┘à╪╣ ╪ú╪╡╪¡╪º╪¿ ╪º┘ä┘à╪╡╪º┘ä╪¡.",
+      desc_signup: "╪º┘å╪╢┘à ╪Ñ┘ä┘ë ╪º┘ä╪»┘ä┘è┘ä ╪º┘ä╪¬╪¼╪º╪▒┘è ╪º┘ä╪╣╪▒╪º┘é┘è ┘ê╪º┘ä┘à┘å╪╡╪⌐ ╪º┘ä╪ú╪│╪▒╪╣ ┘å┘à┘ê╪º┘ï ┘ä┘ä╪¬┘ê╪º╪╡┘ä ╪º┘ä╪º╪¼╪¬┘à╪º╪╣┘è ┘ê╪º┘ä╪ú╪╣┘à╪º┘ä.",
+      email: "╪º┘ä╪¿╪▒┘è╪» ╪º┘ä╪Ñ┘ä┘â╪¬╪▒┘ê┘å┘è",
+      email_placeholder: "┘à╪½╪º┘ä: ali@gmail.com",
+      pwd: "┘â┘ä┘à╪⌐ ╪º┘ä┘à╪▒┘ê╪▒",
+      pwd_placeholder: "┘ä╪º ╪¬┘é┘ä ╪╣┘å 6 ╪ú╪¡╪▒┘ü",
+      name: "╪º┘ä╪º╪│┘à ╪º┘ä┘â╪º┘à┘ä",
+      name_placeholder: "┘à╪½╪º┘ä: ╪╣┘ä┘è ╪º┘ä╪¿╪║╪»╪º╪»┘è",
+      role_label: "╪º┘ä╪¬╪│╪¼┘è┘ä ┘â┘Ç",
+      explorer: "┘à╪│╪¬┘â╪┤┘ü ┘å╪┤╪╖ (╪▓╪º╪ª╪▒)",
+      explorer_desc: "╪¬╪╡┘ü╪¡ ╪º┘ä┘à╪¬╪º╪¼╪▒╪î ┘ê╪º┘â╪¬╪¿ ┘à╪▒╪º╪¼╪╣╪º╪¬╪î ┘ê╪º╪¡┘ü╪╕ ┘à╪╡┘ä╪¡╪¬┘â ╪º┘ä┘à┘ü╪╢┘ä╪⌐.",
+      merchant: "╪╡╪º╪¡╪¿ ┘à╪╡┘ä╪¡╪⌐ / ┘à╪¬╪¼╪▒ ┘à╪¡┘ä┘è",
+      merchant_desc: "╪ú╪╢┘ü ┘à╪¬╪¼╪▒┘â ╪º┘ä╪«╪º╪╡╪î ┘ê╪º┘å╪┤╪▒ ╪╣╪▒┘ê╪╢ ╪º┘ä╪¡╪º┘ü┘ä╪⌐╪î ┘ê┘ê╪½┘æ┘é ╪╣┘ä╪º┘à╪¬┘â.",
+      google_btn: "╪º┘ä╪»╪«┘ê┘ä ╪¿╪º╪│╪¬╪«╪»╪º┘à ╪¡╪│╪º╪¿ Google / ╪¼┘ê┘à┘è┘ä",
+      submit_login: "╪¬╪│╪¼┘è┘ä ╪º┘ä╪»╪«┘ê┘ä",
+      submit_signup: "╪Ñ┘å╪┤╪º╪í ╪¡╪│╪º╪¿ ┘ê╪¿╪»╪í ╪º┘ä╪º╪│╪¬╪«╪»╪º┘à",
+      create_prompt: "┘ä┘è╪│ ┘ä╪»┘è┘â ╪¡╪│╪º╪¿╪ƒ ╪│╪¼┘ä ╪¡╪│╪º╪¿╪º┘ï ┘à╪¼╪º┘å┘è╪º┘ï ╪º┘ä╪ó┘å",
+      login_prompt: "┘ä╪»┘è┘â ╪¡╪│╪º╪¿ ╪¿╪º┘ä┘ü╪╣┘ä╪ƒ ╪│╪¼┘ä ╪»╪«┘ê┘ä┘â",
+      preset_title: "╪¡╪│╪º╪¿╪º╪¬ ╪¬╪¼╪▒┘è╪¿┘è╪⌐ ╪│╪▒┘è╪╣╪⌐ ┘ê┘à╪¿╪º╪┤╪▒╪⌐",
+      preset_desc: "╪º╪╢╪║╪╖ ┘ä╪¬╪¼╪▒╪¿╪⌐ ╪º┘ä┘à┘å╪╡╪⌐ ┘ü┘ê╪▒╪º┘ï ╪¿╪▒╪¬╪¿ ┘à╪«╪¬┘ä┘ü╪⌐ ┘à┘å ╪»┘ê┘å ╪º┘ä╪¡╪º╪¼╪⌐ ┘ä╪Ñ╪»╪«╪º┘ä ╪¿┘è╪º┘å╪º╪¬ ╪ú┘ê ┘â┘ä┘à╪º╪¬ ┘à╪▒┘ê╪▒:",
+      preset_admin: "╪¡╪│╪º╪¿ ╪º┘ä┘à╪»┘è╪▒ ╪º┘ä╪╣╪º┘à (┘à┘ç╪»┘è ╪º┘ä┘à╪│╪¬╪┤╪º╪▒)",
+      preset_owner: "╪¡╪│╪º╪¿ ╪╡╪º╪¡╪¿ ┘à╪¡┘ä ╪¬╪¼╪º╪▒┘è ┘ê┘à┘é╪º┘ç┘è",
+      preset_explorer: "╪¡╪│╪º╪¿ ╪▓╪º╪ª╪▒ ┘ê┘à╪│╪¬┘â╪┤┘ü ╪╣╪▒╪º┘é┘è",
+      or: "╪ú┘ê",
+      loading: "╪¼╪º╪▒┘è ┘à╪╣╪º┘ä╪¼╪⌐ ╪º┘ä╪╖┘ä╪¿ ╪¿╪ú┘à╪º┘å...",
+      success_registered: "╪¬┘à ╪Ñ┘å╪┤╪º╪í ╪º┘ä╪¡╪│╪º╪¿ ╪¿┘å╪¼╪º╪¡! ╪ú┘ç┘ä╪º┘ï ╪¿┘â ┘ü┘è ┘à┘å╪╡╪⌐ ╪┤┘â┘ê ┘à╪º┘â┘ê.",
+      success_logged: "╪ú┘ç┘ä╪º┘ï ┘ê┘à╪▒╪¡╪¿╪º┘ï ╪¿┘â ┘à╪¼╪»╪»╪º┘ï! ╪¬┘à ╪¬╪│╪¼┘è┘ä ╪º┘ä╪»╪«┘ê┘ä.",
+      forgot_title: "╪Ñ╪╣╪º╪»╪⌐ ╪¬╪╣┘è┘è┘å ┘â┘ä┘à╪⌐ ╪º┘ä┘à╪▒┘ê╪▒",
+      forgot_desc: "╪ú╪»╪«┘ä ╪¿╪▒┘è╪»┘â ╪º┘ä╪Ñ┘ä┘â╪¬╪▒┘ê┘å┘è ┘ê╪│┘å╪▒╪│┘ä ┘ä┘â ╪▒╪º╪¿╪╖ ╪Ñ╪╣╪º╪»╪⌐ ╪º┘ä╪¬╪╣┘è┘è┘å.",
+      forgot_btn: "╪Ñ╪▒╪│╪º┘ä ╪▒╪º╪¿╪╖ ╪Ñ╪╣╪º╪»╪⌐ ╪º┘ä╪¬╪╣┘è┘è┘å",
+      forgot_success: "╪Ñ╪░╪º ┘â╪º┘å ╪º┘ä╪¿╪▒┘è╪» ┘à┘ê╪¼┘ê╪»╪º┘ï╪î ┘ü╪│┘è╪¬┘à ╪Ñ╪▒╪│╪º┘ä ╪▒╪º╪¿╪╖ ╪Ñ╪╣╪º╪»╪⌐ ╪º┘ä╪¬╪╣┘è┘è┘å.",
+      reset_title: "╪ú╪»╪«┘ä ┘â┘ä┘à╪⌐ ╪º┘ä┘à╪▒┘ê╪▒ ╪º┘ä╪¼╪»┘è╪»╪⌐",
+      reset_desc: "╪ú╪»╪«┘ä ┘â┘ä┘à╪⌐ ╪º┘ä┘à╪▒┘ê╪▒ ╪º┘ä╪¼╪»┘è╪»╪⌐ ╪ú╪»┘å╪º┘ç.",
+      reset_btn: "╪¬╪¡╪»┘è╪½ ┘â┘ä┘à╪⌐ ╪º┘ä┘à╪▒┘ê╪▒",
+      reset_success: "╪¬┘à ╪¬╪¡╪»┘è╪½ ┘â┘ä┘à╪⌐ ╪º┘ä┘à╪▒┘ê╪▒ ╪¿┘å╪¼╪º╪¡! ┘è┘à┘â┘å┘â ╪º┘ä╪ó┘å ╪¬╪│╪¼┘è┘ä ╪º┘ä╪»╪«┘ê┘ä.",
+      forgot_link: "┘å╪│┘è╪¬ ┘â┘ä┘à╪⌐ ╪º┘ä┘à╪▒┘ê╪▒╪ƒ",
+      back_to_login: "╪º┘ä╪╣┘ê╪»╪⌐ ┘ä╪¬╪│╪¼┘è┘ä ╪º┘ä╪»╪«┘ê┘ä",
+      token_label: "╪▒┘à╪▓ ╪Ñ╪╣╪º╪»╪⌐ ╪º┘ä╪¬╪╣┘è┘è┘å",
+      new_pwd: "┘â┘ä┘à╪⌐ ╪º┘ä┘à╪▒┘ê╪▒ ╪º┘ä╪¼╪»┘è╪»╪⌐",
+      confirm_pwd: "╪¬╪ú┘â┘è╪» ┘â┘ä┘à╪⌐ ╪º┘ä┘à╪▒┘ê╪▒",
+      pwd_mismatch: "┘â┘ä┘à╪º╪¬ ╪º┘ä┘à╪▒┘ê╪▒ ╪║┘è╪▒ ┘à╪¬╪╖╪º╪¿┘é╪⌐"
     },
     ku: {
-      title_login: "چوونەژوور بۆ شەکو مەکو",
-      title_signup: "تۆمارکردنی ئەکاونتی نوێ",
-      desc_login: "بچۆ ژوورەوە بە ئیمەیڵەکەت یان ئەکاونتەکانت بۆ پاشکۆکردنی شوێنەکان و ڕاوبۆچوونەکانت.",
-      desc_signup: "ببە بە ئەندام لە خێراترین تۆڕی دۆزینەوەی شوێنە بازرگانییەکان و فرۆشگاکانی عێراق.",
-      email: "ناونیشانی ئیمەیڵ",
-      email_placeholder: "بۆ نموونە: ali@gmail.com",
-      pwd: "وشەی تێپەڕ",
-      pwd_placeholder: "کەمتر نەبێت لە 6 پیت",
-      name: "ناوی تەواو",
-      name_placeholder: "بۆ نموونە: عەلی بەغدادی",
-      role_label: "تۆمارکردنی ئەکاونت وەک",
-      explorer: "گەڕیدەی چالاک (سەردانکەر)",
-      explorer_desc: "فرۆشگاکان بدۆزەرەوە، پۆست بکە و شوێنەکان پاشەکەوت بکە.",
-      merchant: "خاوەن کار یان فرۆشگا",
-      merchant_desc: "شوێنەکەت زیاد بکە و پۆستی گرنگ بکە.",
-      google_btn: "چوونەژوورەوە بە حیسابی Google",
-      submit_login: "بچۆ ژوورەوە",
-      submit_signup: "تۆمارکردن و دەستپێکردن",
-      create_prompt: "ئەکاونتت نییە؟ دروستی بکە",
-      login_prompt: "حیسابت هەیە؟ ئێستا بچۆ ژوورەوە",
-      preset_title: "ئەکاونتی خێرا بۆ تاقیکردنەوەی خێرا",
-      preset_desc: "کلیل لەم ئەکاونتانە بکە بۆ تاقیکردنەوەی ڕاستەوخۆ بەبێ وشەی نهێنی:",
-      preset_admin: "ئەکاونتی بەڕێوەبەر (مەهدی)",
-      preset_owner: "بینینی خاوەن کار و فرۆشگا",
-      preset_explorer: "بەکارهێنەری ئاسایی",
-      or: "یان",
-      loading: "خەریکە پرۆسێس دەکرێت...",
-      success_registered: "ئەکاونتەکەت سەرکەوتووانە دروستکرا! بەخێربێیت.",
-      success_logged: "بەخێربێیتەوە! چوونەژوورەوە سەرکەوتوو بوو.",
-      forgot_title: "وشەی نهێنی بگۆڕە",
-      forgot_desc: "ئیمەیڵەکەت بنووسە و لینکی گۆڕینەوە بۆت دەنێردرێت.",
-      forgot_btn: "لینکی گۆڕینەوە بنێرە",
-      forgot_success: "ئەگەر ئیمەیڵەکە هەبێت، لینکی گۆڕینەوەی وشەی نهێنی دەنێردرێت.",
-      reset_title: "وشەی نهێنی نوێ بنووسە",
-      reset_desc: "وشەی نهێنی نوێکەت لە خوارەوە بنووسە.",
-      reset_btn: "وشەی نهێنی نوێ بکە",
-      reset_success: "وشەی نهێنی بە سەرکەوتوویی گۆڕدرا! ئێستا دەتوانیت بچیی ژوورەوە.",
-      forgot_link: "وشەی نهێنیت بیرکردۆتەوە؟",
-      back_to_login: "گەڕانەوە بۆ چوونەژوورەوە",
-      token_label: "کۆدی گۆڕینەوە",
-      new_pwd: "وشەی نهێنی نوێ",
-      confirm_pwd: "دووبارەکردنەوەی وشەی نهێنی",
-      pwd_mismatch: "وشەی نهێنیەکان یەک ناگرنەوە"
+      title_login: "┌å┘ê┘ê┘å█ò┌ÿ┘ê┘ê╪▒ ╪¿█å ╪┤█ò┌⌐┘ê ┘à█ò┌⌐┘ê",
+      title_signup: "╪¬█å┘à╪º╪▒┌⌐╪▒╪»┘å█î ╪ª█ò┌⌐╪º┘ê┘å╪¬█î ┘å┘ê█Ä",
+      desc_login: "╪¿┌å█å ┌ÿ┘ê┘ê╪▒█ò┘ê█ò ╪¿█ò ╪ª█î┘à█ò█î┌╡█ò┌⌐█ò╪¬ █î╪º┘å ╪ª█ò┌⌐╪º┘ê┘å╪¬█ò┌⌐╪º┘å╪¬ ╪¿█å ┘╛╪º╪┤┌⌐█å┌⌐╪▒╪»┘å█î ╪┤┘ê█Ä┘å█ò┌⌐╪º┘å ┘ê ┌ò╪º┘ê╪¿█å┌å┘ê┘ê┘å█ò┌⌐╪º┘å╪¬.",
+      desc_signup: "╪¿╪¿█ò ╪¿█ò ╪ª█ò┘å╪»╪º┘à ┘ä█ò ╪«█Ä╪▒╪º╪¬╪▒█î┘å ╪¬█å┌ò█î ╪»█å╪▓█î┘å█ò┘ê█ò█î ╪┤┘ê█Ä┘å█ò ╪¿╪º╪▓╪▒┌»╪º┘å█î█î█ò┌⌐╪º┘å ┘ê ┘ü╪▒█å╪┤┌»╪º┌⌐╪º┘å█î ╪╣█Ä╪▒╪º┘é.",
+      email: "┘å╪º┘ê┘å█î╪┤╪º┘å█î ╪ª█î┘à█ò█î┌╡",
+      email_placeholder: "╪¿█å ┘å┘à┘ê┘ê┘å█ò: ali@gmail.com",
+      pwd: "┘ê╪┤█ò█î ╪¬█Ä┘╛█ò┌ò",
+      pwd_placeholder: "┌⌐█ò┘à╪¬╪▒ ┘å█ò╪¿█Ä╪¬ ┘ä█ò 6 ┘╛█î╪¬",
+      name: "┘å╪º┘ê█î ╪¬█ò┘ê╪º┘ê",
+      name_placeholder: "╪¿█å ┘å┘à┘ê┘ê┘å█ò: ╪╣█ò┘ä█î ╪¿█ò╪║╪»╪º╪»█î",
+      role_label: "╪¬█å┘à╪º╪▒┌⌐╪▒╪»┘å█î ╪ª█ò┌⌐╪º┘ê┘å╪¬ ┘ê█ò┌⌐",
+      explorer: "┌»█ò┌ò█î╪»█ò█î ┌å╪º┘ä╪º┌⌐ (╪│█ò╪▒╪»╪º┘å┌⌐█ò╪▒)",
+      explorer_desc: "┘ü╪▒█å╪┤┌»╪º┌⌐╪º┘å ╪¿╪»█å╪▓█ò╪▒█ò┘ê█ò╪î ┘╛█å╪│╪¬ ╪¿┌⌐█ò ┘ê ╪┤┘ê█Ä┘å█ò┌⌐╪º┘å ┘╛╪º╪┤█ò┌⌐█ò┘ê╪¬ ╪¿┌⌐█ò.",
+      merchant: "╪«╪º┘ê█ò┘å ┌⌐╪º╪▒ █î╪º┘å ┘ü╪▒█å╪┤┌»╪º",
+      merchant_desc: "╪┤┘ê█Ä┘å█ò┌⌐█ò╪¬ ╪▓█î╪º╪» ╪¿┌⌐█ò ┘ê ┘╛█å╪│╪¬█î ┌»╪▒┘å┌» ╪¿┌⌐█ò.",
+      google_btn: "┌å┘ê┘ê┘å█ò┌ÿ┘ê┘ê╪▒█ò┘ê█ò ╪¿█ò ╪¡█î╪│╪º╪¿█î Google",
+      submit_login: "╪¿┌å█å ┌ÿ┘ê┘ê╪▒█ò┘ê█ò",
+      submit_signup: "╪¬█å┘à╪º╪▒┌⌐╪▒╪»┘å ┘ê ╪»█ò╪│╪¬┘╛█Ä┌⌐╪▒╪»┘å",
+      create_prompt: "╪ª█ò┌⌐╪º┘ê┘å╪¬╪¬ ┘å█î█î█ò╪ƒ ╪»╪▒┘ê╪│╪¬█î ╪¿┌⌐█ò",
+      login_prompt: "╪¡█î╪│╪º╪¿╪¬ ┘ç█ò█î█ò╪ƒ ╪ª█Ä╪│╪¬╪º ╪¿┌å█å ┌ÿ┘ê┘ê╪▒█ò┘ê█ò",
+      preset_title: "╪ª█ò┌⌐╪º┘ê┘å╪¬█î ╪«█Ä╪▒╪º ╪¿█å ╪¬╪º┘é█î┌⌐╪▒╪»┘å█ò┘ê█ò█î ╪«█Ä╪▒╪º",
+      preset_desc: "┌⌐┘ä█î┘ä ┘ä█ò┘à ╪ª█ò┌⌐╪º┘ê┘å╪¬╪º┘å█ò ╪¿┌⌐█ò ╪¿█å ╪¬╪º┘é█î┌⌐╪▒╪»┘å█ò┘ê█ò█î ┌ò╪º╪│╪¬█ò┘ê╪«█å ╪¿█ò╪¿█Ä ┘ê╪┤█ò█î ┘å┘ç█Ä┘å█î:",
+      preset_admin: "╪ª█ò┌⌐╪º┘ê┘å╪¬█î ╪¿█ò┌ò█Ä┘ê█ò╪¿█ò╪▒ (┘à█ò┘ç╪»█î)",
+      preset_owner: "╪¿█î┘å█î┘å█î ╪«╪º┘ê█ò┘å ┌⌐╪º╪▒ ┘ê ┘ü╪▒█å╪┤┌»╪º",
+      preset_explorer: "╪¿█ò┌⌐╪º╪▒┘ç█Ä┘å█ò╪▒█î ╪ª╪º╪│╪º█î█î",
+      or: "█î╪º┘å",
+      loading: "╪«█ò╪▒█î┌⌐█ò ┘╛╪▒█å╪│█Ä╪│ ╪»█ò┌⌐╪▒█Ä╪¬...",
+      success_registered: "╪ª█ò┌⌐╪º┘ê┘å╪¬█ò┌⌐█ò╪¬ ╪│█ò╪▒┌⌐█ò┘ê╪¬┘ê┘ê╪º┘å█ò ╪»╪▒┘ê╪│╪¬┌⌐╪▒╪º! ╪¿█ò╪«█Ä╪▒╪¿█Ä█î╪¬.",
+      success_logged: "╪¿█ò╪«█Ä╪▒╪¿█Ä█î╪¬█ò┘ê█ò! ┌å┘ê┘ê┘å█ò┌ÿ┘ê┘ê╪▒█ò┘ê█ò ╪│█ò╪▒┌⌐█ò┘ê╪¬┘ê┘ê ╪¿┘ê┘ê.",
+      forgot_title: "┘ê╪┤█ò█î ┘å┘ç█Ä┘å█î ╪¿┌»█å┌ò█ò",
+      forgot_desc: "╪ª█î┘à█ò█î┌╡█ò┌⌐█ò╪¬ ╪¿┘å┘ê┘ê╪│█ò ┘ê ┘ä█î┘å┌⌐█î ┌»█å┌ò█î┘å█ò┘ê█ò ╪¿█å╪¬ ╪»█ò┘å█Ä╪▒╪»╪▒█Ä╪¬.",
+      forgot_btn: "┘ä█î┘å┌⌐█î ┌»█å┌ò█î┘å█ò┘ê█ò ╪¿┘å█Ä╪▒█ò",
+      forgot_success: "╪ª█ò┌»█ò╪▒ ╪ª█î┘à█ò█î┌╡█ò┌⌐█ò ┘ç█ò╪¿█Ä╪¬╪î ┘ä█î┘å┌⌐█î ┌»█å┌ò█î┘å█ò┘ê█ò█î ┘ê╪┤█ò█î ┘å┘ç█Ä┘å█î ╪»█ò┘å█Ä╪▒╪»╪▒█Ä╪¬.",
+      reset_title: "┘ê╪┤█ò█î ┘å┘ç█Ä┘å█î ┘å┘ê█Ä ╪¿┘å┘ê┘ê╪│█ò",
+      reset_desc: "┘ê╪┤█ò█î ┘å┘ç█Ä┘å█î ┘å┘ê█Ä┌⌐█ò╪¬ ┘ä█ò ╪«┘ê╪º╪▒█ò┘ê█ò ╪¿┘å┘ê┘ê╪│█ò.",
+      reset_btn: "┘ê╪┤█ò█î ┘å┘ç█Ä┘å█î ┘å┘ê█Ä ╪¿┌⌐█ò",
+      reset_success: "┘ê╪┤█ò█î ┘å┘ç█Ä┘å█î ╪¿█ò ╪│█ò╪▒┌⌐█ò┘ê╪¬┘ê┘ê█î█î ┌»█å┌ò╪»╪▒╪º! ╪ª█Ä╪│╪¬╪º ╪»█ò╪¬┘ê╪º┘å█î╪¬ ╪¿┌å█î█î ┌ÿ┘ê┘ê╪▒█ò┘ê█ò.",
+      forgot_link: "┘ê╪┤█ò█î ┘å┘ç█Ä┘å█î╪¬ ╪¿█î╪▒┌⌐╪▒╪»█å╪¬█ò┘ê█ò╪ƒ",
+      back_to_login: "┌»█ò┌ò╪º┘å█ò┘ê█ò ╪¿█å ┌å┘ê┘ê┘å█ò┌ÿ┘ê┘ê╪▒█ò┘ê█ò",
+      token_label: "┌⌐█å╪»█î ┌»█å┌ò█î┘å█ò┘ê█ò",
+      new_pwd: "┘ê╪┤█ò█î ┘å┘ç█Ä┘å█î ┘å┘ê█Ä",
+      confirm_pwd: "╪»┘ê┘ê╪¿╪º╪▒█ò┌⌐╪▒╪»┘å█ò┘ê█ò█î ┘ê╪┤█ò█î ┘å┘ç█Ä┘å█î",
+      pwd_mismatch: "┘ê╪┤█ò█î ┘å┘ç█Ä┘å█î█ò┌⌐╪º┘å █î█ò┌⌐ ┘å╪º┌»╪▒┘å█ò┘ê█ò"
     }
   }[currentLang];
 
   const handleGoogleClick = async () => {
     // Google auth not implemented in Cloudflare backend yet
-    setErrorMsg(currentLang === 'en' ? 'Google auth not available yet' : 'تسجيل الدخول بـ Google غير متاح حالياً');
+    setErrorMsg(currentLang === 'en' ? 'Google auth not available yet' : '╪¬╪│╪¼┘è┘ä ╪º┘ä╪»╪«┘ê┘ä ╪¿┘Ç Google ╪║┘è╪▒ ┘à╪¬╪º╪¡ ╪¡╪º┘ä┘è╪º┘ï');
   };
 
   const handleEmailAuthSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) return;
     if (isSignUp && !displayName) {
-      setErrorMsg(currentLang === 'en' ? 'Full name is required to sign up' : 'الاسم الكامل مطلوب للتسجيل');
+      setErrorMsg(currentLang === 'en' ? 'Full name is required to sign up' : '╪º┘ä╪º╪│┘à ╪º┘ä┘â╪º┘à┘ä ┘à╪╖┘ä┘ê╪¿ ┘ä┘ä╪¬╪│╪¼┘è┘ä');
       return;
     }
     if (password.length < 6) {
-      setErrorMsg(currentLang === 'en' ? 'Password must be at least 6 characters' : 'يجب أن لا تقل كلمة المرور عن 6 أحرف');
+      setErrorMsg(currentLang === 'en' ? 'Password must be at least 6 characters' : '┘è╪¼╪¿ ╪ú┘å ┘ä╪º ╪¬┘é┘ä ┘â┘ä┘à╪⌐ ╪º┘ä┘à╪▒┘ê╪▒ ╪╣┘å 6 ╪ú╪¡╪▒┘ü');
       return;
     }
 
@@ -226,15 +226,15 @@ export default function AuthModal({
       if (localizedErr.includes('user-not-found') || localizedErr.includes('wrong-password') || localizedErr.includes('invalid-credential')) {
         localizedErr = currentLang === 'en' 
           ? 'Invalid email or incorrect password. Please try again.' 
-          : 'البريد الإلكتروني أو كلمة المرور غير صحيحة. يرجى المحاولة ثانية.';
+          : '╪º┘ä╪¿╪▒┘è╪» ╪º┘ä╪Ñ┘ä┘â╪¬╪▒┘ê┘å┘è ╪ú┘ê ┘â┘ä┘à╪⌐ ╪º┘ä┘à╪▒┘ê╪▒ ╪║┘è╪▒ ╪╡╪¡┘è╪¡╪⌐. ┘è╪▒╪¼┘ë ╪º┘ä┘à╪¡╪º┘ê┘ä╪⌐ ╪½╪º┘å┘è╪⌐.';
       } else if (localizedErr.includes('email-already-in-use')) {
         localizedErr = currentLang === 'en'
           ? 'This email address is already registered. Please login instead.'
-          : 'هذا البريد الإلكتروني مسجل بالفعل. يرجى اختيار تسجيل الدخول.';
+          : '┘ç╪░╪º ╪º┘ä╪¿╪▒┘è╪» ╪º┘ä╪Ñ┘ä┘â╪¬╪▒┘ê┘å┘è ┘à╪│╪¼┘ä ╪¿╪º┘ä┘ü╪╣┘ä. ┘è╪▒╪¼┘ë ╪º╪«╪¬┘è╪º╪▒ ╪¬╪│╪¼┘è┘ä ╪º┘ä╪»╪«┘ê┘ä.';
       } else if (localizedErr.includes('invalid-email')) {
-        localizedErr = currentLang === 'en' ? 'Invalid email format' : 'صيغة البريد الإلكتروني غير صالحة';
+        localizedErr = currentLang === 'en' ? 'Invalid email format' : '╪╡┘è╪║╪⌐ ╪º┘ä╪¿╪▒┘è╪» ╪º┘ä╪Ñ┘ä┘â╪¬╪▒┘ê┘å┘è ╪║┘è╪▒ ╪╡╪º┘ä╪¡╪⌐';
       } else if (localizedErr.includes('weak-password')) {
-        localizedErr = currentLang === 'en' ? 'Weak password! Use at least 6 characters.' : 'كلمة المرور ضعيفة جداً! يرجى كتابة 6 أحرف على الأقل.';
+        localizedErr = currentLang === 'en' ? 'Weak password! Use at least 6 characters.' : '┘â┘ä┘à╪⌐ ╪º┘ä┘à╪▒┘ê╪▒ ╪╢╪╣┘è┘ü╪⌐ ╪¼╪»╪º┘ï! ┘è╪▒╪¼┘ë ┘â╪¬╪º╪¿╪⌐ 6 ╪ú╪¡╪▒┘ü ╪╣┘ä┘ë ╪º┘ä╪ú┘é┘ä.';
       }
       setErrorMsg(localizedErr);
     } finally {
@@ -247,8 +247,8 @@ export default function AuthModal({
       currentLang === 'en'
         ? 'Quick preset login is disabled. Please log in with a real account.'
         : currentLang === 'ku'
-        ? 'چوونەژووری خێرا داخراوە. تکایە بە هەژماری ڕاستەقینە بچۆ ژوورەوە.'
-        : 'تسجيل الدخول السريع معطّل. يرجى تسجيل الدخول بحساب حقيقي.'
+        ? '┌å┘ê┘ê┘å█ò┌ÿ┘ê┘ê╪▒█î ╪«█Ä╪▒╪º ╪»╪º╪«╪▒╪º┘ê█ò. ╪¬┌⌐╪º█î█ò ╪¿█ò ┘ç█ò┌ÿ┘à╪º╪▒█î ┌ò╪º╪│╪¬█ò┘é█î┘å█ò ╪¿┌å█å ┌ÿ┘ê┘ê╪▒█ò┘ê█ò.'
+        : '╪¬╪│╪¼┘è┘ä ╪º┘ä╪»╪«┘ê┘ä ╪º┘ä╪│╪▒┘è╪╣ ┘à╪╣╪╖┘æ┘ä. ┘è╪▒╪¼┘ë ╪¬╪│╪¼┘è┘ä ╪º┘ä╪»╪«┘ê┘ä ╪¿╪¡╪│╪º╪¿ ╪¡┘é┘è┘é┘è.'
     );
   };
 
@@ -278,7 +278,7 @@ export default function AuthModal({
       return;
     }
     if (newPassword.length < 8) {
-      setErrorMsg(currentLang === 'en' ? 'Password must be at least 8 characters' : 'يجب أن لا تقل كلمة المرور عن 8 أحرف');
+      setErrorMsg(currentLang === 'en' ? 'Password must be at least 8 characters' : '┘è╪¼╪¿ ╪ú┘å ┘ä╪º ╪¬┘é┘ä ┘â┘ä┘à╪⌐ ╪º┘ä┘à╪▒┘ê╪▒ ╪╣┘å 8 ╪ú╪¡╪▒┘ü');
       return;
     }
 
@@ -289,7 +289,7 @@ export default function AuthModal({
     try {
       const token = resetTokenRef.current?.value.trim() || initialResetToken;
       if (!token) {
-        setErrorMsg(currentLang === 'en' ? 'Reset token is required' : 'رمز إعادة التعيين مطلوب');
+        setErrorMsg(currentLang === 'en' ? 'Reset token is required' : '╪▒┘à╪▓ ╪Ñ╪╣╪º╪»╪⌐ ╪º┘ä╪¬╪╣┘è┘è┘å ┘à╪╖┘ä┘ê╪¿');
         return;
       }
       await authApi.resetPassword(email.trim(), token, newPassword);
@@ -488,7 +488,7 @@ export default function AuthModal({
                     }`}
                   >
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-sm">🧭</span>
+                      <span className="text-sm">≡ƒº¡</span>
                       <span className="text-[11px] font-black">{L.explorer}</span>
                     </div>
                     <p className="text-[9px] text-zinc-400 font-sans tracking-tight leading-normal">
@@ -506,7 +506,7 @@ export default function AuthModal({
                     }`}
                   >
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-sm">🏢</span>
+                      <span className="text-sm">≡ƒÅó</span>
                       <span className="text-[11px] font-black text-amber-400">{L.merchant}</span>
                     </div>
                     <p className="text-[9px] text-zinc-400 font-sans tracking-tight leading-normal">
@@ -716,21 +716,21 @@ export default function AuthModal({
                 onClick={handleSandboxPresetClick}
                 className="px-2 py-1.5 bg-red-950/40 hover:bg-red-900/50 border border-red-500/20 text-red-200 text-[9px] font-black rounded-lg transition-all text-center cursor-pointer font-mono"
               >
-                🛠️ Admin Panel
+                ≡ƒ¢á∩╕Å Admin Panel
               </button>
               <button
                 type="button"
                 onClick={handleSandboxPresetClick}
                 className="px-2 py-1.5 bg-amber-950/40 hover:bg-amber-900/55 border border-amber-500/25 text-amber-200 text-[9px] font-black rounded-lg transition-all text-center cursor-pointer font-mono"
               >
-                🏢 Shop Owner
+                ≡ƒÅó Shop Owner
               </button>
               <button
                 type="button"
                 onClick={handleSandboxPresetClick}
                 className="px-2 py-1.5 bg-blue-950/45 hover:bg-blue-900/50 border border-blue-500/20 text-sky-200 text-[9px] font-black rounded-lg transition-all text-center cursor-pointer font-mono"
               >
-                🧭 Explorer User
+                ≡ƒº¡ Explorer User
               </button>
             </div>
           </div>
