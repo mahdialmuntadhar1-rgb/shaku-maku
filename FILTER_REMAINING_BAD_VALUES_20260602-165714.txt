@@ -1,0 +1,6 @@
+﻿
+Path                                                                          LineNumber Line                                       
+----                                                                          ---------- ----                                       
+C:\Users\HB LAPTOP STORE\Documents\SHETA\shaku-maku\src\lib\filterMappings.ts         27   { label_ar: "مطاعم وكافيهات", label_en...
+
+

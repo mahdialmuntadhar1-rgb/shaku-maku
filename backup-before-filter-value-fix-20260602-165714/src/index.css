@@ -1,0 +1,318 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Cairo", "Noto Naskh Arabic", "Noto Sans Arabic", "Plus Jakarta Sans", "Segoe UI", Tahoma, ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  
+  --color-luxury-bg: #1A1A1A;
+  --color-luxury-gold: #C8A95F;
+  --color-luxury-teal: #0F2E2F;
+  --color-luxury-gold-hover: #D8B96F;
+  --color-luxury-neutral: #F9F9F9;
+  --color-luxury-coral: #FF6B4A;
+  --color-luxury-coral-hover: #C8A95F;
+  --color-luxury-violet: #9B5DE5;
+}
+
+body {
+  background-color: #F9F9F9; /* Soft Off-white luxury background */
+  color: #1A1A1A; /* Deep Charcoal primary text */
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+}
+
+html {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+:lang(ar),
+:lang(ku),
+[dir="rtl"] {
+  font-family: "Cairo", "Noto Naskh Arabic", "Noto Sans Arabic", "Segoe UI", Tahoma, Arial, sans-serif;
+}
+
+bdi,
+.bidi-isolate {
+  unicode-bidi: isolate;
+}
+
+textarea,
+input,
+[contenteditable="true"] {
+  unicode-bidi: plaintext;
+}
+
+[dir="rtl"] textarea,
+[dir="rtl"] input {
+  text-align: right;
+}
+
+/* Stunning custom dark-glass scrollbar for smooth scrolling feeds */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(30, 27, 75, 0.1);
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.3);
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 92, 246, 0.6);
+}
+
+/* Aesthetic glowing pulse elements */
+@keyframes pulseGlow {
+  0%, 100% {
+    text-shadow: 0 0 10px rgba(34, 211, 238, 0.3);
+  }
+  50% {
+    text-shadow: 0 0 20px rgba(34, 211, 238, 0.7), 0 0 30px rgba(139, 92, 246, 0.4);
+  }
+}
+
+.glow-title {
+  animation: pulseGlow 4s infinite;
+}
+
+/* Saku Maku custom shake animation for deals */
+@keyframes gentleShake {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-3deg); }
+  75% { transform: rotate(3deg); }
+}
+
+.animate-shake {
+  animation: gentleShake 2s infinite ease-in-out;
+}
+
+/* PWA Install Button glowing pulse */
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(200, 169, 95, 0.3), 0 0 16px rgba(15, 46, 47, 0.2);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(200, 169, 95, 0.6), 0 0 40px rgba(15, 46, 47, 0.4);
+    transform: scale(1.03);
+  }
+}
+
+.animate-glow-pulse {
+  animation: glowPulse 2.5s infinite ease-in-out;
+}
+
+/* ============================================================
+   PWA INSTALL BUTTON FIX
+   Purpose:
+   - Do not cover login/register forms
+   - Move PWA install button to left-middle side
+   - Make it slide/popup from left
+   ============================================================ */
+
+button[id*="pwa" i],
+button[class*="pwa" i],
+button[aria-label*="install" i],
+button[title*="install" i],
+a[id*="pwa" i],
+a[class*="pwa" i],
+.pwa-install-button,
+.install-pwa-button,
+.install-button,
+.add-to-home-button,
+#pwa-install-button,
+#install-pwa-button {
+  position: fixed !important;
+  left: 14px !important;
+  right: auto !important;
+  top: 50% !important;
+  bottom: auto !important;
+  transform: translateY(-50%) !important;
+  z-index: 40 !important;
+
+  max-width: 150px !important;
+  min-width: 44px !important;
+  min-height: 44px !important;
+
+  border-radius: 999px !important;
+  padding: 10px 14px !important;
+
+  background: linear-gradient(135deg, #c8a95f, #f2db92) !important;
+  color: #101415 !important;
+  box-shadow: 0 12px 30px rgba(0,0,0,.28) !important;
+
+  animation: shakuMakuPwaSlideIn .45s ease-out both !important;
+}
+
+@keyframes shakuMakuPwaSlideIn {
+  from {
+    opacity: 0;
+    transform: translate(-110%, -50%) scale(.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, -50%) scale(1);
+  }
+}
+
+/* On small phones, keep it smaller so it does not block registration */
+@media (max-width: 640px) {
+  button[id*="pwa" i],
+  button[class*="pwa" i],
+  button[aria-label*="install" i],
+  button[title*="install" i],
+  a[id*="pwa" i],
+  a[class*="pwa" i],
+  .pwa-install-button,
+  .install-pwa-button,
+  .install-button,
+  .add-to-home-button,
+  #pwa-install-button,
+  #install-pwa-button {
+    left: 8px !important;
+    top: 50% !important;
+    max-width: 54px !important;
+    width: 48px !important;
+    height: 48px !important;
+    padding: 8px !important;
+    overflow: hidden !important;
+    white-space: nowrap !important;
+    font-size: 0 !important;
+  }
+
+  button[id*="pwa" i]::before,
+  button[class*="pwa" i]::before,
+  button[aria-label*="install" i]::before,
+  button[title*="install" i]::before,
+  .pwa-install-button::before,
+  .install-pwa-button::before,
+  .install-button::before,
+  .add-to-home-button::before,
+  #pwa-install-button::before,
+  #install-pwa-button::before {
+    content: "📲";
+    font-size: 22px;
+  }
+}
+
+/* Make sure auth pages/forms stay above normal content and are not pushed */
+form,
+.auth-form,
+.login-form,
+.register-form,
+.signup-form,
+[data-auth],
+[data-login],
+[data-register] {
+  position: relative;
+  z-index: 10;
+}
+
+/* ============================================================
+   PWA INSTALL BUTTON FIX
+   Purpose:
+   - Do not cover login/register forms
+   - Move PWA install button to left-middle side
+   - Make it slide/popup from left
+   ============================================================ */
+
+button[id*="pwa" i],
+button[class*="pwa" i],
+button[aria-label*="install" i],
+button[title*="install" i],
+a[id*="pwa" i],
+a[class*="pwa" i],
+.pwa-install-button,
+.install-pwa-button,
+.install-button,
+.add-to-home-button,
+#pwa-install-button,
+#install-pwa-button {
+  position: fixed !important;
+  left: 14px !important;
+  right: auto !important;
+  top: 50% !important;
+  bottom: auto !important;
+  transform: translateY(-50%) !important;
+  z-index: 40 !important;
+
+  max-width: 150px !important;
+  min-width: 44px !important;
+  min-height: 44px !important;
+
+  border-radius: 999px !important;
+  padding: 10px 14px !important;
+
+  background: linear-gradient(135deg, #c8a95f, #f2db92) !important;
+  color: #101415 !important;
+  box-shadow: 0 12px 30px rgba(0,0,0,.28) !important;
+
+  animation: shakuMakuPwaSlideIn .45s ease-out both !important;
+}
+
+@keyframes shakuMakuPwaSlideIn {
+  from {
+    opacity: 0;
+    transform: translate(-110%, -50%) scale(.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, -50%) scale(1);
+  }
+}
+
+/* On small phones, keep it smaller so it does not block registration */
+@media (max-width: 640px) {
+  button[id*="pwa" i],
+  button[class*="pwa" i],
+  button[aria-label*="install" i],
+  button[title*="install" i],
+  a[id*="pwa" i],
+  a[class*="pwa" i],
+  .pwa-install-button,
+  .install-pwa-button,
+  .install-button,
+  .add-to-home-button,
+  #pwa-install-button,
+  #install-pwa-button {
+    left: 8px !important;
+    top: 50% !important;
+    max-width: 54px !important;
+    width: 48px !important;
+    height: 48px !important;
+    padding: 8px !important;
+    overflow: hidden !important;
+    white-space: nowrap !important;
+    font-size: 0 !important;
+  }
+
+  button[id*="pwa" i]::before,
+  button[class*="pwa" i]::before,
+  button[aria-label*="install" i]::before,
+  button[title*="install" i]::before,
+  .pwa-install-button::before,
+  .install-pwa-button::before,
+  .install-button::before,
+  .add-to-home-button::before,
+  #pwa-install-button::before,
+  #install-pwa-button::before {
+    content: "📲";
+    font-size: 22px;
+  }
+}
+
+/* Make sure auth pages/forms stay above normal content and are not pushed */
+form,
+.auth-form,
+.login-form,
+.register-form,
+.signup-form,
+[data-auth],
+[data-login],
+[data-register] {
+  position: relative;
+  z-index: 10;
+}

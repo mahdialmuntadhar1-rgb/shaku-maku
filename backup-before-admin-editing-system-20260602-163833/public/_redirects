@@ -1,0 +1,2 @@
+﻿/api/* https://shaku-maku.mahdialmuntadhar1.workers.dev/api/:splat 200
+/health https://shaku-maku.mahdialmuntadhar1.workers.dev/health 200
