@@ -645,6 +645,12 @@ export default function App() {
       return govMatch && catMatch && keywordMatch;
     });
   }, [businesses, selectedGov, selectedCategory, searchQuery, currentLang]);
+  // Safe frontend pagination flags.
+  // The app currently fetches a large filtered batch from the backend, so this prevents a runtime crash
+  // when older JSX still references hasMore.
+  const hasMore = false;
+  const loadMoreBusinesses = () => {};
+  const handleLoadMoreBusinesses = () => {};
 
   // Handle Likes state toggle (local state for now, API support needed)
   const handleToggleLike = async (bizId: string) => {
@@ -1348,5 +1354,6 @@ export default function App() {
     </div>
   );
 }
+
 
 
