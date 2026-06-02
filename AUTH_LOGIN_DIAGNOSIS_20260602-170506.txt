@@ -1,0 +1,303 @@
+﻿AUTH LOGIN DIAGNOSIS 20260602-170506
+Backend: https://shaku-maku.mahdialmuntadhar1.workers.dev
+Database: shaku_maku_db
+Email tested: 
+
+1) Backend health
+{
+    "ok":  true,
+    "service":  "shaku-maku-api",
+    "database":  "connected"
+}
+
+2) Login endpoint
+HTTP 400
+
+
+3) Skipped /auth/me because no token.
+
+4) Password reset endpoints
+
+Testing /api/auth/forgot-password
+HTTP 400
+
+
+Testing /api/auth/request-reset
+HTTP 404
+
+
+5) D1 auth tables
+
+SQL: SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;
+
+ Γ¢à∩╕Å wrangler 4.95.0 (update available 4.96.0)
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+Resource location: remote 
+
+≡ƒîÇ Executing on remote database shaku_maku_db (6e1cf3c7-0b05-4e85-bae8-83e96044a864):
+≡ƒîÇ To execute on your local development database, remove the --remote flag from your wrangler command.
+≡ƒÜú Executed 1 command in 0.25ms
+[
+  {
+    "results": [
+      {
+        "name": "_cf_KV"
+      },
+      {
+        "name": "admin_users"
+      },
+      {
+        "name": "business_claims"
+      },
+      {
+        "name": "business_owners"
+      },
+      {
+        "name": "businesses"
+      },
+      {
+        "name": "cms_sections"
+      },
+      {
+        "name": "comments"
+      },
+      {
+        "name": "likes"
+      },
+      {
+        "name": "password_reset_tokens"
+      },
+      {
+        "name": "posts"
+      },
+      {
+        "name": "saves"
+      },
+      {
+        "name": "social_feed_posts"
+      },
+      {
+        "name": "sqlite_sequence"
+      },
+      {
+        "name": "users"
+      }
+    ],
+    "success": true,
+    "meta": {
+      "served_by": "v3-prod",
+      "served_by_region": "EEUR",
+      "served_by_colo": "FRA",
+      "served_by_primary": true,
+      "timings": {
+        "sql_duration_ms": 0.2517
+      },
+      "duration": 0.2517,
+      "changes": 0,
+      "last_row_id": 0,
+      "changed_db": false,
+      "size_after": 4472832,
+      "rows_read": 58,
+      "rows_written": 0,
+      "total_attempts": 1
+    }
+  }
+]
+
+
+SQL: PRAGMA table_info(users);
+
+ Γ¢à∩╕Å wrangler 4.95.0 (update available 4.96.0)
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+Resource location: remote 
+
+≡ƒîÇ Executing on remote database shaku_maku_db (6e1cf3c7-0b05-4e85-bae8-83e96044a864):
+≡ƒîÇ To execute on your local development database, remove the --remote flag from your wrangler command.
+≡ƒÜú Executed 1 command in 0.34ms
+[
+  {
+    "results": [
+      {
+        "cid": 0,
+        "name": "id",
+        "type": "TEXT",
+        "notnull": 0,
+        "dflt_value": null,
+        "pk": 1
+      },
+      {
+        "cid": 1,
+        "name": "email",
+        "type": "TEXT",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 2,
+        "name": "password_hash",
+        "type": "TEXT",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 3,
+        "name": "name",
+        "type": "TEXT",
+        "notnull": 0,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 4,
+        "name": "role",
+        "type": "TEXT",
+        "notnull": 0,
+        "dflt_value": "'user'",
+        "pk": 0
+      },
+      {
+        "cid": 5,
+        "name": "is_admin",
+        "type": "INTEGER",
+        "notnull": 0,
+        "dflt_value": "0",
+        "pk": 0
+      },
+      {
+        "cid": 6,
+        "name": "photo_url",
+        "type": "TEXT",
+        "notnull": 0,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 7,
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": 0,
+        "dflt_value": "datetime('now')",
+        "pk": 0
+      },
+      {
+        "cid": 8,
+        "name": "updated_at",
+        "type": "TEXT",
+        "notnull": 0,
+        "dflt_value": "datetime('now')",
+        "pk": 0
+      }
+    ],
+    "success": true,
+    "meta": {
+      "served_by": "v3-prod",
+      "served_by_region": "EEUR",
+      "served_by_colo": "FRA",
+      "served_by_primary": true,
+      "timings": {
+        "sql_duration_ms": 0.343
+      },
+      "duration": 0.343,
+      "changes": 0,
+      "last_row_id": 0,
+      "changed_db": false,
+      "size_after": 4472832,
+      "rows_read": 0,
+      "rows_written": 0,
+      "total_attempts": 1
+    }
+  }
+]
+
+
+SQL: SELECT * FROM users WHERE lower(email)=lower('') LIMIT 3;
+
+ Γ¢à∩╕Å wrangler 4.95.0 (update available 4.96.0)
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+Resource location: remote 
+
+≡ƒîÇ Executing on remote database shaku_maku_db (6e1cf3c7-0b05-4e85-bae8-83e96044a864):
+≡ƒîÇ To execute on your local development database, remove the --remote flag from your wrangler command.
+≡ƒÜú Executed 1 command in 0.43ms
+[
+  {
+    "results": [],
+    "success": true,
+    "meta": {
+      "served_by": "v3-prod",
+      "served_by_region": "EEUR",
+      "served_by_colo": "FRA",
+      "served_by_primary": true,
+      "timings": {
+        "sql_duration_ms": 0.4254
+      },
+      "duration": 0.4254,
+      "changes": 0,
+      "last_row_id": 0,
+      "changed_db": false,
+      "size_after": 4472832,
+      "rows_read": 14,
+      "rows_written": 0,
+      "total_attempts": 1
+    }
+  }
+]
+
+
+SQL: SELECT * FROM admin_users WHERE lower(email)=lower('') LIMIT 3;
+
+ Γ¢à∩╕Å wrangler 4.95.0 (update available 4.96.0)
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+Resource location: remote 
+
+≡ƒîÇ Executing on remote database shaku_maku_db (6e1cf3c7-0b05-4e85-bae8-83e96044a864):
+≡ƒîÇ To execute on your local development database, remove the --remote flag from your wrangler command.
+≡ƒÜú Executed 1 command in 0.34ms
+[
+  {
+    "results": [],
+    "success": true,
+    "meta": {
+      "served_by": "v3-prod",
+      "served_by_region": "EEUR",
+      "served_by_colo": "FRA",
+      "served_by_primary": true,
+      "timings": {
+        "sql_duration_ms": 0.3427
+      },
+      "duration": 0.3427,
+      "changes": 0,
+      "last_row_id": 0,
+      "changed_db": false,
+      "size_after": 4472832,
+      "rows_read": 1,
+      "rows_written": 0,
+      "total_attempts": 1
+    }
+  }
+]
+
+
+SQL: SELECT * FROM profiles WHERE lower(email)=lower('') LIMIT 3;
+
+ Γ¢à∩╕Å wrangler 4.95.0 (update available 4.96.0)
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+Resource location: remote 
+
+≡ƒîÇ Executing on remote database shaku_maku_db (6e1cf3c7-0b05-4e85-bae8-83e96044a864):
+≡ƒîÇ To execute on your local development database, remove the --remote flag from your wrangler command.
+
+
+
+SQL: SELECT * FROM accounts WHERE lower(email)=lower('') LIMIT 3;
+
+ Γ¢à∩╕Å wrangler 4.95.0 (update available 4.96.0)
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+Resource location: remote 
+
+≡ƒîÇ Executing on remote database shaku_maku_db (6e1cf3c7-0b05-4e85-bae8-83e96044a864):
+≡ƒîÇ To execute on your local development database, remove the --remote flag from your wrangler command.
+
+
