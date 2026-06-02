@@ -6,10 +6,20 @@ import { sign } from 'hono/jwt';
 type Env = {
   DB: any;
   JWT_SECRET: string;
-  ADMIN_EMAILS?: string;
 };
 
 const adminRoutes = new Hono<{ Bindings: Env }>();
+
+async function generateToken(payload: any, secret: string): Promise<string> {
+  const expiresInSeconds = 7 * 24 * 60 * 60;
+  return await sign(
+    {
+      ...payload,
+      exp: Math.floor(Date.now() / 1000) + expiresInSeconds
+    },
+    secret
+  );
+}
 
 // Admin login (same as regular login but for admin panel)
 adminRoutes.post('/login', async (c) => {
@@ -36,7 +46,7 @@ adminRoutes.post('/login', async (c) => {
     }
 
     // Generate token
-    const token = await sign(
+    const token = await generateToken(
       { id: user.id, email: user.email, role: user.role, is_admin: user.is_admin },
       c.env.JWT_SECRET
     );
@@ -117,9 +127,19 @@ adminRoutes.put('/users/:id/role', async (c) => {
     const { id } = c.req.param();
     const { role, is_admin } = await c.req.json();
 
+    if (!['user', 'owner', 'admin'].includes(role)) {
+      return c.json({ error: 'Invalid role' }, 400);
+    }
+
+    if (typeof is_admin !== 'boolean' && is_admin !== 0 && is_admin !== 1) {
+      return c.json({ error: 'Invalid admin flag' }, 400);
+    }
+
+    const normalizedIsAdmin = role === 'admin' ? 1 : Number(Boolean(is_admin));
+
     await c.env.DB.prepare(
       'UPDATE users SET role = ?, is_admin = ?, updated_at = datetime("now") WHERE id = ?'
-    ).bind(role, is_admin ? 1 : 0, id).run();
+    ).bind(role, normalizedIsAdmin, id).run();
 
     return c.json({ success: true, message: 'User role updated successfully' });
   } catch (error) {

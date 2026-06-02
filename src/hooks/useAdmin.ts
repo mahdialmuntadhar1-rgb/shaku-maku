@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { AUTH_CHANGE_EVENT, isAdminEmail, readSession } from '../auth/session';
+import { AUTH_CHANGE_EVENT, readSession } from '../auth/session';
 
 export const useAdmin = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -7,9 +7,10 @@ export const useAdmin = () => {
   const [loading, setLoading] = useState(true);
 
   const check = () => {
-    const email = readSession()?.user.email || '';
-    setIsAdmin(isAdminEmail(email));
-    setAdminEmail(isAdminEmail(email) ? email : '');
+    const user = readSession()?.user;
+    const nextIsAdmin = user?.role === 'admin';
+    setIsAdmin(nextIsAdmin);
+    setAdminEmail(nextIsAdmin ? user.email : '');
     setLoading(false);
   };
 

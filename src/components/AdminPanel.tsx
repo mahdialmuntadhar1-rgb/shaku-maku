@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Check, Edit3, Image as ImageIcon, Lock, Save, Trash2 } from 'lucide-react';
 import { api, API_BASE_URL, businessesApi, getApiErrorMessage, postsApi } from '../api';
-import { isAdminEmail, readSession } from '../auth/session';
+import { readSession } from '../auth/session';
 import { Business, HeroSlide, Language, SocialPost, UserProfile } from '../types';
 
 interface AdminPanelProps {
@@ -55,7 +55,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
   const [diagnosticsLoading, setDiagnosticsLoading] = useState(false);
   const session = readSession();
   const signedInEmail = (userProfile?.email || session?.user?.email || '').toLowerCase();
-  const hasAdminAccess = userProfile?.role === 'admin' || isAdminEmail(signedInEmail);
+  const hasAdminAccess = userProfile?.role === 'admin' || session?.user?.role === 'admin';
 
   if (!hasAdminAccess) {
     return (
@@ -293,7 +293,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
         <div className="text-xs text-zinc-400 space-y-1">
           <p>API base: {API_BASE_URL}</p>
           <p>Signed-in email: {signedInEmail || 'none'}</p>
-          <p>Frontend allowlist admin: {isAdminEmail(signedInEmail) ? 'yes' : 'no'}</p>
+          <p>Backend admin role: {hasAdminAccess ? 'yes' : 'no'}</p>
         </div>
         {diagnostics.length > 0 && (
           <div className="space-y-2">

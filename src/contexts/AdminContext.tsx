@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { AUTH_CHANGE_EVENT, isAdminEmail, readSession } from '../auth/session';
+import { AUTH_CHANGE_EVENT, readSession } from '../auth/session';
 
 interface AdminContextType {
   isAdmin: boolean;
@@ -27,11 +27,12 @@ export const AdminProvider: React.FC<AdminProviderProps> = ({ children }) => {
   const [isAdmin, setIsAdmin] = useState(false);
 
   const checkAdmin = (): void => {
-    setIsAdmin(isAdminEmail(readSession()?.user.email));
+    setIsAdmin(readSession()?.user.role === 'admin');
   };
 
   const setAdminByEmail = (email: string): void => {
-    setIsAdmin(isAdminEmail(email));
+    const session = readSession();
+    setIsAdmin(Boolean(email && session?.user.email === email && session.user.role === 'admin'));
   };
 
   useEffect(() => {

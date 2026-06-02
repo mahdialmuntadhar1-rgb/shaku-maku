@@ -4,12 +4,6 @@ export const AUTH_TOKEN_KEY = 'auth_token';
 export const AUTH_USER_KEY = 'user';
 export const AUTH_CHANGE_EVENT = 'shaku-maku-auth-change';
 
-const splitCsv = (...values: Array<string | undefined>): string[] =>
-  values
-    .flatMap((value) => String(value ?? '').split(','))
-    .map((value) => value.trim())
-    .filter(Boolean);
-
 export interface SessionUser {
   id: string;
   email: string;
@@ -30,16 +24,6 @@ export interface AuthSession {
 }
 
 export const normalizeEmail = (email?: string | null): string => (email || '').trim().toLowerCase();
-
-export const getAdminEmails = (): string[] => {
-  const configured = splitCsv(import.meta.env.VITE_ADMIN_EMAIL, import.meta.env.VITE_ADMIN_EMAILS, 'safaribosafar@gmail.com')
-    .map(normalizeEmail)
-    .filter(Boolean);
-
-  return Array.from(new Set(configured));
-};
-
-export const isAdminEmail = (email?: string | null): boolean => getAdminEmails().includes(normalizeEmail(email));
 
 const notifyAuthChange = (): void => {
   window.dispatchEvent(new Event(AUTH_CHANGE_EVENT));
@@ -76,7 +60,7 @@ export const normalizeUser = (raw: unknown): SessionUser | null => {
     name: displayName,
     displayName,
     photoURL: String(source.photoURL || ''),
-    role: isAdminEmail(email) ? 'admin' : backendRole
+    role: backendRole
   };
 };
 
@@ -86,7 +70,7 @@ export const toUserProfile = (user: SessionUser): UserProfile => ({
   photoURL: user.photoURL || '',
   email: user.email,
   createdAt: typeof user.createdAt === 'string' ? user.createdAt : new Date().toISOString(),
-  role: isAdminEmail(user.email) ? 'admin' : user.role || 'user',
+  role: user.role || 'user',
   onboarded: Boolean(user.onboarded),
   businessId: typeof user.businessId === 'string' ? user.businessId : null
 });

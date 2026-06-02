@@ -6,7 +6,6 @@ import { requireAuth } from './_authz';
 type Env = {
   DB: any;
   JWT_SECRET: string;
-  ADMIN_EMAILS?: string;
 };
 
 const authRoutes = new Hono<{ Bindings: Env }>();
@@ -28,8 +27,17 @@ async function verifyPassword(password: string, hash: string): Promise<boolean> 
 
 // Helper: Generate JWT token
 async function generateToken(payload: any, secret: string): Promise<string> {
-  return await sign(payload, secret);
+  const expiresInSeconds = 7 * 24 * 60 * 60;
+  return await sign(
+    {
+      ...payload,
+      exp: Math.floor(Date.now() / 1000) + expiresInSeconds
+    },
+    secret
+  );
 }
+
+const PASSWORD_RESET_MESSAGE = 'If the email exists, a reset link has been sent';
 
 // Register
 authRoutes.post('/register', async (c) => {
@@ -50,10 +58,6 @@ authRoutes.post('/register', async (c) => {
     }
 
     const normalizedEmail = email.toLowerCase();
-    const allowedAdmins = ((c.env.ADMIN_EMAILS || '').split(',').map((v) => v.trim().toLowerCase()).filter(Boolean));
-    if (!allowedAdmins.includes('safaribosafar@gmail.com')) allowedAdmins.push('safaribosafar@gmail.com');
-    const isAdminUser = allowedAdmins.includes(normalizedEmail);
-
     // Hash password
     const passwordHash = await hashPassword(password);
     const userId = generateId();
@@ -67,13 +71,13 @@ authRoutes.post('/register', async (c) => {
       normalizedEmail,
       passwordHash,
       name || email.split('@')[0],
-      isAdminUser ? 'admin' : 'user',
-      isAdminUser ? 1 : 0
+      'user',
+      0
     ).run();
 
     // Generate token
     const token = await generateToken(
-      { id: userId, email: normalizedEmail, role: isAdminUser ? 'admin' : 'user', is_admin: isAdminUser ? 1 : 0 },
+      { id: userId, email: normalizedEmail, role: 'user', is_admin: 0 },
       c.env.JWT_SECRET
     );
 
@@ -84,8 +88,8 @@ authRoutes.post('/register', async (c) => {
           id: userId,
           email: normalizedEmail,
           name: name || email.split('@')[0],
-          role: isAdminUser ? 'admin' : 'user',
-          is_admin: isAdminUser ? 1 : 0
+          role: 'user',
+          is_admin: 0
         },
         token
       }
@@ -201,7 +205,7 @@ authRoutes.post('/forgot-password', async (c) => {
       // Don't reveal if user exists or not
       return c.json({ 
         success: true, 
-        message: 'If the email exists, a reset token has been sent' 
+        message: PASSWORD_RESET_MESSAGE
       });
     }
 
@@ -221,12 +225,9 @@ authRoutes.post('/forgot-password', async (c) => {
        VALUES (?, ?, ?, ?)`
     ).bind(tokenId, user.id, resetToken, expiresAt).run();
 
-    // In production, send email with the token
-    // For now, return the token in response (for testing)
     return c.json({
       success: true,
-      message: 'Password reset token generated',
-      data: { token: resetToken } // Remove this in production
+      message: PASSWORD_RESET_MESSAGE
     });
   } catch (error) {
     console.error('Forgot password error:', error);

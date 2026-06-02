@@ -8,12 +8,6 @@ type AuthPayload = {
   [key: string]: any;
 };
 
-function normalizeAdminEmails(raw?: string): string[] {
-  const configured = (raw || '').split(',').map((email) => email.trim().toLowerCase()).filter(Boolean);
-  if (!configured.includes('safaribosafar@gmail.com')) configured.push('safaribosafar@gmail.com');
-  return configured;
-}
-
 export async function requireAuth(c: any): Promise<{ ok: true; payload: AuthPayload } | { ok: false; response: Response }> {
   const authHeader = c.req.header('Authorization') || c.req.header('authorization') || '';
   if (!authHeader.startsWith('Bearer ')) {
@@ -57,8 +51,7 @@ export async function requireAdmin(c: any): Promise<{ ok: true; userId: string; 
     };
   }
 
-  const allowedEmails = normalizeAdminEmails(c.env.ADMIN_EMAILS);
-  const isAdmin = Number(user.is_admin) === 1 || user.role === 'admin' || allowedEmails.includes(String(user.email || '').toLowerCase());
+  const isAdmin = Number(user.is_admin) === 1 || user.role === 'admin';
   if (!isAdmin) {
     return {
       ok: false,

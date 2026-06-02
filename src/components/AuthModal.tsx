@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   X, Lock, Mail, User, Shield, Sparkles, AlertCircle, Key, 
@@ -33,8 +33,9 @@ export default function AuthModal({
   const [showPassword, setShowPassword] = useState(false);
 
   // Forgot password states
-  const [authMode, setAuthMode] = useState<'login' | 'forgot' | 'reset'>('login');
-  const [resetToken, setResetToken] = useState('');
+  const initialResetToken = new URLSearchParams(window.location.search).get('token') || '';
+  const [authMode, setAuthMode] = useState<'login' | 'forgot' | 'reset'>(initialResetToken ? 'reset' : 'login');
+  const resetTokenRef = useRef<HTMLInputElement>(null);
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
@@ -77,14 +78,14 @@ export default function AuthModal({
       forgot_title: "Reset Your Password",
       forgot_desc: "Enter your email address and we'll send you a reset link.",
       forgot_btn: "Send Reset Link",
-      forgot_success: "Email verified! Enter your new password below.",
+      forgot_success: "If the email exists, a reset link has been sent.",
       reset_title: "Enter New Password",
       reset_desc: "Enter your new password below.",
       reset_btn: "Update Password",
       reset_success: "Password updated successfully! You can now login.",
       forgot_link: "Forgot password?",
       back_to_login: "Back to login",
-      token_label: "Your Reset Token (copy this)",
+      token_label: "Reset Token",
       new_pwd: "New Password",
       confirm_pwd: "Confirm Password",
       pwd_mismatch: "Passwords do not match"
@@ -122,14 +123,14 @@ export default function AuthModal({
       forgot_title: "إعادة تعيين كلمة المرور",
       forgot_desc: "أدخل بريدك الإلكتروني وسنرسل لك رابط إعادة التعيين.",
       forgot_btn: "إرسال رابط إعادة التعيين",
-      forgot_success: "تم التحقق من البريد الإلكتروني! أدخل كلمة المرور الجديدة أدناه.",
+      forgot_success: "إذا كان البريد موجوداً، فسيتم إرسال رابط إعادة التعيين.",
       reset_title: "أدخل كلمة المرور الجديدة",
       reset_desc: "أدخل كلمة المرور الجديدة أدناه.",
       reset_btn: "تحديث كلمة المرور",
       reset_success: "تم تحديث كلمة المرور بنجاح! يمكنك الآن تسجيل الدخول.",
       forgot_link: "نسيت كلمة المرور؟",
       back_to_login: "العودة لتسجيل الدخول",
-      token_label: "رمز إعادة التعيين (انسخ هذا)",
+      token_label: "رمز إعادة التعيين",
       new_pwd: "كلمة المرور الجديدة",
       confirm_pwd: "تأكيد كلمة المرور",
       pwd_mismatch: "كلمات المرور غير متطابقة"
@@ -167,14 +168,14 @@ export default function AuthModal({
       forgot_title: "وشەی نهێنی بگۆڕە",
       forgot_desc: "ئیمەیڵەکەت بنووسە و لینکی گۆڕینەوە بۆت دەنێردرێت.",
       forgot_btn: "لینکی گۆڕینەوە بنێرە",
-      forgot_success: "ئیمەیڵەکە دڵنیا کرایەوە! وشەی نهێنی نوێت لە خوارەوە بنووسە.",
+      forgot_success: "ئەگەر ئیمەیڵەکە هەبێت، لینکی گۆڕینەوەی وشەی نهێنی دەنێردرێت.",
       reset_title: "وشەی نهێنی نوێ بنووسە",
       reset_desc: "وشەی نهێنی نوێکەت لە خوارەوە بنووسە.",
       reset_btn: "وشەی نهێنی نوێ بکە",
       reset_success: "وشەی نهێنی بە سەرکەوتوویی گۆڕدرا! ئێستا دەتوانیت بچیی ژوورەوە.",
       forgot_link: "وشەی نهێنیت بیرکردۆتەوە؟",
       back_to_login: "گەڕانەوە بۆ چوونەژوورەوە",
-      token_label: "کۆدی گۆڕینەوە (ئیمەن کۆپی بکە)",
+      token_label: "کۆدی گۆڕینەوە",
       new_pwd: "وشەی نهێنی نوێ",
       confirm_pwd: "دووبارەکردنەوەی وشەی نهێنی",
       pwd_mismatch: "وشەی نهێنیەکان یەک ناگرنەوە"
@@ -241,7 +242,7 @@ export default function AuthModal({
     }
   };
 
-  const handleSandboxPresetClick = (emailPreset: string) => {
+  const handleSandboxPresetClick = () => {
     setErrorMsg(
       currentLang === 'en'
         ? 'Quick preset login is disabled. Please log in with a real account.'
@@ -260,10 +261,8 @@ export default function AuthModal({
     setSuccessMsg('');
 
     try {
-      const response = await authApi.forgotPassword(email.trim());
-      setResetToken(response.token || '');
+      await authApi.forgotPassword(email.trim());
       setSuccessMsg(L.forgot_success);
-      setAuthMode('reset');
     } catch (err: any) {
       setErrorMsg(err.message || 'Failed to send reset link');
     } finally {
@@ -288,13 +287,18 @@ export default function AuthModal({
     setSuccessMsg('');
 
     try {
-      await authApi.resetPassword(email.trim(), resetToken.trim(), newPassword);
+      const token = resetTokenRef.current?.value.trim() || initialResetToken;
+      if (!token) {
+        setErrorMsg(currentLang === 'en' ? 'Reset token is required' : 'رمز إعادة التعيين مطلوب');
+        return;
+      }
+      await authApi.resetPassword(email.trim(), token, newPassword);
       setSuccessMsg(L.reset_success);
       setTimeout(() => {
         setAuthMode('login');
         setNewPassword('');
         setConfirmPassword('');
-        setResetToken('');
+        if (resetTokenRef.current) resetTokenRef.current.value = '';
         setSuccessMsg('');
       }, 2000);
     } catch (err: any) {
@@ -315,7 +319,6 @@ export default function AuthModal({
           setAuthMode('login');
           setErrorMsg('');
           setSuccessMsg('');
-          setResetToken('');
           onClose();
         }}
         className="fixed inset-0 bg-black/85 backdrop-blur-xl"
@@ -338,7 +341,6 @@ export default function AuthModal({
             setAuthMode('login');
             setErrorMsg('');
             setSuccessMsg('');
-            setResetToken('');
             onClose();
           }}
           className={`absolute top-4 ${isRtl ? 'left-4' : 'right-4'} p-2 rounded-full bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition cursor-pointer border border-white/5 z-20`}
@@ -575,6 +577,23 @@ export default function AuthModal({
             <form onSubmit={handleResetPassword} className="space-y-4">
               <div className="space-y-1">
                 <label className="text-[10px] uppercase font-black text-luxury-gold/80 tracking-wider block font-mono">
+                  {L.token_label}
+                </label>
+                <div className="relative flex items-center">
+                  <Key className="absolute left-3.5 w-4 h-4 text-zinc-500" />
+                  <input
+                    ref={resetTokenRef}
+                    type="text"
+                    required
+                    defaultValue={initialResetToken}
+                    placeholder={L.token_label}
+                    className="w-full bg-black/40 border border-white/15 focus:border-luxury-gold/50 text-xs pl-10 pr-4 py-3 rounded-xl text-white placeholder-zinc-500 focus:outline-none transition font-semibold"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] uppercase font-black text-luxury-gold/80 tracking-wider block font-mono">
                   {L.new_pwd}
                 </label>
                 <div className="relative flex items-center">
@@ -622,7 +641,7 @@ export default function AuthModal({
                     setAuthMode('login');
                     setErrorMsg('');
                     setSuccessMsg('');
-                    setResetToken('');
+                    if (resetTokenRef.current) resetTokenRef.current.value = '';
                   }}
                   className="text-[11px] font-black text-luxury-gold hover:underline cursor-pointer tracking-wide uppercase"
                 >
@@ -694,21 +713,21 @@ export default function AuthModal({
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 pt-1">
               <button
                 type="button"
-                onClick={() => handleSandboxPresetClick('mahdialmuntadhar1@gmail.com')}
+                onClick={handleSandboxPresetClick}
                 className="px-2 py-1.5 bg-red-950/40 hover:bg-red-900/50 border border-red-500/20 text-red-200 text-[9px] font-black rounded-lg transition-all text-center cursor-pointer font-mono"
               >
                 🛠️ Admin Panel
               </button>
               <button
                 type="button"
-                onClick={() => handleSandboxPresetClick('owner@shkomaku.com')}
+                onClick={handleSandboxPresetClick}
                 className="px-2 py-1.5 bg-amber-950/40 hover:bg-amber-900/55 border border-amber-500/25 text-amber-200 text-[9px] font-black rounded-lg transition-all text-center cursor-pointer font-mono"
               >
                 🏢 Shop Owner
               </button>
               <button
                 type="button"
-                onClick={() => handleSandboxPresetClick('visitor@shkomaku.com')}
+                onClick={handleSandboxPresetClick}
                 className="px-2 py-1.5 bg-blue-950/45 hover:bg-blue-900/50 border border-blue-500/20 text-sky-200 text-[9px] font-black rounded-lg transition-all text-center cursor-pointer font-mono"
               >
                 🧭 Explorer User

@@ -12,7 +12,6 @@ interface RegisterPayload {
 interface PasswordResetResponse {
   success: boolean;
   message: string;
-  token?: string;
 }
 
 interface AuthContextType {
@@ -65,20 +64,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (email: string, password: string): Promise<AuthResponse> => {
     const response = await authApi.login(email, password);
-
-    if (response.success) {
-      refreshSession();
-    }
+    refreshSession();
 
     return response;
   };
 
   const register = async (userData: RegisterPayload): Promise<AuthResponse> => {
     const response = await authApi.register(userData);
-
-    if (response.success) {
-      refreshSession();
-    }
+    refreshSession();
 
     return response;
   };
@@ -94,8 +87,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       return {
         success: data.success !== false,
-        message: String(data.message || 'Password reset instructions were sent.'),
-        token: typeof data.token === 'string' ? data.token : undefined
+        message: String(data.message || 'Password reset instructions were sent.')
       };
     } catch (error: any) {
       return {

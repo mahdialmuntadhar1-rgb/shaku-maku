@@ -1,4 +1,4 @@
-const RAW_API_BASE_URL = (import.meta as any).env?.VITE_API_URL || 'https://shaku-maku-api.mahdialmuntadhar1.workers.dev';
+const RAW_API_BASE_URL = (import.meta as any).env?.VITE_API_URL || 'https://shaku-maku.mahdialmuntadhar1.workers.dev';
 export const API_BASE_URL = String(RAW_API_BASE_URL).replace(/\/+$/, '').replace(/\/api$/i, '');
 
 if (!(import.meta as any).env?.VITE_API_URL) {
@@ -232,14 +232,14 @@ export const authApi = {
     return unwrap<AuthResponse['user']>(response);
   },
 
-  async forgotPassword(email: string): Promise<{ token?: string; message: string }> {
+  async forgotPassword(email: string): Promise<{ message: string }> {
     localStorage.setItem('password_reset_email', email);
     const response = await apiRequest<any>('/auth/forgot-password', {
       method: 'POST',
       body: JSON.stringify({ email }),
     }, true);
     if (response?.data) return response.data;
-    return { token: response?.token, message: response?.message || 'Password reset requested' };
+    return { message: response?.message || 'If the email exists, a reset link has been sent' };
   },
 
   async resetPassword(email: string, token: string, newPassword: string): Promise<{ message: string }> {
@@ -431,9 +431,9 @@ export const adminApi = {
   },
 };
 
-export async function requestPasswordReset(email: string): Promise<{ success?: boolean; message: string; token?: string }> {
+export async function requestPasswordReset(email: string): Promise<{ success?: boolean; message: string }> {
   const response = await authApi.forgotPassword(email);
-  return { success: true, message: response.message, token: response.token };
+  return { success: true, message: response.message };
 }
 
 export async function resetPassword(token: string, newPassword: string, email?: string): Promise<{ success: boolean; message: string }> {

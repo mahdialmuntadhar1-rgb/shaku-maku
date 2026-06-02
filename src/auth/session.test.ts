@@ -20,6 +20,16 @@ describe('session helpers', () => {
     expect(user?.role).toBe('admin');
   });
 
+  it('does not promote a user to admin based on email alone', () => {
+    const user = normalizeUser({
+      id: '123',
+      email: 'former-admin@example.com',
+      name: 'Regular User'
+    });
+
+    expect(user?.role).toBe('user');
+  });
+
   it('writes and reads a session', () => {
     const session = writeSession('token-1', {
       id: '123',

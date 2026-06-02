@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useRef, useState } from 'react';
 import { requestPasswordReset, resetPassword } from '../api';
 
 interface PasswordResetModalProps {
@@ -9,12 +9,13 @@ interface PasswordResetModalProps {
 export const PasswordResetModal: React.FC<PasswordResetModalProps> = ({ isOpen, onClose }) => {
   const [step, setStep] = useState<'request' | 'reset'>('request');
   const [identifier, setIdentifier] = useState('');
-  const [token, setToken] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const initialToken = new URLSearchParams(window.location.search).get('token') || '';
+  const tokenRef = useRef<HTMLInputElement>(null);
 
   if (!isOpen) return null;
 
@@ -26,14 +27,8 @@ export const PasswordResetModal: React.FC<PasswordResetModalProps> = ({ isOpen, 
     
     try {
       const response = await requestPasswordReset(identifier);
-      if (response.token) {
-        setToken(response.token);
-        setMessage(`رمز التحقق الخاص بك هو: ${response.token}`);
-        setStep('reset');
-      } else {
-        setMessage(response.message || 'تم إرسال رمز التحقق');
-        setStep('reset');
-      }
+      setMessage(response.message || 'إذا كان البريد موجوداً، فسيتم إرسال رابط إعادة التعيين');
+      setStep('reset');
     } catch (err: any) {
       setError(err.response?.data?.error || 'فشل في طلب إعادة تعيين كلمة المرور');
     } finally {
@@ -56,13 +51,19 @@ export const PasswordResetModal: React.FC<PasswordResetModalProps> = ({ isOpen, 
     setError('');
     
     try {
+      const token = tokenRef.current?.value.trim() || initialToken;
+      if (!token) {
+        setError('رمز إعادة التعيين مطلوب');
+        setLoading(false);
+        return;
+      }
       await resetPassword(token, newPassword);
       setMessage('تم إعادة تعيين كلمة المرور بنجاح! يمكنك الآن تسجيل الدخول');
       setTimeout(() => {
         onClose();
         setStep('request');
         setIdentifier('');
-        setToken('');
+        if (tokenRef.current) tokenRef.current.value = '';
         setNewPassword('');
         setConfirmPassword('');
         setMessage('');
@@ -124,8 +125,8 @@ export const PasswordResetModal: React.FC<PasswordResetModalProps> = ({ isOpen, 
               <label className="block text-gray-700 mb-2">رمز التحقق</label>
               <input
                 type="text"
-                value={token}
-                onChange={(e) => setToken(e.target.value)}
+                ref={tokenRef}
+                defaultValue={initialToken}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 font-mono text-center text-xl"
                 placeholder="000000"
                 required
