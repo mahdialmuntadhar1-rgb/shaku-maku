@@ -1,0 +1,1237 @@
+﻿SHAKU MAKU FILTER DIAGNOSIS - 20260602-165028
+
+1) Backend health
+{
+    "ok":  true,
+    "service":  "shaku-maku-api",
+    "database":  "connected"
+}
+
+2) Business table columns
+
+ Γ¢à∩╕Å wrangler 4.95.0 (update available 4.96.0)
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+Resource location: remote 
+
+≡ƒîÇ Executing on remote database shaku_maku_db (6e1cf3c7-0b05-4e85-bae8-83e96044a864):
+≡ƒîÇ To execute on your local development database, remove the --remote flag from your wrangler command.
+≡ƒÜú Executed 1 command in 0.52ms
+[
+  {
+    "results": [
+      {
+        "cid": 0,
+        "name": "id",
+        "type": "TEXT",
+        "notnull": 0,
+        "dflt_value": null,
+        "pk": 1
+      },
+      {
+        "cid": 1,
+        "name": "owner_id",
+        "type": "TEXT",
+        "notnull": 0,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 2,
+        "name": "name_ar",
+        "type": "TEXT",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 3,
+        "name": "name_ku",
+        "type": "TEXT",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 4,
+        "name": "name_en",
+        "type": "TEXT",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 5,
+        "name": "description_ar",
+        "type": "TEXT",
+        "notnull": 0,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 6,
+        "name": "description_ku",
+        "type": "TEXT",
+        "notnull": 0,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 7,
+        "name": "description_en",
+        "type": "TEXT",
+        "notnull": 0,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 8,
+        "name": "category",
+        "type": "TEXT",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 9,
+        "name": "governorate",
+        "type": "TEXT",
+        "notnull": 1,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 10,
+        "name": "rating",
+        "type": "REAL",
+        "notnull": 0,
+        "dflt_value": "0",
+        "pk": 0
+      },
+      {
+        "cid": 11,
+        "name": "reviews_count",
+        "type": "INTEGER",
+        "notnull": 0,
+        "dflt_value": "0",
+        "pk": 0
+      },
+      {
+        "cid": 12,
+        "name": "image",
+        "type": "TEXT",
+        "notnull": 0,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 13,
+        "name": "images",
+        "type": "TEXT",
+        "notnull": 0,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 14,
+        "name": "avatar",
+        "type": "TEXT",
+        "notnull": 0,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 15,
+        "name": "is_verified",
+        "type": "INTEGER",
+        "notnull": 0,
+        "dflt_value": "0",
+        "pk": 0
+      },
+      {
+        "cid": 16,
+        "name": "phone_number",
+        "type": "TEXT",
+        "notnull": 0,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 17,
+        "name": "address_ar",
+        "type": "TEXT",
+        "notnull": 0,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 18,
+        "name": "address_ku",
+        "type": "TEXT",
+        "notnull": 0,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 19,
+        "name": "address_en",
+        "type": "TEXT",
+        "notnull": 0,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 20,
+        "name": "likes",
+        "type": "INTEGER",
+        "notnull": 0,
+        "dflt_value": "0",
+        "pk": 0
+      },
+      {
+        "cid": 21,
+        "name": "saves",
+        "type": "INTEGER",
+        "notnull": 0,
+        "dflt_value": "0",
+        "pk": 0
+      },
+      {
+        "cid": 22,
+        "name": "map_coords_x",
+        "type": "REAL",
+        "notnull": 0,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 23,
+        "name": "map_coords_y",
+        "type": "REAL",
+        "notnull": 0,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 24,
+        "name": "featured_deal_ar",
+        "type": "TEXT",
+        "notnull": 0,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 25,
+        "name": "featured_deal_ku",
+        "type": "TEXT",
+        "notnull": 0,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 26,
+        "name": "featured_deal_en",
+        "type": "TEXT",
+        "notnull": 0,
+        "dflt_value": null,
+        "pk": 0
+      },
+      {
+        "cid": 27,
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": 0,
+        "dflt_value": "datetime('now')",
+        "pk": 0
+      },
+      {
+        "cid": 28,
+        "name": "updated_at",
+        "type": "TEXT",
+        "notnull": 0,
+        "dflt_value": "datetime('now')",
+        "pk": 0
+      }
+    ],
+    "success": true,
+    "meta": {
+      "served_by": "v3-prod",
+      "served_by_region": "EEUR",
+      "served_by_colo": "FRA",
+      "served_by_primary": true,
+      "timings": {
+        "sql_duration_ms": 0.5161
+      },
+      "duration": 0.5161,
+      "changes": 0,
+      "last_row_id": 0,
+      "changed_db": false,
+      "size_after": 4472832,
+      "rows_read": 0,
+      "rows_written": 0,
+      "total_attempts": 1
+    }
+  }
+]
+
+
+3) Business count
+
+ Γ¢à∩╕Å wrangler 4.95.0 (update available 4.96.0)
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+Resource location: remote 
+
+≡ƒîÇ Executing on remote database shaku_maku_db (6e1cf3c7-0b05-4e85-bae8-83e96044a864):
+≡ƒîÇ To execute on your local development database, remove the --remote flag from your wrangler command.
+≡ƒÜú Executed 1 command in 2.85ms
+[
+  {
+    "results": [
+      {
+        "total_businesses": 4595
+      }
+    ],
+    "success": true,
+    "meta": {
+      "served_by": "v3-prod",
+      "served_by_region": "EEUR",
+      "served_by_colo": "FRA",
+      "served_by_primary": true,
+      "timings": {
+        "sql_duration_ms": 2.8482
+      },
+      "duration": 2.8482,
+      "changes": 0,
+      "last_row_id": 0,
+      "changed_db": false,
+      "size_after": 4472832,
+      "rows_read": 4595,
+      "rows_written": 0,
+      "total_attempts": 1
+    }
+  }
+]
+
+
+4) Governorate values
+
+ Γ¢à∩╕Å wrangler 4.95.0 (update available 4.96.0)
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+Resource location: remote 
+
+≡ƒîÇ Executing on remote database shaku_maku_db (6e1cf3c7-0b05-4e85-bae8-83e96044a864):
+≡ƒîÇ To execute on your local development database, remove the --remote flag from your wrangler command.
+≡ƒÜú Executed 1 command in 1.56ms
+[
+  {
+    "results": [
+      {
+        "governorate": "Basra",
+        "count": 272
+      },
+      {
+        "governorate": "Kirkuk",
+        "count": 269
+      },
+      {
+        "governorate": "Maysan",
+        "count": 268
+      },
+      {
+        "governorate": "Karbala",
+        "count": 260
+      },
+      {
+        "governorate": "Sulaymaniyah",
+        "count": 259
+      },
+      {
+        "governorate": "Babil",
+        "count": 257
+      },
+      {
+        "governorate": "Erbil",
+        "count": 257
+      },
+      {
+        "governorate": "Diyala",
+        "count": 254
+      },
+      {
+        "governorate": "Najaf",
+        "count": 254
+      },
+      {
+        "governorate": "Wasit",
+        "count": 253
+      },
+      {
+        "governorate": "Baghdad",
+        "count": 250
+      },
+      {
+        "governorate": "Anbar",
+        "count": 246
+      },
+      {
+        "governorate": "Muthanna",
+        "count": 246
+      },
+      {
+        "governorate": "Nineveh",
+        "count": 239
+      },
+      {
+        "governorate": "Dhi Qar",
+        "count": 228
+      },
+      {
+        "governorate": "Qadisiyyah",
+        "count": 222
+      },
+      {
+        "governorate": "Duhok",
+        "count": 202
+      },
+      {
+        "governorate": "Salahaddin",
+        "count": 201
+      },
+      {
+        "governorate": "Tikrit",
+        "count": 43
+      },
+      {
+        "governorate": "Saladin",
+        "count": 41
+      },
+      {
+        "governorate": "Halabja",
+        "count": 40
+      },
+      {
+        "governorate": "Dohuk",
+        "count": 34
+      }
+    ],
+    "success": true,
+    "meta": {
+      "served_by": "v3-prod",
+      "served_by_region": "EEUR",
+      "served_by_colo": "FRA",
+      "served_by_primary": true,
+      "timings": {
+        "sql_duration_ms": 1.5563
+      },
+      "duration": 1.5563,
+      "changes": 0,
+      "last_row_id": 0,
+      "changed_db": false,
+      "size_after": 4472832,
+      "rows_read": 4617,
+      "rows_written": 0,
+      "total_attempts": 1
+    }
+  }
+]
+
+ Γ¢à∩╕Å wrangler 4.95.0 (update available 4.96.0)
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+Resource location: remote 
+
+≡ƒîÇ Executing on remote database shaku_maku_db (6e1cf3c7-0b05-4e85-bae8-83e96044a864):
+≡ƒîÇ To execute on your local development database, remove the --remote flag from your wrangler command.
+
+
+ Γ¢à∩╕Å wrangler 4.95.0 (update available 4.96.0)
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+Resource location: remote 
+
+≡ƒîÇ Executing on remote database shaku_maku_db (6e1cf3c7-0b05-4e85-bae8-83e96044a864):
+≡ƒîÇ To execute on your local development database, remove the --remote flag from your wrangler command.
+
+
+
+5) Category values
+
+ Γ¢à∩╕Å wrangler 4.95.0 (update available 4.96.0)
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+Resource location: remote 
+
+≡ƒîÇ Executing on remote database shaku_maku_db (6e1cf3c7-0b05-4e85-bae8-83e96044a864):
+≡ƒîÇ To execute on your local development database, remove the --remote flag from your wrangler command.
+≡ƒÜú Executed 1 command in 2.05ms
+[
+  {
+    "results": [
+      {
+        "category": "education",
+        "count": 485
+      },
+      {
+        "category": "tourism",
+        "count": 326
+      },
+      {
+        "category": "real_estate",
+        "count": 222
+      },
+      {
+        "category": "atm",
+        "count": 173
+      },
+      {
+        "category": "beauty",
+        "count": 173
+      },
+      {
+        "category": "fuel",
+        "count": 171
+      },
+      {
+        "category": "restaurant",
+        "count": 170
+      },
+      {
+        "category": "pharmacy",
+        "count": 168
+      },
+      {
+        "category": "clinic",
+        "count": 164
+      },
+      {
+        "category": "mosque",
+        "count": 163
+      },
+      {
+        "category": "cafe",
+        "count": 162
+      },
+      {
+        "category": "gym",
+        "count": 162
+      },
+      {
+        "category": "hospital",
+        "count": 162
+      },
+      {
+        "category": "entertainment",
+        "count": 154
+      },
+      {
+        "category": "events",
+        "count": 153
+      },
+      {
+        "category": "market",
+        "count": 153
+      },
+      {
+        "category": "electronics",
+        "count": 152
+      },
+      {
+        "category": "services",
+        "count": 149
+      },
+      {
+        "category": "fashion",
+        "count": 146
+      },
+      {
+        "category": "bank",
+        "count": 143
+      },
+      {
+        "category": "restaurants_and_cafes",
+        "count": 138
+      },
+      {
+        "category": "home",
+        "count": 134
+      },
+      {
+        "category": "education_and_training_centers",
+        "count": 84
+      },
+      {
+        "category": "beauty_and_salons",
+        "count": 79
+      },
+      {
+        "category": "electronics_and_tech_shops",
+        "count": 77
+      },
+      {
+        "category": "construction_and_contractors",
+        "count": 73
+      },
+      {
+        "category": "health_and_medical_services",
+        "count": 73
+      },
+      {
+        "category": "hotels_and_hospitality",
+        "count": 73
+      },
+      {
+        "category": "fitness_and_gyms",
+        "count": 71
+      },
+      {
+        "category": "it_and_software_services",
+        "count": 26
+      },
+      {
+        "category": "amenity",
+        "count": 8
+      },
+      {
+        "category": "office",
+        "count": 5
+      },
+      {
+        "category": "shop",
+        "count": 2
+      },
+      {
+        "category": "craft",
+        "count": 1
+      }
+    ],
+    "success": true,
+    "meta": {
+      "served_by": "v3-prod",
+      "served_by_region": "EEUR",
+      "served_by_colo": "FRA",
+      "served_by_primary": true,
+      "timings": {
+        "sql_duration_ms": 2.052
+      },
+      "duration": 2.052,
+      "changes": 0,
+      "last_row_id": 0,
+      "changed_db": false,
+      "size_after": 4472832,
+      "rows_read": 4629,
+      "rows_written": 0,
+      "total_attempts": 1
+    }
+  }
+]
+
+ Γ¢à∩╕Å wrangler 4.95.0 (update available 4.96.0)
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+Resource location: remote 
+
+≡ƒîÇ Executing on remote database shaku_maku_db (6e1cf3c7-0b05-4e85-bae8-83e96044a864):
+≡ƒîÇ To execute on your local development database, remove the --remote flag from your wrangler command.
+
+
+ Γ¢à∩╕Å wrangler 4.95.0 (update available 4.96.0)
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+Resource location: remote 
+
+≡ƒîÇ Executing on remote database shaku_maku_db (6e1cf3c7-0b05-4e85-bae8-83e96044a864):
+≡ƒîÇ To execute on your local development database, remove the --remote flag from your wrangler command.
+
+
+
+6) Live API filter tests
+
+URL: https://shaku-maku.mahdialmuntadhar1.workers.dev/api/businesses?page=1&limit=5
+{
+    "success":  true,
+    "data":  [
+                 {
+                     "id":  "f764cd71-0d7f-45be-a27c-65f7e936e84a",
+                     "owner_id":  "d0e972df-f0ea-4187-81b6-8c5bd490d659",
+                     "name_ar":  "Central Wasit Real_Estate",
+                     "name_ku":  "Central Wasit Real_Estate",
+                     "name_en":  "Central Wasit Real_Estate",
+                     "description_ar":  "City: Wasit | Website: www.centralwasitreal_estate.iq | Facebook: facebook.com/centralwasitreal_estate | Instagram: instagram.com/centralwasitreal_estate",
+                     "description_ku":  "City: Wasit | Website: www.centralwasitreal_estate.iq | Facebook: facebook.com/centralwasitreal_estate | Instagram: instagram.com/centralwasitreal_estate",
+                     "description_en":  "City: Wasit | Website: www.centralwasitreal_estate.iq | Facebook: facebook.com/centralwasitreal_estate | Instagram: instagram.com/centralwasitreal_estate",
+                     "category":  "real_estate",
+                     "governorate":  "Wasit",
+                     "rating":  0,
+                     "reviews_count":  0,
+                     "image":  null,
+                     "images":  null,
+                     "avatar":  null,
+                     "is_verified":  0,
+                     "phone_number":  "9647529460621",
+                     "address_ar":  "Wasit City, District 4, Wasit, Wasit",
+                     "address_ku":  "Wasit City, District 4, Wasit, Wasit",
+                     "address_en":  "Wasit City, District 4, Wasit, Wasit",
+                     "likes":  0,
+                     "saves":  0,
+                     "map_coords_x":  null,
+                     "map_coords_y":  null,
+                     "featured_deal_ar":  null,
+                     "featured_deal_ku":  null,
+                     "featured_deal_en":  null,
+                     "created_at":  "2026-06-02 10:51:42",
+                     "updated_at":  "2026-06-02 10:51:42",
+                     "like_count":  0,
+                     "save_count":  0
+                 },
+                 {
+                     "id":  "140ca516-1388-4d4f-93d4-638f0173af6b",
+                     "owner_id":  "d0e972df-f0ea-4187-81b6-8c5bd490d659",
+                     "name_ar":  "Central Wasit Real_Estate",
+                     "name_ku":  "Central Wasit Real_Estate",
+                     "name_en":  "Central Wasit Real_Estate",
+                     "description_ar":  "City: Wasit | Website: www.centralwasitreal_estate.iq | Facebook: facebook.com/centralwasitreal_estate | Instagram: instagram.com/centralwasitreal_estate",
+                     "description_ku":  "City: Wasit | Website: www.centralwasitreal_estate.iq | Facebook: facebook.com/centralwasitreal_estate | Instagram: instagram.com/centralwasitreal_estate",
+                     "description_en":  "City: Wasit | Website: www.centralwasitreal_estate.iq | Facebook: facebook.com/centralwasitreal_estate | Instagram: instagram.com/centralwasitreal_estate",
+                     "category":  "real_estate",
+                     "governorate":  "Wasit",
+                     "rating":  0,
+                     "reviews_count":  0,
+                     "image":  null,
+                     "images":  null,
+                     "avatar":  null,
+                     "is_verified":  0,
+                     "phone_number":  "9647844120199",
+                     "address_ar":  "Wasit City, District 4, Wasit, Wasit",
+                     "address_ku":  "Wasit City, District 4, Wasit, Wasit",
+                     "address_en":  "Wasit City, District 4, Wasit, Wasit",
+                     "likes":  0,
+                     "saves":  0,
+                     "map_coords_x":  null,
+                     "map_coords_y":  null,
+                     "featured_deal_ar":  null,
+                     "featured_deal_ku":  null,
+                     "featured_deal_en":  null,
+                     "created_at":  "2026-06-02 10:51:42",
+                     "updated_at":  "2026-06-02 10:51:42",
+                     "like_count":  0,
+                     "save_count":  0
+                 },
+                 {
+                     "id":  "350f603f-63b3-409a-adc9-64403b28ba0b",
+                     "owner_id":  "d0e972df-f0ea-4187-81b6-8c5bd490d659",
+                     "name_ar":  "Royal Wasit Real_Estate",
+                     "name_ku":  "Royal Wasit Real_Estate",
+                     "name_en":  "Royal Wasit Real_Estate",
+                     "description_ar":  "City: Wasit | Website: www.royalwasitreal_estate.iq | Facebook: facebook.com/royalwasitreal_estate | Instagram: instagram.com/royalwasitreal_estate",
+                     "description_ku":  "City: Wasit | Website: www.royalwasitreal_estate.iq | Facebook: facebook.com/royalwasitreal_estate | Instagram: instagram.com/royalwasitreal_estate",
+                     "description_en":  "City: Wasit | Website: www.royalwasitreal_estate.iq | Facebook: facebook.com/royalwasitreal_estate | Instagram: instagram.com/royalwasitreal_estate",
+                     "category":  "real_estate",
+                     "governorate":  "Wasit",
+                     "rating":  0,
+                     "reviews_count":  0,
+                     "image":  null,
+                     "images":  null,
+                     "avatar":  null,
+                     "is_verified":  0,
+                     "phone_number":  "9647109089562",
+                     "address_ar":  "Main Road, Wasit, Wasit, Wasit",
+                     "address_ku":  "Main Road, Wasit, Wasit, Wasit",
+                     "address_en":  "Main Road, Wasit, Wasit, Wasit",
+                     "likes":  0,
+                     "saves":  0,
+                     "map_coords_x":  null,
+                     "map_coords_y":  null,
+                     "featured_deal_ar":  null,
+                     "featured_deal_ku":  null,
+                     "featured_deal_en":  null,
+                     "created_at":  "2026-06-02 10:51:42",
+                     "updated_at":  "2026-06-02 10:51:42",
+                     "like_count":  0,
+                     "save_count":  0
+                 },
+                 {
+                     "id":  "d53a3695-2ef2-4c84-9f6f-a7c6f1122dbd",
+                     "owner_id":  "d0e972df-f0ea-4187-81b6-8c5bd490d659",
+                     "name_ar":  "Royal Wasit Real_Estate",
+                     "name_ku":  "Royal Wasit Real_Estate",
+                     "name_en":  "Royal Wasit Real_Estate",
+                     "description_ar":  "City: Wasit | Website: www.royalwasitreal_estate.iq | Facebook: facebook.com/royalwasitreal_estate | Instagram: instagram.com/royalwasitreal_estate",
+                     "description_ku":  "City: Wasit | Website: www.royalwasitreal_estate.iq | Facebook: facebook.com/royalwasitreal_estate | Instagram: instagram.com/royalwasitreal_estate",
+                     "description_en":  "City: Wasit | Website: www.royalwasitreal_estate.iq | Facebook: facebook.com/royalwasitreal_estate | Instagram: instagram.com/royalwasitreal_estate",
+                     "category":  "real_estate",
+                     "governorate":  "Wasit",
+                     "rating":  0,
+                     "reviews_count":  0,
+                     "image":  null,
+                     "images":  null,
+                     "avatar":  null,
+                     "is_verified":  0,
+                     "phone_number":  "9647122700204",
+                     "address_ar":  "Main Road, Wasit, Wasit, Wasit",
+                     "address_ku":  "Main Road, Wasit, Wasit, Wasit",
+                     "address_en":  "Main Road, Wasit, Wasit, Wasit",
+                     "likes":  0,
+                     "saves":  0,
+                     "map_coords_x":  null,
+                     "map_coords_y":  null,
+                     "featured_deal_ar":  null,
+                     "featured_deal_ku":  null,
+                     "featured_deal_en":  null,
+                     "created_at":  "2026-06-02 10:51:42",
+                     "updated_at":  "2026-06-02 10:51:42",
+                     "like_count":  0,
+                     "save_count":  0
+                 },
+                 {
+                     "id":  "d3c7a751-9799-46b4-82fd-4d36aca2928c",
+                     "owner_id":  "d0e972df-f0ea-4187-81b6-8c5bd490d659",
+                     "name_ar":  "Wasit Real_Estate",
+                     "name_ku":  "Wasit Real_Estate",
+                     "name_en":  "Wasit Real_Estate",
+                     "description_ar":  "City: Wasit | Website: www.wasitreal_estate.iq | Facebook: facebook.com/wasitreal_estate | Instagram: instagram.com/wasitreal_estate",
+                     "description_ku":  "City: Wasit | Website: www.wasitreal_estate.iq | Facebook: facebook.com/wasitreal_estate | Instagram: instagram.com/wasitreal_estate",
+                     "description_en":  "City: Wasit | Website: www.wasitreal_estate.iq | Facebook: facebook.com/wasitreal_estate | Instagram: instagram.com/wasitreal_estate",
+                     "category":  "real_estate",
+                     "governorate":  "Wasit",
+                     "rating":  0,
+                     "reviews_count":  0,
+                     "image":  null,
+                     "images":  null,
+                     "avatar":  null,
+                     "is_verified":  0,
+                     "phone_number":  "9647186456755",
+                     "address_ar":  "Street 1, Wasit, Wasit, Wasit",
+                     "address_ku":  "Street 1, Wasit, Wasit, Wasit",
+                     "address_en":  "Street 1, Wasit, Wasit, Wasit",
+                     "likes":  0,
+                     "saves":  0,
+                     "map_coords_x":  null,
+                     "map_coords_y":  null,
+                     "featured_deal_ar":  null,
+                     "featured_deal_ku":  null,
+                     "featured_deal_en":  null,
+                     "created_at":  "2026-06-02 10:51:42",
+                     "updated_at":  "2026-06-02 10:51:42",
+                     "like_count":  0,
+                     "save_count":  0
+                 }
+             ],
+    "pagination":  {
+                       "page":  1,
+                       "limit":  5,
+                       "count":  5
+                   }
+}
+
+URL: https://shaku-maku.mahdialmuntadhar1.workers.dev/api/businesses?page=1&limit=5&governorate=Baghdad
+{
+    "success":  true,
+    "data":  [
+                 {
+                     "id":  "7bb8e828-5584-4112-a4c9-6f1f5f179030",
+                     "owner_id":  "d0e972df-f0ea-4187-81b6-8c5bd490d659",
+                     "name_ar":  "Star Beauty Salon",
+                     "name_ku":  "Star Beauty Salon",
+                     "name_en":  "Star Beauty Salon",
+                     "description_ar":  "Facebook: fb.com/biz | Instagram: @biz",
+                     "description_ku":  "Facebook: fb.com/biz | Instagram: @biz",
+                     "description_en":  "Facebook: fb.com/biz | Instagram: @biz",
+                     "category":  "beauty_and_salons",
+                     "governorate":  "Baghdad",
+                     "rating":  0,
+                     "reviews_count":  0,
+                     "image":  null,
+                     "images":  null,
+                     "avatar":  null,
+                     "is_verified":  0,
+                     "phone_number":  "9647869205494",
+                     "address_ar":  "Street 209, Baghdad, Baghdad",
+                     "address_ku":  "Street 209, Baghdad, Baghdad",
+                     "address_en":  "Street 209, Baghdad, Baghdad",
+                     "likes":  0,
+                     "saves":  0,
+                     "map_coords_x":  null,
+                     "map_coords_y":  null,
+                     "featured_deal_ar":  null,
+                     "featured_deal_ku":  null,
+                     "featured_deal_en":  null,
+                     "created_at":  "2026-06-02 10:51:41",
+                     "updated_at":  "2026-06-02 10:51:41",
+                     "like_count":  0,
+                     "save_count":  0
+                 },
+                 {
+                     "id":  "4f9387c1-d67a-42ae-8fce-15752be8805f",
+                     "owner_id":  "d0e972df-f0ea-4187-81b6-8c5bd490d659",
+                     "name_ar":  "Star Beauty Salon",
+                     "name_ku":  "Star Beauty Salon",
+                     "name_en":  "Star Beauty Salon",
+                     "description_ar":  "Facebook: fb.com/biz | Instagram: @biz",
+                     "description_ku":  "Facebook: fb.com/biz | Instagram: @biz",
+                     "description_en":  "Facebook: fb.com/biz | Instagram: @biz",
+                     "category":  "beauty_and_salons",
+                     "governorate":  "Baghdad",
+                     "rating":  0,
+                     "reviews_count":  0,
+                     "image":  null,
+                     "images":  null,
+                     "avatar":  null,
+                     "is_verified":  0,
+                     "phone_number":  "9647878503180",
+                     "address_ar":  "Street 209, Baghdad, Baghdad",
+                     "address_ku":  "Street 209, Baghdad, Baghdad",
+                     "address_en":  "Street 209, Baghdad, Baghdad",
+                     "likes":  0,
+                     "saves":  0,
+                     "map_coords_x":  null,
+                     "map_coords_y":  null,
+                     "featured_deal_ar":  null,
+                     "featured_deal_ku":  null,
+                     "featured_deal_en":  null,
+                     "created_at":  "2026-06-02 10:51:41",
+                     "updated_at":  "2026-06-02 10:51:41",
+                     "like_count":  0,
+                     "save_count":  0
+                 },
+                 {
+                     "id":  "aecade42-e7ee-45a0-aec0-941683cc6e0f",
+                     "owner_id":  "d0e972df-f0ea-4187-81b6-8c5bd490d659",
+                     "name_ar":  "ØµØ§ÙÙÙ ÙÙØ± Ø§ÙØ¬Ù\u0085Ø§Ù",
+                     "name_ku":  "ØµØ§ÙÙÙ ÙÙØ± Ø§ÙØ¬Ù\u0085Ø§Ù",
+                     "name_en":  "ØµØ§ÙÙÙ ÙÙØ± Ø§ÙØ¬Ù\u0085Ø§Ù",
+                     "description_ar":  "Website: www.goldengaterealestate.iq | Instagram: @goldengaterealestate",
+                     "description_ku":  "Website: www.goldengaterealestate.iq | Instagram: @goldengaterealestate",
+                     "description_en":  "Website: www.goldengaterealestate.iq | Instagram: @goldengaterealestate",
+                     "category":  "beauty_and_salons",
+                     "governorate":  "Baghdad",
+                     "rating":  0,
+                     "reviews_count":  0,
+                     "image":  null,
+                     "images":  null,
+                     "avatar":  null,
+                     "is_verified":  0,
+                     "phone_number":  "9647896192478",
+                     "address_ar":  "Street 1, Baghdad, Baghdad",
+                     "address_ku":  "Street 1, Baghdad, Baghdad",
+                     "address_en":  "Street 1, Baghdad, Baghdad",
+                     "likes":  0,
+                     "saves":  0,
+                     "map_coords_x":  null,
+                     "map_coords_y":  null,
+                     "featured_deal_ar":  null,
+                     "featured_deal_ku":  null,
+                     "featured_deal_en":  null,
+                     "created_at":  "2026-06-02 10:51:41",
+                     "updated_at":  "2026-06-02 10:51:41",
+                     "like_count":  0,
+                     "save_count":  0
+                 },
+                 {
+                     "id":  "f7f0b498-48a2-421f-996e-b2dce9ada00e",
+                     "owner_id":  "d0e972df-f0ea-4187-81b6-8c5bd490d659",
+                     "name_ar":  "Modern Build Co.",
+                     "name_ku":  "Modern Build Co.",
+                     "name_en":  "Modern Build Co.",
+                     "description_ar":  "Instagram: @baghdadtechhub",
+                     "description_ku":  "Instagram: @baghdadtechhub",
+                     "description_en":  "Instagram: @baghdadtechhub",
+                     "category":  "construction_and_contractors",
+                     "governorate":  "Baghdad",
+                     "rating":  0,
+                     "reviews_count":  0,
+                     "image":  null,
+                     "images":  null,
+                     "avatar":  null,
+                     "is_verified":  0,
+                     "phone_number":  "9647972348454",
+                     "address_ar":  "Street 365, Baghdad, Baghdad",
+                     "address_ku":  "Street 365, Baghdad, Baghdad",
+                     "address_en":  "Street 365, Baghdad, Baghdad",
+                     "likes":  0,
+                     "saves":  0,
+                     "map_coords_x":  null,
+                     "map_coords_y":  null,
+                     "featured_deal_ar":  null,
+                     "featured_deal_ku":  null,
+                     "featured_deal_en":  null,
+                     "created_at":  "2026-06-02 10:51:41",
+                     "updated_at":  "2026-06-02 10:51:41",
+                     "like_count":  0,
+                     "save_count":  0
+                 },
+                 {
+                     "id":  "2c5226d3-e683-4566-9f00-692f64656bdc",
+                     "owner_id":  "d0e972df-f0ea-4187-81b6-8c5bd490d659",
+                     "name_ar":  "Modern Build Co.",
+                     "name_ku":  "Modern Build Co.",
+                     "name_en":  "Modern Build Co.",
+                     "description_ar":  "Instagram: @baghdadtechhub",
+                     "description_ku":  "Instagram: @baghdadtechhub",
+                     "description_en":  "Instagram: @baghdadtechhub",
+                     "category":  "construction_and_contractors",
+                     "governorate":  "Baghdad",
+                     "rating":  0,
+                     "reviews_count":  0,
+                     "image":  null,
+                     "images":  null,
+                     "avatar":  null,
+                     "is_verified":  0,
+                     "phone_number":  "9647974862732",
+                     "address_ar":  "Street 365, Baghdad, Baghdad",
+                     "address_ku":  "Street 365, Baghdad, Baghdad",
+                     "address_en":  "Street 365, Baghdad, Baghdad",
+                     "likes":  0,
+                     "saves":  0,
+                     "map_coords_x":  null,
+                     "map_coords_y":  null,
+                     "featured_deal_ar":  null,
+                     "featured_deal_ku":  null,
+                     "featured_deal_en":  null,
+                     "created_at":  "2026-06-02 10:51:41",
+                     "updated_at":  "2026-06-02 10:51:41",
+                     "like_count":  0,
+                     "save_count":  0
+                 }
+             ],
+    "pagination":  {
+                       "page":  1,
+                       "limit":  5,
+                       "count":  5
+                   }
+}
+
+URL: https://shaku-maku.mahdialmuntadhar1.workers.dev/api/businesses?page=1&limit=5&governorate=بغداد
+{
+    "success":  true,
+    "data":  [
+
+             ],
+    "pagination":  {
+                       "page":  1,
+                       "limit":  5,
+                       "count":  0
+                   }
+}
+
+URL: https://shaku-maku.mahdialmuntadhar1.workers.dev/api/businesses?page=1&limit=5&city=Baghdad
+{
+    "success":  true,
+    "data":  [
+                 {
+                     "id":  "f764cd71-0d7f-45be-a27c-65f7e936e84a",
+                     "owner_id":  "d0e972df-f0ea-4187-81b6-8c5bd490d659",
+                     "name_ar":  "Central Wasit Real_Estate",
+                     "name_ku":  "Central Wasit Real_Estate",
+                     "name_en":  "Central Wasit Real_Estate",
+                     "description_ar":  "City: Wasit | Website: www.centralwasitreal_estate.iq | Facebook: facebook.com/centralwasitreal_estate | Instagram: instagram.com/centralwasitreal_estate",
+                     "description_ku":  "City: Wasit | Website: www.centralwasitreal_estate.iq | Facebook: facebook.com/centralwasitreal_estate | Instagram: instagram.com/centralwasitreal_estate",
+                     "description_en":  "City: Wasit | Website: www.centralwasitreal_estate.iq | Facebook: facebook.com/centralwasitreal_estate | Instagram: instagram.com/centralwasitreal_estate",
+                     "category":  "real_estate",
+                     "governorate":  "Wasit",
+                     "rating":  0,
+                     "reviews_count":  0,
+                     "image":  null,
+                     "images":  null,
+                     "avatar":  null,
+                     "is_verified":  0,
+                     "phone_number":  "9647529460621",
+                     "address_ar":  "Wasit City, District 4, Wasit, Wasit",
+                     "address_ku":  "Wasit City, District 4, Wasit, Wasit",
+                     "address_en":  "Wasit City, District 4, Wasit, Wasit",
+                     "likes":  0,
+                     "saves":  0,
+                     "map_coords_x":  null,
+                     "map_coords_y":  null,
+                     "featured_deal_ar":  null,
+                     "featured_deal_ku":  null,
+                     "featured_deal_en":  null,
+                     "created_at":  "2026-06-02 10:51:42",
+                     "updated_at":  "2026-06-02 10:51:42",
+                     "like_count":  0,
+                     "save_count":  0
+                 },
+                 {
+                     "id":  "140ca516-1388-4d4f-93d4-638f0173af6b",
+                     "owner_id":  "d0e972df-f0ea-4187-81b6-8c5bd490d659",
+                     "name_ar":  "Central Wasit Real_Estate",
+                     "name_ku":  "Central Wasit Real_Estate",
+                     "name_en":  "Central Wasit Real_Estate",
+                     "description_ar":  "City: Wasit | Website: www.centralwasitreal_estate.iq | Facebook: facebook.com/centralwasitreal_estate | Instagram: instagram.com/centralwasitreal_estate",
+                     "description_ku":  "City: Wasit | Website: www.centralwasitreal_estate.iq | Facebook: facebook.com/centralwasitreal_estate | Instagram: instagram.com/centralwasitreal_estate",
+                     "description_en":  "City: Wasit | Website: www.centralwasitreal_estate.iq | Facebook: facebook.com/centralwasitreal_estate | Instagram: instagram.com/centralwasitreal_estate",
+                     "category":  "real_estate",
+                     "governorate":  "Wasit",
+                     "rating":  0,
+                     "reviews_count":  0,
+                     "image":  null,
+                     "images":  null,
+                     "avatar":  null,
+                     "is_verified":  0,
+                     "phone_number":  "9647844120199",
+                     "address_ar":  "Wasit City, District 4, Wasit, Wasit",
+                     "address_ku":  "Wasit City, District 4, Wasit, Wasit",
+                     "address_en":  "Wasit City, District 4, Wasit, Wasit",
+                     "likes":  0,
+                     "saves":  0,
+                     "map_coords_x":  null,
+                     "map_coords_y":  null,
+                     "featured_deal_ar":  null,
+                     "featured_deal_ku":  null,
+                     "featured_deal_en":  null,
+                     "created_at":  "2026-06-02 10:51:42",
+                     "updated_at":  "2026-06-02 10:51:42",
+                     "like_count":  0,
+                     "save_count":  0
+                 },
+                 {
+                     "id":  "350f603f-63b3-409a-adc9-64403b28ba0b",
+                     "owner_id":  "d0e972df-f0ea-4187-81b6-8c5bd490d659",
+                     "name_ar":  "Royal Wasit Real_Estate",
+                     "name_ku":  "Royal Wasit Real_Estate",
+                     "name_en":  "Royal Wasit Real_Estate",
+                     "description_ar":  "City: Wasit | Website: www.royalwasitreal_estate.iq | Facebook: facebook.com/royalwasitreal_estate | Instagram: instagram.com/royalwasitreal_estate",
+                     "description_ku":  "City: Wasit | Website: www.royalwasitreal_estate.iq | Facebook: facebook.com/royalwasitreal_estate | Instagram: instagram.com/royalwasitreal_estate",
+                     "description_en":  "City: Wasit | Website: www.royalwasitreal_estate.iq | Facebook: facebook.com/royalwasitreal_estate | Instagram: instagram.com/royalwasitreal_estate",
+                     "category":  "real_estate",
+                     "governorate":  "Wasit",
+                     "rating":  0,
+                     "reviews_count":  0,
+                     "image":  null,
+                     "images":  null,
+                     "avatar":  null,
+                     "is_verified":  0,
+                     "phone_number":  "9647109089562",
+                     "address_ar":  "Main Road, Wasit, Wasit, Wasit",
+                     "address_ku":  "Main Road, Wasit, Wasit, Wasit",
+                     "address_en":  "Main Road, Wasit, Wasit, Wasit",
+                     "likes":  0,
+                     "saves":  0,
+                     "map_coords_x":  null,
+                     "map_coords_y":  null,
+                     "featured_deal_ar":  null,
+                     "featured_deal_ku":  null,
+                     "featured_deal_en":  null,
+                     "created_at":  "2026-06-02 10:51:42",
+                     "updated_at":  "2026-06-02 10:51:42",
+                     "like_count":  0,
+                     "save_count":  0
+                 },
+                 {
+                     "id":  "d53a3695-2ef2-4c84-9f6f-a7c6f1122dbd",
+                     "owner_id":  "d0e972df-f0ea-4187-81b6-8c5bd490d659",
+                     "name_ar":  "Royal Wasit Real_Estate",
+                     "name_ku":  "Royal Wasit Real_Estate",
+                     "name_en":  "Royal Wasit Real_Estate",
+                     "description_ar":  "City: Wasit | Website: www.royalwasitreal_estate.iq | Facebook: facebook.com/royalwasitreal_estate | Instagram: instagram.com/royalwasitreal_estate",
+                     "description_ku":  "City: Wasit | Website: www.royalwasitreal_estate.iq | Facebook: facebook.com/royalwasitreal_estate | Instagram: instagram.com/royalwasitreal_estate",
+                     "description_en":  "City: Wasit | Website: www.royalwasitreal_estate.iq | Facebook: facebook.com/royalwasitreal_estate | Instagram: instagram.com/royalwasitreal_estate",
+                     "category":  "real_estate",
+                     "governorate":  "Wasit",
+                     "rating":  0,
+                     "reviews_count":  0,
+                     "image":  null,
+                     "images":  null,
+                     "avatar":  null,
+                     "is_verified":  0,
+                     "phone_number":  "9647122700204",
+                     "address_ar":  "Main Road, Wasit, Wasit, Wasit",
+                     "address_ku":  "Main Road, Wasit, Wasit, Wasit",
+                     "address_en":  "Main Road, Wasit, Wasit, Wasit",
+                     "likes":  0,
+                     "saves":  0,
+                     "map_coords_x":  null,
+                     "map_coords_y":  null,
+                     "featured_deal_ar":  null,
+                     "featured_deal_ku":  null,
+                     "featured_deal_en":  null,
+                     "created_at":  "2026-06-02 10:51:42",
+                     "updated_at":  "2026-06-02 10:51:42",
+                     "like_count":  0,
+                     "save_count":  0
+                 },
+                 {
+                     "id":  "d3c7a751-9799-46b4-82fd-4d36aca2928c",
+                     "owner_id":  "d0e972df-f0ea-4187-81b6-8c5bd490d659",
+                     "name_ar":  "Wasit Real_Estate",
+                     "name_ku":  "Wasit Real_Estate",
+                     "name_en":  "Wasit Real_Estate",
+                     "description_ar":  "City: Wasit | Website: www.wasitreal_estate.iq | Facebook: facebook.com/wasitreal_estate | Instagram: instagram.com/wasitreal_estate",
+                     "description_ku":  "City: Wasit | Website: www.wasitreal_estate.iq | Facebook: facebook.com/wasitreal_estate | Instagram: instagram.com/wasitreal_estate",
+                     "description_en":  "City: Wasit | Website: www.wasitreal_estate.iq | Facebook: facebook.com/wasitreal_estate | Instagram: instagram.com/wasitreal_estate",
+                     "category":  "real_estate",
+                     "governorate":  "Wasit",
+                     "rating":  0,
+                     "reviews_count":  0,
+                     "image":  null,
+                     "images":  null,
+                     "avatar":  null,
+                     "is_verified":  0,
+                     "phone_number":  "9647186456755",
+                     "address_ar":  "Street 1, Wasit, Wasit, Wasit",
+                     "address_ku":  "Street 1, Wasit, Wasit, Wasit",
+                     "address_en":  "Street 1, Wasit, Wasit, Wasit",
+                     "likes":  0,
+                     "saves":  0,
+                     "map_coords_x":  null,
+                     "map_coords_y":  null,
+                     "featured_deal_ar":  null,
+                     "featured_deal_ku":  null,
+                     "featured_deal_en":  null,
+                     "created_at":  "2026-06-02 10:51:42",
+                     "updated_at":  "2026-06-02 10:51:42",
+                     "like_count":  0,
+                     "save_count":  0
+                 }
+             ],
+    "pagination":  {
+                       "page":  1,
+                       "limit":  5,
+                       "count":  5
+                   }
+}
+
+URL: https://shaku-maku.mahdialmuntadhar1.workers.dev/api/businesses?page=1&limit=5&category=مطاعم
+{
+    "success":  true,
+    "data":  [
+
+             ],
+    "pagination":  {
+                       "page":  1,
+                       "limit":  5,
+                       "count":  0
+                   }
+}
+
+URL: https://shaku-maku.mahdialmuntadhar1.workers.dev/api/businesses?page=1&limit=5&category=Restaurants
+{
+    "success":  true,
+    "data":  [
+
+             ],
+    "pagination":  {
+                       "page":  1,
+                       "limit":  5,
+                       "count":  0
+                   }
+}
+
+URL: https://shaku-maku.mahdialmuntadhar1.workers.dev/api/businesses?page=1&limit=5&governorate=Baghdad&category=مطاعم
+{
+    "success":  true,
+    "data":  [
+
+             ],
+    "pagination":  {
+                       "page":  1,
+                       "limit":  5,
+                       "count":  0
+                   }
+}
+
+URL: https://shaku-maku.mahdialmuntadhar1.workers.dev/api/businesses?page=1&limit=5&governorate=بغداد&category=مطاعم
+{
+    "success":  true,
+    "data":  [
+
+             ],
+    "pagination":  {
+                       "page":  1,
+                       "limit":  5,
+                       "count":  0
+                   }
+}
