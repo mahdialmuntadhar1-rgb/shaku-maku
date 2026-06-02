@@ -1,67 +1,58 @@
-﻿# Shaku Maku Lock Status
+﻿# LOCK STATUS
 
-Date: 20260602-160802
+This checkpoint locks the current working level.
 
-## Locked working state
+## Bulk messaging
 
-### Bulk WhatsApp / Nabda
+Status:
+WORKING
 
-- Nabda API sending confirmed working.
-- Correct endpoint:
-  https://api.nabdaotp.com/api/v1/messages/send
-- Correct authorization:
-  Authorization: API_KEY
-- Important: Do not use Bearer before the API key.
-- Body:
-  {
-    "phone": "+964XXXXXXXXXX",
-    "message": "message text"
-  }
+Correct Nabda send format:
+POST https://api.nabdaotp.com/api/v1/messages/send
 
-### Local dashboard
+Header:
+Authorization: raw API key only
 
-- Local dashboard folder:
-  nabda-local-dashboard
-- Start file:
-  START-DASHBOARD.bat
-- Local URL:
-  http://localhost:8787
-- Features:
-  - Manual phone list
-  - CSV by governorate
-  - Preview
-  - Deduplication
-  - Iraqi phone normalization to +964
-  - Test my number
-  - Bulk send
-  - Export report CSV
+Do not use:
+Bearer
 
-### Main application
+Body:
+{
+  "phone": "+964...",
+  "message": "..."
+}
+
+Local dashboard:
+nabda-local-dashboard
+
+Start:
+START-DASHBOARD.bat
+
+Open:
+http://localhost:8787
+
+## Main application
 
 Current known status:
+- Frontend live
+- Backend live
+- Backend health connected to database
+- Businesses endpoint returns real data
 
-- Frontend live.
-- Backend live.
-- Backend health confirms database connected.
-- Businesses API returns real data.
-- Auth/login/admin still needs final fix/verification.
-- Social feed still needs admin edit and design/content improvement.
-- Business category images still need better category-specific logic.
-- Governorate/category filtering still needs final verification.
+Still pending:
+- Auth/login/register/logout/reset password
+- Admin role for safaribosafar@gmail.com
+- Admin edit sections
+- Social feed
+- Category images
+- Governorate/category filters
 
-## Next work should start from here
+## Next priority
 
-Recommended next priorities:
-
-1. Fix and verify auth/login/register/logout/password reset.
-2. Make safaribosafar@gmail.com admin in the database.
-3. Admin can edit hero, sales section, social feed, and content sections.
-4. Social feed should look real and beautiful.
-5. Business cards should load backend data reliably.
-6. Category images should match each category.
-7. Governorate/category filters should work correctly.
-
-## Security note
-
-Nabda API key/password were exposed during testing.
-Rotate Nabda password and API key after finishing this checkpoint.
+Do not touch Nabda API again.
+Next work should be:
+1. Auth and admin
+2. Social feed
+3. Business data loading
+4. Category images
+5. Filters
