@@ -179,7 +179,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
         const img = new Image();
 
         img.onload = () => {
-          const maxSize = 1200;
+          const maxSize = 720;
           const scale = Math.min(1, maxSize / Math.max(img.width, img.height));
           const width = Math.max(1, Math.round(img.width * scale));
           const height = Math.max(1, Math.round(img.height * scale));
@@ -196,16 +196,16 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
 
           ctx.drawImage(img, 0, 0, width, height);
 
-          let quality = 0.78;
+          let quality = 0.62;
           let output = canvas.toDataURL('image/jpeg', quality);
 
-          while (output.length > 240000 && quality > 0.42) {
-            quality -= 0.08;
+          while (output.length > 75000 && quality > 0.24) {
+            quality -= 0.06;
             output = canvas.toDataURL('image/jpeg', quality);
           }
 
-          if (output.length > 260000) {
-            reject(new Error('Image is still too large after compression.'));
+          if (output.length > 95000) {
+            reject(new Error('Image is still too large after compression. Please choose a smaller photo.'));
             return;
           }
 
@@ -256,7 +256,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
   }
 
   function isTooLargeInlineMedia(value: string): boolean {
-    return String(value || '').startsWith('data:') && String(value || '').length > 280000;
+    return String(value || '').startsWith('data:') && String(value || '').length > 100000;
   }
 
   function getSafePostMediaUrl(value: string): string {
