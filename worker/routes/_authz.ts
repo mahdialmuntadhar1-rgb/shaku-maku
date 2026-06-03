@@ -40,9 +40,16 @@ export async function requireAdmin(c: any): Promise<{ ok: true; userId: string; 
   const auth = await requireAuth(c);
   if (auth.ok === false) return auth;
 
+  const tokenUserId = String(auth.payload.id || '').trim();
+  const tokenEmail = String(auth.payload.email || '').trim().toLowerCase();
+
   const user = await c.env.DB.prepare(
-    'SELECT id, email, is_admin, role FROM users WHERE id = ?'
-  ).bind(auth.payload.id || '').first() as any;
+    `SELECT id, email, is_admin, role
+     FROM users
+     WHERE id = ?
+        OR lower(email) = ?
+     LIMIT 1`
+  ).bind(tokenUserId, tokenEmail).first() as any;
 
   if (!user) {
     return {
