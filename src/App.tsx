@@ -242,22 +242,20 @@ function dedupeBusinessesByIdentity(items: Business[]): Business[] {
 
   return items.filter((biz) => {
     const nameKey = normalizeDedupeText(
-      biz.name?.en || biz.name?.ar || biz.name?.ku || biz.id
+      biz.name?.en || biz.name?.ar || biz.name?.ku || ''
     );
-
-    const phoneKey = normalizeDedupeText(biz.phoneNumber || '');
     const govKey = normalizeDedupeText(biz.governorate || '');
     const catKey = normalizeDedupeText(biz.category || '');
 
-    // Prefer phone when available, otherwise use name + governorate + category.
-    const key = phoneKey
-      ? `phone:${phoneKey}`
-      : `name:${nameKey}|gov:${govKey}|cat:${catKey}`;
+    // Strong rule: same business name inside same governorate and category = one card.
+    // Do NOT use phone as the primary key because imported duplicates can have
+    // different placeholder/fake phone values.
+    const identityKey = `name:${nameKey}|gov:${govKey}|cat:${catKey}`;
 
-    if (!nameKey && !phoneKey) return true;
-    if (seen.has(key)) return false;
+    if (!nameKey) return true;
+    if (seen.has(identityKey)) return false;
 
-    seen.add(key);
+    seen.add(identityKey);
     return true;
   });
 }
@@ -447,7 +445,17 @@ export default function App() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   // Saku Maku core Reactive businesses database
-  const [businesses, setBusinesses] = useState<Business[]>([]);
+  const [businesses, setBusinesses] = useState<Business[]>(() => {
+    try {
+      const cached = localStorage.getItem('cached_businesses_v1');
+      if (!cached) return [];
+      const parsed = JSON.parse(cached);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  });
+  const [businessesLoading, setBusinessesLoading] = useState(false);
   
   // Saku Maku elevated Live Social posts stream
   const [posts, setPosts] = useState<SocialPost[]>([]);
@@ -624,6 +632,7 @@ export default function App() {
 
     const fetchBusinesses = async () => {
       try {
+        setBusinessesLoading(true);
         const limit = 50;
         const maxPages = 100;
         const allRows: any[] = [];
@@ -656,13 +665,20 @@ export default function App() {
 
         console.log("[ShakuMaku] all businesses loaded:", transformedBusinesses.length);
 
-        setBusinesses(dedupeBusinessesByIdentity(transformedBusinesses));
+        const dedupedBusinesses = dedupeBusinessesByIdentity(transformedBusinesses);
+        setBusinesses(dedupedBusinesses);
+        localStorage.setItem('cached_businesses_v1', JSON.stringify(dedupedBusinesses));
         setBusinessesLoadError(null);
       } catch (error) {
         console.error("Error fetching all businesses from API:", error);
         if (cancelled) return;
-        setBusinesses([]);
+
+        // Keep cached/previous businesses visible instead of clearing the screen.
         setBusinessesLoadError(formatLiveDataError('/api/businesses', error));
+      } finally {
+        if (!cancelled) {
+          setBusinessesLoading(false);
+        }
       }
     };
 
@@ -1148,6 +1164,7 @@ export default function App() {
                   selectedGov={selectedGov}
                   selectedCategory={selectedCategory}
                   businesses={filteredBusinesses}
+                  businessesLoading={businessesLoading}
                   onToggleLike={handleToggleLike}
                   onToggleSave={handleToggleSave}
                   onSelectStory={(stories) => {
@@ -1155,6 +1172,8 @@ export default function App() {
                     setActiveStoryIdx(0);
                     setStoryProgress(0);
                   }}
+                  isAdmin={isAdmin}
+                  setBusinesses={setBusinesses}
                 />
               </motion.div>
             )}

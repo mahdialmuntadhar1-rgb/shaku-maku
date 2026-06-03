@@ -1,20 +1,24 @@
 ﻿import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
-  Heart, Bookmark, Star, MapPin, Phone, Share2, 
+  Heart, Bookmark, Star, MapPin, Phone, Share2, Edit3, Save, 
   CheckCircle2, FolderHeart, Award, Eye, MessageCircle, X, Send, Gift 
 } from 'lucide-react';
 import { Business, Language, GovernorateCode } from '../types';
 import { CATEGORIES, TRANSLATIONS } from '../data';
+import { businessesApi, getApiErrorMessage } from '../api';
 
 interface BusinessFeedProps {
   currentLang: Language;
   selectedGov: GovernorateCode;
   selectedCategory: string | null;
   businesses: Business[];
+  businessesLoading?: boolean;
   onToggleLike: (bizId: string) => void;
   onToggleSave: (bizId: string) => void;
   onSelectStory: (stories: string[]) => void;
+  isAdmin?: boolean;
+  setBusinesses?: React.Dispatch<React.SetStateAction<Business[]>>;
 }
 
 export default function BusinessFeed({
@@ -22,11 +26,23 @@ export default function BusinessFeed({
   selectedGov,
   selectedCategory,
   businesses,
+  businessesLoading = false,
   onToggleLike,
   onToggleSave,
-  onSelectStory
+  onSelectStory,
+  isAdmin = false,
+  setBusinesses
 }: BusinessFeedProps) {
   const [selectedBiz, setSelectedBiz] = useState<Business | null>(null);
+  const [editingBusinessId, setEditingBusinessId] = useState<string | null>(null);
+  const [adminStatus, setAdminStatus] = useState('');
+  const [businessEditDraft, setBusinessEditDraft] = useState({
+    name: '',
+    phoneNumber: '',
+    address: '',
+    description: '',
+    image: ''
+  });
   
   // Keep track of counts of displayed items per category
   const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({});
@@ -45,6 +61,112 @@ export default function BusinessFeed({
   const [newReviewRating, setNewReviewRating] = useState(5);
 
   const t = TRANSLATIONS[currentLang];
+
+  function cleanBusinessDisplayText(value: string | undefined): string {
+    const raw = String(value || '').trim();
+    if (!raw) return '';
+
+    const lower = raw.toLowerCase();
+
+    // Hide generated/fake placeholder metadata from cards.
+    if (
+      lower.includes('street 1,') ||
+      lower.includes('website: www.') ||
+      lower.includes('facebook: facebook.com/') ||
+      lower.includes('instagram: instagram.com/') ||
+      lower.includes('city: ')
+    ) {
+      return '';
+    }
+
+    return raw;
+  }
+
+  function extractExternalLinks(value: string | undefined): Array<{ label: string; href: string }> {
+    const raw = String(value || '');
+    const links: Array<{ label: string; href: string }> = [];
+
+    const website = raw.match(/website:\s*([^|\n]+)/i)?.[1]?.trim();
+    const facebook = raw.match(/facebook:\s*([^|\n]+)/i)?.[1]?.trim();
+    const instagram = raw.match(/instagram:\s*([^|\n]+)/i)?.[1]?.trim();
+
+    if (website && !website.includes('example.com')) {
+      links.push({ label: 'Website', href: website.startsWith('http') ? website : `https://${website}` });
+    }
+    if (facebook) {
+      links.push({ label: 'Facebook', href: facebook.startsWith('http') ? facebook : `https://${facebook}` });
+    }
+    if (instagram) {
+      links.push({ label: 'Instagram', href: instagram.startsWith('http') ? instagram : `https://${instagram}` });
+    }
+
+    return links;
+  }
+
+  function startInlineEdit(biz: Business) {
+    setEditingBusinessId(biz.id);
+    setBusinessEditDraft({
+      name: biz.name[currentLang] || biz.name.en || biz.name.ar || '',
+      phoneNumber: biz.phoneNumber || '',
+      address: cleanBusinessDisplayText(biz.address[currentLang]) || '',
+      description: cleanBusinessDisplayText(biz.description[currentLang]) || '',
+      image: biz.image || ''
+    });
+  }
+
+  async function saveInlineBusiness(biz: Business) {
+    const payload = {
+      name: businessEditDraft.name.trim(),
+      phone: businessEditDraft.phoneNumber.trim(),
+      address: businessEditDraft.address.trim(),
+      description: businessEditDraft.description.trim(),
+      image: businessEditDraft.image.trim()
+    };
+
+    const updatedBusiness: Business = {
+      ...biz,
+      name: {
+        ar: payload.name || biz.name.ar,
+        ku: payload.name || biz.name.ku,
+        en: payload.name || biz.name.en
+      },
+      phoneNumber: payload.phone,
+      address: {
+        ar: payload.address,
+        ku: payload.address,
+        en: payload.address
+      },
+      description: {
+        ar: payload.description,
+        ku: payload.description,
+        en: payload.description
+      },
+      image: payload.image || biz.image,
+      images: payload.image ? [payload.image, ...(biz.images || []).filter((img) => img !== payload.image)] : biz.images
+    };
+
+    try {
+      try {
+        await businessesApi.update(biz.id, payload);
+        setAdminStatus(currentLang === 'en' ? 'Business updated.' : currentLang === 'ku' ? 'بازرگانی نوێکرایەوە.' : 'تم تحديث النشاط.');
+      } catch (backendError) {
+        console.warn('Business backend update failed, keeping local edit:', backendError);
+        setAdminStatus(
+          currentLang === 'en'
+            ? 'Updated locally. Backend update route may need review.'
+            : currentLang === 'ku'
+            ? 'ناوخۆیی نوێکرایەوە. باکئێند پێویستی بە پشکنین هەیە.'
+            : 'تم التحديث محلياً. قد يحتاج مسار الخادم للمراجعة.'
+        );
+      }
+
+      setBusinesses?.((prev) => prev.map((item) => (item.id === biz.id ? updatedBusiness : item)));
+      setSelectedBiz((prev) => (prev?.id === biz.id ? updatedBusiness : prev));
+      setEditingBusinessId(null);
+    } catch (error) {
+      setAdminStatus(getApiErrorMessage(error));
+    }
+  }
   const isRtl = currentLang === 'ar' || currentLang === 'ku';
 
   // Filter businesses by Governorate (if not 'all')
@@ -119,6 +241,26 @@ export default function BusinessFeed({
     setNewReviewRating(5);
   };
 
+  if (businessesLoading && visibleCount === 0) {
+    return (
+      <div className="py-10 bg-white/70 rounded-2xl border border-luxury-teal/20">
+        <div className="flex flex-col items-center justify-center gap-3">
+          <div className="w-10 h-10 rounded-full border-4 border-luxury-teal/20 border-t-luxury-gold animate-spin"></div>
+          <h3 className="text-sm font-black text-luxury-bg">
+            {currentLang === 'en' ? 'Loading businesses...' : currentLang === 'ku' ? 'بازرگانییەکان بار دەکرێن...' : 'جاري تحميل الأنشطة...'}
+          </h3>
+          <p className="text-xs text-zinc-500 text-center max-w-sm">
+            {currentLang === 'en'
+              ? 'Please wait a moment while we prepare the governorate and category results.'
+              : currentLang === 'ku'
+              ? 'تکایە چاوەڕێ بکە تا ئەنجامەکانی پارێزگا و پۆل ئامادە دەکرێن.'
+              : 'انتظر لحظة حتى نجهز نتائج المحافظة والتصنيف.'}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   if (visibleCount === 0) {
     return (
       <div className="text-center py-14 bg-white/55 rounded-2xl border border-luxury-teal/20">
@@ -138,6 +280,9 @@ export default function BusinessFeed({
 
   return (
     <div className="space-y-12">
+{isAdmin && adminStatus && (
+<div className="bg-amber-50 border border-amber-300 text-amber-900 rounded-xl px-4 py-3 text-xs font-bold">{adminStatus}</div>
+)}
       
       {/* Category Grouping Logic */}
       {categoriesToGroup.map((category) => {
@@ -243,16 +388,101 @@ export default function BusinessFeed({
                           </div>
                         </div>
 
-                        {/* Location Subtext */}
-                        <div className="flex items-center gap-0.5 xs:gap-1 text-[9px] xs:text-[11px] text-zinc-500 mb-1 xs:mb-2 font-black">
-                          <MapPin className="w-3 xs:w-3.5 h-3 xs:h-3.5 text-luxury-coral shrink-0" />
-                          <span className="truncate">{biz.address[currentLang]}</span>
-                        </div>
+                        {isAdmin && editingBusinessId === biz.id ? (
+                          <div className="space-y-2 mb-3 bg-amber-50 border border-amber-200 rounded-xl p-2">
+                            <input
+                              value={businessEditDraft.name}
+                              onChange={(event) => setBusinessEditDraft((prev) => ({ ...prev, name: event.target.value }))}
+                              placeholder="Business name"
+                              className="w-full rounded-lg border border-amber-200 px-2 py-1 text-[10px]"
+                            />
+                            <input
+                              value={businessEditDraft.phoneNumber}
+                              onChange={(event) => setBusinessEditDraft((prev) => ({ ...prev, phoneNumber: event.target.value }))}
+                              placeholder="Phone number"
+                              className="w-full rounded-lg border border-amber-200 px-2 py-1 text-[10px]"
+                              dir="ltr"
+                            />
+                            <input
+                              value={businessEditDraft.address}
+                              onChange={(event) => setBusinessEditDraft((prev) => ({ ...prev, address: event.target.value }))}
+                              placeholder="Real address only. Leave empty if unknown."
+                              className="w-full rounded-lg border border-amber-200 px-2 py-1 text-[10px]"
+                            />
+                            <input
+                              value={businessEditDraft.image}
+                              onChange={(event) => setBusinessEditDraft((prev) => ({ ...prev, image: event.target.value }))}
+                              placeholder="Image URL"
+                              className="w-full rounded-lg border border-amber-200 px-2 py-1 text-[10px]"
+                              dir="ltr"
+                            />
+                            <textarea
+                              value={businessEditDraft.description}
+                              onChange={(event) => setBusinessEditDraft((prev) => ({ ...prev, description: event.target.value }))}
+                              placeholder="Description"
+                              rows={2}
+                              className="w-full rounded-lg border border-amber-200 px-2 py-1 text-[10px]"
+                            />
+                            <div className="flex gap-2">
+                              <button
+                                type="button"
+                                onClick={() => void saveInlineBusiness(biz)}
+                                className="px-2 py-1 rounded-lg bg-emerald-600 text-white text-[9px] font-black flex items-center gap-1"
+                              >
+                                <Save className="w-3 h-3" /> Save
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setEditingBusinessId(null)}
+                                className="px-2 py-1 rounded-lg bg-zinc-200 text-zinc-800 text-[9px] font-black"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <>
+                            {/* Location Subtext */}
+                            {cleanBusinessDisplayText(biz.address[currentLang]) && (
+                              <div className="flex items-center gap-0.5 xs:gap-1 text-[9px] xs:text-[11px] text-zinc-500 mb-1 xs:mb-2 font-black">
+                                <MapPin className="w-3 xs:w-3.5 h-3 xs:h-3.5 text-luxury-coral shrink-0" />
+                                <span className="truncate">{cleanBusinessDisplayText(biz.address[currentLang])}</span>
+                              </div>
+                            )}
 
-                        {/* Description snippet */}
-                        <p className="text-[9px] xs:text-[11px] text-zinc-500 line-clamp-2 leading-relaxed mb-2 xs:mb-4">
-                          {biz.description[currentLang]}
-                        </p>
+                            {biz.phoneNumber && (
+                              <a
+                                href={`tel:${biz.phoneNumber}`}
+                                className="inline-flex items-center gap-1 text-[9px] xs:text-[11px] text-emerald-700 font-black mb-1 xs:mb-2"
+                                dir="ltr"
+                              >
+                                <Phone className="w-3 h-3" />
+                                {biz.phoneNumber}
+                              </a>
+                            )}
+
+                            <div className="flex flex-wrap gap-1 mb-1">
+                              {extractExternalLinks(biz.description[currentLang]).slice(0, 3).map((link) => (
+                                <a
+                                  key={link.label}
+                                  href={link.href}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="text-[8px] font-black px-1.5 py-0.5 rounded-full bg-zinc-100 text-zinc-600 border border-zinc-200"
+                                >
+                                  {link.label}
+                                </a>
+                              ))}
+                            </div>
+
+                            {/* Description snippet */}
+                            {cleanBusinessDisplayText(biz.description[currentLang]) && (
+                              <p className="text-[9px] xs:text-[11px] text-zinc-500 line-clamp-2 leading-relaxed mb-2 xs:mb-4">
+                                {cleanBusinessDisplayText(biz.description[currentLang])}
+                              </p>
+                            )}
+                          </>
+                        )}
                       </div>
 
                       {/* Interactive engagement Footer Row */}
@@ -304,6 +534,20 @@ export default function BusinessFeed({
                           >
                             <Bookmark className={`w-3 xs:w-3.5 h-3 xs:h-3.5 ${biz.savedByUser ? 'fill-luxury-teal' : ''}`} />
                           </button>
+
+                          {isAdmin && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                startInlineEdit(biz);
+                              }}
+                              className="text-[9px] xs:text-[10px] font-black text-black bg-luxury-gold border border-luxury-gold px-2 xs:px-2.5 py-1 xs:py-1.5 rounded-lg transition cursor-pointer duration-300 flex items-center gap-1"
+                              title="Admin edit"
+                            >
+                              <Edit3 className="w-3 h-3" />
+                              Edit
+                            </button>
+                          )}
 
                           {/* Detail pop up opener CTA */}
                           <button
