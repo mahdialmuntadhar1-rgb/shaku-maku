@@ -670,9 +670,19 @@ export default function App() {
             await heroSlidesApi.delete(previous.id);
           }
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('Could not sync hero slides to database:', error);
-        window.alert('Hero change was saved locally, but database sync failed. Please make sure you are logged in as admin.');
+
+        const status = error?.response?.status ? `HTTP ${error.response.status}` : 'NETWORK/UNKNOWN';
+        const backendMessage =
+          error?.response?.data?.error ||
+          error?.response?.data?.message ||
+          error?.message ||
+          'Unknown backend error';
+
+        window.alert(
+          `Hero change was saved locally, but database sync failed.\n\nReason: ${status} - ${backendMessage}\n\nFix: log out, log in again as safaribosafar@gmail.com, then try saving the hero again.`
+        );
       }
     })();
   };
