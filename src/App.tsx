@@ -204,6 +204,28 @@ function normalizeGovCode(value: unknown): GovernorateCode {
     }
   }
 
+  const administrativeWordsRemoved = compact
+    .replace(/governorate/g, '')
+    .replace(/province/g, '')
+    .replace(/محافظة/g, '')
+    .replace(/المحافظة/g, '')
+    .replace(/پارێزگای/g, '')
+    .replace(/پارێزگا/g, '');
+
+  if (map[administrativeWordsRemoved]) {
+    return map[administrativeWordsRemoved];
+  }
+
+  const fuzzyMatch = Object.entries(map).find(([alias, code]) => {
+    if (!alias || alias === 'all' || alias === 'iraq') return false;
+    if (alias.length < 4) return false;
+    return compact.includes(alias) || administrativeWordsRemoved.includes(alias);
+  });
+
+  if (fuzzyMatch) {
+    return fuzzyMatch[1];
+  }
+
   return compact as GovernorateCode;
 }
 
@@ -522,7 +544,7 @@ export default function App() {
 
     const fetchBusinesses = async () => {
       try {
-        const limit = 100;
+        const limit = 50;
         const maxPages = 100;
         const allRows: any[] = [];
         const seenIds = new Set<string>();
@@ -545,7 +567,7 @@ export default function App() {
           }
 
           if (newRowsThisPage === 0) break;
-          if (rows.length < limit) break;
+          // Keep going until an empty or duplicate page. Backend may cap page size.
         }
 
         if (cancelled) return;
