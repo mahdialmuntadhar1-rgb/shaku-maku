@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import { Language, GovernorateCode, Business, SocialPost, UserProfile, HeroSlide } from './types';
 import { TRANSLATIONS, CATEGORIES, GOVERNORATES, HERO_SLIDES } from './data';
-import { authApi, businessesApi, postsApi } from './api';
+import { authApi, businessesApi, postsApi, heroSlidesApi } from './api';
 
 // Saku Maku Modular Components
 import Header from './components/Header';
@@ -588,6 +588,95 @@ export default function App() {
     }
   }, [heroSlides]);
 
+  // Load hero slides from backend database.
+  // Fallback stays local so the app never goes blank if API is temporarily unavailable.
+  useEffect(() => {
+    let cancelled = false;
+
+    const fetchHeroSlides = async () => {
+      try {
+        const slides = await heroSlidesApi.list();
+
+        if (cancelled) return;
+
+        if (Array.isArray(slides) && slides.length > 0) {
+          setHeroSlides(slides as HeroSlide[]);
+          localStorage.setItem('hero_slides', JSON.stringify(slides));
+        }
+      } catch (error) {
+        console.warn('Could not load hero slides from database; using local fallback:', error);
+      }
+    };
+
+    fetchHeroSlides();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // Sync hero slide edits from Hero component to backend database.
+  const syncHeroSlidesToDatabase = (previousSlides: HeroSlide[], nextSlides: HeroSlide[]) => {
+    const previousById = new Map(previousSlides.map((slide) => [slide.id, slide]));
+    const nextById = new Map(nextSlides.map((slide) => [slide.id, slide]));
+
+    void (async () => {
+      try {
+        for (let index = 0; index < nextSlides.length; index += 1) {
+          const slide = nextSlides[index];
+          const previous = previousById.get(slide.id);
+
+          const payload = {
+            id: slide.id,
+            image: slide.image,
+            slogan: slide.slogan,
+            badge: slide.badge,
+            governorate: slide.governorate || 'all',
+            category: slide.category || 'restaurant',
+            sortOrder: index + 1,
+            isActive: true
+          };
+
+          if (!previous) {
+            await heroSlidesApi.create(payload);
+            continue;
+          }
+
+          if (JSON.stringify(previous) !== JSON.stringify(slide)) {
+            try {
+              await heroSlidesApi.update(slide.id, payload);
+            } catch (error: any) {
+              if (error?.response?.status === 404) {
+                await heroSlidesApi.create(payload);
+              } else {
+                throw error;
+              }
+            }
+          }
+        }
+
+        for (const previous of previousSlides) {
+          if (!nextById.has(previous.id)) {
+            await heroSlidesApi.delete(previous.id);
+          }
+        }
+      } catch (error) {
+        console.error('Could not sync hero slides to database:', error);
+        window.alert('Hero change was saved locally, but database sync failed. Please make sure you are logged in as admin.');
+      }
+    })();
+  };
+
+  const setHeroSlidesAndSync: React.Dispatch<React.SetStateAction<HeroSlide[]>> = (action) => {
+    setHeroSlides((previousSlides) => {
+      const nextSlides = typeof action === 'function'
+        ? (action as (prevState: HeroSlide[]) => HeroSlide[])(previousSlides)
+        : action;
+
+      syncHeroSlidesToDatabase(previousSlides, nextSlides);
+      return nextSlides;
+    });
+  };
   // Secure logout
   const handleSecureLogout = async () => {
     try {
@@ -974,7 +1063,7 @@ export default function App() {
           currentLang={currentLang}
           slides={heroSlides}
           isAdmin={isAdmin}
-          setSlides={setHeroSlides}
+          setSlides={setHeroSlidesAndSync}
           onExploreClick={() => {
             setActiveTab('discover');
             const catElem = document.getElementById('discovery-catalog-section');

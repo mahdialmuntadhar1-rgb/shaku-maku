@@ -421,6 +421,35 @@ export const postsApi = {
   },
 };
 
+
+export const heroSlidesApi = {
+  async list(): Promise<any[]> {
+    const response = await apiRequest<ApiResponse<any[]>>('/hero-slides', {}, true);
+    return unwrap<any[]>(response);
+  },
+
+  async create(slide: any): Promise<any> {
+    const response = await apiRequest<ApiResponse<any>>('/hero-slides', {
+      method: 'POST',
+      body: JSON.stringify(slide),
+    }, true);
+    return unwrap<any>(response);
+  },
+
+  async update(id: string, payload: any): Promise<any> {
+    const response = await apiRequest<ApiResponse<any>>(`/hero-slides/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(payload),
+    }, true);
+    return unwrap<any>(response);
+  },
+
+  async delete(id: string): Promise<any> {
+    return apiRequest<any>(`/hero-slides/${id}`, {
+      method: 'DELETE',
+    }, true);
+  },
+};
 export const adminApi = {
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     const response = await apiRequest<ApiResponse<AuthResponse>>('/admin/login', {
