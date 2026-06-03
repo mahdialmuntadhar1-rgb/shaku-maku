@@ -14,3 +14,14 @@ coverage/
 *.tmp
 *.cache
 nabda-bulk-report-*.json
+
+# Local repair backups / temporary files
+*.bak
+*.restore-*.bak
+*.before-*.bak
+hotfix-report.txt
+dist/
+node_modules/
+.env.local
+.env.development.local
+.env.production.local
