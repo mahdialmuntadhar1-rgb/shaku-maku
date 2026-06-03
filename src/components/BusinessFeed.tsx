@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Heart, Bookmark, Star, MapPin, Phone, Share2, Edit3, Save, 
@@ -49,11 +49,11 @@ export default function BusinessFeed({
   const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({});
   const [loadingCategories, setLoadingCategories] = useState<Record<string, boolean>>({});
 
-  // Reset pagination/expanded categories when selectedCategory changes
+  // Reset pagination/expanded categories when governorate or category changes
   React.useEffect(() => {
     setExpandedCategories({});
     setLoadingCategories({});
-  }, [selectedCategory]);
+  }, [selectedGov, selectedCategory]);
   
   // Real-time custom comments added to specific business IDs
   const [localReviews, setLocalReviews] = useState<Record<string, { reviewer: string, rating: number, comment: string, date: string }[]>>({});
@@ -170,16 +170,24 @@ export default function BusinessFeed({
   }
   const isRtl = currentLang === 'ar' || currentLang === 'ku';
 
-  // Filter businesses by Governorate (if not 'all')
-  const govFiltered = selectedGov === 'all' 
-    ? businesses 
-    : businesses.filter(b => b.governorate === selectedGov);
+  // Filter businesses by Governorate (if not 'all').
+  // Always normalize because backend rows may say "Wasit" while UI filter uses "wasit".
+  const normalizedSelectedGov = normalizeGovernorate(selectedGov);
+
+  const govFiltered = normalizedSelectedGov === 'all'
+    ? businesses
+    : businesses.filter((b) => normalizeGovernorate(b.governorate) === normalizedSelectedGov);
 
   const knownCategoryIds = new Set(CATEGORIES.map((c) => c.id));
   const groupedBusinesses = govFiltered.reduce<Record<string, Business[]>>((acc, biz) => {
-    const categoryId = knownCategoryIds.has(biz.category) ? biz.category : 'other';
+    const normalizedCategory = normalizeCategory(biz.category);
+    const categoryId = knownCategoryIds.has(normalizedCategory) ? normalizedCategory : 'other';
     if (!acc[categoryId]) acc[categoryId] = [];
-    acc[categoryId].push(biz);
+    acc[categoryId].push({
+      ...biz,
+      governorate: normalizeGovernorate(biz.governorate),
+      category: categoryId
+    });
     return acc;
   }, {});
 
@@ -191,6 +199,17 @@ export default function BusinessFeed({
   const visibleCount = categoriesToGroup.reduce((count, category) => {
     return count + (groupedBusinesses[category.id] || []).length;
   }, 0);
+
+  React.useEffect(() => {
+    console.log('[ShakuMaku] business feed filter:', {
+      selectedGov,
+      normalizedSelectedGov,
+      selectedCategory,
+      inputBusinesses: businesses.length,
+      afterGovernorateFilter: govFiltered.length,
+      visibleCount
+    });
+  }, [selectedGov, normalizedSelectedGov, selectedCategory, businesses.length, govFiltered.length, visibleCount]);
 
   const handleToggleCategoryExpand = (catId: string) => {
     const isCurrentlyExpanded = expandedCategories[catId] || false;
