@@ -166,10 +166,38 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
       governorate: linkedBusiness ? normalizeGovernorate(linkedBusiness.governorate) : prev.governorate,
       category: linkedBusiness ? normalizeCategory(linkedBusiness.category) : prev.category
     }));
-  };
+  };  function isTooLargeInlineMedia(value: string): boolean {
+    return String(value || '').startsWith('data:') && String(value || '').length > 250000;
+  }
+
+  function getSafePostMediaUrl(value: string): string {
+    const media = String(value || '').trim();
+
+    if (!media) {
+      return 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&auto=format&fit=crop&q=85';
+    }
+
+    if (isTooLargeInlineMedia(media)) {
+      return 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&auto=format&fit=crop&q=85';
+    }
+
+    return media;
+  }
+
+
 
   const createPost = async () => {
-    const linkedBusiness = businesses.find((business) => business.id === newPostDraft.businessId) || businesses[0];
+    const rawMediaUrl = String(newPostDraft.mediaUrl || '').trim();
+    if (isTooLargeInlineMedia(rawMediaUrl)) {
+      setPostStatus(t(
+        currentLang,
+        'The selected image is too large to save directly. Please use an image URL for now.',
+        'الصورة المختارة كبيرة جداً للحفظ المباشر. حالياً استخدم رابط صورة.',
+        'وێنەی هەڵبژێردراو زۆر گەورەیە. تکایە ئێستا لینکی وێنە بەکاربهێنە.'
+      ));
+      return;
+    }
+const linkedBusiness = businesses.find((business) => business.id === newPostDraft.businessId) || businesses[0];
     const captionAr = newPostDraft.captionAr.trim();
     const captionKu = newPostDraft.captionKu.trim() || captionAr;
     const captionEn = newPostDraft.captionEn.trim() || captionAr;
