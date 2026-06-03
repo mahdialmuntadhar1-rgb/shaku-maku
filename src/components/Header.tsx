@@ -119,50 +119,7 @@ export default function Header({
 
   return (
     <header className="sticky top-0 z-50 flex flex-col w-full shadow-lg">
-      {!user && (
-        <div
-          id="top-register-cta"
-          className="w-full border-b border-cyan-400/20 bg-gradient-to-r from-fuchsia-950/95 via-slate-950/95 to-cyan-950/95 px-3 py-2.5 shadow-[0_0_35px_rgba(34,211,238,0.18)]"
-          dir={isRtl ? 'rtl' : 'ltr'}
-        >
-          <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 sm:flex-row">
-            <div className="text-center sm:text-start">
-              <div className="text-[11px] font-black uppercase tracking-[0.22em] text-cyan-200">
-                {currentLang === 'en'
-                  ? 'Join Shaku Maku for free'
-                  : currentLang === 'ku'
-                    ? 'بەخۆڕایی ببە بە شەکو مەکو'
-                    : 'انضم إلى شكو ماكو مجاناً'}
-              </div>
-              <div className="text-xs font-extrabold leading-5 text-white md:text-sm">
-                {currentLang === 'en'
-                  ? 'Register your business, manage your page, and reach more customers in Iraq.'
-                  : currentLang === 'ku'
-                    ? 'کارەکەت تۆمار بکە، پەڕەکەت بەڕێوەببە، و بگە بە کڕیاری زیاتر لە عێراق.'
-                    : 'سجّل مشروعك، أدِر صفحتك، ووصل إلى زبائن أكثر في العراق.'}
-              </div>
-            </div>
-
-            <button
-              type="button"
-              onClick={onSignIn}
-              className="group relative overflow-hidden rounded-full border border-white/25 bg-gradient-to-r from-luxury-gold via-yellow-300 to-cyan-300 px-5 py-2.5 text-[11px] font-black uppercase tracking-widest text-black shadow-[0_0_22px_rgba(34,211,238,0.45)] transition hover:scale-105 active:scale-95"
-              id="top-register-login-btn"
-            >
-              <span className="absolute inset-0 bg-white/30 opacity-0 transition group-hover:opacity-100" />
-              <span className="relative">
-                {currentLang === 'en'
-                  ? 'Register / Login'
-                  : currentLang === 'ku'
-                    ? 'تۆماربوون / چوونەژوور'
-                    : 'تسجيل / دخول'}
-              </span>
-            </button>
-          </div>
-        </div>
-      )}
-
-      <div className="backdrop-blur-md bg-luxury-bg/90 border-b border-luxury-gold/20 pb-3 pt-3.5 px-3 xs:px-6 w-full flex flex-col md:flex-row items-center justify-between gap-3.5 md:gap-4">
+<div className="backdrop-blur-md bg-luxury-bg/90 border-b border-luxury-gold/20 pb-3 pt-3.5 px-3 xs:px-6 w-full flex flex-col md:flex-row items-center justify-between gap-3.5 md:gap-4">
         
         {/* Left/Right Brand Column */}
         <div className="flex items-center justify-between w-full md:w-auto gap-3">
@@ -376,7 +333,7 @@ export default function Header({
           ) : (
             <button
               onClick={onSignIn}
-              className="flex items-center gap-2 px-4.5 py-2.5 rounded-full bg-gradient-to-r from-luxury-teal to-luxury-gold hover:from-[#154648] hover:to-[#dfbe6d] text-xs font-black uppercase text-white tracking-widest cursor-pointer shadow-xl transition active:scale-95 border border-white/10 shrink-0"
+              className="group relative flex items-center gap-2 overflow-hidden rounded-full border border-yellow-200/60 bg-gradient-to-r from-luxury-gold via-yellow-300 to-cyan-300 px-5 py-2.5 text-[11px] font-black uppercase tracking-widest text-black shadow-[0_0_24px_rgba(212,175,55,0.75)] transition hover:scale-105 active:scale-95 shrink-0"
               id="google-sign-in-hdr"
             >
               <span>🔑</span>
