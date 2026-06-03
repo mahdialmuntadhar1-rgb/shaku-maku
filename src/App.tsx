@@ -617,8 +617,8 @@ export default function App() {
 
   // Sync hero slide edits from Hero component to backend database.
   const syncHeroSlidesToDatabase = (previousSlides: HeroSlide[], nextSlides: HeroSlide[]) => {
-    const previousById = new Map(previousSlides.map((slide) => [slide.id, slide]));
-    const nextById = new Map(nextSlides.map((slide) => [slide.id, slide]));
+    const previousById = new globalThis.Map(previousSlides.map((slide) => [slide.id, slide]));
+    const nextById = new globalThis.Map(nextSlides.map((slide) => [slide.id, slide]));
 
     void (async () => {
       try {
