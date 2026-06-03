@@ -12,6 +12,7 @@ import { authApi, businessesApi, postsApi } from './api';
 // Saku Maku Modular Components
 import Header from './components/Header';
 import Hero from './components/Hero';
+import PWAInstallButton from './components/PWAInstallButton';
 import CategorySwiper from './components/CategorySwiper';
 import BusinessFeed from './components/BusinessFeed';
 import SocialFeed from './components/SocialFeed';
@@ -866,6 +867,8 @@ export default function App() {
       </div>
 
       {/* Dynamic Saku Maku top header */}
+      <PWAInstallButton currentLang={currentLang} />
+
       <Header
         currentLang={currentLang}
         onChangeLang={(lang) => {
