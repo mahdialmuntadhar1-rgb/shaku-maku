@@ -147,11 +147,50 @@ async function updateHeroSlide(c: any) {
     const data = await c.req.json();
 
     const existing = await c.env.DB.prepare('SELECT id FROM hero_slides WHERE id = ?').bind(id).first();
-    if (!existing) {
-      return c.json({ success: false, error: 'Hero slide not found' }, 404);
-    }
-
     const normalized = readSlidePayload(data);
+
+    if (!existing) {
+      if (!normalized.image_url) {
+        return c.json({ success: false, error: 'Hero slide not found and image is required to create it' }, 404);
+      }
+
+      await c.env.DB.prepare(
+        `INSERT INTO hero_slides (
+          id,
+          image_url,
+          slogan_ar,
+          slogan_ku,
+          slogan_en,
+          badge_ar,
+          badge_ku,
+          badge_en,
+          governorate,
+          category,
+          sort_order,
+          is_active,
+          created_by,
+          created_at,
+          updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))`
+      ).bind(
+        id,
+        normalized.image_url,
+        normalized.slogan_ar,
+        normalized.slogan_ku,
+        normalized.slogan_en,
+        normalized.badge_ar,
+        normalized.badge_ku,
+        normalized.badge_en,
+        normalized.governorate,
+        normalized.category,
+        normalized.sort_order,
+        normalized.is_active,
+        admin.userId
+      ).run();
+
+      const createdRow = await c.env.DB.prepare('SELECT * FROM hero_slides WHERE id = ?').bind(id).first();
+      return c.json({ success: true, data: rowToHeroSlide(createdRow), message: 'Hero slide created by upsert' }, 201);
+    }
     const updates: string[] = [];
     const values: any[] = [];
 
