@@ -14,6 +14,7 @@ import { authApi, businessesApi, postsApi } from './api';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import PWAInstallButton from './components/PWAInstallButton';
+import AttentionTabsGlow from './components/AttentionTabsGlow';
 import CategorySwiper from './components/CategorySwiper';
 import BusinessFeed from './components/BusinessFeed';
 import SocialFeed from './components/SocialFeed';
@@ -899,6 +900,7 @@ export default function App() {
       </div>
 
       {/* Dynamic Saku Maku top header */}
+      <AttentionTabsGlow />
       <PWAInstallButton currentLang={currentLang} />
 
       <Header
