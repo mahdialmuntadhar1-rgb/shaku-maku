@@ -353,7 +353,53 @@ function normalizeCategoryId(value: unknown): string {
     compactMap[k.toLowerCase().replace(/[\s_\-&/،]+/g, '')] = v;
   });
 
-  return compactMap[compact] || 'other';
+  const exact = compactMap[compact];
+  if (exact) return exact;
+
+  // Fuzzy backend category matching.
+  // Many imported database rows use broad labels such as Food, Dining,
+  // Health, Medical, Shopping, Tech, Automotive, etc.
+  const keywordRules: Array<[string, string[]]> = [
+    ['restaurant', ['restaurant', 'restaurants', 'food', 'foods', 'dining', 'eatery', 'kitchen', 'grill', 'fastfood', 'burger', 'pizza', 'shawarma', 'catering']],
+    ['cafe_bakery', ['cafe', 'cafes', 'coffee', 'coffeeshop', 'bakery', 'bakeries', 'pastry', 'dessert', 'sweets', 'cake']],
+    ['pharmacy', ['pharmacy', 'pharmacies', 'drugstore', 'medicine', 'medicines']],
+    ['hospital', ['hospital', 'hospitals']],
+    ['clinic', ['clinic', 'clinics', 'medicalcenter', 'healthcenter', 'health', 'medical', 'lab', 'laboratory']],
+    ['doctor', ['doctor', 'doctors', 'physician', 'specialist']],
+    ['dentist', ['dentist', 'dentists', 'dental']],
+    ['supermarket', ['supermarket', 'supermarkets', 'grocery', 'groceries', 'market', 'markets', 'hypermarket', 'minimarket']],
+    ['mall', ['mall', 'malls', 'shopping', 'retail', 'store', 'stores']],
+    ['salon', ['salon', 'salons', 'beauty', 'barber', 'hair', 'cosmetic', 'makeup']],
+    ['spa', ['spa', 'wellness', 'massage']],
+    ['gym', ['gym', 'gyms', 'fitness', 'sport', 'sportsclub', 'club']],
+    ['hotel', ['hotel', 'hotels', 'resort', 'resorts', 'hospitality', 'motel']],
+    ['travel_agency', ['travel', 'tourism', 'tour', 'agency', 'airline', 'ticket']],
+    ['university', ['university', 'universities', 'college', 'school', 'education', 'training', 'institute', 'academy']],
+    ['bank', ['bank', 'banks', 'finance', 'exchange', 'money', 'insurance']],
+    ['real_estate', ['realestate', 'property', 'properties', 'housing', 'apartment', 'apartments']],
+    ['lawyer', ['lawyer', 'lawyers', 'legal', 'law', 'attorney']],
+    ['car_dealer', ['cardealer', 'carsales', 'automotive', 'autosales', 'vehicle']],
+    ['car_rental', ['carrental', 'rentalcar', 'rentacar']],
+    ['mobile_shop', ['mobile', 'mobiles', 'phone', 'phones', 'smartphone', 'electronics', 'techshop', 'computer']],
+    ['furniture', ['furniture', 'homefurniture', 'decor']],
+    ['clothing_store', ['clothing', 'fashion', 'clothes', 'boutique', 'apparel']],
+    ['software_company', ['software', 'it', 'technology', 'digital', 'programming', 'webdesign']],
+    ['marketing_agency', ['marketing', 'advertising', 'mediaagency', 'agency']],
+    ['construction_company', ['construction', 'contractor', 'contractors', 'building']],
+    ['architecture', ['architecture', 'architect', 'design']],
+    ['photography', ['photography', 'photo', 'studio', 'camera']],
+    ['cinema', ['cinema', 'theatre', 'theater', 'movie']],
+    ['gaming_center', ['gaming', 'game', 'games', 'playstation']],
+    ['pet_shop', ['pet', 'pets', 'veterinary', 'vet']]
+  ];
+
+  for (const [categoryId, keywords] of keywordRules) {
+    if (keywords.some((keyword) => compact.includes(keyword))) {
+      return categoryId;
+    }
+  }
+
+  return 'other';
 }
 
 export default function App() {
