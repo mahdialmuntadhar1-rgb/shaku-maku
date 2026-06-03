@@ -555,7 +555,38 @@ export default function App() {
   }, [user]);
 
   useEffect(() => {
-    localStorage.setItem('hero_slides', JSON.stringify(heroSlides));
+    try {
+      const safeHeroSlides = heroSlides.map((slide) => {
+        const image = String(slide.image || '');
+
+        // Browser localStorage is small. Large uploaded base64 images can crash the app.
+        // Keep URL images, but do not persist huge base64 images.
+        if (image.startsWith('data:image') && image.length > 350000) {
+          return {
+            ...slide,
+            image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1400&auto=format&fit=crop&q=85'
+          };
+        }
+
+        return slide;
+      });
+
+      const payload = JSON.stringify(safeHeroSlides);
+
+      // Keep localStorage payload under a safer size.
+      if (payload.length > 3000000) {
+        console.warn('hero_slides too large for localStorage; clearing saved hero slides.');
+        localStorage.removeItem('hero_slides');
+        return;
+      }
+
+      localStorage.setItem('hero_slides', payload);
+    } catch (error) {
+      console.warn('Could not save hero_slides to localStorage:', error);
+      try {
+        localStorage.removeItem('hero_slides');
+      } catch {}
+    }
   }, [heroSlides]);
 
   // Secure logout
