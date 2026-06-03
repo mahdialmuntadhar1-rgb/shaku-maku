@@ -229,6 +229,39 @@ function normalizeGovCode(value: unknown): GovernorateCode {
   return compact as GovernorateCode;
 }
 
+function normalizeDedupeText(value: unknown): string {
+  return String(value || '')
+    .toLowerCase()
+    .trim()
+    .replace(/[\s\-_،.,()\[\]{}]+/g, '')
+    .replace(/[^\p{L}\p{N}]+/gu, '');
+}
+
+function dedupeBusinessesByIdentity(items: Business[]): Business[] {
+  const seen = new Set<string>();
+
+  return items.filter((biz) => {
+    const nameKey = normalizeDedupeText(
+      biz.name?.en || biz.name?.ar || biz.name?.ku || biz.id
+    );
+
+    const phoneKey = normalizeDedupeText(biz.phoneNumber || '');
+    const govKey = normalizeDedupeText(biz.governorate || '');
+    const catKey = normalizeDedupeText(biz.category || '');
+
+    // Prefer phone when available, otherwise use name + governorate + category.
+    const key = phoneKey
+      ? `phone:${phoneKey}`
+      : `name:${nameKey}|gov:${govKey}|cat:${catKey}`;
+
+    if (!nameKey && !phoneKey) return true;
+    if (seen.has(key)) return false;
+
+    seen.add(key);
+    return true;
+  });
+}
+
 function normalizeCategoryId(value: unknown): string {
   const raw = String(value || '').trim();
   if (!raw) return 'other';
@@ -622,7 +655,7 @@ export default function App() {
 
         console.log("[ShakuMaku] all businesses loaded:", transformedBusinesses.length);
 
-        setBusinesses(transformedBusinesses);
+        setBusinesses(dedupeBusinessesByIdentity(transformedBusinesses));
         setBusinessesLoadError(null);
       } catch (error) {
         console.error("Error fetching all businesses from API:", error);
