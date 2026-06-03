@@ -1,10 +1,10 @@
 const RAW_API_BASE_URL = (import.meta as any).env?.VITE_API_URL || 'https://shaku-maku.mahdialmuntadhar1.workers.dev';
-export const API_BASE_URL = String(RAW_API_BASE_URL).replace(/\/+$/, '').replace(/\/api$/i, '');
+const RAW_API_BASE_URL_STRING = String(RAW_API_BASE_URL).trim();
 
-if (!(import.meta as any).env?.VITE_API_URL) {
-  console.warn('[Shaku Maku] VITE_API_URL is not set. Using fallback API base:', API_BASE_URL);
-}
-
+export const API_BASE_URL =
+  RAW_API_BASE_URL_STRING === '/api'
+    ? ''
+    : RAW_API_BASE_URL_STRING.replace(/\/+$/, '').replace(/\/api$/i, '');
 interface ApiResponse<T> {
   success: boolean;
   data: T;

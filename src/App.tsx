@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { normalizeGovernorate, normalizeCategory } from './utils/taxonomy';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Compass, Flame, Map, PlusCircle, BookOpen, Search, X, 
@@ -14,7 +13,6 @@ import { authApi, businessesApi, postsApi } from './api';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import PWAInstallButton from './components/PWAInstallButton';
-import AttentionTabsGlow from './components/AttentionTabsGlow';
 import CategorySwiper from './components/CategorySwiper';
 import BusinessFeed from './components/BusinessFeed';
 import SocialFeed from './components/SocialFeed';
@@ -900,8 +898,7 @@ export default function App() {
       </div>
 
       {/* Dynamic Saku Maku top header */}
-      <AttentionTabsGlow />
-      <PWAInstallButton currentLang={currentLang} />
+<PWAInstallButton currentLang={currentLang} />
 
       <Header
         currentLang={currentLang}
@@ -939,11 +936,6 @@ export default function App() {
         {liveDataError && (
           <div className="mb-5 max-w-3xl mx-auto bg-red-950/85 border border-red-400/40 rounded-xl px-4 py-3 text-red-100 text-xs md:text-sm font-medium">
             {liveDataError}
-          </div>
-        )}
-        {import.meta.env.DEV && (
-          <div className="mb-5 max-w-3xl mx-auto bg-zinc-900/80 border border-zinc-600/40 rounded-xl px-4 py-3 text-zinc-100 text-xs md:text-sm font-medium">
-            {`Loaded ${businesses.length} businesses from API. Visible after filters: ${filteredBusinesses.length}. Selected governorate: ${selectedGov}. Selected category: ${selectedCategory || 'all'}.`}
           </div>
         )}
 

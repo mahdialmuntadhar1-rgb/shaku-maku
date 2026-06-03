@@ -17,9 +17,21 @@ export default defineConfig({
   },
   server: {
     host: '0.0.0.0',
-    port: 5173,
+    port: 5175,
     strictPort: true,
-    cors: true
+    cors: true,
+    proxy: {
+      '/api': {
+        target: 'https://shaku-maku.mahdialmuntadhar1.workers.dev',
+        changeOrigin: true,
+        secure: true
+      },
+      '/health': {
+        target: 'https://shaku-maku.mahdialmuntadhar1.workers.dev',
+        changeOrigin: true,
+        secure: true
+      }
+    }
   },
   preview: {
     host: '0.0.0.0',
