@@ -84,6 +84,7 @@ import authRoutes from './routes/auth';
 import userRoutes from './routes/users';
 import businessRoutes from './routes/businesses';
 import feedRoutes from './routes/feed';
+import heroRoutes from './routes/hero';
 import adminRoutes from './routes/admin';
 
 type Env = {
@@ -234,6 +235,7 @@ app.route('/api/auth', authRoutes);
 app.route('/api/users', userRoutes);
 app.route('/api/businesses', businessRoutes);
 app.route('/api/feed', feedRoutes);
+app.route('/api/hero-slides', heroRoutes);
 app.route('/api', feedRoutes); // aliases: /api/posts, /api/business-posts, etc.
 app.route('/api/admin', adminRoutes);
 
