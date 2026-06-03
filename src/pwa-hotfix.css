@@ -1,0 +1,38 @@
+/* Hide install CTA only in the top header/nav area; keep middle/body CTA visible */
+header button[aria-label*="install" i],
+header button[title*="install" i],
+header a[aria-label*="install" i],
+header a[title*="install" i],
+nav button[aria-label*="install" i],
+nav button[title*="install" i],
+nav a[aria-label*="install" i],
+nav a[title*="install" i],
+[role="banner"] button[aria-label*="install" i],
+[role="banner"] button[title*="install" i],
+[role="banner"] a[aria-label*="install" i],
+[role="banner"] a[title*="install" i],
+header button[aria-label*="تثبيت"],
+header button[title*="تثبيت"],
+header a[aria-label*="تثبيت"],
+header a[title*="تثبيت"],
+nav button[aria-label*="تثبيت"],
+nav button[title*="تثبيت"],
+nav a[aria-label*="تثبيت"],
+nav a[title*="تثبيت"],
+[role="banner"] button[aria-label*="تثبيت"],
+[role="banner"] button[title*="تثبيت"],
+[role="banner"] a[aria-label*="تثبيت"],
+[role="banner"] a[title*="تثبيت"],
+header .install-button,
+header .pwa-install,
+header .app-install,
+nav .install-button,
+nav .pwa-install,
+nav .app-install,
+[role="banner"] .install-button,
+[role="banner"] .pwa-install,
+[role="banner"] .app-install {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
