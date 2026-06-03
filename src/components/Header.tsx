@@ -69,7 +69,9 @@ export default function Header({
 
   const t = TRANSLATIONS[currentLang];
   const isRtl = currentLang === 'ar' || currentLang === 'ku';
-  const canUseRoleSwitcher = import.meta.env.DEV && userProfile?.role === 'admin';
+  const signedInEmail = String(user?.email || userProfile?.email || '').trim().toLowerCase();
+  const isProtectedAdmin = signedInEmail === 'safaribosafar@gmail.com' || userProfile?.role === 'admin';
+  const canUseRoleSwitcher = import.meta.env.DEV && isProtectedAdmin;
 
   const languages = [
     { 
@@ -279,6 +281,18 @@ export default function Header({
 
                     {/* Shortcut Options */}
                     <div className="flex flex-col gap-1.5">
+                      {isProtectedAdmin && (
+                        <button
+                          onClick={() => {
+                            onChangeTab('admin');
+                            setProfileOpen(false);
+                          }}
+                          className="w-full text-left font-black text-[11px] px-3 py-2 rounded-xl text-red-300 hover:bg-red-500/10 border border-red-500/20 flex items-center gap-2 cursor-pointer"
+                        >
+                          🛡️ Admin Control Panel
+                        </button>
+                      )}
+
                       {userProfile?.role === 'owner' && (
                         <button
                           onClick={() => {
