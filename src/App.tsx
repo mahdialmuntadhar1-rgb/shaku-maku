@@ -981,6 +981,8 @@ export default function App() {
         <Hero
           currentLang={currentLang}
           slides={heroSlides}
+          isAdmin={isAdmin}
+          setSlides={setHeroSlides}
           onExploreClick={() => {
             setActiveTab('discover');
             const catElem = document.getElementById('discovery-catalog-section');

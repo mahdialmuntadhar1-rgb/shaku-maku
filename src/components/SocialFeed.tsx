@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { CheckCircle2, Eye, Heart, ImagePlus, Loader2, MapPin, MessageCircle, Phone, Repeat2, Send, Share2 } from 'lucide-react';
+import { CheckCircle2, Edit3, Eye, Heart, ImagePlus, Loader2, MapPin, MessageCircle, Phone, Repeat2, Save, Send, Share2, Trash2, X } from 'lucide-react';
 import { API_BASE_URL, getApiErrorMessage, postsApi } from '../api';
 import { CATEGORIES, GOVERNORATES } from '../data';
 import { normalizeGovernorate, normalizeCategory, getGovernorateLabel, getCategoryLabel } from '../utils/taxonomy';
@@ -39,6 +39,12 @@ const text = {
     shares: 'Shares',
     views: 'Views',
     seeded: 'localized demo engagement',
+    edit: 'Edit',
+    save: 'Save',
+    cancel: 'Cancel',
+    delete: 'Delete',
+    deleted: 'Post deleted',
+    updated: 'Post updated',
   },
   ar: {
     composerTitle: 'إنشاء منشور',
@@ -63,6 +69,12 @@ const text = {
     shares: 'مشاركة',
     views: 'مشاهدة',
     seeded: 'تفاعل تجريبي محلي',
+    edit: 'تعديل',
+    save: 'حفظ',
+    cancel: 'إلغاء',
+    delete: 'حذف',
+    deleted: 'تم حذف المنشور',
+    updated: 'تم تحديث المنشور',
   },
   ku: {
     composerTitle: 'دروستکردنی بابەت',
@@ -87,6 +99,12 @@ const text = {
     shares: 'هاوبەشکردن',
     views: 'بینین',
     seeded: 'کارلێکی نموونەیی',
+    edit: 'دەستکاری',
+    save: 'پاشەکەوت',
+    cancel: 'هەڵوەشاندنەوە',
+    delete: 'سڕینەوە',
+    deleted: 'بابەتەکە سڕایەوە',
+    updated: 'بابەتەکە نوێکرایەوە',
   }
 } as const;
 
@@ -168,6 +186,10 @@ export default function SocialFeed({
   const [generatedPosts, setGeneratedPosts] = useState<SocialPost[]>(() => buildLocalizedSocialPosts([]));
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [visibleCount, setVisibleCount] = useState(12);
+  const isAdmin = String(user?.email || '').toLowerCase() === 'safaribosafar@gmail.com' || user?.role === 'admin';
+  const [editingPostId, setEditingPostId] = useState<string | null>(null);
+  const [editCaption, setEditCaption] = useState('');
+  const [postActionStatus, setPostActionStatus] = useState('');
 
   useEffect(() => {
     let cancelled = false;
@@ -194,7 +216,67 @@ export default function SocialFeed({
       }
     };
     probeAndLoadBusinesses();
-    return () => {
+    const updatePostLocally = (postId: string, updater: (post: SocialPost) => SocialPost) => {
+    setPosts((prev) => prev.map((post) => (post.id === postId ? updater(post) : post)));
+    setGeneratedPosts((prev) => prev.map((post) => (post.id === postId ? updater(post) : post)));
+  };
+
+  const removePostLocally = (postId: string) => {
+    setPosts((prev) => prev.filter((post) => post.id !== postId));
+    setGeneratedPosts((prev) => prev.filter((post) => post.id !== postId));
+  };
+
+  const startEditPost = (post: SocialPost) => {
+    setEditingPostId(post.id);
+    setEditCaption(getLocalized(post.caption, currentLang));
+    setPostActionStatus('');
+  };
+
+  const cancelEditPost = () => {
+    setEditingPostId(null);
+    setEditCaption('');
+  };
+
+  const saveEditedPost = async (post: SocialPost) => {
+    const cleanCaption = editCaption.trim();
+    if (!cleanCaption) return;
+
+    updatePostLocally(post.id, (current) => ({
+      ...current,
+      caption: {
+        ...current.caption,
+        ar: cleanCaption,
+        ku: cleanCaption,
+        en: cleanCaption
+      }
+    }));
+
+    try {
+      await postsApi.update(post.id, { caption: cleanCaption });
+      setPostActionStatus(t.updated);
+    } catch (error) {
+      setPostActionStatus(`${t.failed}: ${getApiErrorMessage(error)}`);
+    } finally {
+      setEditingPostId(null);
+      setEditCaption('');
+    }
+  };
+
+  const deletePost = async (post: SocialPost) => {
+    const ok = window.confirm(currentLang === 'en' ? 'Delete this post?' : currentLang === 'ku' ? 'ئەم بابەتە بسڕدرێتەوە؟' : 'هل تريد حذف هذا المنشور؟');
+    if (!ok) return;
+
+    removePostLocally(post.id);
+
+    try {
+      await postsApi.delete(post.id);
+      setPostActionStatus(t.deleted);
+    } catch (error) {
+      setPostActionStatus(`${t.deleted}. ${getApiErrorMessage(error)}`);
+    }
+  };
+
+  return () => {
       cancelled = true;
     };
   }, []);
@@ -350,6 +432,11 @@ export default function SocialFeed({
             {statusText}
           </p>
         ) : null}
+        {postActionStatus ? (
+          <p className="text-xs text-emerald-300 mt-2" lang={currentLang === 'ku' ? 'ku' : currentLang}>
+            {postActionStatus}
+          </p>
+        ) : null}
       </section>
 
       <section className="bg-white border border-zinc-200 rounded-2xl p-3 shadow-sm space-y-3">
@@ -415,6 +502,25 @@ export default function SocialFeed({
                       </div>
                     </div>
                   </div>
+                  {isAdmin ? (
+                    <div className="shrink-0 flex flex-col gap-1">
+                      <button
+                        type="button"
+                        onClick={() => startEditPost(post)}
+                        className="inline-flex items-center gap-1 rounded-xl border border-blue-200 bg-blue-50 px-2.5 py-1 text-[10px] font-black text-blue-700 hover:bg-blue-100"
+                      >
+                        <Edit3 className="w-3 h-3" /> {t.edit}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => deletePost(post)}
+                        className="inline-flex items-center gap-1 rounded-xl border border-red-200 bg-red-50 px-2.5 py-1 text-[10px] font-black text-red-700 hover:bg-red-100"
+                      >
+                        <Trash2 className="w-3 h-3" /> {t.delete}
+                      </button>
+                    </div>
+                  ) : null}
+
                   {badge ? (
                     <span className="shrink-0 text-[10px] font-black px-2.5 py-1 rounded-full bg-luxury-gold/15 text-[#7a5b00] border border-luxury-gold/30">
                       {badge}
@@ -423,9 +529,38 @@ export default function SocialFeed({
                 </div>
 
                 <div className="px-4 pb-3">
-                  <p className="text-[15px] text-zinc-900 leading-7 whitespace-pre-line" lang={currentLang === 'ku' ? 'ku' : currentLang}>
-                    {captionText}
-                  </p>
+                  {editingPostId === post.id ? (
+                    <div className="space-y-2">
+                      <textarea
+                        value={editCaption}
+                        onChange={(event) => setEditCaption(event.target.value)}
+                        rows={4}
+                        className="w-full rounded-2xl border border-luxury-gold/40 bg-white p-3 text-sm font-bold text-zinc-950 outline-none focus:border-luxury-gold"
+                        lang={currentLang === 'ku' ? 'ku' : currentLang}
+                        dir={isRtl ? 'rtl' : 'ltr'}
+                      />
+                      <div className="flex flex-wrap gap-2">
+                        <button
+                          type="button"
+                          onClick={() => saveEditedPost(post)}
+                          className="inline-flex items-center gap-1 rounded-xl bg-emerald-600 px-3 py-2 text-xs font-black text-white"
+                        >
+                          <Save className="w-3.5 h-3.5" /> {t.save}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={cancelEditPost}
+                          className="inline-flex items-center gap-1 rounded-xl bg-zinc-200 px-3 py-2 text-xs font-black text-zinc-800"
+                        >
+                          <X className="w-3.5 h-3.5" /> {t.cancel}
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-[15px] text-zinc-900 leading-7 whitespace-pre-line" lang={currentLang === 'ku' ? 'ku' : currentLang}>
+                      {captionText}
+                    </p>
+                  )}
                   <div className="flex flex-wrap gap-2 mt-3">
                     <span className="text-[11px] font-bold text-luxury-teal bg-luxury-teal/10 rounded-full px-2 py-1">#شكو_ماكو</span>
                     <span className="text-[11px] font-bold text-luxury-teal bg-luxury-teal/10 rounded-full px-2 py-1">#{category.name.replace(/\s+/g, '_')}</span>

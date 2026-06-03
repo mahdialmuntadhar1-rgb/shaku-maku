@@ -63,17 +63,103 @@ export default function Hero({ currentLang, onExploreClick, onSelectGov, slides,
     setEditingHero(false);
   };
 
-  const uploadHeroImage = (file: File | null) => {
+  const compressHeroImage = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      if (!file.type.startsWith('image/')) {
+        reject(new Error('Only image files are supported.'));
+        return;
+      }
+
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        const img = new Image();
+
+        img.onload = () => {
+          const maxSize = 1400;
+          const scale = Math.min(1, maxSize / Math.max(img.width, img.height));
+          const width = Math.max(1, Math.round(img.width * scale));
+          const height = Math.max(1, Math.round(img.height * scale));
+
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            reject(new Error('Could not prepare image.'));
+            return;
+          }
+
+          ctx.drawImage(img, 0, 0, width, height);
+
+          let quality = 0.72;
+          let output = canvas.toDataURL('image/jpeg', quality);
+
+          while (output.length > 260000 && quality > 0.36) {
+            quality -= 0.08;
+            output = canvas.toDataURL('image/jpeg', quality);
+          }
+
+          if (output.length > 320000) {
+            reject(new Error('Hero image is too large. Please choose a smaller photo.'));
+            return;
+          }
+
+          resolve(output);
+        };
+
+        img.onerror = () => reject(new Error('Could not load image.'));
+        img.src = String(reader.result || '');
+      };
+
+      reader.onerror = () => reject(new Error('Could not read image.'));
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const uploadHeroImages = async (files: FileList | null) => {
+    if (!files || !setSlides) return;
+
+    const imageFiles = Array.from(files).filter((file) => file.type.startsWith('image/'));
+    if (imageFiles.length === 0) return;
+
+    const compressedImages = await Promise.all(imageFiles.map((file) => compressHeroImage(file)));
+
+    const newSlides: HeroSlide[] = compressedImages.map((image, index) => ({
+      id: `hero-upload-${Date.now()}-${index}`,
+      image,
+      slogan: {
+        ar: 'إعلان جديد من شكو ماكو',
+        ku: 'ڕیکلامی نوێ لە شەکو مەکو',
+        en: 'New Shaku Maku promotion'
+      },
+      governorate: 'all',
+      category: 'restaurant',
+      badge: {
+        ar: 'مساحة ترويجية',
+        ku: 'شوێنی ڕیکلام',
+        en: 'Promotional space'
+      }
+    }));
+
+    setSlides((prev) => [...newSlides, ...prev].slice(0, 10));
+    setCurrentIndex(0);
+    setEditingHero(true);
+    setHeroDraft({
+      slogan: newSlides[0].slogan[currentLang] || newSlides[0].slogan.en,
+      badge: newSlides[0].badge[currentLang] || newSlides[0].badge.en
+    });
+  };
+
+  const uploadHeroImage = async (file: File | null) => {
     if (!file || !setSlides || !activeSlide) return;
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      updateActiveHeroSlide((slide) => ({
-        ...slide,
-        image: String(reader.result)
-      }));
-    };
-    reader.readAsDataURL(file);
+    const image = await compressHeroImage(file);
+    updateActiveHeroSlide((slide) => ({
+      ...slide,
+      image
+    }));
   };
 
   const addInlineHeroSlide = () => {
@@ -119,7 +205,12 @@ export default function Hero({ currentLang, onExploreClick, onSelectGov, slides,
   };
 
   return (
-    <div className="relative w-full h-[320px] md:h-[420px] overflow-hidden rounded-3xl group mb-6 bg-slate-950">
+    <div
+      onClick={() => {
+        if (canInlineEditHero) setEditingHero(true);
+      }}
+      className="relative w-full h-[320px] md:h-[420px] overflow-hidden rounded-3xl group mb-6 bg-slate-950 cursor-pointer"
+    >
       
       {/* Background Slides with AnimatePresence */}
       <AnimatePresence mode="wait">
@@ -159,12 +250,13 @@ export default function Hero({ currentLang, onExploreClick, onSelectGov, slides,
 
             <label className="px-3 py-2 rounded-xl bg-blue-500/20 text-blue-100 border border-blue-400/30 text-xs font-black flex items-center gap-1 cursor-pointer">
               <ImageIcon className="w-3.5 h-3.5" />
-              Upload image
+              Upload images
               <input
                 type="file"
                 accept="image/*"
+                multiple
                 className="hidden"
-                onChange={(event) => uploadHeroImage(event.target.files?.[0] || null)}
+                onChange={(event) => uploadHeroImages(event.target.files)}
               />
             </label>
 
@@ -186,7 +278,8 @@ export default function Hero({ currentLang, onExploreClick, onSelectGov, slides,
               Delete slide
             </button>
 
-            <span className="text-[10px] text-zinc-300 font-bold ml-auto">
+            <span className="text-[10px] text-cyan-100 font-black hidden md:inline">Click anywhere on hero to edit</span>
+             <span className="text-[10px] text-zinc-300 font-bold ml-auto">
               Slide {currentIndex + 1} / {activeSlidesList.length}
             </span>
           </div>
