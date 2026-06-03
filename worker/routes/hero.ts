@@ -109,12 +109,28 @@ heroRoutes.post('/', async (c) => {
 
     const id = cleanText(data.id) || generateId();
 
+    // Safe upsert:
+    // If the frontend sends a slide id that already exists, update it instead of crashing
+    // with D1_ERROR UNIQUE constraint failed: hero_slides.id.
     await c.env.DB.prepare(
       `INSERT INTO hero_slides (
         id, image_url, slogan_ar, slogan_ku, slogan_en,
         badge_ar, badge_ku, badge_en, governorate, category,
         sort_order, is_active, created_by, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))`
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
+      ON CONFLICT(id) DO UPDATE SET
+        image_url = excluded.image_url,
+        slogan_ar = excluded.slogan_ar,
+        slogan_ku = excluded.slogan_ku,
+        slogan_en = excluded.slogan_en,
+        badge_ar = excluded.badge_ar,
+        badge_ku = excluded.badge_ku,
+        badge_en = excluded.badge_en,
+        governorate = excluded.governorate,
+        category = excluded.category,
+        sort_order = excluded.sort_order,
+        is_active = excluded.is_active,
+        updated_at = datetime('now')`
     ).bind(
       id,
       payload.image_url,
@@ -132,12 +148,11 @@ heroRoutes.post('/', async (c) => {
     ).run();
 
     const row = await c.env.DB.prepare('SELECT * FROM hero_slides WHERE id = ?').bind(id).first();
-    return c.json({ success: true, data: rowToHeroSlide(row) }, 201);
+    return c.json({ success: true, data: rowToHeroSlide(row), message: 'Hero slide saved' }, 200);
   } catch (error: any) {
-    return c.json({ success: false, error: error?.message || 'Failed to create hero slide' }, 500);
+    return c.json({ success: false, error: error?.message || 'Failed to save hero slide' }, 500);
   }
 });
-
 async function updateHeroSlide(c: any) {
   try {
     const admin = await requireAdmin(c);
