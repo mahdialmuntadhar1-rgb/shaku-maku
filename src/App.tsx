@@ -471,77 +471,105 @@ export default function App() {
     console.log("Profile update not implemented yet");
   };
 
-  // Fetch businesses from API
+  // Fetch ALL businesses from API, page by page.
+  // Important: do not send governorate/category filters here.
+  // We load the full backend dataset first, then filter locally below.
+  // This prevents empty results when the backend and frontend use different category/governorate labels.
   useEffect(() => {
+    let cancelled = false;
+
+    const transformBusiness = (biz: any): Business => {
+      const category = normalizeCategoryId(biz.category);
+      const governorate = normalizeGovCode(biz.governorate);
+      const sourceImages = biz.images ? String(biz.images).split(',').map((value) => value.trim()).filter(Boolean) : [];
+      const cleanSourceImages = sourceImages.filter((value) => !isLikelyGenericBusinessImage(value));
+      const mainImage = resolveBusinessCardImage(biz.image || cleanSourceImages[0], category, biz.id);
+      const gallery = [mainImage, ...cleanSourceImages.filter((value) => value !== mainImage)];
+
+      return {
+        id: String(biz.id),
+        name: {
+          ar: biz.name_ar || biz.name_en || '',
+          ku: biz.name_ku || biz.name_en || '',
+          en: biz.name_en || ''
+        },
+        description: {
+          ar: biz.description_ar || '',
+          ku: biz.description_ku || '',
+          en: biz.description_en || ''
+        },
+        category,
+        governorate,
+        rating: Number(biz.rating || 0),
+        reviewsCount: Number(biz.reviews_count || 0),
+        image: mainImage,
+        images: gallery.length > 0 ? gallery : [FALLBACK_BUSINESS_IMAGE],
+        avatar: biz.avatar || FALLBACK_AVATAR,
+        isVerified: Boolean(biz.is_verified),
+        phoneNumber: biz.phone_number || '',
+        address: {
+          ar: biz.address_ar || '',
+          ku: biz.address_ku || '',
+          en: biz.address_en || ''
+        },
+        likes: Number(biz.likes || biz.like_count || 0),
+        saves: Number(biz.saves || biz.save_count || 0),
+        mapCoords: { x: Number(biz.map_coords_x || 0), y: Number(biz.map_coords_y || 0) },
+        likedByUser: false,
+        savedByUser: false
+      };
+    };
+
     const fetchBusinesses = async () => {
       try {
-        const params: { page: number; limit: number; governorate?: string; category?: string } = { page: 1, limit: 50 };
-        if (selectedGov !== 'all') {
-          const selectedGovMeta = GOVERNORATES.find((g) => g.code === selectedGov);
-          params.governorate = selectedGovMeta?.englishLabel || selectedGovMeta?.name.en || selectedGov;
+        const limit = 100;
+        const maxPages = 100;
+        const allRows: any[] = [];
+        const seenIds = new Set<string>();
+
+        for (let page = 1; page <= maxPages; page += 1) {
+          const response = await businessesApi.list({ page, limit });
+          const rows = normalizeList(response);
+
+          if (rows.length === 0) break;
+
+          let newRowsThisPage = 0;
+
+          for (const row of rows) {
+            const id = String(row?.id || '');
+            if (!id) continue;
+            if (seenIds.has(id)) continue;
+            seenIds.add(id);
+            allRows.push(row);
+            newRowsThisPage += 1;
+          }
+
+          if (newRowsThisPage === 0) break;
+          if (rows.length < limit) break;
         }
-        if (selectedCategory && selectedCategory !== 'other') {
-          params.category = selectedCategory;
-        }
 
-        const response = await businessesApi.list(params);
-        const rows = normalizeList(response);
-        console.log("[ShakuMaku] businesses raw response:", response);
-        console.log("[ShakuMaku] businesses rows:", rows.length);
+        if (cancelled) return;
 
-        const transformedBusinesses: Business[] = rows.map((biz: any) => {
-          const category = normalizeCategoryId(biz.category);
-          const governorate = normalizeGovCode(biz.governorate);
-          const sourceImages = biz.images ? String(biz.images).split(',').map((value) => value.trim()).filter(Boolean) : [];
-          const cleanSourceImages = sourceImages.filter((value) => !isLikelyGenericBusinessImage(value));
-          const mainImage = resolveBusinessCardImage(biz.image || cleanSourceImages[0], category, biz.id);
-          const gallery = [mainImage, ...cleanSourceImages.filter((value) => value !== mainImage)];
+        const transformedBusinesses = allRows.map(transformBusiness);
 
-          return {
-            id: biz.id,
-            name: {
-              ar: biz.name_ar || biz.name_en || '',
-              ku: biz.name_ku || biz.name_en || '',
-              en: biz.name_en || ''
-            },
-            description: {
-              ar: biz.description_ar || '',
-              ku: biz.description_ku || '',
-              en: biz.description_en || ''
-            },
-            category,
-            governorate,
-            rating: Number(biz.rating || 0),
-            reviewsCount: Number(biz.reviews_count || 0),
-            image: mainImage,
-            images: gallery.length > 0 ? gallery : [FALLBACK_BUSINESS_IMAGE],
-            avatar: biz.avatar || FALLBACK_AVATAR,
-            isVerified: Boolean(biz.is_verified),
-            phoneNumber: biz.phone_number || '',
-            address: {
-              ar: biz.address_ar || '',
-              ku: biz.address_ku || '',
-              en: biz.address_en || ''
-            },
-            likes: Number(biz.likes || biz.like_count || 0),
-            saves: Number(biz.saves || biz.save_count || 0),
-            mapCoords: { x: Number(biz.map_coords_x || 0), y: Number(biz.map_coords_y || 0) },
-            likedByUser: false,
-            savedByUser: false
-          };
-        });
+        console.log("[ShakuMaku] all businesses loaded:", transformedBusinesses.length);
 
         setBusinesses(transformedBusinesses);
         setBusinessesLoadError(null);
       } catch (error) {
-        console.error("Error fetching businesses from API:", error);
+        console.error("Error fetching all businesses from API:", error);
+        if (cancelled) return;
         setBusinesses([]);
         setBusinessesLoadError(formatLiveDataError('/api/businesses', error));
       }
     };
 
     fetchBusinesses();
-  }, [selectedGov, selectedCategory]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // Fetch posts from API
   useEffect(() => {
