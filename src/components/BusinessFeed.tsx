@@ -83,6 +83,12 @@ export default function BusinessFeed({
     return raw;
   }
 
+
+  function standardizeMosulNinevehDisplay(value: string | undefined): string {
+    return String(value || '')
+      .replace(/\b(nineveh|ninewa|ninawa|nainawa|niniveh|neneveh|neniva)\b/gi, 'Mosul / Nineveh')
+      .replace(/نينوى|نينوي/g, 'الموصل / نينوى');
+  }
   function extractExternalLinks(value: string | undefined): Array<{ label: string; href: string }> {
     const raw = String(value || '');
     const links: Array<{ label: string; href: string }> = [];
@@ -246,7 +252,7 @@ export default function BusinessFeed({
       }).catch(console.error);
     } else {
       // Fallback
-      alert(`${t.share}: ${biz.name[currentLang]}\n${window.location.href}`);
+      alert(`${t.share}: ${standardizeMosulNinevehDisplay(biz.name[currentLang])}\n${window.location.href}`);
     }
   };
 
@@ -397,7 +403,7 @@ export default function BusinessFeed({
                       {/* Cover Photo */}
                       <img
                         src={biz.image}
-                        alt={biz.name[currentLang]}
+                        alt={standardizeMosulNinevehDisplay(biz.name[currentLang])}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                         referrerPolicy="no-referrer"
                       />
@@ -410,7 +416,7 @@ export default function BusinessFeed({
                         {/* Title & Category with governorate */}
                         <div className="flex flex-col xs:flex-row xs:items-start justify-between gap-1 mb-1 xs:mb-1.5">
                           <h3 className="text-xs xs:text-sm font-black text-[#1A1A1A] group-hover:text-luxury-gold transition-colors line-clamp-1 font-sans">
-                            {biz.name[currentLang]}
+                            {standardizeMosulNinevehDisplay(biz.name[currentLang])}
                           </h3>
                           
                           <div className="flex items-center gap-0.5 xs:gap-1 text-[9px] xs:text-[11px] text-amber-805 font-black shrink-0 bg-amber-500/10 px-1 xs:px-1.5 py-0.5 rounded-lg border border-amber-500/20 w-fit">
@@ -477,7 +483,7 @@ export default function BusinessFeed({
                             {cleanBusinessDisplayText(biz.address[currentLang]) && (
                               <div className="flex items-center gap-0.5 xs:gap-1 text-[9px] xs:text-[11px] text-zinc-500 mb-1 xs:mb-2 font-black">
                                 <MapPin className="w-3 xs:w-3.5 h-3 xs:h-3.5 text-luxury-coral shrink-0" />
-                                <span className="truncate">{cleanBusinessDisplayText(biz.address[currentLang])}</span>
+                                <span className="truncate">{standardizeMosulNinevehDisplay(cleanBusinessDisplayText(biz.address[currentLang]))}</span>
                               </div>
                             )}
 
@@ -509,7 +515,7 @@ export default function BusinessFeed({
                             {/* Description snippet */}
                             {cleanBusinessDisplayText(biz.description[currentLang]) && (
                               <p className="text-[9px] xs:text-[11px] text-zinc-500 line-clamp-2 leading-relaxed mb-2 xs:mb-4">
-                                {cleanBusinessDisplayText(biz.description[currentLang])}
+                                {standardizeMosulNinevehDisplay(cleanBusinessDisplayText(biz.description[currentLang]))}
                               </p>
                             )}
                           </>

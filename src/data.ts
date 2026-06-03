@@ -49,11 +49,11 @@ export const GOVERNORATES: Governorate[] = [
   {
     code: 'mosul',
     name: {
-      ar: 'الموصل 🍏',
-      ku: 'مووسڵ 🍏',
-      en: 'Mosul 🍏'
+      ar: 'الموصل / نينوى 🍏',
+      ku: 'مووسڵ / نەینەوا 🍏',
+      en: 'Mosul / Nineveh 🍏'
     },
-    englishLabel: 'Mosul'
+    englishLabel: 'Mosul / Nineveh'
   },
   {
     code: 'najaf',
