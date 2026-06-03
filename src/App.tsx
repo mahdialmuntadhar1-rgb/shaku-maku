@@ -1102,75 +1102,158 @@ export default function App() {
           </div>
         </div>
 
-        {/* Dynamic Dual Discovery Buttons (Optimized: Square, side-by-side on mobile layout) */}
-        <div className="mt-6 mb-8 grid grid-cols-2 gap-3.5 max-w-xl mx-auto px-2">
-          {/* Button: Main category of businesses */}
-          <button
-            onClick={() => {
-              setActiveTab('discover');
-              const catElem = document.getElementById('discovery-catalog-section');
-              if (catElem) catElem.scrollIntoView({ behavior: 'smooth' });
-            }}
-            className={`flex flex-col items-center justify-center p-4 rounded-3xl border aspect-square text-center transition-all duration-300 transform hover:scale-[1.02] cursor-pointer relative group overflow-hidden ${
-              activeTab === 'discover'
-                ? 'bg-[#1A1A1A] border-[#0F2E2F] text-white shadow-xl shadow-[#0F2E2F]/15'
-                : 'bg-white border-zinc-200 text-zinc-800 hover:border-luxury-gold hover:bg-zinc-50/50'
-            }`}
-          >
-            <div className={`w-11 h-11 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center text-xl sm:text-2xl mb-2 sm:mb-3 transition-colors duration-300 shrink-0 ${
-              activeTab === 'discover' ? 'bg-[#0F2E2F]/80 text-luxury-gold' : 'bg-zinc-100 text-zinc-500 group-hover:bg-luxury-gold/10 group-hover:text-luxury-gold'
-            }`}>
-              🏢
-            </div>
-            
-            <span className={`text-xs sm:text-sm md:text-base font-black block leading-tight tracking-tight ${activeTab === 'discover' ? 'text-white' : 'text-[#1A1A1A]'}`}>
-              {currentLang === 'en' ? 'Businesses' : currentLang === 'ku' ? 'شوێنەکان' : 'المحلات'}
-            </span>
-            
-            <span className={`text-[9px] sm:text-[10px] md:text-[11px] leading-tight font-medium mt-1 sm:mt-1.5 block opacity-70 px-1 line-clamp-2 max-w-full ${activeTab === 'discover' ? 'text-zinc-300' : 'text-zinc-500'}`}>
-              {currentLang === 'en' ? 'Explore cafes & spas' : currentLang === 'ku' ? 'گەڕان بەدوای پۆلەکاندا' : 'استكشف المحلات والخدمات'}
-            </span>
-            
-            <div className={`absolute bottom-3 text-xs font-bold transition-opacity transition-transform duration-300 ${activeTab === 'discover' ? 'text-luxury-gold opacity-100' : 'text-zinc-400 opacity-0 group-hover:opacity-100 translateY(2px)'}`}>
-              ➔
-            </div>
-          </button>
+                {/* Main Public Two-Tab Experience: Businesses + Social Feed */}
+        <section className="relative mx-auto mb-9 mt-7 max-w-4xl px-2" aria-label="Main Shaku Maku sections">
+          <div className="absolute inset-0 -z-10 rounded-[2rem] bg-gradient-to-r from-luxury-gold/20 via-cyan-400/10 to-fuchsia-500/20 blur-2xl"></div>
 
-          {/* Button: Social media Pulse Feed */}
-          <button
-            onClick={() => {
-              setActiveTab('feed');
-              const catElem = document.getElementById('discovery-catalog-section');
-              if (catElem) catElem.scrollIntoView({ behavior: 'smooth' });
-            }}
-            className={`flex flex-col items-center justify-center p-4 rounded-3xl border aspect-square text-center transition-all duration-300 transform hover:scale-[1.02] cursor-pointer relative group overflow-hidden ${
-              activeTab === 'feed'
-                ? 'bg-[#1A1A1A] border-[#0F2E2F] text-white shadow-xl shadow-[#0F2E2F]/15'
-                : 'bg-white border-zinc-200 text-zinc-800 hover:border-luxury-gold hover:bg-zinc-50/50'
-            }`}
-          >
-            <div className={`w-11 h-11 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center text-xl sm:text-2xl mb-2 sm:mb-3 relative transition-colors duration-300 shrink-0 ${
-              activeTab === 'feed' ? 'bg-[#0F2E2F]/80 text-luxury-gold' : 'bg-zinc-100 text-zinc-500 group-hover:bg-luxury-gold/10 group-hover:text-luxury-gold'
-            }`}>
-              📸
-              <span className="absolute -top-1 -right-1 w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-red-550 bg-red-500 animate-ping"></span>
-            </div>
-            
-            <span className={`text-xs sm:text-sm md:text-base font-black block leading-tight tracking-tight ${activeTab === 'feed' ? 'text-white' : 'text-[#1A1A1A]'}`}>
-              {currentLang === 'en' ? 'Social Feed' : currentLang === 'ku' ? 'پۆستە نوێکان' : 'نبض الشارع'}
-            </span>
-            
-            <span className={`text-[9px] sm:text-[10px] md:text-[11px] leading-tight font-medium mt-1 sm:mt-1.5 block opacity-70 px-1 line-clamp-2 max-w-full ${activeTab === 'feed' ? 'text-zinc-300' : 'text-zinc-500'}`}>
-              {currentLang === 'en' ? 'Stories & photo updates' : currentLang === 'ku' ? 'بڵاوکراوەکان و وێنەکان' : 'عروض ومشاركات حية'}
-            </span>
+          <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[#0b0b10]/90 p-2.5 shadow-[0_0_45px_rgba(15,46,47,0.42)] backdrop-blur-xl">
+            <div className="pointer-events-none absolute -left-20 -top-24 h-48 w-48 rounded-full bg-luxury-gold/20 blur-3xl"></div>
+            <div className="pointer-events-none absolute -bottom-24 -right-20 h-48 w-48 rounded-full bg-cyan-400/20 blur-3xl"></div>
 
-            <div className={`absolute bottom-3 text-xs font-bold transition-opacity transition-transform duration-300 ${activeTab === 'feed' ? 'text-luxury-gold opacity-100' : 'text-zinc-400 opacity-0 group-hover:opacity-100 translateY(2px)'}`}>
-              ➔
+            <div className="mb-2 flex items-center justify-center gap-2 px-3 pt-2 text-center">
+              <span className="h-px flex-1 bg-gradient-to-r from-transparent via-luxury-gold/40 to-transparent"></span>
+              <span className="text-[10px] font-black uppercase tracking-[0.28em] text-luxury-gold">
+                {currentLang === 'en'
+                  ? 'Choose your experience'
+                  : currentLang === 'ku'
+                    ? 'ئەزموونەکەت هەڵبژێرە'
+                    : 'اختر تجربتك'}
+              </span>
+              <span className="h-px flex-1 bg-gradient-to-r from-transparent via-luxury-gold/40 to-transparent"></span>
             </div>
-          </button>
-        </div>
 
-        {/* Core Dashboard Content Switcher tabs */}
+            <div className="grid grid-cols-2 gap-2.5 sm:gap-3.5">
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveTab('discover');
+                  const catElem = document.getElementById('discovery-catalog-section');
+                  if (catElem) catElem.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className={`group relative min-h-[145px] overflow-hidden rounded-[1.7rem] border p-3.5 text-start transition-all duration-300 active:scale-[0.98] sm:min-h-[170px] sm:p-5 ${
+                  activeTab === 'discover'
+                    ? 'border-luxury-gold/80 bg-gradient-to-br from-[#1A1A1A] via-[#102c2e] to-[#1A1A1A] text-white shadow-[0_0_30px_rgba(212,175,55,0.42)] scale-[1.01]'
+                    : 'border-white/10 bg-white/[0.06] text-zinc-200 hover:border-luxury-gold/50 hover:bg-white/[0.09] hover:shadow-[0_0_25px_rgba(212,175,55,0.18)]'
+                }`}
+              >
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent opacity-70"></div>
+                <div className={`pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full blur-2xl transition ${
+                  activeTab === 'discover' ? 'bg-luxury-gold/35' : 'bg-white/10 group-hover:bg-luxury-gold/20'
+                }`}></div>
+
+                <div className="relative flex h-full flex-col justify-between gap-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className={`flex h-12 w-12 items-center justify-center rounded-2xl text-2xl shadow-inner transition sm:h-14 sm:w-14 sm:text-3xl ${
+                      activeTab === 'discover'
+                        ? 'bg-luxury-gold text-black shadow-[0_0_22px_rgba(212,175,55,0.55)]'
+                        : 'bg-black/35 text-luxury-gold group-hover:bg-luxury-gold group-hover:text-black'
+                    }`}>
+                      🏢
+                    </div>
+
+                    <span className={`rounded-full px-2.5 py-1 text-[9px] font-black uppercase tracking-widest sm:text-[10px] ${
+                      activeTab === 'discover'
+                        ? 'bg-luxury-gold text-black'
+                        : 'bg-white/10 text-zinc-300 group-hover:bg-luxury-gold/20 group-hover:text-luxury-gold'
+                    }`}>
+                      {filteredBusinesses.length}
+                    </span>
+                  </div>
+
+                  <div>
+                    <h3 className="text-base font-black leading-tight text-white sm:text-2xl">
+                      {currentLang === 'en' ? 'Businesses' : currentLang === 'ku' ? 'شوێنەکان' : 'المحلات'}
+                    </h3>
+                    <p className="mt-1.5 text-[10px] font-bold leading-5 text-zinc-300 sm:text-xs">
+                      {currentLang === 'en'
+                        ? 'Find restaurants, doctors, shops, services, and places around your governorate.'
+                        : currentLang === 'ku'
+                          ? 'چێشتخانە، دکتۆر، دوکان، خزمەتگوزاری و شوێنەکان لە پارێزگاکەت بدۆزەرەوە.'
+                          : 'اكتشف المطاعم، الأطباء، المحلات، الخدمات والأماكن حسب محافظتك.'}
+                    </p>
+                  </div>
+
+                  <div className={`flex items-center justify-between rounded-2xl px-3 py-2 text-[10px] font-black uppercase tracking-widest transition ${
+                    activeTab === 'discover'
+                      ? 'bg-black/35 text-luxury-gold'
+                      : 'bg-white/5 text-zinc-400 group-hover:text-luxury-gold'
+                  }`}>
+                    <span>
+                      {currentLang === 'en' ? 'Explore now' : currentLang === 'ku' ? 'ئێستا بگەڕێ' : 'استكشف الآن'}
+                    </span>
+                    <span className="transition group-hover:translate-x-1">➜</span>
+                  </div>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveTab('feed');
+                  const catElem = document.getElementById('discovery-catalog-section');
+                  if (catElem) catElem.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className={`group relative min-h-[145px] overflow-hidden rounded-[1.7rem] border p-3.5 text-start transition-all duration-300 active:scale-[0.98] sm:min-h-[170px] sm:p-5 ${
+                  activeTab === 'feed'
+                    ? 'border-cyan-300/80 bg-gradient-to-br from-[#1A1A1A] via-[#13213a] to-[#1A1A1A] text-white shadow-[0_0_30px_rgba(34,211,238,0.36)] scale-[1.01]'
+                    : 'border-white/10 bg-white/[0.06] text-zinc-200 hover:border-cyan-300/50 hover:bg-white/[0.09] hover:shadow-[0_0_25px_rgba(34,211,238,0.18)]'
+                }`}
+              >
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent opacity-70"></div>
+                <div className={`pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full blur-2xl transition ${
+                  activeTab === 'feed' ? 'bg-cyan-400/35' : 'bg-white/10 group-hover:bg-cyan-400/20'
+                }`}></div>
+
+                <div className="relative flex h-full flex-col justify-between gap-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className={`relative flex h-12 w-12 items-center justify-center rounded-2xl text-2xl shadow-inner transition sm:h-14 sm:w-14 sm:text-3xl ${
+                      activeTab === 'feed'
+                        ? 'bg-cyan-300 text-black shadow-[0_0_22px_rgba(34,211,238,0.55)]'
+                        : 'bg-black/35 text-cyan-200 group-hover:bg-cyan-300 group-hover:text-black'
+                    }`}>
+                      📸
+                      <span className="absolute -right-1 -top-1 h-3 w-3 rounded-full bg-red-500 shadow-[0_0_15px_rgba(239,68,68,0.9)]"></span>
+                      <span className="absolute -right-1 -top-1 h-3 w-3 animate-ping rounded-full bg-red-500"></span>
+                    </div>
+
+                    <span className={`rounded-full px-2.5 py-1 text-[9px] font-black uppercase tracking-widest sm:text-[10px] ${
+                      activeTab === 'feed'
+                        ? 'bg-cyan-300 text-black'
+                        : 'bg-white/10 text-zinc-300 group-hover:bg-cyan-400/20 group-hover:text-cyan-200'
+                    }`}>
+                      {posts.length}
+                    </span>
+                  </div>
+
+                  <div>
+                    <h3 className="text-base font-black leading-tight text-white sm:text-2xl">
+                      {currentLang === 'en' ? 'Social Feed' : currentLang === 'ku' ? 'پۆستە نوێکان' : 'نبض الشارع'}
+                    </h3>
+                    <p className="mt-1.5 text-[10px] font-bold leading-5 text-zinc-300 sm:text-xs">
+                      {currentLang === 'en'
+                        ? 'See posts, offers, updates, photos, and activity from local businesses.'
+                        : currentLang === 'ku'
+                          ? 'پۆست، داشکاندن، نوێکاری، وێنە و چالاکی کارە ناوخۆییەکان ببینە.'
+                          : 'شاهد المنشورات، العروض، التحديثات، الصور ونشاطات الأعمال المحلية.'}
+                    </p>
+                  </div>
+
+                  <div className={`flex items-center justify-between rounded-2xl px-3 py-2 text-[10px] font-black uppercase tracking-widest transition ${
+                    activeTab === 'feed'
+                      ? 'bg-black/35 text-cyan-200'
+                      : 'bg-white/5 text-zinc-400 group-hover:text-cyan-200'
+                  }`}>
+                    <span>
+                      {currentLang === 'en' ? 'Watch updates' : currentLang === 'ku' ? 'نوێکاری ببینە' : 'شاهد التحديثات'}
+                    </span>
+                    <span className="transition group-hover:translate-x-1">➜</span>
+                  </div>
+                </div>
+              </button>
+            </div>
+          </div>
+        </section>
+{/* Core Dashboard Content Switcher tabs */}
         <div id="discovery-catalog-section" className="space-y-6">
           
           <AnimatePresence mode="wait">
