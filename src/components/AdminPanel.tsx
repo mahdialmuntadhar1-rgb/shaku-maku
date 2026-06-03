@@ -166,8 +166,97 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
       governorate: linkedBusiness ? normalizeGovernorate(linkedBusiness.governorate) : prev.governorate,
       category: linkedBusiness ? normalizeCategory(linkedBusiness.category) : prev.category
     }));
-  };  function isTooLargeInlineMedia(value: string): boolean {
-    return String(value || '').startsWith('data:') && String(value || '').length > 250000;
+  };  async function compressImageFileForPost(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      if (!file.type.startsWith('image/')) {
+        reject(new Error('Only image files are supported.'));
+        return;
+      }
+
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        const img = new Image();
+
+        img.onload = () => {
+          const maxSize = 1200;
+          const scale = Math.min(1, maxSize / Math.max(img.width, img.height));
+          const width = Math.max(1, Math.round(img.width * scale));
+          const height = Math.max(1, Math.round(img.height * scale));
+
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            reject(new Error('Could not prepare image.'));
+            return;
+          }
+
+          ctx.drawImage(img, 0, 0, width, height);
+
+          let quality = 0.78;
+          let output = canvas.toDataURL('image/jpeg', quality);
+
+          while (output.length > 240000 && quality > 0.42) {
+            quality -= 0.08;
+            output = canvas.toDataURL('image/jpeg', quality);
+          }
+
+          if (output.length > 260000) {
+            reject(new Error('Image is still too large after compression.'));
+            return;
+          }
+
+          resolve(output);
+        };
+
+        img.onerror = () => reject(new Error('Could not load image.'));
+        img.src = String(reader.result || '');
+      };
+
+      reader.onerror = () => reject(new Error('Could not read image.'));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function handlePostImageUpload(file?: File | null) {
+    if (!file) return;
+
+    try {
+      setPostStatus(t(
+        currentLang,
+        'Compressing image...',
+        'جاري ضغط الصورة...',
+        'پەستاندنی وێنە...'
+      ));
+
+      const compressed = await compressImageFileForPost(file);
+
+      setNewPostDraft((prev) => ({
+        ...prev,
+        mediaUrl: compressed
+      }));
+
+      setPostStatus(t(
+        currentLang,
+        'Image ready. You can publish now.',
+        'الصورة جاهزة. يمكنك النشر الآن.',
+        'وێنەکە ئامادەیە. ئێستا دەتوانیت بڵاوی بکەیتەوە.'
+      ));
+    } catch (error: any) {
+      setPostStatus(t(
+        currentLang,
+        error?.message || 'Image upload failed.',
+        'فشل رفع الصورة. جرّب صورة أصغر.',
+        'بارکردنی وێنە شکستی هێنا. وێنەیەکی بچووکتر تاقیبکەوە.'
+      ));
+    }
+  }
+
+  function isTooLargeInlineMedia(value: string): boolean {
+    return String(value || '').startsWith('data:') && String(value || '').length > 280000;
   }
 
   function getSafePostMediaUrl(value: string): string {
@@ -549,7 +638,29 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
         <h2 className="text-lg font-black">
           {t(currentLang, 'Social Feed Moderation', 'إدارة المنشورات', 'بەڕێوەبردنی بابەتەکان')}
         </h2>
-        {postStatus && <p className="text-xs text-zinc-300">{postStatus}</p>}
+        
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                <label className="text-xs font-black text-zinc-300">
+                  {t(currentLang, 'Upload post photo', 'رفع صورة المنشور', 'بارکردنی وێنەی بابەت')}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(event) => handlePostImageUpload(event.target.files?.[0])}
+                    className="mt-2 block w-full text-sm text-zinc-200 file:mr-4 file:rounded-xl file:border-0 file:bg-cyan-500 file:px-4 file:py-2 file:text-sm file:font-black file:text-white hover:file:bg-cyan-400"
+                  />
+                </label>
+                <p className="mt-2 text-[11px] text-zinc-400">
+                  {t(
+                    currentLang,
+                    'The app will compress the image automatically before posting.',
+                    'سيقوم التطبيق بضغط الصورة تلقائياً قبل النشر.',
+                    'ئەپەکە وێنەکە خۆکارانە پێش بڵاوکردنەوە پەستان دەکات.'
+                  )}
+                </p>
+              </div>
+
+
+              {postStatus && <p className="text-xs text-zinc-300">{postStatus}</p>}
 
         <div className="bg-white/5 border border-luxury-gold/20 rounded-xl p-4 space-y-3">
           <h3 className="text-sm font-black text-luxury-gold">Create New Social Post</h3>
