@@ -1,6 +1,6 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronLeft, ChevronRight, Sparkles, MapPin, Compass } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Sparkles, MapPin, Compass, Edit3, Save, Trash2, Image as ImageIcon, PlusCircle } from 'lucide-react';
 import { Language, GovernorateCode, HeroSlide } from '../types';
 import { HERO_SLIDES, TRANSLATIONS } from '../data';
 
@@ -9,10 +9,14 @@ interface HeroProps {
   onExploreClick: () => void;
   onSelectGov: (gov: GovernorateCode) => void;
   slides?: HeroSlide[];
+  isAdmin?: boolean;
+  setSlides?: React.Dispatch<React.SetStateAction<HeroSlide[]>>;
 }
 
-export default function Hero({ currentLang, onExploreClick, onSelectGov, slides }: HeroProps) {
+export default function Hero({ currentLang, onExploreClick, onSelectGov, slides, isAdmin = false, setSlides }: HeroProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [editingHero, setEditingHero] = useState(false);
+  const [heroDraft, setHeroDraft] = useState({ slogan: '', badge: '' });
 
   const activeSlidesList = slides && slides.length > 0 ? slides : HERO_SLIDES;
 
@@ -34,6 +38,85 @@ export default function Hero({ currentLang, onExploreClick, onSelectGov, slides 
   const t = TRANSLATIONS[currentLang];
   const activeSlide = activeSlidesList[currentIndex % activeSlidesList.length] || activeSlidesList[0];
   const isRtl = currentLang === 'ar' || currentLang === 'ku';
+
+  useEffect(() => {
+    if (!activeSlide) return;
+    setHeroDraft({
+      slogan: activeSlide.slogan[currentLang] || activeSlide.slogan.en || '',
+      badge: activeSlide.badge[currentLang] || activeSlide.badge.en || ''
+    });
+  }, [activeSlide?.id, currentLang]);
+
+  const canInlineEditHero = Boolean(isAdmin && setSlides && activeSlide);
+
+  const updateActiveHeroSlide = (updater: (slide: HeroSlide) => HeroSlide) => {
+    if (!setSlides || !activeSlide) return;
+    setSlides((prev) => prev.map((slide) => (slide.id === activeSlide.id ? updater(slide) : slide)));
+  };
+
+  const saveHeroText = () => {
+    updateActiveHeroSlide((slide) => ({
+      ...slide,
+      slogan: { ...slide.slogan, [currentLang]: heroDraft.slogan },
+      badge: { ...slide.badge, [currentLang]: heroDraft.badge }
+    }));
+    setEditingHero(false);
+  };
+
+  const uploadHeroImage = (file: File | null) => {
+    if (!file || !setSlides || !activeSlide) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      updateActiveHeroSlide((slide) => ({
+        ...slide,
+        image: String(reader.result)
+      }));
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const addInlineHeroSlide = () => {
+    if (!setSlides) return;
+
+    const now = Date.now();
+    const newSlide: HeroSlide = {
+      id: `hero-inline-${now}`,
+      image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1400&auto=format&fit=crop&q=85',
+      slogan: {
+        ar: 'إعلان جديد من شكو ماكو',
+        ku: 'ڕیکلامی نوێ لە شەکو مەکو',
+        en: 'New Shaku Maku promotion'
+      },
+      governorate: 'all',
+      category: 'restaurant',
+      badge: {
+        ar: 'مساحة ترويجية',
+        ku: 'شوێنی ڕیکلام',
+        en: 'Promotional space'
+      }
+    };
+
+    setSlides((prev) => [newSlide, ...prev]);
+    setCurrentIndex(0);
+    setEditingHero(true);
+    setHeroDraft({
+      slogan: newSlide.slogan[currentLang] || newSlide.slogan.en,
+      badge: newSlide.badge[currentLang] || newSlide.badge.en
+    });
+  };
+
+  const deleteInlineHeroSlide = () => {
+    if (!setSlides || !activeSlide) return;
+
+    setSlides((prev) => {
+      if (prev.length <= 1) return prev;
+      return prev.filter((slide) => slide.id !== activeSlide.id);
+    });
+
+    setCurrentIndex(0);
+    setEditingHero(false);
+  };
 
   return (
     <div className="relative w-full h-[320px] md:h-[420px] overflow-hidden rounded-3xl group mb-6 bg-slate-950">
@@ -60,6 +143,84 @@ export default function Hero({ currentLang, onExploreClick, onSelectGov, slides 
           <div className="absolute inset-0 bg-gradient-to-r from-[#020205]/80 via-transparent to-[#020205]/20"></div>
         </motion.div>
       </AnimatePresence>
+
+      {/* Direct Admin Hero Controls */}
+      {canInlineEditHero && (
+        <div className="absolute top-3 left-3 right-3 z-30 bg-black/70 backdrop-blur-xl border border-luxury-gold/40 rounded-2xl p-3 shadow-2xl">
+          <div className="flex flex-wrap items-center gap-2 mb-2">
+            <button
+              type="button"
+              onClick={() => setEditingHero((value) => !value)}
+              className="px-3 py-2 rounded-xl bg-luxury-gold text-black text-xs font-black flex items-center gap-1"
+            >
+              <Edit3 className="w-3.5 h-3.5" />
+              {editingHero ? 'Close editor' : 'Edit this slide'}
+            </button>
+
+            <label className="px-3 py-2 rounded-xl bg-blue-500/20 text-blue-100 border border-blue-400/30 text-xs font-black flex items-center gap-1 cursor-pointer">
+              <ImageIcon className="w-3.5 h-3.5" />
+              Upload image
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(event) => uploadHeroImage(event.target.files?.[0] || null)}
+              />
+            </label>
+
+            <button
+              type="button"
+              onClick={addInlineHeroSlide}
+              className="px-3 py-2 rounded-xl bg-emerald-500/20 text-emerald-100 border border-emerald-400/30 text-xs font-black flex items-center gap-1"
+            >
+              <PlusCircle className="w-3.5 h-3.5" />
+              Add slide
+            </button>
+
+            <button
+              type="button"
+              onClick={deleteInlineHeroSlide}
+              className="px-3 py-2 rounded-xl bg-red-500/20 text-red-100 border border-red-400/30 text-xs font-black flex items-center gap-1"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              Delete slide
+            </button>
+
+            <span className="text-[10px] text-zinc-300 font-bold ml-auto">
+              Slide {currentIndex + 1} / {activeSlidesList.length}
+            </span>
+          </div>
+
+          {editingHero && (
+            <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-2">
+              <input
+                value={heroDraft.badge}
+                onChange={(event) => setHeroDraft((prev) => ({ ...prev, badge: event.target.value }))}
+                placeholder="Badge text"
+                className="bg-white text-black rounded-xl px-3 py-2 text-xs font-bold"
+                dir={isRtl ? 'rtl' : 'ltr'}
+              />
+
+              <input
+                value={heroDraft.slogan}
+                onChange={(event) => setHeroDraft((prev) => ({ ...prev, slogan: event.target.value }))}
+                placeholder="Hero slogan"
+                className="bg-white text-black rounded-xl px-3 py-2 text-xs font-bold"
+                dir={isRtl ? 'rtl' : 'ltr'}
+              />
+
+              <button
+                type="button"
+                onClick={saveHeroText}
+                className="px-4 py-2 rounded-xl bg-emerald-500 text-white text-xs font-black flex items-center justify-center gap-1"
+              >
+                <Save className="w-3.5 h-3.5" />
+                Save
+              </button>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Floating Sparkle Elements & Active Content Overlay */}
       <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-10 z-10">
