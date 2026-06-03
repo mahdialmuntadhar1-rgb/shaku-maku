@@ -58,12 +58,14 @@ export default function PWAInstallButton({ currentLang }: PWAInstallButtonProps)
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    const dismissed = localStorage.getItem('pwa_install_dismissed_v1') === 'true';
-
-    if (isStandaloneMode() || dismissed || !isMobileLike()) {
+    // Keep the install button visible across desktop/mobile Chrome/Safari.
+    // Hide only when the app is already installed/standalone.
+    if (isStandaloneMode()) {
       setVisible(false);
       return;
     }
+
+    setVisible(true);
 
     if (isIOS()) {
       setVisible(true);
@@ -78,7 +80,7 @@ export default function PWAInstallButton({ currentLang }: PWAInstallButtonProps)
     const handleAppInstalled = () => {
       setVisible(false);
       setInstallPrompt(null);
-      localStorage.setItem('pwa_install_dismissed_v1', 'true');
+      // Installed already, so hiding is correct.
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
@@ -97,8 +99,8 @@ export default function PWAInstallButton({ currentLang }: PWAInstallButtonProps)
       setInstallPrompt(null);
 
       if (choice.outcome === 'accepted' || choice.outcome === 'dismissed') {
-        setVisible(false);
-        localStorage.setItem('pwa_install_dismissed_v1', 'true');
+        setVisible(true);
+    // Do not permanently hide the install button; user wants it visible on all browsers.
       }
 
       return;
@@ -108,8 +110,8 @@ export default function PWAInstallButton({ currentLang }: PWAInstallButtonProps)
   };
 
   const hideButton = () => {
-    setVisible(false);
-    localStorage.setItem('pwa_install_dismissed_v1', 'true');
+    setVisible(true);
+    // Do not permanently hide the install button; user wants it visible on all browsers.
   };
 
   if (!visible) return null;
