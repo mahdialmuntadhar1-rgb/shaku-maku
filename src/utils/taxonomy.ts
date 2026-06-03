@@ -1,94 +1,120 @@
 import { Language } from '../types';
 
 export type GovernorateId =
+  | 'all'
   | 'baghdad'
-  | 'basra'
-  | 'nineveh'
   | 'erbil'
+  | 'basra'
   | 'sulaymaniyah'
-  | 'duhok'
-  | 'kirkuk'
+  | 'mosul'
   | 'najaf'
   | 'karbala'
-  | 'babil'
+  | 'kirkuk'
   | 'anbar'
+  | 'duhok'
+  | 'babil'
   | 'diyala'
   | 'wasit'
-  | 'salah_ad_din'
+  | 'saladin'
   | 'maysan'
-  | 'dhi_qar'
+  | 'dhiqar'
   | 'muthanna'
-  | 'qadisiyyah';
+  | 'qadisiya'
+  | 'halabja';
 
 export type CategoryId =
   | 'restaurant'
-  | 'cafe'
-  | 'doctor'
-  | 'clinic'
+  | 'cafe_bakery'
+  | 'supermarket'
+  | 'mall'
   | 'pharmacy'
-  | 'shopping'
-  | 'clothing'
-  | 'cars'
-  | 'hotel'
-  | 'beauty'
-  | 'education'
-  | 'real_estate'
-  | 'services'
-  | 'electronics'
+  | 'hospital'
+  | 'clinic'
+  | 'doctor'
+  | 'dentist'
+  | 'salon'
+  | 'spa'
   | 'gym'
-  | 'entertainment';
+  | 'hotel'
+  | 'travel_agency'
+  | 'university'
+  | 'bank'
+  | 'real_estate'
+  | 'lawyer'
+  | 'car_dealer'
+  | 'car_rental'
+  | 'mobile_shop'
+  | 'furniture'
+  | 'clothing_store'
+  | 'software_company'
+  | 'marketing_agency'
+  | 'construction_company'
+  | 'architecture'
+  | 'photography'
+  | 'cinema'
+  | 'gaming_center'
+  | 'sports_club'
+  | 'pet_shop'
+  | 'other';
 
-export const IRAQ_GOVERNORATES: Array<{
-  id: GovernorateId;
-  en: string;
-  ar: string;
-  ku: string;
-  aliases: string[];
-}> = [
-  { id: 'baghdad', en: 'Baghdad', ar: 'بغداد', ku: 'بەغدا', aliases: ['baghdad', 'بغداد'] },
-  { id: 'basra', en: 'Basra', ar: 'البصرة', ku: 'بەسرە', aliases: ['basra', 'البصرة', 'بصرة', 'basrah'] },
-  { id: 'nineveh', en: 'Nineveh / Mosul', ar: 'نينوى / الموصل', ku: 'نەینەوا / مووسڵ', aliases: ['nineveh', 'ninewa', 'ninawa', 'nainawa', 'mosul', 'mousl', 'mousul', 'نينوى', 'نينوي', 'الموصل', 'موصل'] },
-  { id: 'erbil', en: 'Erbil', ar: 'أربيل', ku: 'هەولێر', aliases: ['erbil', 'arbil', 'hawler', 'hewler', 'اربيل', 'أربيل', 'هەولێر'] },
-  { id: 'sulaymaniyah', en: 'Sulaymaniyah', ar: 'السليمانية', ku: 'سلێمانی', aliases: ['sulaymaniyah', 'sulaimani', 'sulaymaniya', 'suleimani', 'slemani', 'السليمانية', 'سليمانية', 'سلێمانی'] },
-  { id: 'duhok', en: 'Duhok', ar: 'دهوك', ku: 'دهۆك', aliases: ['duhok', 'dohuk', 'دهوك', 'دهۆك'] },
-  { id: 'kirkuk', en: 'Kirkuk', ar: 'كركوك', ku: 'کەرکووک', aliases: ['kirkuk', 'كركوك', 'کرکوک', 'کەرکووک'] },
-  { id: 'najaf', en: 'Najaf', ar: 'النجف', ku: 'نەجەف', aliases: ['najaf', 'النجف', 'نجف'] },
-  { id: 'karbala', en: 'Karbala', ar: 'كربلاء', ku: 'کەربەلا', aliases: ['karbala', 'kerbala', 'كربلاء', 'کربلا'] },
-  { id: 'babil', en: 'Babil / Hillah', ar: 'بابل / الحلة', ku: 'بابیل', aliases: ['babil', 'babylon', 'hillah', 'hilla', 'بابل', 'الحلة', 'حلة'] },
-  { id: 'anbar', en: 'Anbar', ar: 'الأنبار', ku: 'ئەنبار', aliases: ['anbar', 'الانبار', 'الأنبار', 'رمادي', 'ramadi'] },
-  { id: 'diyala', en: 'Diyala', ar: 'ديالى', ku: 'دیالە', aliases: ['diyala', 'ديالى', 'بعقوبة', 'baquba'] },
-  { id: 'wasit', en: 'Wasit', ar: 'واسط', ku: 'واسیت', aliases: ['wasit', 'واسط', 'الكوت', 'kut'] },
-  { id: 'salah_ad_din', en: 'Salah ad-Din / Tikrit', ar: 'صلاح الدين / تكريت', ku: 'سەلاحەدین', aliases: ['salah_ad_din', 'salahaddin', 'salah al din', 'salah ad din', 'صلاح الدين', 'تكريت', 'tikrit'] },
-  { id: 'maysan', en: 'Maysan', ar: 'ميسان', ku: 'مەیسان', aliases: ['maysan', 'ميسان', 'العمارة', 'amara'] },
-  { id: 'dhi_qar', en: 'Dhi Qar / Nasiriyah', ar: 'ذي قار / الناصرية', ku: 'زیقار', aliases: ['dhi_qar', 'dhiqar', 'ذي قار', 'ذى قار', 'الناصرية', 'nasiriyah', 'nasiriya'] },
-  { id: 'muthanna', en: 'Muthanna', ar: 'المثنى', ku: 'موثەننا', aliases: ['muthanna', 'المثنى', 'السماوة', 'samawah'] },
-  { id: 'qadisiyyah', en: 'Qadisiyyah / Diwaniyah', ar: 'القادسية / الديوانية', ku: 'قادسیە', aliases: ['qadisiyyah', 'qadisiyah', 'diwaniyah', 'القادسية', 'الديوانية', 'diwaniya'] }
-];
+const GOVERNORATE_ALIASES: Record<GovernorateId, string[]> = {
+  all: ['all', 'iraq', 'العراق', 'عێراق'],
+  baghdad: ['baghdad', 'bagdad', 'بغداد'],
+  erbil: ['erbil', 'arbil', 'hawler', 'hewler', 'اربيل', 'أربيل', 'هەولێر'],
+  basra: ['basra', 'basrah', 'البصرة', 'بصرة'],
+  sulaymaniyah: ['sulaymaniyah', 'sulaymania', 'sulaimani', 'suleimani', 'slemani', 'السليمانية', 'سليمانية', 'سلێمانی'],
+  mosul: ['mosul', 'mousl', 'mousul', 'nineveh', 'ninewa', 'ninawa', 'nainawa', 'niniveh', 'neneveh', 'نينوى', 'نينوي', 'الموصل', 'موصل'],
+  najaf: ['najaf', 'النجف', 'نجف'],
+  karbala: ['karbala', 'kerbala', 'كربلاء', 'کربلا'],
+  kirkuk: ['kirkuk', 'كركوك', 'کرکوک', 'کەرکووک'],
+  anbar: ['anbar', 'الانبار', 'الأنبار', 'رمادي', 'ramadi'],
+  duhok: ['duhok', 'dohuk', 'دهوك', 'دهۆك', 'دهوک'],
+  babil: ['babil', 'babylon', 'hillah', 'hilla', 'بابل', 'الحلة', 'حلة'],
+  diyala: ['diyala', 'ديالى', 'بعقوبة', 'baquba'],
+  wasit: ['wasit', 'واسط', 'الكوت', 'kut'],
+  saladin: ['saladin', 'salahaddin', 'salahaldin', 'salah al din', 'salah ad din', 'salah_ad_din', 'صلاح الدين', 'صلاحالدين', 'تكريت', 'tikrit'],
+  maysan: ['maysan', 'ميسان', 'العمارة', 'amara'],
+  dhiqar: ['dhiqar', 'dhi qar', 'dhi_qar', 'ذي قار', 'ذيقار', 'ذى قار', 'الناصرية', 'nasiriyah', 'nasiriya'],
+  muthanna: ['muthanna', 'المثنى', 'المثني', 'السماوة', 'samawah'],
+  qadisiya: ['qadisiya', 'qadisiyah', 'qadisiyyah', 'القادسية', 'الديوانية', 'diwaniya', 'diwaniyah'],
+  halabja: ['halabja', 'حلبجة', 'حلبجه', 'هەڵەبجە']
+};
 
-export const APP_CATEGORIES: Array<{
-  id: CategoryId;
-  en: string;
-  ar: string;
-  ku: string;
-  aliases: string[];
-}> = [
-  { id: 'restaurant', en: 'Restaurants', ar: 'مطاعم', ku: 'چێشتخانە', aliases: ['restaurant', 'restaurants', 'food', 'مطعم', 'مطاعم', 'اكل', 'أكل'] },
-  { id: 'cafe', en: 'Cafes', ar: 'كافيهات', ku: 'کافێ', aliases: ['cafe', 'cafes', 'coffee', 'كوفي', 'كافيه', 'كافيهات', 'مقهى'] },
-  { id: 'doctor', en: 'Doctors', ar: 'أطباء', ku: 'پزیشک', aliases: ['doctor', 'doctors', 'طبيب', 'اطباء', 'أطباء', 'دكتور'] },
-  { id: 'clinic', en: 'Clinics', ar: 'عيادات', ku: 'کلینیک', aliases: ['clinic', 'clinics', 'عيادة', 'عيادات', 'medical'] },
-  { id: 'pharmacy', en: 'Pharmacies', ar: 'صيدليات', ku: 'دەرمانخانە', aliases: ['pharmacy', 'pharmacies', 'صيدلية', 'صيدليات'] },
-  { id: 'shopping', en: 'Shopping', ar: 'تسوق', ku: 'بازاڕکردن', aliases: ['shopping', 'shop', 'market', 'mall', 'تسوق', 'سوق', 'مول'] },
-  { id: 'clothing', en: 'Clothing', ar: 'ملابس', ku: 'جلوبەرگ', aliases: ['clothing', 'fashion', 'ملابس', 'ازياء', 'أزياء'] },
-  { id: 'cars', en: 'Cars', ar: 'سيارات', ku: 'ئۆتۆمبێل', aliases: ['cars', 'car', 'auto', 'automotive', 'سيارات', 'سيارة'] },
-  { id: 'hotel', en: 'Hotels', ar: 'فنادق', ku: 'هوتێل', aliases: ['hotel', 'hotels', 'فنادق', 'فندق'] },
-  { id: 'beauty', en: 'Beauty', ar: 'تجميل', ku: 'جوانکاری', aliases: ['beauty', 'salon', 'spa', 'تجميل', 'صالون'] },
-  { id: 'education', en: 'Education', ar: 'تعليم', ku: 'پەروەردە', aliases: ['education', 'school', 'academy', 'تعليم', 'مدرسة', 'معهد'] },
-  { id: 'real_estate', en: 'Real estate', ar: 'عقارات', ku: 'خانووبەرە', aliases: ['real_estate', 'real estate', 'property', 'عقار', 'عقارات'] },
-  { id: 'services', en: 'Services', ar: 'خدمات', ku: 'خزمەتگوزاری', aliases: ['services', 'service', 'خدمات', 'خدمة'] },
-  { id: 'electronics', en: 'Electronics', ar: 'إلكترونيات', ku: 'ئەلیکترۆنیات', aliases: ['electronics', 'mobile', 'phone', 'computer', 'الكترونيات', 'إلكترونيات', 'موبايل'] },
-  { id: 'gym', en: 'Gyms', ar: 'نوادي رياضية', ku: 'یانەی وەرزشی', aliases: ['gym', 'fitness', 'sport', 'sports', 'نادي', 'نوادي', 'رياضة'] },
-  { id: 'entertainment', en: 'Entertainment', ar: 'ترفيه', ku: 'کات بەسەربردن', aliases: ['entertainment', 'fun', 'cinema', 'ترفيه', 'سينما'] }
-];
+const CATEGORY_ALIASES: Record<CategoryId, string[]> = {
+  restaurant: ['restaurant', 'restaurants', 'food', 'dining', 'eatery', 'kitchen', 'grill', 'fast food', 'burger', 'pizza', 'shawarma', 'مطعم', 'مطاعم', 'اكل', 'أكل'],
+  cafe_bakery: ['cafe_bakery', 'cafe bakery', 'cafe', 'cafes', 'café', 'coffee', 'coffee shop', 'bakery', 'bakeries', 'pastry', 'dessert', 'كافيه', 'مقهى', 'مخبز', 'كوفي'],
+  supermarket: ['supermarket', 'supermarkets', 'grocery', 'groceries', 'market', 'markets', 'hypermarket', 'سوبرماركت', 'بقالة'],
+  mall: ['mall', 'malls', 'shopping', 'retail', 'shopping center', 'مول', 'مولات', 'تسوق'],
+  pharmacy: ['pharmacy', 'pharmacies', 'drugstore', 'medicine', 'صيدلية', 'صيدليات'],
+  hospital: ['hospital', 'hospitals', 'مستشفى', 'مستشفيات'],
+  clinic: ['clinic', 'clinics', 'medical center', 'health center', 'health', 'medical', 'lab', 'laboratory', 'عيادة', 'عيادات'],
+  doctor: ['doctor', 'doctors', 'physician', 'specialist', 'طبيب', 'اطباء', 'أطباء', 'دكتور'],
+  dentist: ['dentist', 'dentists', 'dental', 'اسنان', 'أسنان'],
+  salon: ['salon', 'salons', 'beauty', 'barber', 'hair', 'cosmetic', 'makeup', 'صالون', 'تجميل', 'حلاقة'],
+  spa: ['spa', 'wellness', 'massage', 'سبا', 'مساج'],
+  gym: ['gym', 'gyms', 'fitness', 'sport', 'sports club', 'club', 'نادي', 'نوادي', 'رياضة'],
+  hotel: ['hotel', 'hotels', 'resort', 'resorts', 'hospitality', 'motel', 'فندق', 'فنادق'],
+  travel_agency: ['travel_agency', 'travel agency', 'travel', 'tourism', 'tour', 'agency', 'airline', 'ticket', 'سفر', 'سياحة'],
+  university: ['university', 'universities', 'college', 'school', 'education', 'training', 'institute', 'academy', 'جامعة', 'جامعات', 'مدرسة', 'معهد'],
+  bank: ['bank', 'banks', 'finance', 'exchange', 'money', 'insurance', 'مصرف', 'بنك', 'بنوك'],
+  real_estate: ['real_estate', 'real estate', 'property', 'properties', 'housing', 'apartment', 'عقار', 'عقارات'],
+  lawyer: ['lawyer', 'lawyers', 'legal', 'law', 'attorney', 'محامي', 'محامون', 'قانون'],
+  car_dealer: ['car_dealer', 'car dealer', 'car dealers', 'car sales', 'automotive', 'auto sales', 'vehicle', 'cars', 'سيارات', 'معارض سيارات'],
+  car_rental: ['car_rental', 'car rental', 'rental car', 'rent a car', 'تأجير سيارات', 'تاجير سيارات'],
+  mobile_shop: ['mobile_shop', 'mobile shop', 'mobile shops', 'mobile', 'phone', 'phones', 'smartphone', 'electronics', 'tech shop', 'computer', 'موبايل', 'الكترونيات', 'إلكترونيات'],
+  furniture: ['furniture', 'home furniture', 'decor', 'اثاث', 'أثاث', 'مفروشات'],
+  clothing_store: ['clothing_store', 'clothing store', 'clothing', 'fashion', 'clothes', 'boutique', 'apparel', 'ملابس', 'ازياء', 'أزياء'],
+  software_company: ['software_company', 'software company', 'software', 'it', 'technology', 'digital', 'programming', 'web design', 'tech software', 'برمجيات', 'تقنية'],
+  marketing_agency: ['marketing_agency', 'marketing agency', 'marketing', 'advertising', 'media agency', 'اعلان', 'إعلان', 'تسويق'],
+  construction_company: ['construction_company', 'construction company', 'construction', 'contractor', 'contractors', 'building', 'مقاولات', 'انشاءات', 'إنشاءات'],
+  architecture: ['architecture', 'architect', 'design', 'هندسة', 'تصميم'],
+  photography: ['photography', 'photo', 'studio', 'camera', 'تصوير', 'استوديو'],
+  cinema: ['cinema', 'theatre', 'theater', 'movie', 'سينما', 'افلام', 'أفلام'],
+  gaming_center: ['gaming_center', 'gaming center', 'gaming', 'game', 'games', 'playstation', 'العاب', 'ألعاب'],
+  sports_club: ['sports_club', 'sports club', 'sports clubs', 'football club', 'stadium', 'ملعب', 'ملاعب'],
+  pet_shop: ['pet_shop', 'pet shop', 'pet', 'pets', 'veterinary', 'vet', 'حيوانات', 'بيطري'],
+  other: ['other', 'services', 'service', 'entertainment', 'misc', 'اخرى', 'أخرى', 'خدمات', 'خدمة']
+};
 
 function clean(value: unknown): string {
   return String(value || '')
@@ -98,7 +124,7 @@ function clean(value: unknown): string {
     .replace(/ة/g, 'ه')
     .replace(/ى/g, 'ي')
     .replace(/[_\-]+/g, ' ')
-    .replace(/[\s،,./()\[\]{}]+/g, ' ')
+    .replace(/[\s،,./()()[\]{}&]+/g, ' ')
     .trim();
 }
 
@@ -106,42 +132,55 @@ function compact(value: unknown): string {
   return clean(value).replace(/\s+/g, '');
 }
 
-export function normalizeGovernorate(value: unknown): GovernorateId {
+function lookupAlias<T extends string>(value: unknown, aliases: Record<T, string[]>, fallback: T): T {
   const raw = clean(value);
   const rawCompact = compact(value);
 
-  for (const gov of IRAQ_GOVERNORATES) {
-    if (clean(gov.id) === raw || compact(gov.id) === rawCompact) return gov.id;
-    if (clean(gov.en) === raw || clean(gov.ar) === raw || clean(gov.ku) === raw) return gov.id;
-    if (gov.aliases.some((alias) => clean(alias) === raw || compact(alias) === rawCompact)) return gov.id;
+  for (const [id, values] of Object.entries(aliases) as Array<[T, string[]]>) {
+    if (clean(id) === raw || compact(id) === rawCompact) return id;
+    if (values.some((alias) => clean(alias) === raw || compact(alias) === rawCompact)) return id;
   }
 
-  return rawCompact === 'all' ? ('all' as GovernorateId) : (String(value || '').trim() as GovernorateId);
+  return fallback;
+}
+
+export function normalizeGovernorate(value: unknown): GovernorateId {
+  return lookupAlias(value, GOVERNORATE_ALIASES, 'all');
 }
 
 export function normalizeCategory(value: unknown): CategoryId {
-  const raw = clean(value);
-  const rawCompact = compact(value);
-
-  for (const category of APP_CATEGORIES) {
-    if (clean(category.id) === raw || compact(category.id) === rawCompact) return category.id;
-    if (clean(category.en) === raw || clean(category.ar) === raw || clean(category.ku) === raw) return category.id;
-    if (category.aliases.some((alias) => clean(alias) === raw || compact(alias) === rawCompact)) return category.id;
-  }
-
-  return String(value || '').trim() as CategoryId;
+  return lookupAlias(value, CATEGORY_ALIASES, 'other');
 }
 
 export function getGovernorateLabel(id: unknown, lang: Language): string {
   const normalized = normalizeGovernorate(id);
-  const gov = IRAQ_GOVERNORATES.find((item) => item.id === normalized);
-  if (!gov) return String(id || '');
-  return gov[lang] || gov.en;
+  const labels: Record<GovernorateId, Record<Language, string>> = {
+    all: { en: 'All Iraq', ar: 'كل العراق', ku: 'هەموو عێراق' },
+    baghdad: { en: 'Baghdad', ar: 'بغداد', ku: 'بەغداد' },
+    erbil: { en: 'Erbil', ar: 'أربيل', ku: 'هەولێر' },
+    basra: { en: 'Basra', ar: 'البصرة', ku: 'بەسرە' },
+    sulaymaniyah: { en: 'Sulaymaniyah', ar: 'السليمانية', ku: 'سلێمانی' },
+    mosul: { en: 'Mosul / Nineveh', ar: 'الموصل / نينوى', ku: 'مووسڵ / نەینەوا' },
+    najaf: { en: 'Najaf', ar: 'النجف', ku: 'نەجەف' },
+    karbala: { en: 'Karbala', ar: 'كربلاء', ku: 'کەربەلا' },
+    kirkuk: { en: 'Kirkuk', ar: 'كركوك', ku: 'کەرکووک' },
+    anbar: { en: 'Anbar', ar: 'الأنبار', ku: 'ئەنبار' },
+    duhok: { en: 'Duhok', ar: 'دهوك', ku: 'دهۆک' },
+    babil: { en: 'Babylon', ar: 'بابل', ku: 'بابل' },
+    diyala: { en: 'Diyala', ar: 'ديالى', ku: 'دیالە' },
+    wasit: { en: 'Wasit', ar: 'واسط', ku: 'واسط' },
+    saladin: { en: 'Saladin', ar: 'صلاح الدين', ku: 'سەڵاحەددین' },
+    maysan: { en: 'Maysan', ar: 'ميسان', ku: 'میسان' },
+    dhiqar: { en: 'Dhi Qar', ar: 'ذي قار', ku: 'زیقار' },
+    muthanna: { en: 'Muthanna', ar: 'المثنى', ku: 'موسەنا' },
+    qadisiya: { en: 'Qadisiya', ar: 'القادسية', ku: 'قادسیە' },
+    halabja: { en: 'Halabja', ar: 'حلبجة', ku: 'هەڵەبجە' }
+  };
+
+  return labels[normalized]?.[lang] || labels[normalized]?.en || String(id || '');
 }
 
 export function getCategoryLabel(id: unknown, lang: Language): string {
   const normalized = normalizeCategory(id);
-  const category = APP_CATEGORIES.find((item) => item.id === normalized);
-  if (!category) return String(id || '');
-  return category[lang] || category.en;
+  return String(normalized || id || '');
 }
