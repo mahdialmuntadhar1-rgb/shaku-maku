@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { CheckCircle2, Eye, Heart, ImagePlus, Loader2, MapPin, MessageCircle, Phone, Repeat2, Send, Share2 } from 'lucide-react';
 import { API_BASE_URL, getApiErrorMessage, postsApi } from '../api';
 import { CATEGORIES, GOVERNORATES } from '../data';
+import { normalizeGovernorate, normalizeCategory, getGovernorateLabel, getCategoryLabel } from '../utils/taxonomy';
 import { buildLocalizedSocialPosts, LOCALIZED_SOCIAL_POST_COUNT } from '../data/socialFeedSeed';
 import { GovernorateCode, Language, SocialPost } from '../types';
 
@@ -217,8 +218,8 @@ export default function SocialFeed({
 
   const filteredPosts = useMemo(() => {
     return mergedPosts.filter((post) => {
-      const govMatch = selectedGov === 'all' || post.governorate === selectedGov;
-      const categoryMatch = selectedCategory === 'all' || post.category === selectedCategory;
+      const govMatch = selectedGov === 'all' || normalizeGovernorate(post.governorate) === normalizeGovernorate(selectedGov);
+      const categoryMatch = selectedCategory === 'all' || normalizeCategory(post.category) === normalizeCategory(selectedCategory);
       return govMatch && categoryMatch;
     });
   }, [mergedPosts, selectedGov, selectedCategory]);

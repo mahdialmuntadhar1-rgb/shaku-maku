@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { normalizeGovernorate, normalizeCategory } from './utils/taxonomy';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Compass, Flame, Map, PlusCircle, BookOpen, Search, X, 
@@ -130,7 +131,7 @@ function normalizeList(payload: any): any[] {
   return [];
 }
 
-function normalizeGovCode(value: unknown): GovernorateCode {
+function normalizeGovernorate(value: unknown): GovernorateCode {
   const raw = String(value || '').toLowerCase().trim();
   if (!raw) return 'all';
   const compact = raw.replace(/[\s_\-،]+/g, '');
@@ -261,7 +262,7 @@ function dedupeBusinessesByIdentity(items: Business[]): Business[] {
   });
 }
 
-function normalizeCategoryId(value: unknown): string {
+function normalizeCategory(value: unknown): string {
   const raw = String(value || '').trim();
   if (!raw) return 'other';
 
@@ -590,8 +591,8 @@ export default function App() {
     let cancelled = false;
 
     const transformBusiness = (biz: any): Business => {
-      const category = normalizeCategoryId(biz.category);
-      const governorate = normalizeGovCode(biz.governorate);
+      const category = normalizeCategory(biz.category);
+      const governorate = normalizeGovernorate(biz.governorate);
       const sourceImages = biz.images ? String(biz.images).split(',').map((value) => value.trim()).filter(Boolean) : [];
       const cleanSourceImages = sourceImages.filter((value) => !isLikelyGenericBusinessImage(value));
       const mainImage = resolveBusinessCardImage(biz.image || cleanSourceImages[0], category, biz.id);
@@ -700,8 +701,8 @@ export default function App() {
           businessId: post.business_id,
           businessName: post.business_name_ar || post.business_name_en || '',
           businessAvatar: post.business_avatar || FALLBACK_AVATAR,
-          category: normalizeCategoryId(post.category),
-          governorate: normalizeGovCode(post.governorate),
+          category: normalizeCategory(post.category),
+          governorate: normalizeGovernorate(post.governorate),
           mediaUrl: post.media_url || '',
           caption: {
             ar: post.caption_ar || '',
@@ -745,10 +746,10 @@ export default function App() {
   const filteredBusinesses = useMemo(() => {
     return businesses.filter(b => {
       // Governorate Match
-      const govMatch = selectedGov === 'all' || b.governorate === selectedGov;
+      const govMatch = selectedGov === 'all' || normalizeGovernorate(b.governorate) === normalizeGovernorate(selectedGov);
 
       // Category Match
-      const catMatch = !selectedCategory || b.category === selectedCategory;
+      const catMatch = !selectedCategory || normalizeCategory(b.category) === normalizeCategory(selectedCategory);
       
       // Keyword Match (case-insensitive across translated fields)
       const keyword = searchQuery.toLowerCase().trim();

@@ -3,6 +3,7 @@ import { Check, Edit3, Image as ImageIcon, Lock, Save, Trash2 } from 'lucide-rea
 import { api, API_BASE_URL, businessesApi, getApiErrorMessage, postsApi } from '../api';
 import { readSession } from '../auth/session';
 import { Business, HeroSlide, Language, SocialPost, UserProfile } from '../types';
+import { IRAQ_GOVERNORATES, APP_CATEGORIES, normalizeGovernorate, normalizeCategory, getGovernorateLabel, getCategoryLabel } from '../utils/taxonomy';
 
 interface AdminPanelProps {
   currentLang: Language;
@@ -58,7 +59,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
     captionKu: '',
     captionEn: '',
     mediaUrl: '',
-    videoUrl: ''
+    videoUrl: '',
+    governorate: '',
+    category: ''
   });
   const [diagnostics, setDiagnostics] = useState<DiagnosticItem[]>([]);
   const [diagnosticsLoading, setDiagnosticsLoading] = useState(false);
@@ -103,25 +106,25 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
 
   const addHeroSlide = () => {
     const now = Date.now();
-    setHeroSlides((prev) => [
-      ...prev,
-      {
-        id: `hero-${now}`,
-        image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1400&auto=format&fit=crop&q=85',
-        slogan: {
-          ar: 'إعلان جديد من شكو ماكو',
-          ku: 'ڕیکلامی نوێ لە شەکو مەکو',
-          en: 'New Shaku Maku promotion'
-        },
-        governorate: 'all' as any,
-        category: 'restaurant',
-        badge: {
-          ar: 'مساحة ترويجية',
-          ku: 'شوێنی ڕیکلام',
-          en: 'Promotional space'
-        }
+    const newSlide: HeroSlide = {
+      id: `hero-${now}`,
+      image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1400&auto=format&fit=crop&q=85',
+      slogan: {
+        ar: 'إعلان جديد من شكو ماكو',
+        ku: 'ڕیکلامی نوێ لە شەکو مەکو',
+        en: 'New Shaku Maku promotion'
+      },
+      governorate: 'all' as any,
+      category: 'restaurant',
+      badge: {
+        ar: 'مساحة ترويجية',
+        ku: 'شوێنی ڕیکلام',
+        en: 'Promotional space'
       }
-    ]);
+    };
+
+    // Put new slide first so it becomes visible/active immediately in the hero.
+    setHeroSlides((prev) => [newSlide, ...prev]);
   };
 
   const deleteHeroSlide = (slideId: string) => {
@@ -155,6 +158,16 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
     }
   };
 
+  const handleNewPostBusinessChange = (businessId: string) => {
+    const linkedBusiness = businesses.find((business) => business.id === businessId);
+    setNewPostDraft((prev) => ({
+      ...prev,
+      businessId,
+      governorate: linkedBusiness ? normalizeGovernorate(linkedBusiness.governorate) : prev.governorate,
+      category: linkedBusiness ? normalizeCategory(linkedBusiness.category) : prev.category
+    }));
+  };
+
   const createPost = async () => {
     const linkedBusiness = businesses.find((business) => business.id === newPostDraft.businessId) || businesses[0];
     const captionAr = newPostDraft.captionAr.trim();
@@ -173,13 +186,18 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
       return;
     }
 
+    if (!newPostDraft.governorate || !newPostDraft.category) {
+      setPostStatus(t(currentLang, 'Please choose governorate and category.', 'يرجى اختيار المحافظة والتصنيف.', 'تکایە پارێزگا و پۆل هەڵبژێرە.'));
+      return;
+    }
+
     const optimisticPost: SocialPost = {
       id: `local-post-${Date.now()}`,
       businessId: linkedBusiness.id,
       businessName: linkedBusiness.name[currentLang] || linkedBusiness.name.en,
       businessAvatar: linkedBusiness.avatar,
-      category: linkedBusiness.category,
-      governorate: linkedBusiness.governorate,
+      category: normalizeCategory(newPostDraft.category || linkedBusiness.category),
+      governorate: normalizeGovernorate(newPostDraft.governorate || linkedBusiness.governorate),
       mediaUrl,
       caption: {
         ar: captionAr || captionKu || captionEn,
@@ -211,8 +229,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
           caption_en: optimisticPost.caption.en,
           media_url: mediaUrl,
           video_url: videoUrl || null,
-          category: linkedBusiness.category,
-          governorate: linkedBusiness.governorate,
+          category: normalizeCategory(newPostDraft.category || linkedBusiness.category),
+          governorate: normalizeGovernorate(newPostDraft.governorate || linkedBusiness.governorate),
           status: 'approved'
         });
 
@@ -231,7 +249,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
         captionKu: '',
         captionEn: '',
         mediaUrl: '',
-        videoUrl: ''
+        videoUrl: '',
+        governorate: '',
+        category: ''
       });
     } finally {
       setSavingNewPost(false);
@@ -474,6 +494,24 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
                 onChange={(event) => updateHeroImage(slide.id, event.target.files?.[0] || null)}
                 className="block w-full text-xs text-zinc-300 file:mr-3 file:rounded-lg file:border-0 file:bg-luxury-gold file:px-3 file:py-2 file:text-black file:font-bold"
               />
+
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => setHeroSlides((prev) => [slide, ...prev.filter((item) => item.id !== slide.id)])}
+                  className="px-3 py-2 rounded-lg bg-blue-500/15 text-blue-200 border border-blue-400/30 text-xs font-black"
+                >
+                  ⭐ Use as main slide
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => deleteHeroSlide(slide.id)}
+                  className="px-3 py-2 rounded-lg bg-red-500/15 text-red-200 border border-red-400/30 text-xs font-black"
+                >
+                  🗑 Delete this slide
+                </button>
+              </div>
             </div>
           ))}
         </div>
@@ -490,7 +528,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
 
           <select
             value={newPostDraft.businessId}
-            onChange={(event) => setNewPostDraft((prev) => ({ ...prev, businessId: event.target.value }))}
+            onChange={(event) => handleNewPostBusinessChange(event.target.value)}
             className="w-full bg-black/35 border border-white/10 rounded-lg px-3 py-2 text-xs"
           >
             <option value="">Link to first available business</option>
@@ -500,6 +538,40 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
               </option>
             ))}
           </select>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <label className="text-xs font-black text-zinc-300">
+                  {t(currentLang, 'Governorate', 'المحافظة', 'پارێزگا')}
+                  <select
+                    value={newPostDraft.governorate}
+                    onChange={(event) => setNewPostDraft((prev) => ({ ...prev, governorate: event.target.value }))}
+                    className="mt-2 w-full rounded-xl bg-black/40 border border-white/10 px-3 py-3 text-sm text-white"
+                  >
+                    <option value="">{t(currentLang, 'Choose governorate for this post', 'اختر محافظة المنشور', 'پارێزگای بابەتەکە هەڵبژێرە')}</option>
+                    {IRAQ_GOVERNORATES.map((gov) => (
+                      <option key={gov.id} value={gov.id}>
+                        {getGovernorateLabel(gov.id, currentLang)}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+
+                <label className="text-xs font-black text-zinc-300">
+                  {t(currentLang, 'Category', 'التصنيف', 'پۆل')}
+                  <select
+                    value={newPostDraft.category}
+                    onChange={(event) => setNewPostDraft((prev) => ({ ...prev, category: event.target.value }))}
+                    className="mt-2 w-full rounded-xl bg-black/40 border border-white/10 px-3 py-3 text-sm text-white"
+                  >
+                    <option value="">{t(currentLang, 'Choose category for this post', 'اختر تصنيف المنشور', 'پۆلی بابەتەکە هەڵبژێرە')}</option>
+                    {APP_CATEGORIES.map((category) => (
+                      <option key={category.id} value={category.id}>
+                        {getCategoryLabel(category.id, currentLang)}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+
 
           <textarea
             value={newPostDraft.captionAr}
@@ -601,6 +673,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
                     className="p-2 rounded-lg bg-red-500/10 text-red-400"
                   >
                     <Trash2 className="w-4 h-4" />
+                    <span>Delete</span>
                   </button>
                 </div>
               </div>

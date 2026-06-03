@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { Business, Language, GovernorateCode } from '../types';
 import { CATEGORIES, TRANSLATIONS } from '../data';
+import { normalizeGovernorate, normalizeCategory } from '../utils/taxonomy';
 import { businessesApi, getApiErrorMessage } from '../api';
 
 interface BusinessFeedProps {

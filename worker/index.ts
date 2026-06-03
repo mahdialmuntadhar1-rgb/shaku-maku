@@ -1,3 +1,82 @@
+
+function cleanTaxonomyValue(value) {
+  return String(value || '')
+    .toLowerCase()
+    .trim()
+    .replace(/[أإآ]/g, 'ا')
+    .replace(/ة/g, 'ه')
+    .replace(/ى/g, 'ي')
+    .replace(/[_\-]+/g, ' ')
+    .replace(/[\s،,./()\[\]{}]+/g, ' ')
+    .trim();
+}
+
+function compactTaxonomyValue(value) {
+  return cleanTaxonomyValue(value).replace(/\s+/g, '');
+}
+
+function normalizeGovernorate(value) {
+  const raw = cleanTaxonomyValue(value);
+  const compact = compactTaxonomyValue(value);
+  const aliases = {
+    baghdad: ['baghdad','بغداد'],
+    basra: ['basra','basrah','البصره','البصرة','بصره','بصرة'],
+    nineveh: ['nineveh','ninewa','ninawa','nainawa','mosul','mousl','mousul','نينوى','نينوي','الموصل','موصل'],
+    erbil: ['erbil','arbil','hawler','hewler','اربيل','أربيل','هەولێر'],
+    sulaymaniyah: ['sulaymaniyah','sulaimani','sulaymaniya','suleimani','slemani','السليمانيه','السليمانية','سليمانيه','سليمانية','سلێمانی'],
+    duhok: ['duhok','dohuk','دهوك','دهۆك'],
+    kirkuk: ['kirkuk','كركوك','کرکوک','کەرکووک'],
+    najaf: ['najaf','النجف','نجف'],
+    karbala: ['karbala','kerbala','كربلاء','کربلا'],
+    babil: ['babil','babylon','hillah','hilla','بابل','الحله','الحلة'],
+    anbar: ['anbar','الانبار','الأنبار','رمادي','ramadi'],
+    diyala: ['diyala','ديالى','بعقوبه','بعقوبة','baquba'],
+    wasit: ['wasit','واسط','الكوت','kut'],
+    salah_ad_din: ['salah_ad_din','salahaddin','salah al din','salah ad din','صلاح الدين','تكريت','tikrit'],
+    maysan: ['maysan','ميسان','العماره','العمارة','amara'],
+    dhi_qar: ['dhi_qar','dhiqar','ذي قار','ذى قار','الناصريه','الناصرية','nasiriyah','nasiriya'],
+    muthanna: ['muthanna','المثنى','السماوه','السماوة','samawah'],
+    qadisiyyah: ['qadisiyyah','qadisiyah','diwaniyah','القادسيه','القادسية','الديوانيه','الديوانية','diwaniya']
+  };
+
+  for (const [id, values] of Object.entries(aliases)) {
+    if (cleanTaxonomyValue(id) === raw || compactTaxonomyValue(id) === compact) return id;
+    if (values.some((alias) => cleanTaxonomyValue(alias) === raw || compactTaxonomyValue(alias) === compact)) return id;
+  }
+
+  return String(value || '').trim();
+}
+
+function normalizeCategory(value) {
+  const raw = cleanTaxonomyValue(value);
+  const compact = compactTaxonomyValue(value);
+  const aliases = {
+    restaurant: ['restaurant','restaurants','food','مطعم','مطاعم','اكل','أكل'],
+    cafe: ['cafe','cafes','coffee','كوفي','كافيه','كافيهات','مقهى'],
+    doctor: ['doctor','doctors','طبيب','اطباء','أطباء','دكتور'],
+    clinic: ['clinic','clinics','عياده','عيادة','عيادات','medical'],
+    pharmacy: ['pharmacy','pharmacies','صيدليه','صيدلية','صيدليات'],
+    shopping: ['shopping','shop','market','mall','تسوق','سوق','مول'],
+    clothing: ['clothing','fashion','ملابس','ازياء','أزياء'],
+    cars: ['cars','car','auto','automotive','سيارات','سياره','سيارة'],
+    hotel: ['hotel','hotels','فنادق','فندق'],
+    beauty: ['beauty','salon','spa','تجميل','صالون'],
+    education: ['education','school','academy','تعليم','مدرسه','مدرسة','معهد'],
+    real_estate: ['real_estate','real estate','property','عقار','عقارات'],
+    services: ['services','service','خدمات','خدمه','خدمة'],
+    electronics: ['electronics','mobile','phone','computer','الكترونيات','إلكترونيات','موبايل'],
+    gym: ['gym','fitness','sport','sports','نادي','نوادي','رياضه','رياضة'],
+    entertainment: ['entertainment','fun','cinema','ترفيه','سينما']
+  };
+
+  for (const [id, values] of Object.entries(aliases)) {
+    if (cleanTaxonomyValue(id) === raw || compactTaxonomyValue(id) === compact) return id;
+    if (values.some((alias) => cleanTaxonomyValue(alias) === raw || compactTaxonomyValue(alias) === compact)) return id;
+  }
+
+  return String(value || '').trim();
+}
+
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { HTTPException } from 'hono/http-exception';
