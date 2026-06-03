@@ -12,19 +12,43 @@ function generateId(): string {
   return crypto.randomUUID();
 }
 
+
+function fixMojibakeText(value: unknown): string {
+  const text = String(value || '');
+
+  // Common Arabic/Kurdish mojibake markers caused by UTF-8 bytes read as Latin-1.
+  if (!/[ØÙÛÚ]/.test(text) && !/[\u0080-\u00FF]/.test(text)) {
+    return text;
+  }
+
+  try {
+    const bytes = Uint8Array.from(Array.from(text), (char) => char.charCodeAt(0) & 0xff);
+    const decoded = new TextDecoder('utf-8', { fatal: false }).decode(bytes);
+
+    // Only use decoded output when it actually contains Arabic/Kurdish characters.
+    if (/[\u0600-\u06FF]/.test(decoded)) {
+      return decoded;
+    }
+  } catch {
+    // Keep original text if decoding fails.
+  }
+
+  return text;
+}
+
 function rowToHeroSlide(row: any) {
   return {
     id: String(row.id),
     image: String(row.image_url || ''),
     slogan: {
-      ar: String(row.slogan_ar || ''),
-      ku: String(row.slogan_ku || ''),
-      en: String(row.slogan_en || '')
+      ar: fixMojibakeText(row.slogan_ar),
+      ku: fixMojibakeText(row.slogan_ku),
+      en: fixMojibakeText(row.slogan_en)
     },
     badge: {
-      ar: String(row.badge_ar || ''),
-      ku: String(row.badge_ku || ''),
-      en: String(row.badge_en || '')
+      ar: fixMojibakeText(row.badge_ar),
+      ku: fixMojibakeText(row.badge_ku),
+      en: fixMojibakeText(row.badge_en)
     },
     governorate: String(row.governorate || 'all'),
     category: String(row.category || 'restaurant'),
