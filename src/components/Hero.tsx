@@ -13,6 +13,18 @@ interface HeroProps {
   setSlides?: React.Dispatch<React.SetStateAction<HeroSlide[]>>;
 }
 
+function isLocalAdminHeroEditor() {
+  try {
+    const raw = localStorage.getItem('current_user') || localStorage.getItem('user') || '{}';
+    const parsed = JSON.parse(raw);
+    const email = String(parsed?.email || '').trim().toLowerCase();
+    const role = String(parsed?.role || '').trim().toLowerCase();
+    return email === 'safaribosafar@gmail.com' || role === 'admin';
+  } catch {
+    return false;
+  }
+}
+
 export default function Hero({ currentLang, onExploreClick, onSelectGov, slides, isAdmin = false, setSlides }: HeroProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [editingHero, setEditingHero] = useState(false);
@@ -47,7 +59,7 @@ export default function Hero({ currentLang, onExploreClick, onSelectGov, slides,
     });
   }, [activeSlide?.id, currentLang]);
 
-  const canInlineEditHero = Boolean(isAdmin && setSlides && activeSlide);
+  const canInlineEditHero = Boolean((isAdmin || isLocalAdminHeroEditor()) && setSlides && activeSlide);
 
   const updateActiveHeroSlide = (updater: (slide: HeroSlide) => HeroSlide) => {
     if (!setSlides || !activeSlide) return;
@@ -76,14 +88,15 @@ export default function Hero({ currentLang, onExploreClick, onSelectGov, slides,
         const img = new Image();
 
         img.onload = () => {
-          const maxSize = 1400;
-          const scale = Math.min(1, maxSize / Math.max(img.width, img.height));
-          const width = Math.max(1, Math.round(img.width * scale));
-          const height = Math.max(1, Math.round(img.height * scale));
+          // Force square hero image. This makes admin uploads predictable.
+          const sourceSize = Math.min(img.width, img.height);
+          const sourceX = Math.floor((img.width - sourceSize) / 2);
+          const sourceY = Math.floor((img.height - sourceSize) / 2);
 
+          const outputSize = 900;
           const canvas = document.createElement('canvas');
-          canvas.width = width;
-          canvas.height = height;
+          canvas.width = outputSize;
+          canvas.height = outputSize;
 
           const ctx = canvas.getContext('2d');
           if (!ctx) {
@@ -91,18 +104,28 @@ export default function Hero({ currentLang, onExploreClick, onSelectGov, slides,
             return;
           }
 
-          ctx.drawImage(img, 0, 0, width, height);
+          ctx.drawImage(
+            img,
+            sourceX,
+            sourceY,
+            sourceSize,
+            sourceSize,
+            0,
+            0,
+            outputSize,
+            outputSize
+          );
 
-          let quality = 0.72;
+          let quality = 0.7;
           let output = canvas.toDataURL('image/jpeg', quality);
 
-          while (output.length > 260000 && quality > 0.36) {
+          while (output.length > 220000 && quality > 0.34) {
             quality -= 0.08;
             output = canvas.toDataURL('image/jpeg', quality);
           }
 
-          if (output.length > 320000) {
-            reject(new Error('Hero image is too large. Please choose a smaller photo.'));
+          if (output.length > 280000) {
+            reject(new Error('Hero image is still too large. Please choose a smaller image.'));
             return;
           }
 
@@ -237,7 +260,13 @@ export default function Hero({ currentLang, onExploreClick, onSelectGov, slides,
 
       {/* Direct Admin Hero Controls */}
       {canInlineEditHero && (
-        <div className="absolute top-3 left-3 right-3 z-30 bg-black/70 backdrop-blur-xl border border-luxury-gold/40 rounded-2xl p-3 shadow-2xl">
+        <div
+          onClick={(event) => event.stopPropagation()}
+          className="absolute top-3 left-3 right-3 z-30 bg-black/85 backdrop-blur-xl border-2 border-luxury-gold rounded-2xl p-3 shadow-[0_0_40px_rgba(212,175,55,0.65)]"
+        >
+          <div className="mb-3 rounded-2xl bg-gradient-to-r from-luxury-gold via-yellow-300 to-luxury-gold px-4 py-3 text-center text-black font-black shadow-xl animate-pulse">
+            ADMIN HERO EDIT — click upload to replace hero image, square size is automatic
+          </div>
           <div className="flex flex-wrap items-center gap-2 mb-2">
             <button
               type="button"
@@ -245,12 +274,12 @@ export default function Hero({ currentLang, onExploreClick, onSelectGov, slides,
               className="px-3 py-2 rounded-xl bg-luxury-gold text-black text-xs font-black flex items-center gap-1"
             >
               <Edit3 className="w-3.5 h-3.5" />
-              {editingHero ? 'Close editor' : 'Edit this slide'}
+              {editingHero ? 'Close editor' : 'Edit text'}
             </button>
 
             <label className="px-3 py-2 rounded-xl bg-blue-500/20 text-blue-100 border border-blue-400/30 text-xs font-black flex items-center gap-1 cursor-pointer">
               <ImageIcon className="w-3.5 h-3.5" />
-              Upload images
+              Upload square photos
               <input
                 type="file"
                 accept="image/*"
@@ -275,12 +304,12 @@ export default function Hero({ currentLang, onExploreClick, onSelectGov, slides,
               className="px-3 py-2 rounded-xl bg-red-500/20 text-red-100 border border-red-400/30 text-xs font-black flex items-center gap-1"
             >
               <Trash2 className="w-3.5 h-3.5" />
-              Delete slide
+              Delete current hero
             </button>
 
             <span className="text-[10px] text-cyan-100 font-black hidden md:inline">Click anywhere on hero to edit</span>
              <span className="text-[10px] text-zinc-300 font-bold ml-auto">
-              Slide {currentIndex + 1} / {activeSlidesList.length}
+              Slide {currentIndex + 1} / {activeSlidesList.length} · Hero image will be cropped square automatically
             </span>
           </div>
 

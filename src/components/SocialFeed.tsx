@@ -108,6 +108,18 @@ const text = {
   }
 } as const;
 
+function isLocalAdminSocialFeed() {
+  try {
+    const raw = localStorage.getItem('current_user') || localStorage.getItem('user') || '{}';
+    const parsed = JSON.parse(raw);
+    const email = String(parsed?.email || '').trim().toLowerCase();
+    const role = String(parsed?.role || '').trim().toLowerCase();
+    return email === 'safaribosafar@gmail.com' || role === 'admin';
+  } catch {
+    return false;
+  }
+}
+
 const FALLBACK_AVATAR =
   'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=120&h=120&fit=crop&q=80';
 const FALLBACK_MEDIA =
@@ -186,7 +198,7 @@ export default function SocialFeed({
   const [generatedPosts, setGeneratedPosts] = useState<SocialPost[]>(() => buildLocalizedSocialPosts([]));
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [visibleCount, setVisibleCount] = useState(12);
-  const isAdmin = String(user?.email || '').toLowerCase() === 'safaribosafar@gmail.com' || user?.role === 'admin';
+  const isAdmin = String(user?.email || '').toLowerCase() === 'safaribosafar@gmail.com' || user?.role === 'admin' || isLocalAdminSocialFeed();
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
   const [editCaption, setEditCaption] = useState('');
   const [postActionStatus, setPostActionStatus] = useState('');
