@@ -174,6 +174,11 @@ export default function BusinessFeed({
       setAdminStatus(getApiErrorMessage(error));
     }
   }
+
+  function officialCategoryLabel(categoryId: string | undefined): string {
+    const normalized = normalizeCategory(categoryId);
+    return CATEGORIES.find((category) => category.id === normalized)?.name[currentLang] || normalized || '';
+  }
   const isRtl = currentLang === 'ar' || currentLang === 'ku';
 
   // Filter businesses by Governorate (if not 'all').
@@ -698,7 +703,7 @@ export default function BusinessFeed({
                 <div className="absolute bottom-4 left-4 right-4 flex flex-wrap items-end justify-between gap-3">
                   <div>
                     <span className="text-[10px] font-extrabold uppercase bg-cyan-400 text-slate-950 px-2 py-0.5 rounded-md mb-1.5 inline-block">
-                      {CATEGORIES.find(c => c.id === selectedBiz.category)?.name[currentLang]}
+                      {officialCategoryLabel(selectedBiz.category)}
                     </span>
                     <h2 className="text-xl md:text-2xl font-black text-white leading-tight">
                       {selectedBiz.name[currentLang]}
