@@ -211,6 +211,17 @@ export default function BusinessFeed({
     });
   }, [selectedGov, normalizedSelectedGov, selectedCategory, businesses.length, govFiltered.length, visibleCount]);
 
+  React.useEffect(() => {
+    console.log('[ShakuMaku] business feed filter:', {
+      selectedGov,
+      normalizedSelectedGov,
+      selectedCategory,
+      inputBusinesses: businesses.length,
+      afterGovernorateFilter: govFiltered.length,
+      visibleCount
+    });
+  }, [selectedGov, normalizedSelectedGov, selectedCategory, businesses.length, govFiltered.length, visibleCount]);
+
   const handleToggleCategoryExpand = (catId: string) => {
     const isCurrentlyExpanded = expandedCategories[catId] || false;
     
