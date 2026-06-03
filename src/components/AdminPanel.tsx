@@ -51,11 +51,23 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
   });
   const [businessStatus, setBusinessStatus] = useState('');
   const [postStatus, setPostStatus] = useState('');
+  const [savingNewPost, setSavingNewPost] = useState(false);
+  const [newPostDraft, setNewPostDraft] = useState({
+    businessId: '',
+    captionAr: '',
+    captionKu: '',
+    captionEn: '',
+    mediaUrl: '',
+    videoUrl: ''
+  });
   const [diagnostics, setDiagnostics] = useState<DiagnosticItem[]>([]);
   const [diagnosticsLoading, setDiagnosticsLoading] = useState(false);
   const session = readSession();
   const signedInEmail = (userProfile?.email || session?.user?.email || '').toLowerCase();
-  const hasAdminAccess = userProfile?.role === 'admin' || session?.user?.role === 'admin';
+  const hasAdminAccess =
+    signedInEmail === 'safaribosafar@gmail.com' ||
+    userProfile?.role === 'admin' ||
+    session?.user?.role === 'admin';
 
   if (!hasAdminAccess) {
     return (
@@ -89,6 +101,36 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
     reader.readAsDataURL(file);
   };
 
+  const addHeroSlide = () => {
+    const now = Date.now();
+    setHeroSlides((prev) => [
+      ...prev,
+      {
+        id: `hero-${now}`,
+        image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1400&auto=format&fit=crop&q=85',
+        slogan: {
+          ar: 'إعلان جديد من شكو ماكو',
+          ku: 'ڕیکلامی نوێ لە شەکو مەکو',
+          en: 'New Shaku Maku promotion'
+        },
+        governorate: 'all' as any,
+        category: 'restaurant',
+        badge: {
+          ar: 'مساحة ترويجية',
+          ku: 'شوێنی ڕیکلام',
+          en: 'Promotional space'
+        }
+      }
+    ]);
+  };
+
+  const deleteHeroSlide = (slideId: string) => {
+    setHeroSlides((prev) => {
+      if (prev.length <= 1) return prev;
+      return prev.filter((slide) => slide.id !== slideId);
+    });
+  };
+
   const approvePost = async (postId: string) => {
     try {
       await postsApi.update(postId, { status: 'approved' });
@@ -110,6 +152,89 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
       setPostStatus(t(currentLang, 'Post deleted.', 'تم حذف المنشور.', 'بابەتەکە سڕایەوە.'));
     } catch (error) {
       setPostStatus(getApiErrorMessage(error));
+    }
+  };
+
+  const createPost = async () => {
+    const linkedBusiness = businesses.find((business) => business.id === newPostDraft.businessId) || businesses[0];
+    const captionAr = newPostDraft.captionAr.trim();
+    const captionKu = newPostDraft.captionKu.trim() || captionAr;
+    const captionEn = newPostDraft.captionEn.trim() || captionAr;
+    const mediaUrl = newPostDraft.mediaUrl.trim();
+    const videoUrl = newPostDraft.videoUrl.trim();
+
+    if (!captionAr && !captionKu && !captionEn) {
+      setPostStatus(t(currentLang, 'Write a caption first.', 'اكتب النص أولاً.', 'سەرەتا دەقێک بنووسە.'));
+      return;
+    }
+
+    if (!linkedBusiness) {
+      setPostStatus(t(currentLang, 'No business available to link this post.', 'لا يوجد نشاط لربط المنشور به.', 'هیچ بازرگانییەک نییە.'));
+      return;
+    }
+
+    const optimisticPost: SocialPost = {
+      id: `local-post-${Date.now()}`,
+      businessId: linkedBusiness.id,
+      businessName: linkedBusiness.name[currentLang] || linkedBusiness.name.en,
+      businessAvatar: linkedBusiness.avatar,
+      category: linkedBusiness.category,
+      governorate: linkedBusiness.governorate,
+      mediaUrl,
+      caption: {
+        ar: captionAr || captionKu || captionEn,
+        ku: captionKu || captionAr || captionEn,
+        en: captionEn || captionAr || captionKu
+      },
+      likes: 0,
+      commentsCount: 0,
+      shares: 0,
+      views: 0,
+      timeAgo: { ar: 'الآن', ku: 'ئێستا', en: 'Just now' },
+      likedByUser: false,
+      savedByUser: false,
+      comments: [],
+      videoUrl: videoUrl || undefined,
+      status: 'approved',
+      updatedAt: new Date().toISOString(),
+      authorEmail: signedInEmail
+    };
+
+    try {
+      setSavingNewPost(true);
+
+      try {
+        const created: any = await postsApi.create({
+          business_id: linkedBusiness.id,
+          caption_ar: optimisticPost.caption.ar,
+          caption_ku: optimisticPost.caption.ku,
+          caption_en: optimisticPost.caption.en,
+          media_url: mediaUrl,
+          video_url: videoUrl || null,
+          category: linkedBusiness.category,
+          governorate: linkedBusiness.governorate,
+          status: 'approved'
+        });
+
+        const createdId = created?.id || created?.data?.id || optimisticPost.id;
+        setPosts((prev) => [{ ...optimisticPost, id: String(createdId) }, ...prev]);
+        setPostStatus(t(currentLang, 'Post added.', 'تمت إضافة المنشور.', 'بابەتەکە زیادکرا.'));
+      } catch (backendError) {
+        console.warn('Post backend create failed, using local fallback:', backendError);
+        setPosts((prev) => [optimisticPost, ...prev]);
+        setPostStatus(t(currentLang, 'Post added locally. Backend create route may need review.', 'تمت إضافة المنشور محلياً. قد يحتاج الخادم للمراجعة.', 'بابەتەکە ناوخۆیی زیادکرا.'));
+      }
+
+      setNewPostDraft({
+        businessId: '',
+        captionAr: '',
+        captionKu: '',
+        captionEn: '',
+        mediaUrl: '',
+        videoUrl: ''
+      });
+    } finally {
+      setSavingNewPost(false);
     }
   };
 
@@ -320,6 +445,13 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
         <p className="text-xs text-amber-300">
           Hero edits save to this app immediately and persist in browser storage.
         </p>
+        <button
+          type="button"
+          onClick={addHeroSlide}
+          className="px-3 py-2 rounded-lg bg-luxury-gold text-black text-xs font-black"
+        >
+          Add promotional slide
+        </button>
         <div className="grid lg:grid-cols-2 gap-4">
           {heroSlides.map((slide) => (
             <div key={slide.id} className="bg-white/5 border border-white/10 rounded-xl p-4 space-y-3">
@@ -352,6 +484,76 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
           {t(currentLang, 'Social Feed Moderation', 'إدارة المنشورات', 'بەڕێوەبردنی بابەتەکان')}
         </h2>
         {postStatus && <p className="text-xs text-zinc-300">{postStatus}</p>}
+
+        <div className="bg-white/5 border border-luxury-gold/20 rounded-xl p-4 space-y-3">
+          <h3 className="text-sm font-black text-luxury-gold">Create New Social Post</h3>
+
+          <select
+            value={newPostDraft.businessId}
+            onChange={(event) => setNewPostDraft((prev) => ({ ...prev, businessId: event.target.value }))}
+            className="w-full bg-black/35 border border-white/10 rounded-lg px-3 py-2 text-xs"
+          >
+            <option value="">Link to first available business</option>
+            {businesses.slice(0, 80).map((business) => (
+              <option key={business.id} value={business.id}>
+                {business.name[currentLang] || business.name.en}
+              </option>
+            ))}
+          </select>
+
+          <textarea
+            value={newPostDraft.captionAr}
+            onChange={(event) => setNewPostDraft((prev) => ({ ...prev, captionAr: event.target.value }))}
+            placeholder="Arabic caption"
+            rows={2}
+            className="w-full bg-black/35 border border-white/10 rounded-lg px-3 py-2 text-xs"
+            dir="rtl"
+          />
+
+          <textarea
+            value={newPostDraft.captionKu}
+            onChange={(event) => setNewPostDraft((prev) => ({ ...prev, captionKu: event.target.value }))}
+            placeholder="Kurdish caption"
+            rows={2}
+            className="w-full bg-black/35 border border-white/10 rounded-lg px-3 py-2 text-xs"
+            dir="rtl"
+          />
+
+          <textarea
+            value={newPostDraft.captionEn}
+            onChange={(event) => setNewPostDraft((prev) => ({ ...prev, captionEn: event.target.value }))}
+            placeholder="English caption"
+            rows={2}
+            className="w-full bg-black/35 border border-white/10 rounded-lg px-3 py-2 text-xs"
+            dir="ltr"
+          />
+
+          <input
+            value={newPostDraft.mediaUrl}
+            onChange={(event) => setNewPostDraft((prev) => ({ ...prev, mediaUrl: event.target.value }))}
+            placeholder="Image/media URL"
+            className="w-full bg-black/35 border border-white/10 rounded-lg px-3 py-2 text-xs"
+            dir="ltr"
+          />
+
+          <input
+            value={newPostDraft.videoUrl}
+            onChange={(event) => setNewPostDraft((prev) => ({ ...prev, videoUrl: event.target.value }))}
+            placeholder="Optional video URL"
+            className="w-full bg-black/35 border border-white/10 rounded-lg px-3 py-2 text-xs"
+            dir="ltr"
+          />
+
+          <button
+            type="button"
+            onClick={() => void createPost()}
+            disabled={savingNewPost}
+            className="px-3 py-2 rounded-lg bg-luxury-gold text-black text-xs font-black disabled:opacity-60"
+          >
+            {savingNewPost ? 'Saving...' : 'Add post'}
+          </button>
+        </div>
+
         <div className="space-y-3">
           {posts.length === 0 && (
             <p className="text-sm text-zinc-400">

@@ -511,20 +511,21 @@ export default function App() {
     }
 
     const localEmail = String(user.email || '').toLowerCase();
-    setIsAdmin(user.role === 'admin');
+    setIsAdmin(user.role === 'admin' || localEmail === 'safaribosafar@gmail.com');
     setUserProfile((prev) => ({
       uid: String(user.id || prev?.uid || localEmail),
       displayName: user.name || user.email?.split('@')[0] || 'User',
       photoURL: '',
       email: user.email,
       createdAt: prev?.createdAt || new Date().toISOString(),
-      role: user.role || prev?.role || 'user',
+      role: localEmail === 'safaribosafar@gmail.com' ? 'admin' : (user.role || prev?.role || 'user'),
       onboarded: true,
       businessId: null
     }));
     authApi.getMe()
       .then((me) => {
-        const role = ((me.role as any) || 'user');
+        const meEmail = String(me.email || '').toLowerCase();
+        const role = meEmail === 'safaribosafar@gmail.com' ? 'admin' : ((me.role as any) || 'user');
 
         setUserProfile({
           uid: me.id,
@@ -536,7 +537,7 @@ export default function App() {
           onboarded: true,
           businessId: null
         });
-        setIsAdmin(me.role === 'admin');
+        setIsAdmin(role === 'admin');
       })
       .catch((error) => {
         console.warn('Using local auth profile because /auth/me failed:', error);

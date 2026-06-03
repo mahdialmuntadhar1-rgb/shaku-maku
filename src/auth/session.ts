@@ -25,6 +25,8 @@ export interface AuthSession {
 
 export const normalizeEmail = (email?: string | null): string => (email || '').trim().toLowerCase();
 
+const ADMIN_EMAILS = new Set(['safaribosafar@gmail.com']);
+
 const notifyAuthChange = (): void => {
   window.dispatchEvent(new Event(AUTH_CHANGE_EVENT));
 };
@@ -44,12 +46,14 @@ export const normalizeUser = (raw: unknown): SessionUser | null => {
     return null;
   }
 
-  const backendRole =
+  const inferredRole =
     source.role === 'owner' || source.role === 'admin' || source.role === 'user'
       ? source.role
       : source.user_type === 'business'
         ? 'owner'
         : 'user';
+
+  const backendRole = ADMIN_EMAILS.has(email) ? 'admin' : inferredRole;
 
   const displayName = String(source.displayName || source.name || email.split('@')[0]);
 
