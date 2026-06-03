@@ -1,4 +1,5 @@
 import { Language } from '../types';
+import { GOVERNORATES, CATEGORIES } from '../data';
 
 export type GovernorateId =
   | 'all'
@@ -184,3 +185,30 @@ export function getCategoryLabel(id: unknown, lang: Language): string {
   const normalized = normalizeCategory(id);
   return String(normalized || id || '');
 }
+
+export const IRAQ_GOVERNORATES = GOVERNORATES.map((gov: any) => ({
+  id: String(gov.code || ''),
+  en: String(gov.englishLabel || gov.name?.en || gov.code || ''),
+  ar: String(gov.name?.ar || gov.englishLabel || gov.code || ''),
+  ku: String(gov.name?.ku || gov.englishLabel || gov.code || ''),
+  aliases: [
+    String(gov.code || ''),
+    String(gov.englishLabel || ''),
+    String(gov.name?.en || ''),
+    String(gov.name?.ar || ''),
+    String(gov.name?.ku || '')
+  ].filter(Boolean)
+}));
+
+export const APP_CATEGORIES = CATEGORIES.map((category: any) => ({
+  id: String(category.id || ''),
+  en: String(category.name?.en || category.id || ''),
+  ar: String(category.name?.ar || category.name?.en || category.id || ''),
+  ku: String(category.name?.ku || category.name?.en || category.id || ''),
+  aliases: [
+    String(category.id || ''),
+    String(category.name?.en || ''),
+    String(category.name?.ar || ''),
+    String(category.name?.ku || '')
+  ].filter(Boolean)
+}));
