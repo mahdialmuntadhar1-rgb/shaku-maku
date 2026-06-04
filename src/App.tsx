@@ -1100,8 +1100,91 @@ export default function App() {
           <div>
             <div className="text-[10px] font-black text-luxury-gold uppercase tracking-wider mb-1.5 text-center flex items-center justify-center gap-1.5">
               <MapPin className="w-3.5 h-3.5 text-luxury-gold shrink-0" />
-              <span>{currentLang === 'en' ? 'All Categories' : currentLang === 'ku' ? 'هەموو پۆلەکان' : 'جميع الفئات'}</span>
-                    {selectedCategory === null && <span className="text-[9px]">✓</span>}
+              <span>{currentLang === 'en' ? 'Select Iraqi Governorate / Region' : currentLang === 'ku' ? 'Ù¾Ø§Ø±ÛŽØ²Ú¯Ø§ÛŒÛ•Ú© Ø¯Û•Ø³ØªÙ†ÛŒØ´Ø§Ù† Ø¨Ú©Û•' : 'Ø§Ø®ØªØ± Ø§Ù„Ù…Ø­Ø§ÙØ¸Ø© Ø§Ù„Ø¹Ø±Ø§Ù‚ÙŠØ© Ù„ØªØµÙØ­ Ø§Ù„Ù…ØªØ§Ø¬Ø±'}</span>
+            </div>
+            
+            <div className="relative">
+              <button
+                onClick={() => {
+                  setGovDropdownOpen(!govDropdownOpen);
+                  setCategoryDropdownOpen(false);
+                }}
+                className="w-full flex items-center justify-between text-xs font-bold bg-[#16161a] hover:bg-[#1f1f26] text-white px-4 py-3 rounded-xl border border-luxury-gold/30 hover:border-luxury-gold/60 transition-all shadow-xl shadow-black/40 cursor-pointer"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-base">ðŸ“</span>
+                  <span>{GOVERNORATES.find(g => g.code === selectedGov)?.name[currentLang]}</span>
+                </div>
+                <ChevronDown className={`w-4 h-4 text-luxury-gold transition-transform duration-300 ${govDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {govDropdownOpen && (
+                <div className="absolute top-full left-0 right-0 mt-1.5 bg-[#121215] border border-luxury-gold/20 rounded-xl shadow-2xl p-1 z-50 grid grid-cols-2 gap-1 animate-fade-in max-h-[220px] overflow-y-auto custom-scrollbar font-sans">
+                  {GOVERNORATES.map((gov) => (
+                    <button
+                      key={gov.code}
+                      onClick={() => {
+                        setSelectedGov(gov.code);
+                        setGovDropdownOpen(false);
+                        setActiveTab('discover');
+                      }}
+                      className={`text-left px-2.5 py-1.5 text-[11px] rounded-lg flex items-center justify-between transition-all cursor-pointer ${
+                        selectedGov === gov.code
+                          ? 'bg-gradient-to-r from-luxury-teal to-luxury-gold/85 text-white font-extrabold shadow'
+                          : 'text-zinc-300 hover:bg-white/5 font-semibold'
+                      }`}
+                    >
+                      <span className="truncate">{gov.name[currentLang]}</span>
+                      {selectedGov === gov.code && <span className="text-[9px]">âœ¨</span>}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div>
+            <div className="text-[10px] font-black text-luxury-gold uppercase tracking-wider mb-1.5 text-center flex items-center justify-center gap-1.5">
+              <span>{currentLang === 'en' ? 'ðŸ” Filter by Category' : currentLang === 'ku' ? 'ðŸ” Ø¨Û•Ù¾ÛŽÛŒ Ù¾Û†Ù„ Ø¯Û•Ø³ØªÙ†ÛŒØ´Ø§Ù† Ø¨Ú©Û•' : 'ðŸ” ØªØµÙÙŠØ© Ø­Ø³Ø¨ Ø§Ù„ÙØ¦Ø©'}</span>
+            </div>
+            
+            <div className="relative">
+              <button
+                onClick={() => {
+                  setCategoryDropdownOpen(!categoryDropdownOpen);
+                  setGovDropdownOpen(false);
+                }}
+                className="w-full flex items-center justify-between text-xs font-bold bg-[#16161a] hover:bg-[#1f1f26] text-white px-4 py-3 rounded-xl border border-luxury-gold/30 hover:border-luxury-gold/60 transition-all shadow-xl shadow-black/40 cursor-pointer"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-base">
+                    {selectedCategory ? CATEGORIES.find(c => c.id === selectedCategory)?.icon || 'ðŸ¢' : 'ðŸ¢'}
+                  </span>
+                  <span>
+                    {selectedCategory 
+                      ? CATEGORIES.find(c => c.id === selectedCategory)?.name[currentLang] 
+                      : (currentLang === 'en' ? 'All Categories' : currentLang === 'ku' ? 'Ù‡Û•Ù…ÙˆÙˆ Ù¾Û†Ù„Û•Ú©Ø§Ù†' : 'Ø¬Ù…ÙŠØ¹ Ø§Ù„ÙØ¦Ø§Øª')}
+                  </span>
+                </div>
+                <ChevronDown className={`w-4 h-4 text-luxury-gold transition-transform duration-300 ${categoryDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {categoryDropdownOpen && (
+                <div className="absolute top-full left-0 right-0 mt-1.5 bg-[#121215] border border-luxury-gold/20 rounded-xl shadow-2xl p-1 z-50 grid grid-cols-2 gap-1 animate-fade-in max-h-[220px] overflow-y-auto custom-scrollbar font-sans animate-fade-in">
+                  <button
+                    onClick={() => {
+                      setSelectedCategory(null);
+                      setCategoryDropdownOpen(false);
+                      setActiveTab('discover');
+                    }}
+                    className={`text-left px-2.5 py-1.5 text-[11px] rounded-lg flex items-center justify-between transition-all cursor-pointer ${
+                      selectedCategory === null
+                        ? 'bg-gradient-to-r from-luxury-teal to-luxury-gold/85 text-white font-extrabold shadow'
+                        : 'text-zinc-300 hover:bg-white/5 font-semibold'
+                    }`}
+                  >
+                    <span>ðŸ” {currentLang === 'en' ? 'All Categories' : currentLang === 'ku' ? 'Ù‡Û•Ù…ÙˆÙˆ Ù¾Û†Ù„Û•Ú©Ø§Ù†' : 'Ø¬Ù…ÙŠØ¹ Ø§Ù„ÙØ¦Ø§Øª'}</span>
+                    {selectedCategory === null && <span className="text-[9px]">âœ¨</span>}
                   </button>
 
                   {CATEGORIES.map((cat) => (
@@ -1119,7 +1202,7 @@ export default function App() {
                       }`}
                     >
                       <span className="truncate">{cat.icon} {cat.name[currentLang]}</span>
-                      {selectedCategory === cat.id && <span className="text-[9px]">✓</span>}
+                      {selectedCategory === cat.id && <span className="text-[9px]">âœ¨</span>}
                     </button>
                   ))}
                 </div>
@@ -1131,29 +1214,14 @@ export default function App() {
                         
         {/* Visual Dual Entry Cards: Chaykhana + Shko Maku */}
         <div className="mt-7 mb-9 max-w-5xl mx-auto px-3" dir={currentLang === 'en' ? 'ltr' : 'rtl'}>
-          <style>{`
-            @keyframes shakuPolicePulseRed {
-              0%, 100% { transform: scale(1); box-shadow: 0 0 24px rgba(244,63,94,0.22); }
-              45% { transform: scale(1.028); box-shadow: 0 0 58px rgba(244,63,94,0.62); }
-              58% { transform: scale(0.992); }
-            }
-            @keyframes shakuPolicePulseBlue {
-              0%, 100% { transform: scale(1); box-shadow: 0 0 24px rgba(34,211,238,0.22); }
-              45% { transform: scale(1.028); box-shadow: 0 0 58px rgba(34,211,238,0.62); }
-              58% { transform: scale(0.992); }
-            }
-            .shaku-police-tab-left { animation: shakuPolicePulseRed 2.4s ease-in-out infinite; transform-origin: center; }
-            .shaku-police-tab-right { animation: shakuPolicePulseBlue 2.4s ease-in-out infinite 0.6s; transform-origin: center; }
-            @media (prefers-reduced-motion: reduce) {
-              .shaku-police-tab-left, .shaku-police-tab-right { animation: none; }
-            }
-          `}</style>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             {/* Chaykhana Social Card */}
             <button
               type="button"
               onClick={() => {
                 setActiveTab('feed');
+                const catElem = document.getElementById('discovery-catalog-section');
+                if (catElem) catElem.scrollIntoView({ behavior: 'smooth' });
               }}
               className={
                 'group relative min-h-[270px] overflow-hidden rounded-[2.25rem] border p-6 text-center transition-all duration-300 hover:scale-[1.015] active:scale-[0.985] ' +
@@ -1195,6 +1263,8 @@ export default function App() {
               type="button"
               onClick={() => {
                 setActiveTab('discover');
+                const catElem = document.getElementById('discovery-catalog-section');
+                if (catElem) catElem.scrollIntoView({ behavior: 'smooth' });
               }}
               className={
                 'group relative min-h-[270px] overflow-hidden rounded-[2.25rem] border p-6 text-center transition-all duration-300 hover:scale-[1.015] active:scale-[0.985] ' +
