@@ -3,11 +3,11 @@ function cleanTaxonomyValue(value) {
   return String(value || '')
     .toLowerCase()
     .trim()
-    .replace(/[أإآ]/g, 'ا')
-    .replace(/ة/g, 'ه')
-    .replace(/ى/g, 'ي')
+    .replace(/[Ø£Ø¥Ø¢]/g, 'Ø§')
+    .replace(/Ø©/g, 'Ù‡')
+    .replace(/Ù‰/g, 'ÙŠ')
     .replace(/[_\-]+/g, ' ')
-    .replace(/[\s،,./()\[\]{}]+/g, ' ')
+    .replace(/[\sØŒ,./()\[\]{}]+/g, ' ')
     .trim();
 }
 
@@ -19,24 +19,24 @@ function normalizeGovernorate(value) {
   const raw = cleanTaxonomyValue(value);
   const compact = compactTaxonomyValue(value);
   const aliases = {
-    baghdad: ['baghdad','بغداد'],
-    basra: ['basra','basrah','البصره','البصرة','بصره','بصرة'],
-    nineveh: ['nineveh','ninewa','ninawa','nainawa','mosul','mousl','mousul','نينوى','نينوي','الموصل','موصل'],
-    erbil: ['erbil','arbil','hawler','hewler','اربيل','أربيل','هەولێر'],
-    sulaymaniyah: ['sulaymaniyah','sulaimani','sulaymaniya','suleimani','slemani','السليمانيه','السليمانية','سليمانيه','سليمانية','سلێمانی'],
-    duhok: ['duhok','dohuk','دهوك','دهۆك'],
-    kirkuk: ['kirkuk','كركوك','کرکوک','کەرکووک'],
-    najaf: ['najaf','النجف','نجف'],
-    karbala: ['karbala','kerbala','كربلاء','کربلا'],
-    babil: ['babil','babylon','hillah','hilla','بابل','الحله','الحلة'],
-    anbar: ['anbar','الانبار','الأنبار','رمادي','ramadi'],
-    diyala: ['diyala','ديالى','بعقوبه','بعقوبة','baquba'],
-    wasit: ['wasit','واسط','الكوت','kut'],
-    salah_ad_din: ['salah_ad_din','salahaddin','salah al din','salah ad din','صلاح الدين','تكريت','tikrit'],
-    maysan: ['maysan','ميسان','العماره','العمارة','amara'],
-    dhi_qar: ['dhi_qar','dhiqar','ذي قار','ذى قار','الناصريه','الناصرية','nasiriyah','nasiriya'],
-    muthanna: ['muthanna','المثنى','السماوه','السماوة','samawah'],
-    qadisiyyah: ['qadisiyyah','qadisiyah','diwaniyah','القادسيه','القادسية','الديوانيه','الديوانية','diwaniya']
+    baghdad: ['baghdad','Ø¨ØºØ¯Ø§Ø¯'],
+    basra: ['basra','basrah','Ø§Ù„Ø¨ØµØ±Ù‡','Ø§Ù„Ø¨ØµØ±Ø©','Ø¨ØµØ±Ù‡','Ø¨ØµØ±Ø©'],
+    nineveh: ['nineveh','ninewa','ninawa','nainawa','mosul','mousl','mousul','Ù†ÙŠÙ†ÙˆÙ‰','Ù†ÙŠÙ†ÙˆÙŠ','Ø§Ù„Ù…ÙˆØµÙ„','Ù…ÙˆØµÙ„'],
+    erbil: ['erbil','arbil','hawler','hewler','Ø§Ø±Ø¨ÙŠÙ„','Ø£Ø±Ø¨ÙŠÙ„','Ù‡Û•ÙˆÙ„ÛŽØ±'],
+    sulaymaniyah: ['sulaymaniyah','sulaimani','sulaymaniya','suleimani','slemani','Ø§Ù„Ø³Ù„ÙŠÙ…Ø§Ù†ÙŠÙ‡','Ø§Ù„Ø³Ù„ÙŠÙ…Ø§Ù†ÙŠØ©','Ø³Ù„ÙŠÙ…Ø§Ù†ÙŠÙ‡','Ø³Ù„ÙŠÙ…Ø§Ù†ÙŠØ©','Ø³Ù„ÛŽÙ…Ø§Ù†ÛŒ'],
+    duhok: ['duhok','dohuk','Ø¯Ù‡ÙˆÙƒ','Ø¯Ù‡Û†Ùƒ'],
+    kirkuk: ['kirkuk','ÙƒØ±ÙƒÙˆÙƒ','Ú©Ø±Ú©ÙˆÚ©','Ú©Û•Ø±Ú©ÙˆÙˆÚ©'],
+    najaf: ['najaf','Ø§Ù„Ù†Ø¬Ù','Ù†Ø¬Ù'],
+    karbala: ['karbala','kerbala','ÙƒØ±Ø¨Ù„Ø§Ø¡','Ú©Ø±Ø¨Ù„Ø§'],
+    babil: ['babil','babylon','hillah','hilla','Ø¨Ø§Ø¨Ù„','Ø§Ù„Ø­Ù„Ù‡','Ø§Ù„Ø­Ù„Ø©'],
+    anbar: ['anbar','Ø§Ù„Ø§Ù†Ø¨Ø§Ø±','Ø§Ù„Ø£Ù†Ø¨Ø§Ø±','Ø±Ù…Ø§Ø¯ÙŠ','ramadi'],
+    diyala: ['diyala','Ø¯ÙŠØ§Ù„Ù‰','Ø¨Ø¹Ù‚ÙˆØ¨Ù‡','Ø¨Ø¹Ù‚ÙˆØ¨Ø©','baquba'],
+    wasit: ['wasit','ÙˆØ§Ø³Ø·','Ø§Ù„ÙƒÙˆØª','kut'],
+    salah_ad_din: ['salah_ad_din','salahaddin','salah al din','salah ad din','ØµÙ„Ø§Ø­ Ø§Ù„Ø¯ÙŠÙ†','ØªÙƒØ±ÙŠØª','tikrit'],
+    maysan: ['maysan','Ù…ÙŠØ³Ø§Ù†','Ø§Ù„Ø¹Ù…Ø§Ø±Ù‡','Ø§Ù„Ø¹Ù…Ø§Ø±Ø©','amara'],
+    dhi_qar: ['dhi_qar','dhiqar','Ø°ÙŠ Ù‚Ø§Ø±','Ø°Ù‰ Ù‚Ø§Ø±','Ø§Ù„Ù†Ø§ØµØ±ÙŠÙ‡','Ø§Ù„Ù†Ø§ØµØ±ÙŠØ©','nasiriyah','nasiriya'],
+    muthanna: ['muthanna','Ø§Ù„Ù…Ø«Ù†Ù‰','Ø§Ù„Ø³Ù…Ø§ÙˆÙ‡','Ø§Ù„Ø³Ù…Ø§ÙˆØ©','samawah'],
+    qadisiyyah: ['qadisiyyah','qadisiyah','diwaniyah','Ø§Ù„Ù‚Ø§Ø¯Ø³ÙŠÙ‡','Ø§Ù„Ù‚Ø§Ø¯Ø³ÙŠØ©','Ø§Ù„Ø¯ÙŠÙˆØ§Ù†ÙŠÙ‡','Ø§Ù„Ø¯ÙŠÙˆØ§Ù†ÙŠØ©','diwaniya']
   };
 
   for (const [id, values] of Object.entries(aliases)) {
@@ -51,22 +51,22 @@ function normalizeCategory(value) {
   const raw = cleanTaxonomyValue(value);
   const compact = compactTaxonomyValue(value);
   const aliases = {
-    restaurant: ['restaurant','restaurants','food','مطعم','مطاعم','اكل','أكل'],
-    cafe: ['cafe','cafes','coffee','كوفي','كافيه','كافيهات','مقهى'],
-    doctor: ['doctor','doctors','طبيب','اطباء','أطباء','دكتور'],
-    clinic: ['clinic','clinics','عياده','عيادة','عيادات','medical'],
-    pharmacy: ['pharmacy','pharmacies','صيدليه','صيدلية','صيدليات'],
-    shopping: ['shopping','shop','market','mall','تسوق','سوق','مول'],
-    clothing: ['clothing','fashion','ملابس','ازياء','أزياء'],
-    cars: ['cars','car','auto','automotive','سيارات','سياره','سيارة'],
-    hotel: ['hotel','hotels','فنادق','فندق'],
-    beauty: ['beauty','salon','spa','تجميل','صالون'],
-    education: ['education','school','academy','تعليم','مدرسه','مدرسة','معهد'],
-    real_estate: ['real_estate','real estate','property','عقار','عقارات'],
-    services: ['services','service','خدمات','خدمه','خدمة'],
-    electronics: ['electronics','mobile','phone','computer','الكترونيات','إلكترونيات','موبايل'],
-    gym: ['gym','fitness','sport','sports','نادي','نوادي','رياضه','رياضة'],
-    entertainment: ['entertainment','fun','cinema','ترفيه','سينما']
+    restaurant: ['restaurant','restaurants','food','Ù…Ø·Ø¹Ù…','Ù…Ø·Ø§Ø¹Ù…','Ø§ÙƒÙ„','Ø£ÙƒÙ„'],
+    cafe: ['cafe','cafes','coffee','ÙƒÙˆÙÙŠ','ÙƒØ§ÙÙŠÙ‡','ÙƒØ§ÙÙŠÙ‡Ø§Øª','Ù…Ù‚Ù‡Ù‰'],
+    doctor: ['doctor','doctors','Ø·Ø¨ÙŠØ¨','Ø§Ø·Ø¨Ø§Ø¡','Ø£Ø·Ø¨Ø§Ø¡','Ø¯ÙƒØªÙˆØ±'],
+    clinic: ['clinic','clinics','Ø¹ÙŠØ§Ø¯Ù‡','Ø¹ÙŠØ§Ø¯Ø©','Ø¹ÙŠØ§Ø¯Ø§Øª','medical'],
+    pharmacy: ['pharmacy','pharmacies','ØµÙŠØ¯Ù„ÙŠÙ‡','ØµÙŠØ¯Ù„ÙŠØ©','ØµÙŠØ¯Ù„ÙŠØ§Øª'],
+    shopping: ['shopping','shop','market','mall','ØªØ³ÙˆÙ‚','Ø³ÙˆÙ‚','Ù…ÙˆÙ„'],
+    clothing: ['clothing','fashion','Ù…Ù„Ø§Ø¨Ø³','Ø§Ø²ÙŠØ§Ø¡','Ø£Ø²ÙŠØ§Ø¡'],
+    cars: ['cars','car','auto','automotive','Ø³ÙŠØ§Ø±Ø§Øª','Ø³ÙŠØ§Ø±Ù‡','Ø³ÙŠØ§Ø±Ø©'],
+    hotel: ['hotel','hotels','ÙÙ†Ø§Ø¯Ù‚','ÙÙ†Ø¯Ù‚'],
+    beauty: ['beauty','salon','spa','ØªØ¬Ù…ÙŠÙ„','ØµØ§Ù„ÙˆÙ†'],
+    education: ['education','school','academy','ØªØ¹Ù„ÙŠÙ…','Ù…Ø¯Ø±Ø³Ù‡','Ù…Ø¯Ø±Ø³Ø©','Ù…Ø¹Ù‡Ø¯'],
+    real_estate: ['real_estate','real estate','property','Ø¹Ù‚Ø§Ø±','Ø¹Ù‚Ø§Ø±Ø§Øª'],
+    services: ['services','service','Ø®Ø¯Ù…Ø§Øª','Ø®Ø¯Ù…Ù‡','Ø®Ø¯Ù…Ø©'],
+    electronics: ['electronics','mobile','phone','computer','Ø§Ù„ÙƒØªØ±ÙˆÙ†ÙŠØ§Øª','Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠØ§Øª','Ù…ÙˆØ¨Ø§ÙŠÙ„'],
+    gym: ['gym','fitness','sport','sports','Ù†Ø§Ø¯ÙŠ','Ù†ÙˆØ§Ø¯ÙŠ','Ø±ÙŠØ§Ø¶Ù‡','Ø±ÙŠØ§Ø¶Ø©'],
+    entertainment: ['entertainment','fun','cinema','ØªØ±ÙÙŠÙ‡','Ø³ÙŠÙ†Ù…Ø§']
   };
 
   for (const [id, values] of Object.entries(aliases)) {
@@ -98,9 +98,6 @@ const app = new Hono<{ Bindings: Env }>();
 // CORS middleware - allow specific origins
 const ALLOWED_ORIGINS = [
   'https://shakumaku.pages.dev',
-  'https://shakumako.pages.dev',
-  'https://f9f5f957.shaku-maku2026.pages.dev',
-  'https://shaku-maku2026.pages.dev',
   'http://localhost:5173',
   'http://localhost:5175',
   'http://localhost:3000',
