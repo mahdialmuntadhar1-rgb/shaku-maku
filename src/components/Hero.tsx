@@ -153,16 +153,16 @@ export default function Hero({ currentLang, onExploreClick, onSelectGov, slides,
       id: `hero-upload-${Date.now()}-${index}`,
       image,
       slogan: {
-        ar: 'إعلان جديد من شكو ماكو',
-        ku: 'ڕیکلامی نوێ لە شەکو مەکو',
-        en: 'New Shaku Maku promotion'
+        ar: '',
+        ku: '',
+        en: ''
       },
       governorate: 'all',
       category: 'restaurant',
       badge: {
-        ar: 'مساحة ترويجية',
-        ku: 'شوێنی ڕیکلام',
-        en: 'Promotional space'
+        ar: '',
+        ku: '',
+        en: ''
       }
     }));
 
@@ -193,16 +193,16 @@ export default function Hero({ currentLang, onExploreClick, onSelectGov, slides,
       id: `hero-inline-${now}`,
       image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1400&auto=format&fit=crop&q=85',
       slogan: {
-        ar: 'إعلان جديد من شكو ماكو',
-        ku: 'ڕیکلامی نوێ لە شەکو مەکو',
-        en: 'New Shaku Maku promotion'
+        ar: '',
+        ku: '',
+        en: ''
       },
       governorate: 'all',
       category: 'restaurant',
       badge: {
-        ar: 'مساحة ترويجية',
-        ku: 'شوێنی ڕیکلام',
-        en: 'Promotional space'
+        ar: '',
+        ku: '',
+        en: ''
       }
     };
 
@@ -252,14 +252,12 @@ export default function Hero({ currentLang, onExploreClick, onSelectGov, slides,
             className="w-full h-full object-cover select-none"
             referrerPolicy="no-referrer"
           />
-          {/* Modern Cinematic Overlay: Ambient Dark Gradients */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#020205] via-[#020205]/45 to-transparent"></div>
-          <div className="absolute inset-0 bg-gradient-to-r from-[#020205]/80 via-transparent to-[#020205]/20"></div>
+          {/* Hero image only: dark/text overlays removed. */}
         </motion.div>
       </AnimatePresence>
 
       {/* Direct Admin Hero Controls */}
-      {canInlineEditHero && (
+      {false && canInlineEditHero && (
         <div
           onClick={(event) => event.stopPropagation()}
           className="absolute top-3 left-3 right-3 z-30 bg-black/85 backdrop-blur-xl border-2 border-luxury-gold rounded-2xl p-3 shadow-[0_0_40px_rgba(212,175,55,0.65)]"
@@ -344,59 +342,7 @@ export default function Hero({ currentLang, onExploreClick, onSelectGov, slides,
         </div>
       )}
 
-      {/* Floating Sparkle Elements & Active Content Overlay */}
-      <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-10 z-10">
-        <div className="max-w-2xl">
-          
-          {/* Active Badges */}
-          <div className="flex flex-wrap items-center gap-2 mb-3">
-            <span className="flex items-center gap-1 text-[10px] font-black uppercase px-3 py-1 rounded-full bg-orange-500 text-black">
-              <Sparkles className="w-3 h-3 text-black animate-pulse" />
-              <span>{activeSlide.badge[currentLang] || activeSlide.badge.en}</span>
-            </span>
-            
-            <button
-              onClick={() => onSelectGov(activeSlide.governorate)}
-              className="flex items-center gap-1 text-[10px] font-bold text-white bg-white/10 backdrop-blur-md px-3 py-1 rounded-full transition-all duration-300 hover:bg-white/20"
-            >
-              <MapPin className="w-3 h-3 text-cyan-400" />
-              <span className="capitalize">{activeSlide.governorate}</span>
-            </button>
-          </div>
-
-          {/* Slogan with Cairo and Plus Jakarta Sans */}
-          <AnimatePresence mode="wait">
-            <motion.h1
-              key={activeSlide.id}
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: -20, opacity: 0 }}
-              transition={{ delay: 0.2, duration: 0.5 }}
-              className="text-2xl md:text-4xl font-extrabold text-white tracking-tight leading-tight mb-4"
-              style={{ fontFamily: currentLang === 'en' ? 'Plus Jakarta Sans' : 'Cairo' }}
-            >
-              {activeSlide.slogan[currentLang] || activeSlide.slogan.en}
-            </motion.h1>
-          </AnimatePresence>
-
-          {/* Call to Action Button */}
-          <div className="flex items-center gap-3">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={onExploreClick}
-              className="flex items-center gap-2 text-xs md:text-sm font-black text-[#1A1A1A] bg-[#FF6B4A] hover:bg-[#C8A95F] px-6 py-3.5 rounded-full shadow-lg shadow-[#FF6B4A]/20 transition-all font-sans cursor-pointer duration-300"
-            >
-              <Compass className="w-4 h-4 text-[#1A1A1A]" />
-              <span>{t.ctaDiscover}</span>
-            </motion.button>
-            <span className="text-[11px] text-white/60 hidden md:inline-block font-medium">
-              Join 14k+ active local foodies in Iraq
-            </span>
-          </div>
-
-        </div>
-      </div>
+      {/* Public hero text overlay removed: image only. */}
 
       {/* Slide Navigator controls */}
       <button
