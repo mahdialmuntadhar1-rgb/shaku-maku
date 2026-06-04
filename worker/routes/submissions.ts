@@ -242,4 +242,43 @@ submissionsRoutes.patch('/:id', async (c) => {
   }
 });
 
+submissionsRoutes.delete('/:id', async (c) => {
+  const admin = await requireAdmin(c);
+  if (admin.ok === false) return admin.response;
+
+  try {
+    await ensureBusinessSubmissionsTable(c.env.DB);
+
+    const id = c.req.param('id');
+
+    const existing = await c.env.DB.prepare(`
+      SELECT id
+      FROM business_submissions
+      WHERE id = ?
+      LIMIT 1
+    `).bind(id).first();
+
+    if (!existing) {
+      return c.json({ success: false, error: 'Business request not found' }, 404);
+    }
+
+    await c.env.DB.prepare(`
+      DELETE FROM business_submissions
+      WHERE id = ?
+    `).bind(id).run();
+
+    return c.json({
+      success: true,
+      data: { id, deleted: true }
+    });
+  } catch (error: any) {
+    console.error('Business submission delete error:', error);
+    return c.json({
+      success: false,
+      error: error?.message || 'Failed to delete business submission'
+    }, 500);
+  }
+});
+
 export default submissionsRoutes;
+

@@ -485,7 +485,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
     setBusinessSubmissionsStatus('');
 
     try {
-      const response = await api.get('/business-submissions', { params: { status: 'all', limit: 100 } });
+      const response = await api.get('/business-submissions', { params: { status: 'pending', limit: 100 } });
       const rows = response?.data?.data || response?.data || response || [];
       setBusinessSubmissions(Array.isArray(rows) ? rows : []);
       setBusinessSubmissionsStatus(t(currentLang, 'Business requests loaded.', 'تم تحميل طلبات الأنشطة.', 'داواکارییەکانی بازرگانی بارکران.'));
@@ -505,17 +505,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
       const payload = response?.data?.data || response?.data || response || {};
       const publishedBusiness = payload?.business;
 
-      setBusinessSubmissions((prev) =>
-        prev.map((item) =>
-          item.id === submissionId
-            ? {
-                ...item,
-                status,
-                approved_business_id: payload?.approved_business_id || (item as any).approved_business_id
-              } as any
-            : item
-        )
-      );
+      setBusinessSubmissions((prev) => prev.filter((item) => item.id !== submissionId));
 
       if (status === 'approved' && publishedBusiness?.id) {
         const name = publishedBusiness.name_en || publishedBusiness.name_ar || publishedBusiness.name_ku || 'New Business';
@@ -578,9 +568,24 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
 
       setBusinessSubmissionsStatus(
         status === 'approved'
-          ? t(currentLang, 'Request approved and business published.', 'تمت الموافقة على الطلب ونشر النشاط.', 'داواکارییەکە پەسەندکرا و بازرگانییەکە بڵاوکرایەوە.')
-          : t(currentLang, 'Request rejected.', 'تم رفض الطلب.', 'داواکارییەکە ڕەتکرایەوە.')
+          ? t(currentLang, 'Request approved, business published, and request removed.', '\u062a\u0645\u062a \u0627\u0644\u0645\u0648\u0627\u0641\u0642\u0629 \u0648\u0646\u0634\u0631 \u0627\u0644\u0646\u0634\u0627\u0637 \u0648\u0625\u0632\u0627\u0644\u0629 \u0627\u0644\u0637\u0644\u0628.', '\u062f\u0627\u0648\u0627\u06a9\u0627\u0631\u06cc\u06cc\u06d5\u06a9\u06d5 \u067e\u06d5\u0633\u06d5\u0646\u062f\u06a9\u0631\u0627\u060c \u0628\u0627\u0632\u0631\u06af\u0627\u0646\u06cc\u06cc\u06d5\u06a9\u06d5 \u0628\u06b5\u0627\u0648\u06a9\u0631\u0627\u06cc\u06d5\u0648\u06d5 \u0648 \u062f\u0627\u0648\u0627\u06a9\u0627\u0631\u06cc\u06cc\u06d5\u06a9\u06d5 \u0644\u0627\u0628\u0631\u0627.')
+          : t(currentLang, 'Request rejected and removed from the list.', '\u062a\u0645 \u0631\u0641\u0636 \u0627\u0644\u0637\u0644\u0628 \u0648\u0625\u0632\u0627\u0644\u062a\u0647 \u0645\u0646 \u0627\u0644\u0642\u0627\u0626\u0645\u0629.', '\u062f\u0627\u0648\u0627\u06a9\u0627\u0631\u06cc\u06cc\u06d5\u06a9\u06d5 \u0695\u06d5\u062a\u06a9\u0631\u0627\u06cc\u06d5\u0648\u06d5 \u0648 \u0644\u06d5 \u0644\u06cc\u0633\u062a\u06d5\u06a9\u06d5 \u0644\u0627\u0628\u0631\u0627.')
       );
+    } catch (error) {
+      setBusinessSubmissionsStatus(getApiErrorMessage(error));
+    } finally {
+      setBusinessSubmissionsLoading(false);
+    }
+  };
+
+  const deleteBusinessSubmission = async (submissionId: string) => {
+    setBusinessSubmissionsLoading(true);
+    setBusinessSubmissionsStatus('');
+
+    try {
+      await api.delete(`/business-submissions/${submissionId}`);
+      setBusinessSubmissions((prev) => prev.filter((item) => item.id !== submissionId));
+      setBusinessSubmissionsStatus(t(currentLang, 'Request deleted permanently.', '\u062a\u0645 \u062d\u0630\u0641 \u0627\u0644\u0637\u0644\u0628 \u0646\u0647\u0627\u0626\u064a\u0627\u064b.', '\u062f\u0627\u0648\u0627\u06a9\u0627\u0631\u06cc\u06cc\u06d5\u06a9\u06d5 \u0628\u06d5 \u062a\u06d5\u0648\u0627\u0648\u06cc \u0633\u0695\u0627\u06cc\u06d5\u0648\u06d5.'));
     } catch (error) {
       setBusinessSubmissionsStatus(getApiErrorMessage(error));
     } finally {
@@ -728,6 +733,14 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
                       className="px-3 py-2 rounded-lg bg-red-600 text-white text-xs font-black disabled:opacity-50"
                     >
                       {t(currentLang, 'Reject', 'رفض', 'ڕەتکردنەوە')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => deleteBusinessSubmission(item.id)}
+                      disabled={businessSubmissionsLoading}
+                      className="px-3 py-2 rounded-lg bg-zinc-700 text-white text-xs font-black disabled:opacity-50"
+                    >
+                      {t(currentLang, 'Delete', '\u062d\u0630\u0641', '\u0633\u0695\u06cc\u0646\u06d5\u0648\u06d5')}
                     </button>
                   </div>
                 </div>
@@ -1136,5 +1149,6 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
 };
 
 export default AdminPanel;
+
 
 
