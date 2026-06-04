@@ -1,0 +1,6 @@
+﻿CONFIRMED CORRECT LIVE OG2 RESTORE
+Date: 20260604-172226
+Main live URL: https://shakumaku.pages.dev/?v=rollback-exact-og2
+Deployment URL: https://55854fc0.shakumaku.pages.dev
+Good branch: backup-exact-og2-deployed-20260604-170546
+Good folder: EXACT-LIVE-OG2-CLEAN
