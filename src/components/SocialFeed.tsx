@@ -1,8 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { CheckCircle2, Edit3, Eye, Heart, ImagePlus, Loader2, MapPin, MessageCircle, Phone, Repeat2, Save, Send, Share2, Trash2, X } from 'lucide-react';
-import { API_BASE_URL, getApiErrorMessage, postsApi } from '../api';
+﻿import React, { useMemo, useState } from 'react';
+import { CheckCircle2, Edit3, Heart, ImagePlus, Loader2, MapPin, MessageCircle, Repeat2, Save, Send, Share2, Trash2, X } from 'lucide-react';
+import { getApiErrorMessage, postsApi } from '../api';
 import { CATEGORIES, GOVERNORATES } from '../data';
-import { normalizeGovernorate, normalizeCategory, getGovernorateLabel, getCategoryLabel } from '../utils/taxonomy';
+import { normalizeGovernorate } from '../utils/taxonomy';
 import { buildLocalizedSocialPosts, LOCALIZED_SOCIAL_POST_COUNT } from '../data/socialFeedSeed';
 import { GovernorateCode, Language, SocialPost } from '../types';
 
@@ -21,109 +21,103 @@ const text = {
     placeholder: 'What do you want to share?',
     post: 'Post',
     media: 'Upload photo or video',
+    chooseGov: 'Choose governorate',
+    govRequired: 'Please choose a governorate before posting.',
     signIn: 'Please sign in to create a post.',
-    empty: 'No more posts for this filter.',
-    backendOn: 'Backend Connected',
-    backendOff: 'Backend Offline',
-    failed: 'Post failed',
-    published: 'Post created',
-    feedTitle: 'Shaku Maku Social Pulse',
-    feedSub: 'Real-looking local business updates from every Iraqi governorate.',
-    allCategories: 'All categories',
-    allGovs: 'All Iraq',
+    empty: 'No posts for this governorate yet.',
+    feedTitle: 'Chaykhana Social Feed',
+    feedSub: 'Local posts by governorate. Choose your city and see what is new.',
     showMore: 'Load more posts',
-    phone: 'Call',
-    address: 'Address',
     likes: 'Likes',
     comments: 'Comments',
     shares: 'Shares',
     views: 'Views',
-    seeded: 'localized demo engagement',
     edit: 'Edit',
     save: 'Save',
     cancel: 'Cancel',
     delete: 'Delete',
     deleted: 'Post deleted',
     updated: 'Post updated',
+    failed: 'Action failed',
+    published: 'Post created',
+    commentPlaceholder: 'Write a comment...',
+    commentSend: 'Comment',
+    copied: 'Link copied',
+    backendLoaded: 'backend database posts loaded',
+    fallbackLoaded: 'fallback posts until backend loads',
   },
   ar: {
     composerTitle: 'إنشاء منشور',
     placeholder: 'ماذا تريد أن تشارك؟',
     post: 'نشر',
     media: 'رفع صورة أو فيديو',
+    chooseGov: 'اختر المحافظة',
+    govRequired: 'يرجى اختيار المحافظة قبل النشر.',
     signIn: 'يرجى تسجيل الدخول لإنشاء منشور.',
-    empty: 'لا توجد منشورات إضافية لهذا الفلتر.',
-    backendOn: 'الخادم متصل',
-    backendOff: 'الخادم غير متصل',
-    failed: 'فشل إنشاء المنشور',
-    published: 'تم إنشاء المنشور',
-    feedTitle: 'نبض شكو ماكو الاجتماعي',
-    feedSub: 'منشورات محلية بشكل فيسبوك/إنستغرام لكل محافظة عراقية.',
-    allCategories: 'جميع الفئات',
-    allGovs: 'كل العراق',
+    empty: 'لا توجد منشورات لهذه المحافظة حالياً.',
+    feedTitle: 'چايخانة شكو ماكو',
+    feedSub: 'منشورات محلية حسب المحافظة. اختر مدينتك وشوف شنو الجديد.',
     showMore: 'تحميل منشورات أكثر',
-    phone: 'اتصال',
-    address: 'العنوان',
     likes: 'إعجاب',
     comments: 'تعليق',
     shares: 'مشاركة',
     views: 'مشاهدة',
-    seeded: 'تفاعل تجريبي محلي',
     edit: 'تعديل',
     save: 'حفظ',
     cancel: 'إلغاء',
     delete: 'حذف',
     deleted: 'تم حذف المنشور',
     updated: 'تم تحديث المنشور',
+    failed: 'فشل الإجراء',
+    published: 'تم إنشاء المنشور',
+    commentPlaceholder: 'اكتب تعليق...',
+    commentSend: 'تعليق',
+    copied: 'تم نسخ الرابط',
+    backendLoaded: 'منشور من قاعدة البيانات',
+    fallbackLoaded: 'منشورات احتياطية إلى أن يعمل الخادم',
   },
   ku: {
     composerTitle: 'دروستکردنی بابەت',
     placeholder: 'چی دەتەوێت هاوبەش بکەیت؟',
     post: 'بڵاوکردنەوە',
     media: 'بارکردنی وێنە یان ڤیدیۆ',
+    chooseGov: 'پارێزگا هەڵبژێرە',
+    govRequired: 'تکایە پێش بڵاوکردنەوە پارێزگا هەڵبژێرە.',
     signIn: 'تکایە بچۆ ژوورەوە بۆ دروستکردنی بابەت.',
-    empty: 'هیچ بابەتێکی تر بۆ ئەم فلتەرە نییە.',
-    backendOn: 'باکەند پەیوەستە',
-    backendOff: 'باکەند ناچالاکە',
-    failed: 'دروستکردنی بابەت سەرکەوتوو نەبوو',
-    published: 'بابەتەکە دروستکرا',
-    feedTitle: 'نەبزی کۆمەڵایەتی شکو ماکو',
-    feedSub: 'پۆستە ناوخۆییەکان بە شێوەی فەیسبووک/ئیستاگرام بۆ هەموو پارێزگاکان.',
-    allCategories: 'هەموو پۆلەکان',
-    allGovs: 'هەموو عێراق',
+    empty: 'هیچ بابەتێک بۆ ئەم پارێزگایە نییە.',
+    feedTitle: 'چایخانەی شکو ماکو',
+    feedSub: 'پۆستە ناوخۆییەکان بەپێی پارێزگا. شارەکەت هەڵبژێرە و ببینە چی نوێیە.',
     showMore: 'پۆستی زیاتر پیشان بدە',
-    phone: 'پەیوەندی',
-    address: 'ناونیشان',
     likes: 'لایک',
     comments: 'کۆمێنت',
     shares: 'هاوبەشکردن',
     views: 'بینین',
-    seeded: 'کارلێکی نموونەیی',
     edit: 'دەستکاری',
     save: 'پاشەکەوت',
     cancel: 'هەڵوەشاندنەوە',
     delete: 'سڕینەوە',
     deleted: 'بابەتەکە سڕایەوە',
     updated: 'بابەتەکە نوێکرایەوە',
+    failed: 'کردارەکە سەرکەوتوو نەبوو',
+    published: 'بابەتەکە دروستکرا',
+    commentPlaceholder: 'کۆمێنت بنووسە...',
+    commentSend: 'کۆمێنت',
+    copied: 'لینک کۆپی کرا',
+    backendLoaded: 'پۆستی داتابەیس بارکرا',
+    fallbackLoaded: 'پۆستی جێگرەوە تا باکەند کاردەکات',
   }
 } as const;
 
-function isLocalAdminSocialFeed() {
-  try {
-    const raw = localStorage.getItem('current_user') || localStorage.getItem('user') || '{}';
-    const parsed = JSON.parse(raw);
-    const email = String(parsed?.email || '').trim().toLowerCase();
-    const role = String(parsed?.role || '').trim().toLowerCase();
-    return email === 'safaribosafar@gmail.com' || role === 'admin';
-  } catch {
-    return false;
-  }
-}
-
-const FALLBACK_AVATAR =
-  'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=120&h=120&fit=crop&q=80';
-const FALLBACK_MEDIA =
-  'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&auto=format&fit=crop&q=80';
+const VIRTUAL_AVATAR_THEMES = [
+  'from-rose-500 to-orange-400',
+  'from-amber-500 to-yellow-300',
+  'from-emerald-500 to-teal-300',
+  'from-cyan-500 to-blue-400',
+  'from-violet-500 to-fuchsia-400',
+  'from-pink-500 to-rose-300',
+  'from-slate-700 to-zinc-500',
+  'from-lime-500 to-emerald-300'
+];
 
 function compactNumber(value = 0): string {
   if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`;
@@ -137,64 +131,43 @@ function getLocalized(value: any, lang: Language): string {
   return String(value[lang] || value.ar || value.ku || value.en || '');
 }
 
-const KURDISH_FIRST_GOVERNORATES = new Set([
-  'erbil',
-  'sulaymaniyah',
-  'duhok',
-  'halabja',
-  'kirkuk'
-]);
-
-function getRegionalMainLanguage(gov: GovernorateCode): Language {
-  return KURDISH_FIRST_GOVERNORATES.has(String(gov)) ? 'ku' : 'ar';
+function getCategoryMeta(categoryId: string, lang: Language) {
+  const category = CATEGORIES.find((item) => item.id === categoryId);
+  return {
+    icon: category?.icon || '💬',
+    name: category?.name?.[lang] || category?.name?.ar || (categoryId === 'community' ? 'Community' : categoryId),
+  };
 }
 
-function getCaptionDisplay(post: SocialPost, currentLang: Language) {
-  const regionalLang = getRegionalMainLanguage(post.governorate);
-  const mainText = getLocalized(post.caption, regionalLang) || getLocalized(post.caption, currentLang);
-  const selectedText = getLocalized(post.caption, currentLang);
-  const englishText = getLocalized(post.caption, 'en');
+function getGovName(govCode: GovernorateCode | string, lang: Language) {
+  const gov = GOVERNORATES.find((item) => item.code === govCode);
+  return gov?.name?.[lang] || gov?.name?.ar || govCode;
+}
 
-  let translationLabel = '';
-  let translationText = '';
-
-  if (currentLang !== regionalLang && selectedText && selectedText !== mainText) {
-    translationLabel =
-      currentLang === 'ar'
-        ? 'الترجمة العربية'
-        : currentLang === 'ku'
-        ? 'وەرگێڕانی کوردی'
-        : 'English translation';
-
-    translationText = selectedText;
-  } else if (currentLang === regionalLang && englishText && englishText !== mainText) {
-    translationLabel =
-      currentLang === 'ku'
-        ? 'English translation'
-        : currentLang === 'ar'
-        ? 'الترجمة الإنجليزية'
-        : 'English translation';
-
-    translationText = englishText;
+function hashText(value: string): number {
+  let hash = 0;
+  for (let i = 0; i < value.length; i += 1) {
+    hash = ((hash << 5) - hash) + value.charCodeAt(i);
+    hash |= 0;
   }
+  return Math.abs(hash);
+}
 
-  return {
-    mainText,
-    mainLang: regionalLang,
-    translationLabel,
-    translationText,
-    translationLang: currentLang !== regionalLang ? currentLang : 'en'
-  };
+function getVirtualAvatar(post: SocialPost, lang: Language) {
+  const meta = getCategoryMeta(post.category || 'community', lang);
+  const key = String(post.id || post.businessId || post.businessName || post.category || post.governorate);
+  const theme = VIRTUAL_AVATAR_THEMES[hashText(key) % VIRTUAL_AVATAR_THEMES.length];
+  return { icon: meta.icon || '✨', theme };
 }
 
 function mapApiPostToUi(post: any): SocialPost {
   return {
     id: String(post.id),
     businessId: String(post.business_id || ''),
-    businessName: post.business_name_ar || post.business_name_en || 'Shaku Maku',
-    businessAvatar: post.business_avatar || FALLBACK_AVATAR,
-    category: String(post.category || 'restaurant'),
-    governorate: String(post.governorate || 'all').toLowerCase().replace(/\s+/g, '') as GovernorateCode,
+    businessName: post.business_name_ar || post.business_name_en || post.author_name || 'Shaku Maku',
+    businessAvatar: post.business_avatar || post.author_avatar || '',
+    category: String(post.category || 'community'),
+    governorate: normalizeGovernorate(post.governorate || 'all') as GovernorateCode,
     mediaUrl: String(post.media_url || ''),
     caption: {
       ar: String(post.caption_ar || post.caption_en || ''),
@@ -210,53 +183,10 @@ function mapApiPostToUi(post: any): SocialPost {
     savedByUser: false,
     comments: [],
     videoUrl: post.video_url || undefined,
-    status: post.status || 'pending',
+    status: post.status || 'approved',
     updatedAt: post.updated_at || undefined,
-  };
-}
-
-function getCategoryMeta(categoryId: string, lang: Language) {
-  const category = CATEGORIES.find((item) => item.id === categoryId);
-  return {
-    icon: category?.icon || '🏢',
-    name: category?.name?.[lang] || category?.name?.ar || categoryId,
-  };
-}
-
-function getGovName(govCode: GovernorateCode, lang: Language) {
-  const gov = GOVERNORATES.find((item) => item.code === govCode);
-  return gov?.name?.[lang] || gov?.name?.ar || govCode;
-}
-
-const VIRTUAL_AVATAR_THEMES = [
-  'from-rose-500 to-orange-400',
-  'from-amber-500 to-yellow-300',
-  'from-emerald-500 to-teal-300',
-  'from-cyan-500 to-blue-400',
-  'from-violet-500 to-fuchsia-400',
-  'from-pink-500 to-rose-300',
-  'from-slate-700 to-zinc-500',
-  'from-lime-500 to-emerald-300'
-];
-
-function hashText(value: string): number {
-  let hash = 0;
-  for (let i = 0; i < value.length; i += 1) {
-    hash = ((hash << 5) - hash) + value.charCodeAt(i);
-    hash |= 0;
-  }
-  return Math.abs(hash);
-}
-
-function getVirtualAvatar(post: SocialPost, lang: Language) {
-  const meta = getCategoryMeta(post.category, lang);
-  const key = String(post.id || post.businessId || post.businessName || post.category || post.governorate);
-  const theme = VIRTUAL_AVATAR_THEMES[hashText(key) % VIRTUAL_AVATAR_THEMES.length];
-  const govName = getGovName(post.governorate, lang);
-  return {
-    icon: meta.icon || '✨',
-    theme,
-    label: String(post.businessName || govName || 'Shaku Maku').slice(0, 2)
+    authorUid: post.author_id || undefined,
+    authorEmail: post.author_email || undefined,
   };
 }
 
@@ -271,141 +201,58 @@ export default function SocialFeed({
   const isRtl = currentLang !== 'en';
   const t = text[currentLang];
 
-  const [apiConnected, setApiConnected] = useState<boolean | null>(null);
   const [caption, setCaption] = useState('');
+  const [selectedPostGov, setSelectedPostGov] = useState<GovernorateCode | ''>('');
   const [attachmentDataUrl, setAttachmentDataUrl] = useState<string>('');
   const [attachmentKind, setAttachmentKind] = useState<'image' | 'video' | null>(null);
   const [statusText, setStatusText] = useState('');
   const [posting, setPosting] = useState(false);
-  const [generatedPosts, setGeneratedPosts] = useState<SocialPost[]>(() => buildLocalizedSocialPosts([]));
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [generatedPosts] = useState<SocialPost[]>(() => buildLocalizedSocialPosts([]));
   const [visibleCount, setVisibleCount] = useState(12);
-  const isAdmin = String(user?.email || '').toLowerCase() === 'safaribosafar@gmail.com' || user?.role === 'admin' || isLocalAdminSocialFeed();
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
   const [editCaption, setEditCaption] = useState('');
-  const [postActionStatus, setPostActionStatus] = useState('');
+  const [commentsOpen, setCommentsOpen] = useState<Record<string, boolean>>({});
+  const [commentsByPost, setCommentsByPost] = useState<Record<string, any[]>>({});
+  const [commentDrafts, setCommentDrafts] = useState<Record<string, string>>({});
+  const [busyPostId, setBusyPostId] = useState<string | null>(null);
 
-  useEffect(() => {
-    let cancelled = false;
-    const probeAndLoadBusinesses = async () => {
-      try {
-        const [healthResponse, businessesResponse] = await Promise.allSettled([
-          fetch(`${API_BASE_URL}/api/health`),
-          fetch(`${API_BASE_URL}/api/businesses?page=1&limit=500`),
-        ]);
+  const userId = String(user?.id || user?.uid || '');
+  const userEmail = String(user?.email || '').toLowerCase();
+  const isAdmin = userEmail === 'safaribosafar@gmail.com' || user?.role === 'admin';
 
-        if (!cancelled) {
-          setApiConnected(healthResponse.status === 'fulfilled' && healthResponse.value.ok);
-        }
+  const sourcePosts = posts.length > 0 ? posts : generatedPosts;
 
-        if (businessesResponse.status === 'fulfilled' && businessesResponse.value.ok) {
-          const payload = await businessesResponse.value.json();
-          const localized = buildLocalizedSocialPosts(payload);
-          if (!cancelled && localized.length >= LOCALIZED_SOCIAL_POST_COUNT) {
-            setGeneratedPosts(localized);
-          }
-        }
-      } catch {
-        if (!cancelled) setApiConnected(false);
-      }
-    };
-    probeAndLoadBusinesses();
-    const updatePostLocally = (postId: string, updater: (post: SocialPost) => SocialPost) => {
+  const filteredPosts = useMemo(() => {
+    return sourcePosts.filter((post) => {
+      return selectedGov === 'all' || normalizeGovernorate(post.governorate) === normalizeGovernorate(selectedGov);
+    });
+  }, [sourcePosts, selectedGov]);
+
+  const visiblePosts = filteredPosts.slice(0, visibleCount);
+
+  const canManagePost = (post: SocialPost) => {
+    const postAuthorId = String(post.authorUid || '');
+    const postAuthorEmail = String(post.authorEmail || '').toLowerCase();
+    return isAdmin || (!!userId && postAuthorId === userId) || (!!userEmail && postAuthorEmail === userEmail);
+  };
+
+  const updatePostLocally = (postId: string, updater: (post: SocialPost) => SocialPost) => {
     setPosts((prev) => prev.map((post) => (post.id === postId ? updater(post) : post)));
-    setGeneratedPosts((prev) => prev.map((post) => (post.id === postId ? updater(post) : post)));
   };
 
   const removePostLocally = (postId: string) => {
     setPosts((prev) => prev.filter((post) => post.id !== postId));
-    setGeneratedPosts((prev) => prev.filter((post) => post.id !== postId));
   };
-
-  const startEditPost = (post: SocialPost) => {
-    setEditingPostId(post.id);
-    setEditCaption(getLocalized(post.caption, currentLang));
-    setPostActionStatus('');
-  };
-
-  const cancelEditPost = () => {
-    setEditingPostId(null);
-    setEditCaption('');
-  };
-
-  const saveEditedPost = async (post: SocialPost) => {
-    const cleanCaption = editCaption.trim();
-    if (!cleanCaption) return;
-
-    updatePostLocally(post.id, (current) => ({
-      ...current,
-      caption: {
-        ...current.caption,
-        ar: cleanCaption,
-        ku: cleanCaption,
-        en: cleanCaption
-      }
-    }));
-
-    try {
-      await postsApi.update(post.id, { caption: cleanCaption });
-      setPostActionStatus(t.updated);
-    } catch (error) {
-      setPostActionStatus(`${t.failed}: ${getApiErrorMessage(error)}`);
-    } finally {
-      setEditingPostId(null);
-      setEditCaption('');
-    }
-  };
-
-  const deletePost = async (post: SocialPost) => {
-    const ok = window.confirm(currentLang === 'en' ? 'Delete this post?' : currentLang === 'ku' ? 'ئەم بابەتە بسڕدرێتەوە؟' : 'هل تريد حذف هذا المنشور؟');
-    if (!ok) return;
-
-    removePostLocally(post.id);
-
-    try {
-      await postsApi.delete(post.id);
-      setPostActionStatus(t.deleted);
-    } catch (error) {
-      setPostActionStatus(`${t.deleted}. ${getApiErrorMessage(error)}`);
-    }
-  };
-
-  return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  useEffect(() => {
-    setVisibleCount(12);
-  }, [selectedGov, selectedCategory]);
-
-  const mergedPosts = useMemo(() => {
-    const sourcePosts = posts.length > 0 ? posts : generatedPosts;
-    const byId = new Map<string, SocialPost>();
-    sourcePosts.forEach((post) => {
-      if (!byId.has(post.id)) byId.set(post.id, post);
-    });
-    return Array.from(byId.values());
-  }, [posts, generatedPosts]);
-
-  const categoriesInFeed = useMemo(() => {
-    const ids = Array.from(new Set(mergedPosts.map((post) => post.category).filter(Boolean)));
-    return ids.sort((a, b) => getCategoryMeta(a, currentLang).name.localeCompare(getCategoryMeta(b, currentLang).name));
-  }, [mergedPosts, currentLang]);
-
-  const filteredPosts = useMemo(() => {
-    return mergedPosts.filter((post) => {
-      const govMatch = selectedGov === 'all' || normalizeGovernorate(post.governorate) === normalizeGovernorate(selectedGov);
-      const categoryMatch = selectedCategory === 'all' || normalizeCategory(post.category) === normalizeCategory(selectedCategory);
-      return govMatch && categoryMatch;
-    });
-  }, [mergedPosts, selectedGov, selectedCategory]);
-
-  const visiblePosts = filteredPosts.slice(0, visibleCount);
 
   const onPickMedia = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
+
+    if (file.size > 900000) {
+      setStatusText(currentLang === 'en' ? 'Media is too large. Please use a smaller image/video.' : currentLang === 'ku' ? 'میدیاکە زۆر گەورەیە. تکایە فایلێکی بچووکتر بەکاربهێنە.' : 'الملف كبير جداً. يرجى استخدام صورة/فيديو أصغر.');
+      return;
+    }
+
     const reader = new FileReader();
     reader.onload = () => {
       const value = String(reader.result || '');
@@ -426,9 +273,15 @@ export default function SocialFeed({
       return;
     }
 
+    if (!selectedPostGov) {
+      setStatusText(t.govRequired);
+      return;
+    }
+
     if (!caption.trim()) return;
 
     setPosting(true);
+
     try {
       const payload = {
         caption_ar: caption.trim(),
@@ -436,16 +289,17 @@ export default function SocialFeed({
         caption_en: caption.trim(),
         media_url: attachmentKind === 'image' ? attachmentDataUrl || null : null,
         video_url: attachmentKind === 'video' ? attachmentDataUrl || null : null,
+        governorate: selectedPostGov,
+        category: 'community'
       };
 
       const response = await postsApi.create(payload);
       const created = response?.data ? mapApiPostToUi(response.data) : null;
 
-      if (created) {
-        setPosts((prev) => [created, ...prev]);
-      }
+      if (created) setPosts((prev) => [created, ...prev]);
 
       setCaption('');
+      setSelectedPostGov('');
       setAttachmentDataUrl('');
       setAttachmentKind(null);
       setStatusText(t.published);
@@ -453,6 +307,151 @@ export default function SocialFeed({
       setStatusText(`${t.failed}: ${getApiErrorMessage(error)}`);
     } finally {
       setPosting(false);
+    }
+  };
+
+  const toggleLike = async (post: SocialPost) => {
+    if (!user) {
+      onSignIn();
+      return;
+    }
+
+    const wasLiked = Boolean(post.likedByUser);
+    updatePostLocally(post.id, (current) => ({
+      ...current,
+      likedByUser: !wasLiked,
+      likes: Math.max(0, Number(current.likes || 0) + (wasLiked ? -1 : 1))
+    }));
+
+    try {
+      const result = await postsApi.like(post.id);
+      if (typeof result?.liked === 'boolean') {
+        updatePostLocally(post.id, (current) => ({
+          ...current,
+          likedByUser: result.liked
+        }));
+      }
+    } catch (error) {
+      updatePostLocally(post.id, (current) => ({
+        ...current,
+        likedByUser: wasLiked,
+        likes: Math.max(0, Number(current.likes || 0) + (wasLiked ? 1 : -1))
+      }));
+      setStatusText(`${t.failed}: ${getApiErrorMessage(error)}`);
+    }
+  };
+
+  const toggleComments = async (post: SocialPost) => {
+    const willOpen = !commentsOpen[post.id];
+    setCommentsOpen((prev) => ({ ...prev, [post.id]: willOpen }));
+
+    if (willOpen && !commentsByPost[post.id]) {
+      try {
+        const comments = await postsApi.getComments(post.id);
+        setCommentsByPost((prev) => ({ ...prev, [post.id]: comments || [] }));
+      } catch (error) {
+        setStatusText(`${t.failed}: ${getApiErrorMessage(error)}`);
+      }
+    }
+  };
+
+  const submitComment = async (post: SocialPost) => {
+    if (!user) {
+      onSignIn();
+      return;
+    }
+
+    const draft = String(commentDrafts[post.id] || '').trim();
+    if (!draft) return;
+
+    setBusyPostId(post.id);
+
+    try {
+      const response = await postsApi.createComment(post.id, draft);
+      const created = response?.data || response;
+      setCommentsByPost((prev) => ({
+        ...prev,
+        [post.id]: [created, ...(prev[post.id] || [])]
+      }));
+      setCommentDrafts((prev) => ({ ...prev, [post.id]: '' }));
+      updatePostLocally(post.id, (current) => ({
+        ...current,
+        commentsCount: Number(current.commentsCount || 0) + 1
+      }));
+    } catch (error) {
+      setStatusText(`${t.failed}: ${getApiErrorMessage(error)}`);
+    } finally {
+      setBusyPostId(null);
+    }
+  };
+
+  const sharePost = async (post: SocialPost) => {
+    const url = `${window.location.origin}/?post=${encodeURIComponent(post.id)}`;
+    const title = post.businessName || 'Shaku Maku';
+
+    try {
+      if (navigator.share) {
+        await navigator.share({ title, text: getLocalized(post.caption, currentLang), url });
+      } else {
+        await navigator.clipboard.writeText(url);
+        setStatusText(t.copied);
+      }
+    } catch {}
+
+    updatePostLocally(post.id, (current) => ({
+      ...current,
+      shares: Number(current.shares || 0) + 1
+    }));
+
+    try {
+      await postsApi.share(post.id);
+    } catch {}
+  };
+
+  const startEditPost = (post: SocialPost) => {
+    setEditingPostId(post.id);
+    setEditCaption(getLocalized(post.caption, currentLang));
+    setStatusText('');
+  };
+
+  const saveEditedPost = async (post: SocialPost) => {
+    const cleanCaption = editCaption.trim();
+    if (!cleanCaption) return;
+
+    updatePostLocally(post.id, (current) => ({
+      ...current,
+      caption: {
+        ...current.caption,
+        ar: cleanCaption,
+        ku: cleanCaption,
+        en: cleanCaption
+      }
+    }));
+
+    try {
+      await postsApi.update(post.id, { caption: cleanCaption });
+      setStatusText(t.updated);
+    } catch (error) {
+      setStatusText(`${t.failed}: ${getApiErrorMessage(error)}`);
+    } finally {
+      setEditingPostId(null);
+      setEditCaption('');
+    }
+  };
+
+  const deletePost = async (post: SocialPost) => {
+    const ok = window.confirm(currentLang === 'en' ? 'Delete this post?' : currentLang === 'ku' ? 'ئەم بابەتە بسڕدرێتەوە؟' : 'هل تريد حذف هذا المنشور؟');
+    if (!ok) return;
+
+    const backup = posts;
+    removePostLocally(post.id);
+
+    try {
+      await postsApi.delete(post.id);
+      setStatusText(t.deleted);
+    } catch (error) {
+      setPosts(backup);
+      setStatusText(`${t.failed}: ${getApiErrorMessage(error)}`);
     }
   };
 
@@ -464,17 +463,14 @@ export default function SocialFeed({
           <div>
             <div className="inline-flex items-center gap-2 text-[11px] font-black text-luxury-gold uppercase tracking-[0.25em] mb-2">
               <Repeat2 className="w-4 h-4" />
-              <span>Social Feed</span>
+              <span>Chaykhana</span>
             </div>
             <h2 className="text-2xl md:text-3xl font-black leading-tight">{t.feedTitle}</h2>
             <p className="text-sm text-zinc-300 mt-2 max-w-2xl">{t.feedSub}</p>
             <p className="text-[11px] text-zinc-400 mt-2">
-              {posts.length > 0 ? `${posts.length} backend database posts loaded.` : `${LOCALIZED_SOCIAL_POST_COUNT} fallback localized posts until backend loads.`} {t.seeded}.
+              {posts.length > 0 ? `${posts.length} ${t.backendLoaded}` : `${LOCALIZED_SOCIAL_POST_COUNT} ${t.fallbackLoaded}`}
             </p>
           </div>
-          <span className={`self-start text-[11px] px-3 py-1.5 rounded-full border ${apiConnected ? 'bg-emerald-500/15 text-emerald-200 border-emerald-400/30' : 'bg-red-500/15 text-red-200 border-red-400/30'}`}>
-            {apiConnected ? t.backendOn : t.backendOff}
-          </span>
         </div>
       </section>
 
@@ -493,6 +489,20 @@ export default function SocialFeed({
             className="w-full rounded-xl bg-[#242526] border border-white/10 p-3 text-sm text-white placeholder-zinc-400 outline-none focus:border-luxury-gold resize-none"
             required
           />
+
+          <select
+            value={selectedPostGov}
+            onChange={(event) => setSelectedPostGov(event.target.value as GovernorateCode)}
+            required
+            className="w-full rounded-xl bg-[#242526] border border-white/10 p-3 text-sm font-bold text-white outline-none focus:border-luxury-gold"
+          >
+            <option value="">{t.chooseGov}</option>
+            {GOVERNORATES.filter((gov) => gov.code !== 'all').map((gov) => (
+              <option key={gov.code} value={gov.code}>
+                {gov.name[currentLang] || gov.name.ar}
+              </option>
+            ))}
+          </select>
 
           {attachmentDataUrl && (
             <div className="rounded-xl border border-white/10 p-2 bg-black/20">
@@ -513,7 +523,7 @@ export default function SocialFeed({
 
             <button
               type="submit"
-              disabled={posting || !caption.trim()}
+              disabled={posting || !caption.trim() || !selectedPostGov}
               className="px-4 py-2 rounded-xl bg-luxury-gold hover:bg-yellow-500 disabled:opacity-60 text-[#101515] text-xs font-black inline-flex items-center gap-2"
             >
               {posting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
@@ -527,68 +537,36 @@ export default function SocialFeed({
             {statusText}
           </p>
         ) : null}
-        {postActionStatus ? (
-          <p className="text-xs text-emerald-300 mt-2" lang={currentLang === 'ku' ? 'ku' : currentLang}>
-            {postActionStatus}
-          </p>
-        ) : null}
-      </section>
-
-      <section className="bg-white border border-zinc-200 rounded-2xl p-3 shadow-sm space-y-3">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs font-black text-zinc-600 px-2">{selectedGov === 'all' ? t.allGovs : getGovName(selectedGov, currentLang)}</span>
-          <button
-            onClick={() => setSelectedCategory('all')}
-            className={`px-3 py-1.5 rounded-full text-[11px] font-black border transition ${selectedCategory === 'all' ? 'bg-[#0F2E2F] text-white border-[#0F2E2F]' : 'bg-zinc-50 text-zinc-700 border-zinc-200 hover:border-luxury-gold'}`}
-          >
-            {t.allCategories}
-          </button>
-          {categoriesInFeed.map((categoryId) => {
-            const meta = getCategoryMeta(categoryId, currentLang);
-            return (
-              <button
-                key={categoryId}
-                onClick={() => setSelectedCategory(categoryId)}
-                className={`px-3 py-1.5 rounded-full text-[11px] font-bold border transition ${selectedCategory === categoryId ? 'bg-luxury-gold text-[#101515] border-luxury-gold' : 'bg-zinc-50 text-zinc-700 border-zinc-200 hover:border-luxury-gold'}`}
-              >
-                {meta.icon} {meta.name}
-              </button>
-            );
-          })}
-        </div>
       </section>
 
       <section className="space-y-4">
         {visiblePosts.length === 0 ? (
-          <div className="bg-white border border-zinc-200 rounded-2xl p-5 text-sm text-zinc-300 text-center">
+          <div className="bg-white border border-zinc-200 rounded-2xl p-5 text-sm text-zinc-500 text-center">
             {t.empty}
           </div>
         ) : (
           visiblePosts.map((post) => {
-            const category = getCategoryMeta(post.category, currentLang);
-            const captionDisplay = getCaptionDisplay(post, currentLang);
-            const captionText = captionDisplay.mainText;
-            const badge = getLocalized(post.promotionBadge, currentLang);
+            const category = getCategoryMeta(post.category || 'community', currentLang);
+            const captionText = getLocalized(post.caption, currentLang) || getLocalized(post.caption, 'ar') || getLocalized(post.caption, 'en');
             const avatar = getVirtualAvatar(post, currentLang);
-            const contactText = String(post.authorEmail || '').trim();
-            const isPhone = /^\+?\d[\d\s()-]{6,}$/.test(contactText);
+            const comments = commentsByPost[post.id] || [];
+            const manage = canManagePost(post);
+
             return (
               <article key={post.id} className="bg-[#170b10] border border-red-400/25 rounded-[1.8rem] shadow-[0_0_0_1px_rgba(251,113,133,0.12),0_0_28px_rgba(244,63,94,0.16)] overflow-hidden hover:shadow-[0_0_42px_rgba(244,63,94,0.24)] transition-shadow text-white">
                 <div className="p-4 flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3 min-w-0">
-                    <div
-                      className={`w-11 h-11 rounded-full border border-white/20 bg-gradient-to-br ${avatar.theme} flex items-center justify-center text-xl shadow-[0_0_18px_rgba(255,255,255,0.12)] shrink-0`}
-                      title={post.businessName}
-                    >
+                    <div className={`w-11 h-11 rounded-full border border-white/20 bg-gradient-to-br ${avatar.theme} flex items-center justify-center text-xl shadow-[0_0_18px_rgba(255,255,255,0.12)] shrink-0`}>
                       <span aria-hidden="true">{avatar.icon}</span>
                     </div>
+
                     <div className="min-w-0">
                       <div className="flex items-center gap-1.5 min-w-0">
                         <p className="text-sm md:text-base font-black text-white truncate">{post.businessName}</p>
-                        {badge ? <CheckCircle2 className="w-4 h-4 text-luxury-teal shrink-0" /> : null}
+                        <CheckCircle2 className="w-4 h-4 text-luxury-teal shrink-0" />
                       </div>
                       <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-zinc-300 mt-0.5">
-                        <span>{post.timeAgo[currentLang]}</span>
+                        <span>{post.timeAgo?.[currentLang] || ''}</span>
                         <span>•</span>
                         <span>{category.icon} {category.name}</span>
                         <span>•</span>
@@ -596,7 +574,8 @@ export default function SocialFeed({
                       </div>
                     </div>
                   </div>
-                  {isAdmin ? (
+
+                  {manage ? (
                     <div className="shrink-0 flex flex-col gap-1">
                       <button
                         type="button"
@@ -614,12 +593,6 @@ export default function SocialFeed({
                       </button>
                     </div>
                   ) : null}
-
-                  {badge ? (
-                    <span className="shrink-0 text-[10px] font-black px-2.5 py-1 rounded-full bg-luxury-gold/15 text-[#7a5b00] border border-luxury-gold/30">
-                      {badge}
-                    </span>
-                  ) : null}
                 </div>
 
                 <div className="px-4 pb-3">
@@ -629,7 +602,7 @@ export default function SocialFeed({
                         value={editCaption}
                         onChange={(event) => setEditCaption(event.target.value)}
                         rows={4}
-                        className="w-full rounded-2xl border border-luxury-gold/40 bg-white p-3 text-sm font-bold text-white outline-none focus:border-luxury-gold"
+                        className="w-full rounded-2xl border border-luxury-gold/40 bg-[#242526] p-3 text-sm font-bold text-white outline-none focus:border-luxury-gold"
                         lang={currentLang === 'ku' ? 'ku' : currentLang}
                         dir={isRtl ? 'rtl' : 'ltr'}
                       />
@@ -643,7 +616,10 @@ export default function SocialFeed({
                         </button>
                         <button
                           type="button"
-                          onClick={cancelEditPost}
+                          onClick={() => {
+                            setEditingPostId(null);
+                            setEditCaption('');
+                          }}
                           className="inline-flex items-center gap-1 rounded-xl bg-zinc-200 px-3 py-2 text-xs font-black text-zinc-800"
                         >
                           <X className="w-3.5 h-3.5" /> {t.cancel}
@@ -651,100 +627,88 @@ export default function SocialFeed({
                       </div>
                     </div>
                   ) : (
-                    <div className="space-y-2">
-                      <p
-                        className="text-[15px] text-zinc-100 leading-7 whitespace-pre-line"
-                        lang={captionDisplay.mainLang === 'ku' ? 'ku' : captionDisplay.mainLang}
-                        dir={captionDisplay.mainLang === 'en' ? 'ltr' : 'rtl'}
-                      >
-                        {captionText}
-                      </p>
-
-                      {captionDisplay.translationText ? (
-                        <div
-                          className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2"
-                          lang={captionDisplay.translationLang === 'ku' ? 'ku' : captionDisplay.translationLang}
-                          dir={captionDisplay.translationLang === 'en' ? 'ltr' : 'rtl'}
-                        >
-                          <div className="text-[10px] font-black uppercase tracking-wide text-zinc-400 mb-1">
-                            {captionDisplay.translationLabel}
-                          </div>
-                          <p className="text-[13px] leading-6 text-zinc-300 whitespace-pre-line">
-                            {captionDisplay.translationText}
-                          </p>
-                        </div>
-                      ) : null}
-                    </div>
+                    <p
+                      className="text-[15px] text-zinc-100 leading-7 whitespace-pre-line"
+                      lang={currentLang === 'ku' ? 'ku' : currentLang}
+                      dir={isRtl ? 'rtl' : 'ltr'}
+                    >
+                      {captionText}
+                    </p>
                   )}
-                  <div className="flex flex-wrap gap-2 mt-3">
-                    <span className="text-[11px] font-bold text-luxury-teal bg-luxury-teal/10 rounded-full px-2 py-1">#شكو_ماكو</span>
-                    <span className="text-[11px] font-bold text-luxury-teal bg-luxury-teal/10 rounded-full px-2 py-1">#{category.name.replace(/\s+/g, '_')}</span>
-                    <span className="text-[11px] font-bold text-luxury-teal bg-luxury-teal/10 rounded-full px-2 py-1">#{getGovName(post.governorate, currentLang).replace(/\s+/g, '_')}</span>
-                  </div>
                 </div>
 
+                {post.mediaUrl ? (
+                  <div className="bg-black/40">
+                    <img src={post.mediaUrl} alt={post.businessName} className="w-full max-h-[520px] object-cover" loading="lazy" />
+                  </div>
+                ) : null}
+
                 {post.videoUrl ? (
-                  <div className="w-full aspect-square overflow-hidden bg-black border-y border-red-400/20">
-                    <video src={post.videoUrl} controls className="w-full h-full object-cover" />
+                  <div className="bg-black/40">
+                    <video src={post.videoUrl} controls className="w-full max-h-[520px] object-contain" />
                   </div>
-                ) : (
-                  <div className="w-full aspect-square overflow-hidden bg-black border-y border-red-400/20">
-                    <img
-                      src={post.mediaUrl || FALLBACK_MEDIA}
-                      alt="post media"
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                      referrerPolicy="no-referrer"
-                      onError={(event) => {
-                        event.currentTarget.src = FALLBACK_MEDIA;
-                      }}
-                    />
-                  </div>
-                )}
+                ) : null}
 
-                <div className="p-4">
-                  <div className="flex items-center justify-between text-[12px] text-zinc-300 border-b border-red-400/15 pb-3">
-                    <span className="inline-flex items-center gap-1.5">
-                      <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-red-500 text-white"><Heart className="w-3.5 h-3.5 fill-current" /></span>
-                      {compactNumber(post.likes)} {t.likes}
-                    </span>
-                    <span>{compactNumber(post.commentsCount)} {t.comments} · {compactNumber(post.shares)} {t.shares} · {compactNumber(post.views || 0)} {t.views}</span>
+                <div className="px-4 py-3 border-t border-white/10">
+                  <div className="flex items-center justify-between text-[12px] text-zinc-300 mb-3">
+                    <span>{compactNumber(post.likes)} {t.likes}</span>
+                    <span>{compactNumber(post.commentsCount)} {t.comments} · {compactNumber(post.shares)} {t.shares} · {compactNumber(post.views)} {t.views}</span>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-2 py-2 border-b border-red-400/15">
-                    <button className="py-2 rounded-xl hover:bg-zinc-50 text-zinc-700 text-xs font-black inline-flex items-center justify-center gap-1.5">
-                      <Heart className="w-4 h-4" /> {t.likes}
+                  <div className="grid grid-cols-3 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => toggleLike(post)}
+                      className={`inline-flex items-center justify-center gap-2 rounded-xl border px-3 py-2 text-xs font-black transition ${post.likedByUser ? 'border-rose-300 bg-rose-500/20 text-rose-100' : 'border-white/10 bg-white/5 text-zinc-200 hover:bg-white/10'}`}
+                    >
+                      <Heart className={`w-4 h-4 ${post.likedByUser ? 'fill-current' : ''}`} /> {t.likes}
                     </button>
-                    <button className="py-2 rounded-xl hover:bg-zinc-50 text-zinc-700 text-xs font-black inline-flex items-center justify-center gap-1.5">
+
+                    <button
+                      type="button"
+                      onClick={() => toggleComments(post)}
+                      className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-black text-zinc-200 hover:bg-white/10"
+                    >
                       <MessageCircle className="w-4 h-4" /> {t.comments}
                     </button>
-                    <button className="py-2 rounded-xl hover:bg-zinc-50 text-zinc-700 text-xs font-black inline-flex items-center justify-center gap-1.5">
+
+                    <button
+                      type="button"
+                      onClick={() => sharePost(post)}
+                      className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-black text-zinc-200 hover:bg-white/10"
+                    >
                       <Share2 className="w-4 h-4" /> {t.shares}
                     </button>
                   </div>
 
-                  {contactText ? (
-                    <div className="flex flex-wrap gap-2 mt-3">
-                      {isPhone ? (
-                        <a href={`tel:${contactText.replace(/\s+/g, '')}`} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#0F2E2F] text-white text-xs font-black">
-                          <Phone className="w-4 h-4" /> {t.phone}
-                        </a>
-                      ) : (
-                        <span className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-zinc-100 text-zinc-700 text-xs font-bold">
-                          <MapPin className="w-4 h-4" /> {t.address}: {contactText}
-                        </span>
-                      )}
-                    </div>
-                  ) : null}
+                  {commentsOpen[post.id] ? (
+                    <div className="mt-3 rounded-2xl border border-white/10 bg-black/20 p-3 space-y-3">
+                      <div className="flex gap-2">
+                        <input
+                          value={commentDrafts[post.id] || ''}
+                          onChange={(event) => setCommentDrafts((prev) => ({ ...prev, [post.id]: event.target.value }))}
+                          placeholder={t.commentPlaceholder}
+                          className="min-w-0 flex-1 rounded-xl border border-white/10 bg-[#242526] px-3 py-2 text-sm text-white outline-none focus:border-luxury-gold"
+                          dir={isRtl ? 'rtl' : 'ltr'}
+                        />
+                        <button
+                          type="button"
+                          disabled={busyPostId === post.id || !String(commentDrafts[post.id] || '').trim()}
+                          onClick={() => submitComment(post)}
+                          className="rounded-xl bg-luxury-gold px-3 py-2 text-xs font-black text-[#101515] disabled:opacity-60"
+                        >
+                          {busyPostId === post.id ? <Loader2 className="w-4 h-4 animate-spin" /> : t.commentSend}
+                        </button>
+                      </div>
 
-                  {post.comments?.length ? (
-                    <div className="mt-3 space-y-2">
-                      {post.comments.slice(0, 3).map((comment) => (
-                        <div key={comment.id} className="rounded-2xl px-3 py-2 text-xs bg-zinc-50 border border-red-400/15 text-zinc-800">
-                          <span className="font-black me-1 text-white">@{comment.username}</span>
-                          <span>{comment.text}</span>
-                        </div>
-                      ))}
+                      <div className="space-y-2">
+                        {comments.map((comment) => (
+                          <div key={comment.id || `${post.id}-${comment.text}`} className="rounded-xl bg-white/5 p-2 text-sm">
+                            <div className="text-[11px] font-black text-luxury-gold">{comment.username || comment.name || 'User'}</div>
+                            <div className="text-zinc-100 leading-6" dir={isRtl ? 'rtl' : 'ltr'}>{comment.text}</div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   ) : null}
                 </div>
@@ -755,17 +719,15 @@ export default function SocialFeed({
       </section>
 
       {visibleCount < filteredPosts.length ? (
-        <div className="text-center">
+        <div className="flex justify-center">
           <button
+            type="button"
             onClick={() => setVisibleCount((count) => count + 12)}
-            className="px-5 py-3 rounded-2xl bg-[#0F2E2F] text-white text-sm font-black shadow-lg hover:bg-[#123a3c] inline-flex items-center gap-2"
+            className="rounded-full bg-[#0F2E2F] px-5 py-2.5 text-xs font-black text-white shadow hover:bg-[#164243]"
           >
-            <Eye className="w-4 h-4" />
             {t.showMore}
           </button>
         </div>
-      ) : filteredPosts.length > 0 ? (
-        <div className="text-center text-xs text-zinc-300 py-2">{t.empty}</div>
       ) : null}
     </div>
   );
