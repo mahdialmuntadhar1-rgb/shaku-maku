@@ -1,13 +1,13 @@
-
+﻿
 function cleanTaxonomyValue(value) {
   return String(value || '')
     .toLowerCase()
     .trim()
-    .replace(/[Ø£Ø¥Ø¢]/g, 'Ø§')
-    .replace(/Ø©/g, 'Ù‡')
-    .replace(/Ù‰/g, 'ÙŠ')
+    .replace(/[Ã˜Â£Ã˜Â¥Ã˜Â¢]/g, 'Ã˜Â§')
+    .replace(/Ã˜Â©/g, 'Ã™â€¡')
+    .replace(/Ã™â€°/g, 'Ã™Å ')
     .replace(/[_\-]+/g, ' ')
-    .replace(/[\sØŒ,./()\[\]{}]+/g, ' ')
+    .replace(/[\sÃ˜Å’,./()\[\]{}]+/g, ' ')
     .trim();
 }
 
@@ -19,24 +19,24 @@ function normalizeGovernorate(value) {
   const raw = cleanTaxonomyValue(value);
   const compact = compactTaxonomyValue(value);
   const aliases = {
-    baghdad: ['baghdad','Ø¨ØºØ¯Ø§Ø¯'],
-    basra: ['basra','basrah','Ø§Ù„Ø¨ØµØ±Ù‡','Ø§Ù„Ø¨ØµØ±Ø©','Ø¨ØµØ±Ù‡','Ø¨ØµØ±Ø©'],
-    nineveh: ['nineveh','ninewa','ninawa','nainawa','mosul','mousl','mousul','Ù†ÙŠÙ†ÙˆÙ‰','Ù†ÙŠÙ†ÙˆÙŠ','Ø§Ù„Ù…ÙˆØµÙ„','Ù…ÙˆØµÙ„'],
-    erbil: ['erbil','arbil','hawler','hewler','Ø§Ø±Ø¨ÙŠÙ„','Ø£Ø±Ø¨ÙŠÙ„','Ù‡Û•ÙˆÙ„ÛŽØ±'],
-    sulaymaniyah: ['sulaymaniyah','sulaimani','sulaymaniya','suleimani','slemani','Ø§Ù„Ø³Ù„ÙŠÙ…Ø§Ù†ÙŠÙ‡','Ø§Ù„Ø³Ù„ÙŠÙ…Ø§Ù†ÙŠØ©','Ø³Ù„ÙŠÙ…Ø§Ù†ÙŠÙ‡','Ø³Ù„ÙŠÙ…Ø§Ù†ÙŠØ©','Ø³Ù„ÛŽÙ…Ø§Ù†ÛŒ'],
-    duhok: ['duhok','dohuk','Ø¯Ù‡ÙˆÙƒ','Ø¯Ù‡Û†Ùƒ'],
-    kirkuk: ['kirkuk','ÙƒØ±ÙƒÙˆÙƒ','Ú©Ø±Ú©ÙˆÚ©','Ú©Û•Ø±Ú©ÙˆÙˆÚ©'],
-    najaf: ['najaf','Ø§Ù„Ù†Ø¬Ù','Ù†Ø¬Ù'],
-    karbala: ['karbala','kerbala','ÙƒØ±Ø¨Ù„Ø§Ø¡','Ú©Ø±Ø¨Ù„Ø§'],
-    babil: ['babil','babylon','hillah','hilla','Ø¨Ø§Ø¨Ù„','Ø§Ù„Ø­Ù„Ù‡','Ø§Ù„Ø­Ù„Ø©'],
-    anbar: ['anbar','Ø§Ù„Ø§Ù†Ø¨Ø§Ø±','Ø§Ù„Ø£Ù†Ø¨Ø§Ø±','Ø±Ù…Ø§Ø¯ÙŠ','ramadi'],
-    diyala: ['diyala','Ø¯ÙŠØ§Ù„Ù‰','Ø¨Ø¹Ù‚ÙˆØ¨Ù‡','Ø¨Ø¹Ù‚ÙˆØ¨Ø©','baquba'],
-    wasit: ['wasit','ÙˆØ§Ø³Ø·','Ø§Ù„ÙƒÙˆØª','kut'],
-    salah_ad_din: ['salah_ad_din','salahaddin','salah al din','salah ad din','ØµÙ„Ø§Ø­ Ø§Ù„Ø¯ÙŠÙ†','ØªÙƒØ±ÙŠØª','tikrit'],
-    maysan: ['maysan','Ù…ÙŠØ³Ø§Ù†','Ø§Ù„Ø¹Ù…Ø§Ø±Ù‡','Ø§Ù„Ø¹Ù…Ø§Ø±Ø©','amara'],
-    dhi_qar: ['dhi_qar','dhiqar','Ø°ÙŠ Ù‚Ø§Ø±','Ø°Ù‰ Ù‚Ø§Ø±','Ø§Ù„Ù†Ø§ØµØ±ÙŠÙ‡','Ø§Ù„Ù†Ø§ØµØ±ÙŠØ©','nasiriyah','nasiriya'],
-    muthanna: ['muthanna','Ø§Ù„Ù…Ø«Ù†Ù‰','Ø§Ù„Ø³Ù…Ø§ÙˆÙ‡','Ø§Ù„Ø³Ù…Ø§ÙˆØ©','samawah'],
-    qadisiyyah: ['qadisiyyah','qadisiyah','diwaniyah','Ø§Ù„Ù‚Ø§Ø¯Ø³ÙŠÙ‡','Ø§Ù„Ù‚Ø§Ø¯Ø³ÙŠØ©','Ø§Ù„Ø¯ÙŠÙˆØ§Ù†ÙŠÙ‡','Ø§Ù„Ø¯ÙŠÙˆØ§Ù†ÙŠØ©','diwaniya']
+    baghdad: ['baghdad','Ã˜Â¨Ã˜ÂºÃ˜Â¯Ã˜Â§Ã˜Â¯'],
+    basra: ['basra','basrah','Ã˜Â§Ã™â€žÃ˜Â¨Ã˜ÂµÃ˜Â±Ã™â€¡','Ã˜Â§Ã™â€žÃ˜Â¨Ã˜ÂµÃ˜Â±Ã˜Â©','Ã˜Â¨Ã˜ÂµÃ˜Â±Ã™â€¡','Ã˜Â¨Ã˜ÂµÃ˜Â±Ã˜Â©'],
+    nineveh: ['nineveh','ninewa','ninawa','nainawa','mosul','mousl','mousul','Ã™â€ Ã™Å Ã™â€ Ã™Ë†Ã™â€°','Ã™â€ Ã™Å Ã™â€ Ã™Ë†Ã™Å ','Ã˜Â§Ã™â€žÃ™â€¦Ã™Ë†Ã˜ÂµÃ™â€ž','Ã™â€¦Ã™Ë†Ã˜ÂµÃ™â€ž'],
+    erbil: ['erbil','arbil','hawler','hewler','Ã˜Â§Ã˜Â±Ã˜Â¨Ã™Å Ã™â€ž','Ã˜Â£Ã˜Â±Ã˜Â¨Ã™Å Ã™â€ž','Ã™â€¡Ã›â€¢Ã™Ë†Ã™â€žÃ›Å½Ã˜Â±'],
+    sulaymaniyah: ['sulaymaniyah','sulaimani','sulaymaniya','suleimani','slemani','Ã˜Â§Ã™â€žÃ˜Â³Ã™â€žÃ™Å Ã™â€¦Ã˜Â§Ã™â€ Ã™Å Ã™â€¡','Ã˜Â§Ã™â€žÃ˜Â³Ã™â€žÃ™Å Ã™â€¦Ã˜Â§Ã™â€ Ã™Å Ã˜Â©','Ã˜Â³Ã™â€žÃ™Å Ã™â€¦Ã˜Â§Ã™â€ Ã™Å Ã™â€¡','Ã˜Â³Ã™â€žÃ™Å Ã™â€¦Ã˜Â§Ã™â€ Ã™Å Ã˜Â©','Ã˜Â³Ã™â€žÃ›Å½Ã™â€¦Ã˜Â§Ã™â€ Ã›Å’'],
+    duhok: ['duhok','dohuk','Ã˜Â¯Ã™â€¡Ã™Ë†Ã™Æ’','Ã˜Â¯Ã™â€¡Ã›â€ Ã™Æ’'],
+    kirkuk: ['kirkuk','Ã™Æ’Ã˜Â±Ã™Æ’Ã™Ë†Ã™Æ’','ÃšÂ©Ã˜Â±ÃšÂ©Ã™Ë†ÃšÂ©','ÃšÂ©Ã›â€¢Ã˜Â±ÃšÂ©Ã™Ë†Ã™Ë†ÃšÂ©'],
+    najaf: ['najaf','Ã˜Â§Ã™â€žÃ™â€ Ã˜Â¬Ã™Â','Ã™â€ Ã˜Â¬Ã™Â'],
+    karbala: ['karbala','kerbala','Ã™Æ’Ã˜Â±Ã˜Â¨Ã™â€žÃ˜Â§Ã˜Â¡','ÃšÂ©Ã˜Â±Ã˜Â¨Ã™â€žÃ˜Â§'],
+    babil: ['babil','babylon','hillah','hilla','Ã˜Â¨Ã˜Â§Ã˜Â¨Ã™â€ž','Ã˜Â§Ã™â€žÃ˜Â­Ã™â€žÃ™â€¡','Ã˜Â§Ã™â€žÃ˜Â­Ã™â€žÃ˜Â©'],
+    anbar: ['anbar','Ã˜Â§Ã™â€žÃ˜Â§Ã™â€ Ã˜Â¨Ã˜Â§Ã˜Â±','Ã˜Â§Ã™â€žÃ˜Â£Ã™â€ Ã˜Â¨Ã˜Â§Ã˜Â±','Ã˜Â±Ã™â€¦Ã˜Â§Ã˜Â¯Ã™Å ','ramadi'],
+    diyala: ['diyala','Ã˜Â¯Ã™Å Ã˜Â§Ã™â€žÃ™â€°','Ã˜Â¨Ã˜Â¹Ã™â€šÃ™Ë†Ã˜Â¨Ã™â€¡','Ã˜Â¨Ã˜Â¹Ã™â€šÃ™Ë†Ã˜Â¨Ã˜Â©','baquba'],
+    wasit: ['wasit','Ã™Ë†Ã˜Â§Ã˜Â³Ã˜Â·','Ã˜Â§Ã™â€žÃ™Æ’Ã™Ë†Ã˜Âª','kut'],
+    salah_ad_din: ['salah_ad_din','salahaddin','salah al din','salah ad din','Ã˜ÂµÃ™â€žÃ˜Â§Ã˜Â­ Ã˜Â§Ã™â€žÃ˜Â¯Ã™Å Ã™â€ ','Ã˜ÂªÃ™Æ’Ã˜Â±Ã™Å Ã˜Âª','tikrit'],
+    maysan: ['maysan','Ã™â€¦Ã™Å Ã˜Â³Ã˜Â§Ã™â€ ','Ã˜Â§Ã™â€žÃ˜Â¹Ã™â€¦Ã˜Â§Ã˜Â±Ã™â€¡','Ã˜Â§Ã™â€žÃ˜Â¹Ã™â€¦Ã˜Â§Ã˜Â±Ã˜Â©','amara'],
+    dhi_qar: ['dhi_qar','dhiqar','Ã˜Â°Ã™Å  Ã™â€šÃ˜Â§Ã˜Â±','Ã˜Â°Ã™â€° Ã™â€šÃ˜Â§Ã˜Â±','Ã˜Â§Ã™â€žÃ™â€ Ã˜Â§Ã˜ÂµÃ˜Â±Ã™Å Ã™â€¡','Ã˜Â§Ã™â€žÃ™â€ Ã˜Â§Ã˜ÂµÃ˜Â±Ã™Å Ã˜Â©','nasiriyah','nasiriya'],
+    muthanna: ['muthanna','Ã˜Â§Ã™â€žÃ™â€¦Ã˜Â«Ã™â€ Ã™â€°','Ã˜Â§Ã™â€žÃ˜Â³Ã™â€¦Ã˜Â§Ã™Ë†Ã™â€¡','Ã˜Â§Ã™â€žÃ˜Â³Ã™â€¦Ã˜Â§Ã™Ë†Ã˜Â©','samawah'],
+    qadisiyyah: ['qadisiyyah','qadisiyah','diwaniyah','Ã˜Â§Ã™â€žÃ™â€šÃ˜Â§Ã˜Â¯Ã˜Â³Ã™Å Ã™â€¡','Ã˜Â§Ã™â€žÃ™â€šÃ˜Â§Ã˜Â¯Ã˜Â³Ã™Å Ã˜Â©','Ã˜Â§Ã™â€žÃ˜Â¯Ã™Å Ã™Ë†Ã˜Â§Ã™â€ Ã™Å Ã™â€¡','Ã˜Â§Ã™â€žÃ˜Â¯Ã™Å Ã™Ë†Ã˜Â§Ã™â€ Ã™Å Ã˜Â©','diwaniya']
   };
 
   for (const [id, values] of Object.entries(aliases)) {
@@ -51,22 +51,22 @@ function normalizeCategory(value) {
   const raw = cleanTaxonomyValue(value);
   const compact = compactTaxonomyValue(value);
   const aliases = {
-    restaurant: ['restaurant','restaurants','food','Ù…Ø·Ø¹Ù…','Ù…Ø·Ø§Ø¹Ù…','Ø§ÙƒÙ„','Ø£ÙƒÙ„'],
-    cafe: ['cafe','cafes','coffee','ÙƒÙˆÙÙŠ','ÙƒØ§ÙÙŠÙ‡','ÙƒØ§ÙÙŠÙ‡Ø§Øª','Ù…Ù‚Ù‡Ù‰'],
-    doctor: ['doctor','doctors','Ø·Ø¨ÙŠØ¨','Ø§Ø·Ø¨Ø§Ø¡','Ø£Ø·Ø¨Ø§Ø¡','Ø¯ÙƒØªÙˆØ±'],
-    clinic: ['clinic','clinics','Ø¹ÙŠØ§Ø¯Ù‡','Ø¹ÙŠØ§Ø¯Ø©','Ø¹ÙŠØ§Ø¯Ø§Øª','medical'],
-    pharmacy: ['pharmacy','pharmacies','ØµÙŠØ¯Ù„ÙŠÙ‡','ØµÙŠØ¯Ù„ÙŠØ©','ØµÙŠØ¯Ù„ÙŠØ§Øª'],
-    shopping: ['shopping','shop','market','mall','ØªØ³ÙˆÙ‚','Ø³ÙˆÙ‚','Ù…ÙˆÙ„'],
-    clothing: ['clothing','fashion','Ù…Ù„Ø§Ø¨Ø³','Ø§Ø²ÙŠØ§Ø¡','Ø£Ø²ÙŠØ§Ø¡'],
-    cars: ['cars','car','auto','automotive','Ø³ÙŠØ§Ø±Ø§Øª','Ø³ÙŠØ§Ø±Ù‡','Ø³ÙŠØ§Ø±Ø©'],
-    hotel: ['hotel','hotels','ÙÙ†Ø§Ø¯Ù‚','ÙÙ†Ø¯Ù‚'],
-    beauty: ['beauty','salon','spa','ØªØ¬Ù…ÙŠÙ„','ØµØ§Ù„ÙˆÙ†'],
-    education: ['education','school','academy','ØªØ¹Ù„ÙŠÙ…','Ù…Ø¯Ø±Ø³Ù‡','Ù…Ø¯Ø±Ø³Ø©','Ù…Ø¹Ù‡Ø¯'],
-    real_estate: ['real_estate','real estate','property','Ø¹Ù‚Ø§Ø±','Ø¹Ù‚Ø§Ø±Ø§Øª'],
-    services: ['services','service','Ø®Ø¯Ù…Ø§Øª','Ø®Ø¯Ù…Ù‡','Ø®Ø¯Ù…Ø©'],
-    electronics: ['electronics','mobile','phone','computer','Ø§Ù„ÙƒØªØ±ÙˆÙ†ÙŠØ§Øª','Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠØ§Øª','Ù…ÙˆØ¨Ø§ÙŠÙ„'],
-    gym: ['gym','fitness','sport','sports','Ù†Ø§Ø¯ÙŠ','Ù†ÙˆØ§Ø¯ÙŠ','Ø±ÙŠØ§Ø¶Ù‡','Ø±ÙŠØ§Ø¶Ø©'],
-    entertainment: ['entertainment','fun','cinema','ØªØ±ÙÙŠÙ‡','Ø³ÙŠÙ†Ù…Ø§']
+    restaurant: ['restaurant','restaurants','food','Ã™â€¦Ã˜Â·Ã˜Â¹Ã™â€¦','Ã™â€¦Ã˜Â·Ã˜Â§Ã˜Â¹Ã™â€¦','Ã˜Â§Ã™Æ’Ã™â€ž','Ã˜Â£Ã™Æ’Ã™â€ž'],
+    cafe: ['cafe','cafes','coffee','Ã™Æ’Ã™Ë†Ã™ÂÃ™Å ','Ã™Æ’Ã˜Â§Ã™ÂÃ™Å Ã™â€¡','Ã™Æ’Ã˜Â§Ã™ÂÃ™Å Ã™â€¡Ã˜Â§Ã˜Âª','Ã™â€¦Ã™â€šÃ™â€¡Ã™â€°'],
+    doctor: ['doctor','doctors','Ã˜Â·Ã˜Â¨Ã™Å Ã˜Â¨','Ã˜Â§Ã˜Â·Ã˜Â¨Ã˜Â§Ã˜Â¡','Ã˜Â£Ã˜Â·Ã˜Â¨Ã˜Â§Ã˜Â¡','Ã˜Â¯Ã™Æ’Ã˜ÂªÃ™Ë†Ã˜Â±'],
+    clinic: ['clinic','clinics','Ã˜Â¹Ã™Å Ã˜Â§Ã˜Â¯Ã™â€¡','Ã˜Â¹Ã™Å Ã˜Â§Ã˜Â¯Ã˜Â©','Ã˜Â¹Ã™Å Ã˜Â§Ã˜Â¯Ã˜Â§Ã˜Âª','medical'],
+    pharmacy: ['pharmacy','pharmacies','Ã˜ÂµÃ™Å Ã˜Â¯Ã™â€žÃ™Å Ã™â€¡','Ã˜ÂµÃ™Å Ã˜Â¯Ã™â€žÃ™Å Ã˜Â©','Ã˜ÂµÃ™Å Ã˜Â¯Ã™â€žÃ™Å Ã˜Â§Ã˜Âª'],
+    shopping: ['shopping','shop','market','mall','Ã˜ÂªÃ˜Â³Ã™Ë†Ã™â€š','Ã˜Â³Ã™Ë†Ã™â€š','Ã™â€¦Ã™Ë†Ã™â€ž'],
+    clothing: ['clothing','fashion','Ã™â€¦Ã™â€žÃ˜Â§Ã˜Â¨Ã˜Â³','Ã˜Â§Ã˜Â²Ã™Å Ã˜Â§Ã˜Â¡','Ã˜Â£Ã˜Â²Ã™Å Ã˜Â§Ã˜Â¡'],
+    cars: ['cars','car','auto','automotive','Ã˜Â³Ã™Å Ã˜Â§Ã˜Â±Ã˜Â§Ã˜Âª','Ã˜Â³Ã™Å Ã˜Â§Ã˜Â±Ã™â€¡','Ã˜Â³Ã™Å Ã˜Â§Ã˜Â±Ã˜Â©'],
+    hotel: ['hotel','hotels','Ã™ÂÃ™â€ Ã˜Â§Ã˜Â¯Ã™â€š','Ã™ÂÃ™â€ Ã˜Â¯Ã™â€š'],
+    beauty: ['beauty','salon','spa','Ã˜ÂªÃ˜Â¬Ã™â€¦Ã™Å Ã™â€ž','Ã˜ÂµÃ˜Â§Ã™â€žÃ™Ë†Ã™â€ '],
+    education: ['education','school','academy','Ã˜ÂªÃ˜Â¹Ã™â€žÃ™Å Ã™â€¦','Ã™â€¦Ã˜Â¯Ã˜Â±Ã˜Â³Ã™â€¡','Ã™â€¦Ã˜Â¯Ã˜Â±Ã˜Â³Ã˜Â©','Ã™â€¦Ã˜Â¹Ã™â€¡Ã˜Â¯'],
+    real_estate: ['real_estate','real estate','property','Ã˜Â¹Ã™â€šÃ˜Â§Ã˜Â±','Ã˜Â¹Ã™â€šÃ˜Â§Ã˜Â±Ã˜Â§Ã˜Âª'],
+    services: ['services','service','Ã˜Â®Ã˜Â¯Ã™â€¦Ã˜Â§Ã˜Âª','Ã˜Â®Ã˜Â¯Ã™â€¦Ã™â€¡','Ã˜Â®Ã˜Â¯Ã™â€¦Ã˜Â©'],
+    electronics: ['electronics','mobile','phone','computer','Ã˜Â§Ã™â€žÃ™Æ’Ã˜ÂªÃ˜Â±Ã™Ë†Ã™â€ Ã™Å Ã˜Â§Ã˜Âª','Ã˜Â¥Ã™â€žÃ™Æ’Ã˜ÂªÃ˜Â±Ã™Ë†Ã™â€ Ã™Å Ã˜Â§Ã˜Âª','Ã™â€¦Ã™Ë†Ã˜Â¨Ã˜Â§Ã™Å Ã™â€ž'],
+    gym: ['gym','fitness','sport','sports','Ã™â€ Ã˜Â§Ã˜Â¯Ã™Å ','Ã™â€ Ã™Ë†Ã˜Â§Ã˜Â¯Ã™Å ','Ã˜Â±Ã™Å Ã˜Â§Ã˜Â¶Ã™â€¡','Ã˜Â±Ã™Å Ã˜Â§Ã˜Â¶Ã˜Â©'],
+    entertainment: ['entertainment','fun','cinema','Ã˜ÂªÃ˜Â±Ã™ÂÃ™Å Ã™â€¡','Ã˜Â³Ã™Å Ã™â€ Ã™â€¦Ã˜Â§']
   };
 
   for (const [id, values] of Object.entries(aliases)) {
@@ -86,6 +86,7 @@ import businessRoutes from './routes/businesses';
 import feedRoutes from './routes/feed';
 import heroRoutes from './routes/hero';
 import adminRoutes from './routes/admin';
+import submissionsRoutes from './routes/submissions';
 
 type Env = {
   DB: any;
@@ -233,6 +234,7 @@ app.get('/api/governorates', async (c) => {
 app.route('/api/auth', authRoutes);
 app.route('/api/users', userRoutes);
 app.route('/api/businesses', businessRoutes);
+app.route('/api/business-submissions', submissionsRoutes);
 app.route('/api/feed', feedRoutes);
 app.route('/api/hero-slides', heroRoutes);
 app.route('/api', feedRoutes); // aliases: /api/posts, /api/business-posts, etc.
@@ -262,3 +264,5 @@ app.onError((err, c) => {
 });
 
 export default app;
+
+
