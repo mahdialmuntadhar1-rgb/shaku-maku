@@ -67,16 +67,16 @@ npm run check
 
 ## Scripts
 
-- `npm run dev` â€” start Vite dev server
-- `npm run build` â€” production build
-- `npm run preview` â€” preview production build locally
-- `npm run typecheck` â€” TypeScript validation
-- `npm run lint` â€” ESLint
-- `npm run test` â€” Vitest
-- `npm run check` â€” typecheck + lint + test
-- `npm run whatsapp:bulk` â€” bulk WhatsApp sender
-- `npm run whatsapp:webhook` â€” webhook receiver
-- `npm run whatsapp:server` â€” local WhatsApp server
+- `npm run dev` Ã¢â‚¬â€ start Vite dev server
+- `npm run build` Ã¢â‚¬â€ production build
+- `npm run preview` Ã¢â‚¬â€ preview production build locally
+- `npm run typecheck` Ã¢â‚¬â€ TypeScript validation
+- `npm run lint` Ã¢â‚¬â€ ESLint
+- `npm run test` Ã¢â‚¬â€ Vitest
+- `npm run check` Ã¢â‚¬â€ typecheck + lint + test
+- `npm run whatsapp:bulk` Ã¢â‚¬â€ bulk WhatsApp sender
+- `npm run whatsapp:webhook` Ã¢â‚¬â€ webhook receiver
+- `npm run whatsapp:server` Ã¢â‚¬â€ local WhatsApp server
 
 ## Deployment
 
