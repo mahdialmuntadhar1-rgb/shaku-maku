@@ -374,9 +374,9 @@ export default function SocialFeed({
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-5" dir={isRtl ? 'rtl' : 'ltr'}>
-      <section className="relative overflow-hidden bg-[#101515] border border-luxury-gold/20 rounded-[2rem] p-5 text-white shadow-2xl">
-        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top_left,rgba(212,175,55,0.18),transparent_35%),radial-gradient(circle_at_bottom_right,rgba(15,46,47,0.55),transparent_40%)]" />
+    <div className="w-full max-w-5xl mx-auto space-y-5 social-live-red-zone" dir={isRtl ? 'rtl' : 'ltr'}>
+      <section className="relative overflow-hidden bg-[#1a0d12] border border-red-400/25 rounded-[2rem] p-5 text-white shadow-[0_0_40px_rgba(244,63,94,0.18)]">
+        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top_left,rgba(244,63,94,0.22),transparent_35%),radial-gradient(circle_at_bottom_right,rgba(127,29,29,0.55),transparent_40%)]" />
         <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <div className="inline-flex items-center gap-2 text-[11px] font-black text-luxury-gold uppercase tracking-[0.25em] mb-2">
@@ -477,7 +477,7 @@ export default function SocialFeed({
 
       <section className="space-y-4">
         {visiblePosts.length === 0 ? (
-          <div className="bg-white border border-zinc-200 rounded-2xl p-5 text-sm text-zinc-500 text-center">
+          <div className="bg-white border border-zinc-200 rounded-2xl p-5 text-sm text-zinc-300 text-center">
             {t.empty}
           </div>
         ) : (
@@ -488,7 +488,7 @@ export default function SocialFeed({
             const contactText = String(post.authorEmail || '').trim();
             const isPhone = /^\+?\d[\d\s()-]{6,}$/.test(contactText);
             return (
-              <article key={post.id} className="bg-white border border-zinc-200 rounded-[1.4rem] shadow-sm overflow-hidden hover:shadow-xl transition-shadow">
+              <article key={post.id} className="bg-[#170b10] border border-red-400/25 rounded-[1.8rem] shadow-[0_0_0_1px_rgba(251,113,133,0.12),0_0_28px_rgba(244,63,94,0.16)] overflow-hidden hover:shadow-[0_0_42px_rgba(244,63,94,0.24)] transition-shadow text-white">
                 <div className="p-4 flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3 min-w-0">
                     <img
@@ -502,10 +502,10 @@ export default function SocialFeed({
                     />
                     <div className="min-w-0">
                       <div className="flex items-center gap-1.5 min-w-0">
-                        <p className="text-sm md:text-base font-black text-zinc-950 truncate">{post.businessName}</p>
+                        <p className="text-sm md:text-base font-black text-white truncate">{post.businessName}</p>
                         {badge ? <CheckCircle2 className="w-4 h-4 text-luxury-teal shrink-0" /> : null}
                       </div>
-                      <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-zinc-500 mt-0.5">
+                      <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-zinc-300 mt-0.5">
                         <span>{post.timeAgo[currentLang]}</span>
                         <span>•</span>
                         <span>{category.icon} {category.name}</span>
@@ -547,7 +547,7 @@ export default function SocialFeed({
                         value={editCaption}
                         onChange={(event) => setEditCaption(event.target.value)}
                         rows={4}
-                        className="w-full rounded-2xl border border-luxury-gold/40 bg-white p-3 text-sm font-bold text-zinc-950 outline-none focus:border-luxury-gold"
+                        className="w-full rounded-2xl border border-luxury-gold/40 bg-white p-3 text-sm font-bold text-white outline-none focus:border-luxury-gold"
                         lang={currentLang === 'ku' ? 'ku' : currentLang}
                         dir={isRtl ? 'rtl' : 'ltr'}
                       />
@@ -569,7 +569,7 @@ export default function SocialFeed({
                       </div>
                     </div>
                   ) : (
-                    <p className="text-[15px] text-zinc-900 leading-7 whitespace-pre-line" lang={currentLang === 'ku' ? 'ku' : currentLang}>
+                    <p className="text-[15px] text-zinc-100 leading-7 whitespace-pre-line" lang={currentLang === 'ku' ? 'ku' : currentLang}>
                       {captionText}
                     </p>
                   )}
@@ -581,11 +581,11 @@ export default function SocialFeed({
                 </div>
 
                 {post.videoUrl ? (
-                  <div className="w-full aspect-[4/3] overflow-hidden bg-zinc-100 border-y border-zinc-200">
+                  <div className="w-full aspect-square overflow-hidden bg-black border-y border-red-400/20">
                     <video src={post.videoUrl} controls className="w-full h-full object-cover" />
                   </div>
                 ) : (
-                  <div className="w-full aspect-[4/3] overflow-hidden bg-zinc-100 border-y border-zinc-200">
+                  <div className="w-full aspect-square overflow-hidden bg-black border-y border-red-400/20">
                     <img
                       src={post.mediaUrl || FALLBACK_MEDIA}
                       alt="post media"
@@ -600,7 +600,7 @@ export default function SocialFeed({
                 )}
 
                 <div className="p-4">
-                  <div className="flex items-center justify-between text-[12px] text-zinc-500 border-b border-zinc-100 pb-3">
+                  <div className="flex items-center justify-between text-[12px] text-zinc-300 border-b border-red-400/15 pb-3">
                     <span className="inline-flex items-center gap-1.5">
                       <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-red-500 text-white"><Heart className="w-3.5 h-3.5 fill-current" /></span>
                       {compactNumber(post.likes)} {t.likes}
@@ -608,7 +608,7 @@ export default function SocialFeed({
                     <span>{compactNumber(post.commentsCount)} {t.comments} · {compactNumber(post.shares)} {t.shares} · {compactNumber(post.views || 0)} {t.views}</span>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-2 py-2 border-b border-zinc-100">
+                  <div className="grid grid-cols-3 gap-2 py-2 border-b border-red-400/15">
                     <button className="py-2 rounded-xl hover:bg-zinc-50 text-zinc-700 text-xs font-black inline-flex items-center justify-center gap-1.5">
                       <Heart className="w-4 h-4" /> {t.likes}
                     </button>
@@ -637,8 +637,8 @@ export default function SocialFeed({
                   {post.comments?.length ? (
                     <div className="mt-3 space-y-2">
                       {post.comments.slice(0, 3).map((comment) => (
-                        <div key={comment.id} className="rounded-2xl px-3 py-2 text-xs bg-zinc-50 border border-zinc-100 text-zinc-800">
-                          <span className="font-black me-1 text-zinc-950">@{comment.username}</span>
+                        <div key={comment.id} className="rounded-2xl px-3 py-2 text-xs bg-zinc-50 border border-red-400/15 text-zinc-800">
+                          <span className="font-black me-1 text-white">@{comment.username}</span>
                           <span>{comment.text}</span>
                         </div>
                       ))}
@@ -662,7 +662,7 @@ export default function SocialFeed({
           </button>
         </div>
       ) : filteredPosts.length > 0 ? (
-        <div className="text-center text-xs text-zinc-500 py-2">{t.empty}</div>
+        <div className="text-center text-xs text-zinc-300 py-2">{t.empty}</div>
       ) : null}
     </div>
   );

@@ -309,7 +309,7 @@ export default function BusinessFeed({
         <h3 className="text-base font-black text-luxury-bg mb-1">
           {currentLang === 'en' ? 'No businesses found' : currentLang === 'ku' ? 'هیچ بازرگانییەک نەدۆزرایەوە' : 'لم يتم العثور على أنشطة'}
         </h3>
-        <p className="text-sm text-zinc-600">
+        <p className="text-sm text-zinc-300">
           {currentLang === 'en'
             ? 'Try changing governorate or category filters.'
             : currentLang === 'ku'
@@ -321,7 +321,7 @@ export default function BusinessFeed({
   }
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-12 business-live-blue-zone">
 {isAdmin && adminStatus && (
 <div className="bg-amber-50 border border-amber-300 text-amber-900 rounded-xl px-4 py-3 text-xs font-bold">{adminStatus}</div>
 )}
@@ -338,28 +338,28 @@ export default function BusinessFeed({
         const visibleBizs = isExpanded ? categoryBizs : categoryBizs.slice(0, 3);
 
         return (
-          <div key={category.id} className="relative bg-white/40 p-5 rounded-3xl border border-luxury-teal/15 shadow-sm">
+          <div key={category.id} className="relative bg-[#07111f]/95 p-5 rounded-3xl border border-blue-400/25 shadow-[0_0_38px_rgba(59,130,246,0.18)] overflow-hidden">
             
             {/* Category Section Header */}
-            <div className="flex items-center justify-between mb-5 border-b border-zinc-200 pb-3">
+            <div className="flex items-center justify-between mb-5 border-b border-blue-400/20 pb-3">
               <div className="flex items-center gap-2.5">
                 <span className="text-2xl filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.15)]">{category.icon}</span>
-                <h2 className="text-xl font-extrabold text-luxury-bg tracking-tight font-sans">
+                <h2 className="text-xl font-extrabold text-white tracking-tight font-sans">
                   {category.name[currentLang]}
                 </h2>
-                <span className="text-[10px] bg-luxury-bg text-white px-2 py-0.5 rounded-full font-bold">
+                <span className="text-[10px] bg-blue-500/20 text-blue-100 border border-blue-300/25 px-2 py-0.5 rounded-full font-bold">
                   {categoryBizs.length}
                 </span>
               </div>
               
               {/* Saku Maku custom decorative accent */}
               <div className="hidden sm:block text-[11px] font-mono text-zinc-500 font-medium">
-                Saku Maku Discover • {category.id.toUpperCase()}
+                Shaku Maku Live • {category.id.toUpperCase()}
               </div>
             </div>
 
             {/* Grid of Business Cards */}
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3.5 sm:gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3.5 sm:gap-6 [&>*:nth-child(odd)]:md:-translate-y-3 [&>*:nth-child(even)]:md:translate-y-3">
               {visibleBizs.map((biz) => {
                 const hasStories = biz.stories && biz.stories.length > 0;
                 
@@ -368,7 +368,7 @@ export default function BusinessFeed({
                     key={biz.id}
                     layoutId={`biz-card-${biz.id}`}
                     whileHover={{ y: -6 }}
-                    className="flex flex-col h-full bg-[#FFFFFF] border border-[#0F2E2F] rounded-2xl overflow-hidden hover:border-luxury-gold hover:shadow-2xl hover:shadow-[#C8A95F]/10 transition-all duration-350 group"
+                    className="flex flex-col h-full bg-[#07111f] border border-blue-400/35 rounded-2xl overflow-hidden hover:border-blue-300 hover:shadow-2xl hover:shadow-blue-500/20 transition-all duration-350 group shadow-[0_0_22px_rgba(59,130,246,0.16)]"
                   >
                     
                     {/* Upper cover photo container */}
@@ -415,12 +415,12 @@ export default function BusinessFeed({
                     </div>
 
                     {/* Bottom details pack */}
-                    <div className="p-2.5 xs:p-4 flex flex-col flex-grow justify-between bg-white text-zinc-900">
+                    <div className="p-2.5 xs:p-4 flex flex-col flex-grow justify-between bg-[#07111f] text-white">
                       <div>
                         
                         {/* Title & Category with governorate */}
                         <div className="flex flex-col xs:flex-row xs:items-start justify-between gap-1 mb-1 xs:mb-1.5">
-                          <h3 className="text-xs xs:text-sm font-black text-[#1A1A1A] group-hover:text-luxury-gold transition-colors line-clamp-1 font-sans">
+                          <h3 className="text-xs xs:text-sm font-black text-white group-hover:text-blue-200 transition-colors line-clamp-1 font-sans">
                             {standardizeMosulNinevehDisplay(biz.name[currentLang])}
                           </h3>
                           
@@ -510,7 +510,7 @@ export default function BusinessFeed({
                                   href={link.href}
                                   target="_blank"
                                   rel="noreferrer"
-                                  className="text-[8px] font-black px-1.5 py-0.5 rounded-full bg-zinc-100 text-zinc-600 border border-zinc-200"
+                                  className="text-[8px] font-black px-1.5 py-0.5 rounded-full bg-zinc-100 text-zinc-300 border border-zinc-200"
                                 >
                                   {link.label}
                                 </a>
@@ -554,7 +554,7 @@ export default function BusinessFeed({
                             className={`p-1 xs:p-1.5 rounded-lg border transition cursor-pointer ${
                               biz.likedByUser
                                 ? 'bg-pink-50 border-pink-500 text-pink-600'
-                                : 'bg-zinc-100 hover:bg-zinc-200 border-zinc-200 text-zinc-600 hover:text-pink-600'
+                                : 'bg-zinc-100 hover:bg-zinc-200 border-zinc-200 text-zinc-300 hover:text-pink-600'
                             }`}
                             title="Like place"
                           >
@@ -570,7 +570,7 @@ export default function BusinessFeed({
                             className={`p-1 xs:p-1.5 rounded-lg border transition cursor-pointer ${
                               biz.savedByUser
                                 ? 'bg-teal-50 border-luxury-teal text-luxury-teal'
-                                : 'bg-zinc-100 hover:bg-zinc-200 border-zinc-200 text-zinc-600 hover:text-luxury-teal'
+                                : 'bg-zinc-100 hover:bg-zinc-200 border-zinc-200 text-zinc-300 hover:text-luxury-teal'
                             }`}
                             title="Save location"
                           >
@@ -647,7 +647,7 @@ export default function BusinessFeed({
       {/* If absolutely no business fits */}
       {govFiltered.length === 0 && (
         <div className="text-center py-16 bg-slate-900/20 border border-slate-900 rounded-3xl p-6">
-          <FolderHeart className="w-12 h-12 text-zinc-600 mx-auto mb-3" />
+          <FolderHeart className="w-12 h-12 text-zinc-300 mx-auto mb-3" />
           <h3 className="text-base font-bold text-white mb-1">
             {t.noBusinessesFound}
           </h3>
@@ -797,7 +797,7 @@ export default function BusinessFeed({
                             onClick={() => setNewReviewRating(starValue)}
                             className="p-0.5"
                           >
-                            <Star className={`w-3.5 h-3.5 ${newReviewRating >= starValue ? 'fill-yellow-500 text-yellow-500' : 'text-zinc-600'}`} />
+                            <Star className={`w-3.5 h-3.5 ${newReviewRating >= starValue ? 'fill-yellow-500 text-yellow-500' : 'text-zinc-300'}`} />
                           </button>
                         ))}
                       </div>
