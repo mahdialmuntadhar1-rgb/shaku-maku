@@ -228,6 +228,38 @@ function getGovName(govCode: GovernorateCode, lang: Language) {
   return gov?.name?.[lang] || gov?.name?.ar || govCode;
 }
 
+const VIRTUAL_AVATAR_THEMES = [
+  'from-rose-500 to-orange-400',
+  'from-amber-500 to-yellow-300',
+  'from-emerald-500 to-teal-300',
+  'from-cyan-500 to-blue-400',
+  'from-violet-500 to-fuchsia-400',
+  'from-pink-500 to-rose-300',
+  'from-slate-700 to-zinc-500',
+  'from-lime-500 to-emerald-300'
+];
+
+function hashText(value: string): number {
+  let hash = 0;
+  for (let i = 0; i < value.length; i += 1) {
+    hash = ((hash << 5) - hash) + value.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash);
+}
+
+function getVirtualAvatar(post: SocialPost, lang: Language) {
+  const meta = getCategoryMeta(post.category, lang);
+  const key = String(post.id || post.businessId || post.businessName || post.category || post.governorate);
+  const theme = VIRTUAL_AVATAR_THEMES[hashText(key) % VIRTUAL_AVATAR_THEMES.length];
+  const govName = getGovName(post.governorate, lang);
+  return {
+    icon: meta.icon || '✨',
+    theme,
+    label: String(post.businessName || govName || 'Shaku Maku').slice(0, 2)
+  };
+}
+
 export default function SocialFeed({
   currentLang,
   selectedGov,
@@ -348,8 +380,9 @@ export default function SocialFeed({
   }, [selectedGov, selectedCategory]);
 
   const mergedPosts = useMemo(() => {
+    const sourcePosts = posts.length > 0 ? posts : generatedPosts;
     const byId = new Map<string, SocialPost>();
-    [...posts, ...generatedPosts].forEach((post) => {
+    sourcePosts.forEach((post) => {
       if (!byId.has(post.id)) byId.set(post.id, post);
     });
     return Array.from(byId.values());
@@ -436,7 +469,7 @@ export default function SocialFeed({
             <h2 className="text-2xl md:text-3xl font-black leading-tight">{t.feedTitle}</h2>
             <p className="text-sm text-zinc-300 mt-2 max-w-2xl">{t.feedSub}</p>
             <p className="text-[11px] text-zinc-400 mt-2">
-              {LOCALIZED_SOCIAL_POST_COUNT} seeded localized posts + backend posts. {t.seeded}.
+              {posts.length > 0 ? `${posts.length} backend database posts loaded.` : `${LOCALIZED_SOCIAL_POST_COUNT} fallback localized posts until backend loads.`} {t.seeded}.
             </p>
           </div>
           <span className={`self-start text-[11px] px-3 py-1.5 rounded-full border ${apiConnected ? 'bg-emerald-500/15 text-emerald-200 border-emerald-400/30' : 'bg-red-500/15 text-red-200 border-red-400/30'}`}>
@@ -536,21 +569,19 @@ export default function SocialFeed({
             const captionDisplay = getCaptionDisplay(post, currentLang);
             const captionText = captionDisplay.mainText;
             const badge = getLocalized(post.promotionBadge, currentLang);
+            const avatar = getVirtualAvatar(post, currentLang);
             const contactText = String(post.authorEmail || '').trim();
             const isPhone = /^\+?\d[\d\s()-]{6,}$/.test(contactText);
             return (
               <article key={post.id} className="bg-[#170b10] border border-red-400/25 rounded-[1.8rem] shadow-[0_0_0_1px_rgba(251,113,133,0.12),0_0_28px_rgba(244,63,94,0.16)] overflow-hidden hover:shadow-[0_0_42px_rgba(244,63,94,0.24)] transition-shadow text-white">
                 <div className="p-4 flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3 min-w-0">
-                    <img
-                      src={post.businessAvatar || FALLBACK_AVATAR}
-                      alt={post.businessName}
-                      className="w-11 h-11 rounded-full object-cover border border-zinc-200"
-                      referrerPolicy="no-referrer"
-                      onError={(event) => {
-                        event.currentTarget.src = FALLBACK_AVATAR;
-                      }}
-                    />
+                    <div
+                      className={`w-11 h-11 rounded-full border border-white/20 bg-gradient-to-br ${avatar.theme} flex items-center justify-center text-xl shadow-[0_0_18px_rgba(255,255,255,0.12)] shrink-0`}
+                      title={post.businessName}
+                    >
+                      <span aria-hidden="true">{avatar.icon}</span>
+                    </div>
                     <div className="min-w-0">
                       <div className="flex items-center gap-1.5 min-w-0">
                         <p className="text-sm md:text-base font-black text-white truncate">{post.businessName}</p>

@@ -834,12 +834,12 @@ export default function App() {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await postsApi.list({ limit: 50 });
+        const response = await postsApi.list({ limit: 120 });
         const transformedPosts: SocialPost[] = (response || []).map((post: any) => ({
           id: post.id,
           businessId: post.business_id,
           businessName: post.business_name_ar || post.business_name_en || '',
-          businessAvatar: post.business_avatar || FALLBACK_AVATAR,
+          businessAvatar: post.business_avatar || '',
           category: normalizeCategory(post.category),
           governorate: normalizeGovernorate(post.governorate),
           mediaUrl: post.media_url || '',
