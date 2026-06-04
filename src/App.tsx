@@ -1234,15 +1234,15 @@ export default function App() {
                     ? 'bg-luxury-gold text-black shadow-[0_0_18px_rgba(212,175,55,0.65)]'
                     : 'bg-zinc-100 text-zinc-500 group-hover:bg-luxury-gold/20 group-hover:text-luxury-gold'
                 }`}>
-                  🏢
+                  🔎
                 </div>
 
                 <span className={`relative z-10 text-xs sm:text-sm md:text-base font-black block leading-tight tracking-tight ${activeTab === 'discover' ? 'text-white' : 'text-[#1A1A1A]'}`}>
-                  {currentLang === 'en' ? 'Businesses' : currentLang === 'ku' ? 'شوێنەکان' : 'المحلات'}
+                  {currentLang === 'en' ? 'Shko Maku' : currentLang === 'ku' ? '\u0634\u06a9\u0648 \u0645\u0627\u06a9\u0648' : '\u0634\u0643\u0648 \u0645\u0627\u0643\u0648'}
                 </span>
 
                 <span className={`relative z-10 text-[9px] sm:text-[10px] md:text-[11px] leading-tight font-medium mt-1 sm:mt-1.5 block opacity-75 px-1 line-clamp-2 max-w-full ${activeTab === 'discover' ? 'text-zinc-300' : 'text-zinc-500'}`}>
-                  {currentLang === 'en' ? 'Find places near you' : currentLang === 'ku' ? 'شوێنە نزیکەکان بدۆزەوە' : 'اكتشف الأماكن حولك'}
+                  {currentLang === 'en' ? 'Business directory' : currentLang === 'ku' ? '\u0695\u06ce\u0628\u06d5\u0631\u06cc \u06a9\u0627\u0631 \u0648 \u062e\u0632\u0645\u06d5\u062a\u06af\u0648\u0632\u0627\u0631\u06cc' : '\u062f\u0644\u064a\u0644 \u0627\u0644\u0623\u0639\u0645\u0627\u0644 \u0648\u0627\u0644\u062e\u062f\u0645\u0627\u062a'}
                 </span>
 
                 <div className={`relative z-10 absolute bottom-3 text-xs font-bold transition-all duration-300 ${activeTab === 'discover' ? 'text-luxury-gold opacity-100' : 'text-zinc-400 opacity-0 group-hover:opacity-100'}`}>
@@ -1260,29 +1260,29 @@ export default function App() {
                 }}
                 className={`shaku-tab-card-glow shaku-tab-feed flex flex-col items-center justify-center p-4 rounded-3xl border aspect-square text-center transition-all duration-300 transform hover:scale-[1.03] active:scale-[0.97] cursor-pointer relative group overflow-hidden ${
                   activeTab === 'feed'
-                    ? 'shaku-tab-card-glow-active bg-[#1A1A1A] border-cyan-300/80 text-white shadow-[0_0_22px_rgba(34,211,238,0.34)]'
-                    : 'bg-white border-zinc-200 text-zinc-800 hover:border-cyan-300 hover:bg-zinc-50/80'
+                    ? 'shaku-tab-card-glow-active bg-[#1A1A1A] border-rose-400/80 text-white shadow-[0_0_22px_rgba(251,113,133,0.38)]'
+                    : 'bg-white border-zinc-200 text-zinc-800 hover:border-rose-400 hover:bg-rose-50/60'
                 }`}
               >
                 <div className={`relative z-10 w-11 h-11 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center text-xl sm:text-2xl mb-2 sm:mb-3 transition-colors duration-300 shrink-0 ${
                   activeTab === 'feed'
-                    ? 'bg-cyan-300 text-black shadow-[0_0_18px_rgba(34,211,238,0.65)]'
-                    : 'bg-zinc-100 text-zinc-500 group-hover:bg-cyan-300/20 group-hover:text-cyan-500'
+                    ? 'bg-rose-400 text-white shadow-[0_0_18px_rgba(251,113,133,0.65)]'
+                    : 'bg-zinc-100 text-zinc-500 group-hover:bg-rose-400/20 group-hover:text-rose-500'
                 }`}>
-                  📸
+                  ☕
                   <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-red-500 animate-ping"></span>
                   <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-red-500"></span>
                 </div>
 
                 <span className={`relative z-10 text-xs sm:text-sm md:text-base font-black block leading-tight tracking-tight ${activeTab === 'feed' ? 'text-white' : 'text-[#1A1A1A]'}`}>
-                  {currentLang === 'en' ? 'Social Feed' : currentLang === 'ku' ? 'پۆستە نوێکان' : 'نبض الشارع'}
+                  {currentLang === 'en' ? 'Chaykhana' : currentLang === 'ku' ? '\u0686\u0627\u06cc\u062e\u0627\u0646\u06d5' : '\u0686\u0627\u064a\u062e\u0627\u0646\u0629'}
                 </span>
 
                 <span className={`relative z-10 text-[9px] sm:text-[10px] md:text-[11px] leading-tight font-medium mt-1 sm:mt-1.5 block opacity-75 px-1 line-clamp-2 max-w-full ${activeTab === 'feed' ? 'text-zinc-300' : 'text-zinc-500'}`}>
-                  {currentLang === 'en' ? 'Offers & updates' : currentLang === 'ku' ? 'داشکاندن و نوێکاری' : 'عروض وتحديثات'}
+                  {currentLang === 'en' ? 'See what is new' : currentLang === 'ku' ? '\u0628\u0628\u06cc\u0646\u06d5 \u0686\u06cc \u0646\u0648\u06ce\u06cc\u06d5' : '\u0634\u0648\u0641 \u0634\u0646\u0648 \u0627\u0644\u062c\u062f\u064a\u062f'}
                 </span>
 
-                <div className={`relative z-10 absolute bottom-3 text-xs font-bold transition-all duration-300 ${activeTab === 'feed' ? 'text-cyan-200 opacity-100' : 'text-zinc-400 opacity-0 group-hover:opacity-100'}`}>
+                <div className={`relative z-10 absolute bottom-3 text-xs font-bold transition-all duration-300 ${activeTab === 'feed' ? 'text-rose-200 opacity-100' : 'text-zinc-400 opacity-0 group-hover:opacity-100'}`}>
                   ➔
                 </div>
               </button>
