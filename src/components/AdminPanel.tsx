@@ -501,17 +501,84 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
     setBusinessSubmissionsStatus('');
 
     try {
-      await api.patch(`/business-submissions/${submissionId}`, { status });
+      const response = await api.patch(`/business-submissions/${submissionId}`, { status });
+      const payload = response?.data?.data || response?.data || response || {};
+      const publishedBusiness = payload?.business;
+
       setBusinessSubmissions((prev) =>
         prev.map((item) =>
           item.id === submissionId
-            ? { ...item, status }
+            ? {
+                ...item,
+                status,
+                approved_business_id: payload?.approved_business_id || (item as any).approved_business_id
+              } as any
             : item
         )
       );
+
+      if (status === 'approved' && publishedBusiness?.id) {
+        const name = publishedBusiness.name_en || publishedBusiness.name_ar || publishedBusiness.name_ku || 'New Business';
+        const description =
+          publishedBusiness.description_en ||
+          publishedBusiness.description_ar ||
+          publishedBusiness.description_ku ||
+          '';
+        const address =
+          publishedBusiness.address_en ||
+          publishedBusiness.address_ar ||
+          publishedBusiness.address_ku ||
+          '';
+        const image =
+          publishedBusiness.image ||
+          publishedBusiness.avatar ||
+          'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&auto=format&fit=crop&q=80';
+
+        const normalizedBusiness: Business = {
+          id: String(publishedBusiness.id),
+          name: {
+            ar: publishedBusiness.name_ar || name,
+            ku: publishedBusiness.name_ku || name,
+            en: publishedBusiness.name_en || name
+          },
+          description: {
+            ar: publishedBusiness.description_ar || description,
+            ku: publishedBusiness.description_ku || description,
+            en: publishedBusiness.description_en || description
+          },
+          category: normalizeCategory(publishedBusiness.category || 'services'),
+          governorate: normalizeGovernorate(publishedBusiness.governorate || 'baghdad') as any,
+          rating: Number(publishedBusiness.rating || 0),
+          reviewsCount: Number(publishedBusiness.reviews_count || 0),
+          image,
+          images: [image],
+          avatar: publishedBusiness.avatar || image,
+          isVerified: Boolean(publishedBusiness.is_verified),
+          phoneNumber: publishedBusiness.phone_number || '',
+          address: {
+            ar: publishedBusiness.address_ar || address,
+            ku: publishedBusiness.address_ku || address,
+            en: publishedBusiness.address_en || address
+          },
+          likes: Number(publishedBusiness.like_count || 0),
+          saves: Number(publishedBusiness.save_count || 0),
+          mapCoords: {
+            x: Number(publishedBusiness.map_coords_x || 0),
+            y: Number(publishedBusiness.map_coords_y || 0)
+          },
+          likedByUser: false,
+          savedByUser: false
+        };
+
+        setBusinesses((prev) => {
+          const withoutDuplicate = prev.filter((business) => business.id !== normalizedBusiness.id);
+          return [normalizedBusiness, ...withoutDuplicate];
+        });
+      }
+
       setBusinessSubmissionsStatus(
         status === 'approved'
-          ? t(currentLang, 'Request approved.', 'تمت الموافقة على الطلب.', 'داواکارییەکە پەسەندکرا.')
+          ? t(currentLang, 'Request approved and business published.', 'تمت الموافقة على الطلب ونشر النشاط.', 'داواکارییەکە پەسەندکرا و بازرگانییەکە بڵاوکرایەوە.')
           : t(currentLang, 'Request rejected.', 'تم رفض الطلب.', 'داواکارییەکە ڕەتکرایەوە.')
       );
     } catch (error) {
@@ -520,6 +587,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
       setBusinessSubmissionsLoading(false);
     }
   };
+
   const runDiagnostics = async () => {
     setDiagnosticsLoading(true);
     const next: DiagnosticItem[] = [];
@@ -1068,4 +1136,5 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
 };
 
 export default AdminPanel;
+
 

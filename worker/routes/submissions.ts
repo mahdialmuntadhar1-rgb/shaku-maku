@@ -8,6 +8,15 @@ type Env = {
 
 const submissionsRoutes = new Hono<{ Bindings: Env }>();
 
+function cleanText(value: unknown): string {
+  return String(value || '').trim();
+}
+
+function fallbackText(value: unknown, fallback: string): string {
+  const cleaned = cleanText(value);
+  return cleaned || fallback;
+}
+
 async function ensureBusinessSubmissionsTable(db: any) {
   await db.prepare(`
     CREATE TABLE IF NOT EXISTS business_submissions (
@@ -21,14 +30,18 @@ async function ensureBusinessSubmissionsTable(db: any) {
       media_url TEXT,
       status TEXT NOT NULL DEFAULT 'pending',
       source TEXT,
+      approved_business_id TEXT,
       created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
       updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     )
   `).run();
-}
 
-function cleanText(value: unknown): string {
-  return String(value || '').trim();
+  const columns = await db.prepare(`PRAGMA table_info(business_submissions)`).all();
+  const names = (columns.results || []).map((column: any) => String(column.name));
+
+  if (!names.includes('approved_business_id')) {
+    await db.prepare(`ALTER TABLE business_submissions ADD COLUMN approved_business_id TEXT`).run();
+  }
 }
 
 submissionsRoutes.post('/', async (c) => {
@@ -57,9 +70,9 @@ submissionsRoutes.post('/', async (c) => {
 
     await c.env.DB.prepare(`
       INSERT INTO business_submissions (
-        id, name, description, address, phone, category, governorate, media_url, status, source, created_at, updated_at
+        id, name, description, address, phone, category, governorate, media_url, status, source, approved_business_id, created_at, updated_at
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
     `).bind(
       id,
       name,
@@ -132,15 +145,93 @@ submissionsRoutes.patch('/:id', async (c) => {
       return c.json({ success: false, error: 'Invalid status' }, 400);
     }
 
+    const submission = await c.env.DB.prepare(`
+      SELECT *
+      FROM business_submissions
+      WHERE id = ?
+      LIMIT 1
+    `).bind(id).first() as any;
+
+    if (!submission) {
+      return c.json({ success: false, error: 'Business request not found' }, 404);
+    }
+
+    let publishedBusiness: any = null;
+    let approvedBusinessId = cleanText(submission.approved_business_id);
+
+    if (status === 'approved') {
+      if (approvedBusinessId) {
+        publishedBusiness = await c.env.DB.prepare(
+          'SELECT * FROM businesses WHERE id = ?'
+        ).bind(approvedBusinessId).first();
+      }
+
+      if (!publishedBusiness) {
+        approvedBusinessId = crypto.randomUUID();
+
+        const name = fallbackText(submission.name, 'New Business');
+        const description = cleanText(submission.description);
+        const address = cleanText(submission.address);
+        const category = fallbackText(submission.category, 'services');
+        const governorate = fallbackText(submission.governorate, 'baghdad');
+        const phone = cleanText(submission.phone);
+        const mediaUrl = cleanText(submission.media_url);
+
+        await c.env.DB.prepare(`
+          INSERT INTO businesses (
+            id, owner_id, name_ar, name_ku, name_en,
+            description_ar, description_ku, description_en,
+            category, governorate, phone_number,
+            address_ar, address_ku, address_en,
+            image, avatar, is_verified,
+            map_coords_x, map_coords_y
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `).bind(
+          approvedBusinessId,
+          admin.userId,
+          name,
+          name,
+          name,
+          description || null,
+          description || null,
+          description || null,
+          category,
+          governorate,
+          phone || null,
+          address || null,
+          address || null,
+          address || null,
+          mediaUrl || null,
+          mediaUrl || null,
+          0,
+          null,
+          null
+        ).run();
+
+        publishedBusiness = await c.env.DB.prepare(
+          'SELECT * FROM businesses WHERE id = ?'
+        ).bind(approvedBusinessId).first();
+      }
+    }
+
     await c.env.DB.prepare(`
       UPDATE business_submissions
-      SET status = ?, updated_at = CURRENT_TIMESTAMP
+      SET status = ?, approved_business_id = COALESCE(?, approved_business_id), updated_at = CURRENT_TIMESTAMP
       WHERE id = ?
-    `).bind(status, id).run();
+    `).bind(
+      status,
+      status === 'approved' ? approvedBusinessId : null,
+      id
+    ).run();
 
     return c.json({
       success: true,
-      data: { id, status }
+      data: {
+        id,
+        status,
+        approved_business_id: status === 'approved' ? approvedBusinessId : submission.approved_business_id || null,
+        business: publishedBusiness || null
+      }
     });
   } catch (error: any) {
     console.error('Business submission update error:', error);
