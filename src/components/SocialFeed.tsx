@@ -137,6 +137,56 @@ function getLocalized(value: any, lang: Language): string {
   return String(value[lang] || value.ar || value.ku || value.en || '');
 }
 
+const KURDISH_FIRST_GOVERNORATES = new Set([
+  'erbil',
+  'sulaymaniyah',
+  'duhok',
+  'halabja',
+  'kirkuk'
+]);
+
+function getRegionalMainLanguage(gov: GovernorateCode): Language {
+  return KURDISH_FIRST_GOVERNORATES.has(String(gov)) ? 'ku' : 'ar';
+}
+
+function getCaptionDisplay(post: SocialPost, currentLang: Language) {
+  const regionalLang = getRegionalMainLanguage(post.governorate);
+  const mainText = getLocalized(post.caption, regionalLang) || getLocalized(post.caption, currentLang);
+  const selectedText = getLocalized(post.caption, currentLang);
+  const englishText = getLocalized(post.caption, 'en');
+
+  let translationLabel = '';
+  let translationText = '';
+
+  if (currentLang !== regionalLang && selectedText && selectedText !== mainText) {
+    translationLabel =
+      currentLang === 'ar'
+        ? 'الترجمة العربية'
+        : currentLang === 'ku'
+        ? 'وەرگێڕانی کوردی'
+        : 'English translation';
+
+    translationText = selectedText;
+  } else if (currentLang === regionalLang && englishText && englishText !== mainText) {
+    translationLabel =
+      currentLang === 'ku'
+        ? 'English translation'
+        : currentLang === 'ar'
+        ? 'الترجمة الإنجليزية'
+        : 'English translation';
+
+    translationText = englishText;
+  }
+
+  return {
+    mainText,
+    mainLang: regionalLang,
+    translationLabel,
+    translationText,
+    translationLang: currentLang !== regionalLang ? currentLang : 'en'
+  };
+}
+
 function mapApiPostToUi(post: any): SocialPost {
   return {
     id: String(post.id),
@@ -483,7 +533,8 @@ export default function SocialFeed({
         ) : (
           visiblePosts.map((post) => {
             const category = getCategoryMeta(post.category, currentLang);
-            const captionText = getLocalized(post.caption, currentLang);
+            const captionDisplay = getCaptionDisplay(post, currentLang);
+            const captionText = captionDisplay.mainText;
             const badge = getLocalized(post.promotionBadge, currentLang);
             const contactText = String(post.authorEmail || '').trim();
             const isPhone = /^\+?\d[\d\s()-]{6,}$/.test(contactText);
@@ -569,9 +620,30 @@ export default function SocialFeed({
                       </div>
                     </div>
                   ) : (
-                    <p className="text-[15px] text-zinc-100 leading-7 whitespace-pre-line" lang={currentLang === 'ku' ? 'ku' : currentLang}>
-                      {captionText}
-                    </p>
+                    <div className="space-y-2">
+                      <p
+                        className="text-[15px] text-zinc-100 leading-7 whitespace-pre-line"
+                        lang={captionDisplay.mainLang === 'ku' ? 'ku' : captionDisplay.mainLang}
+                        dir={captionDisplay.mainLang === 'en' ? 'ltr' : 'rtl'}
+                      >
+                        {captionText}
+                      </p>
+
+                      {captionDisplay.translationText ? (
+                        <div
+                          className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2"
+                          lang={captionDisplay.translationLang === 'ku' ? 'ku' : captionDisplay.translationLang}
+                          dir={captionDisplay.translationLang === 'en' ? 'ltr' : 'rtl'}
+                        >
+                          <div className="text-[10px] font-black uppercase tracking-wide text-zinc-400 mb-1">
+                            {captionDisplay.translationLabel}
+                          </div>
+                          <p className="text-[13px] leading-6 text-zinc-300 whitespace-pre-line">
+                            {captionDisplay.translationText}
+                          </p>
+                        </div>
+                      ) : null}
+                    </div>
                   )}
                   <div className="flex flex-wrap gap-2 mt-3">
                     <span className="text-[11px] font-bold text-luxury-teal bg-luxury-teal/10 rounded-full px-2 py-1">#شكو_ماكو</span>
