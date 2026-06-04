@@ -494,12 +494,14 @@ export default function SocialFeed({
             value={selectedPostGov}
             onChange={(event) => setSelectedPostGov(event.target.value as GovernorateCode)}
             required
-            className="w-full rounded-xl bg-[#242526] border border-white/10 p-3 text-sm font-bold text-white outline-none focus:border-luxury-gold"
+            dir={isRtl ? 'rtl' : 'ltr'}
+            lang={currentLang === 'ku' ? 'ku' : currentLang}
+            className="w-full rounded-xl bg-[#242526] border border-white/10 p-3 text-sm font-bold text-white outline-none focus:border-luxury-gold [font-family:Tahoma,Arial,sans-serif]"
           >
             <option value="">{t.chooseGov}</option>
             {GOVERNORATES.filter((gov) => gov.code !== 'all').map((gov) => (
               <option key={gov.code} value={gov.code}>
-                {gov.name[currentLang] || gov.name.ar}
+                {getGovName(gov.code, currentLang)}
               </option>
             ))}
           </select>
