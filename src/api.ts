@@ -1,4 +1,4 @@
-const RAW_API_BASE_URL = (import.meta as any).env?.VITE_API_URL || 'https://shaku-maku.mahdialmuntadhar1.workers.dev';
+﻿const RAW_API_BASE_URL = (import.meta as any).env?.VITE_API_URL || 'https://shaku-maku.mahdialmuntadhar1.workers.dev';
 const RAW_API_BASE_URL_STRING = String(RAW_API_BASE_URL).trim();
 
 export const API_BASE_URL =
@@ -286,7 +286,7 @@ export const authApi = {
 
 export const CATEGORY_DB_MAP: Record<string, string> = {
   restaurant: 'Restaurants',
-  cafe_bakery: 'Cafés & Bakeries',
+  cafe_bakery: 'CafÃ©s & Bakeries',
   supermarket: 'Supermarkets',
   mall: 'Malls & Shopping',
   pharmacy: 'Pharmacies',
@@ -386,11 +386,27 @@ export const postsApi = {
     return apiRequest<any>('/feed/posts', { method: 'POST', body: JSON.stringify(post) }, true);
   },
 
-  async like(postId: string): Promise<any> {
+  async like(postId: string | number): Promise<any> {
     return apiRequest<any>('/feed/posts/like', {
       method: 'POST',
       body: JSON.stringify({ postId }),
     }, true);
+  },
+
+  async getComments(postId: string | number): Promise<any[]> {
+    const response = await apiRequest<ApiResponse<any[]>>(`/feed/posts/${postId}/comments`, {}, true);
+    return unwrap<any[]>(response);
+  },
+
+  async createComment(postId: string | number, text: string): Promise<any> {
+    return apiRequest<any>(`/feed/posts/${postId}/comments`, {
+      method: 'POST',
+      body: JSON.stringify({ text }),
+    }, true);
+  },
+
+  async share(postId: string | number): Promise<any> {
+    return apiRequest<any>(`/feed/posts/${postId}/share`, { method: 'POST' }, true);
   },
 
   async update(id: string, payload: any): Promise<any> {
@@ -400,6 +416,8 @@ export const postsApi = {
       mapped.caption_ku = payload.caption;
       mapped.caption_en = payload.caption;
     }
+    if (payload?.governorate !== undefined) mapped.governorate = payload.governorate;
+    if (payload?.category !== undefined) mapped.category = payload.category;
     if (payload?.media_url !== undefined) mapped.media_url = payload.media_url;
     if (payload?.video_url !== undefined) mapped.video_url = payload.video_url;
     if (payload?.promotion_badge_ar !== undefined) mapped.promotion_badge_ar = payload.promotion_badge_ar;
@@ -418,9 +436,8 @@ export const postsApi = {
 
   async delete(id: string | number): Promise<any> {
     return apiRequest<any>(`/posts/${id}`, { method: 'DELETE' }, true);
-  },
+  }
 };
-
 
 export const heroSlidesApi = {
   async list(): Promise<any[]> {
@@ -486,3 +503,4 @@ export async function getBusinesses(params?: { page?: number; limit?: number; go
   const businesses = await businessesApi.list(params);
   return { businesses, total: businesses.length, data: businesses };
 }
+
