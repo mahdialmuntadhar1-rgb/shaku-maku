@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Check, Edit3, Image as ImageIcon, Lock, Save, Trash2 } from 'lucide-react';
 import { api, API_BASE_URL, businessesApi, getApiErrorMessage, postsApi } from '../api';
 import { readSession } from '../auth/session';
@@ -21,6 +21,19 @@ interface DiagnosticItem {
   ok: boolean;
   status: string;
   detail: string;
+}
+
+interface BusinessSubmission {
+  id: string;
+  name: string;
+  description?: string;
+  address?: string;
+  phone: string;
+  category?: string;
+  governorate?: string;
+  media_url?: string;
+  status: 'pending' | 'approved' | 'rejected' | string;
+  created_at?: string;
 }
 
 const t = (lang: Language, en: string, ar: string, ku: string) => {
@@ -65,6 +78,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
   });
   const [diagnostics, setDiagnostics] = useState<DiagnosticItem[]>([]);
   const [diagnosticsLoading, setDiagnosticsLoading] = useState(false);
+  const [businessSubmissions, setBusinessSubmissions] = useState<BusinessSubmission[]>([]);
+  const [businessSubmissionsLoading, setBusinessSubmissionsLoading] = useState(false);
+  const [businessSubmissionsStatus, setBusinessSubmissionsStatus] = useState('');
   const session = readSession();
   const signedInEmail = (userProfile?.email || session?.user?.email || '').toLowerCase();
   const hasAdminAccess =
@@ -77,7 +93,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
       <div className="max-w-3xl mx-auto bg-[#18191a] border border-red-500/25 rounded-2xl p-8 text-center shadow-xl">
         <Lock className="w-10 h-10 text-red-400 mx-auto mb-3" />
         <h1 className="text-xl font-black text-white">
-          {t(currentLang, 'Admin access required', 'يلزم حساب مدير', 'هەژماری بەڕێوەبەر پێویستە')}
+          {t(currentLang, 'Admin access required', 'ÙŠÙ„Ø²Ù… Ø­Ø³Ø§Ø¨ Ù…Ø¯ÙŠØ±', 'Ù‡Û•Ú˜Ù…Ø§Ø±ÛŒ Ø¨Û•Ú•ÛŽÙˆÛ•Ø¨Û•Ø± Ù¾ÛŽÙˆÛŒØ³ØªÛ•')}
         </h1>
       </div>
     );
@@ -110,15 +126,15 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
       id: `hero-${now}`,
       image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1400&auto=format&fit=crop&q=85',
       slogan: {
-        ar: 'إعلان جديد من شكو ماكو',
-        ku: 'ڕیکلامی نوێ لە شەکو مەکو',
+        ar: 'Ø¥Ø¹Ù„Ø§Ù† Ø¬Ø¯ÙŠØ¯ Ù…Ù† Ø´ÙƒÙˆ Ù…Ø§ÙƒÙˆ',
+        ku: 'Ú•ÛŒÚ©Ù„Ø§Ù…ÛŒ Ù†ÙˆÛŽ Ù„Û• Ø´Û•Ú©Ùˆ Ù…Û•Ú©Ùˆ',
         en: 'New Shaku Maku promotion'
       },
       governorate: 'all' as any,
       category: 'restaurant',
       badge: {
-        ar: 'مساحة ترويجية',
-        ku: 'شوێنی ڕیکلام',
+        ar: 'Ù…Ø³Ø§Ø­Ø© ØªØ±ÙˆÙŠØ¬ÙŠØ©',
+        ku: 'Ø´ÙˆÛŽÙ†ÛŒ Ú•ÛŒÚ©Ù„Ø§Ù…',
         en: 'Promotional space'
       }
     };
@@ -142,7 +158,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
           post.id === postId ? { ...post, status: 'approved', updatedAt: new Date().toISOString() } : post
         )
       );
-      setPostStatus(t(currentLang, 'Post approved.', 'تمت الموافقة على المنشور.', 'بابەتەکە پەسەندکرا.'));
+      setPostStatus(t(currentLang, 'Post approved.', 'ØªÙ…Øª Ø§Ù„Ù…ÙˆØ§ÙÙ‚Ø© Ø¹Ù„Ù‰ Ø§Ù„Ù…Ù†Ø´ÙˆØ±.', 'Ø¨Ø§Ø¨Û•ØªÛ•Ú©Û• Ù¾Û•Ø³Û•Ù†Ø¯Ú©Ø±Ø§.'));
     } catch (error) {
       setPostStatus(getApiErrorMessage(error));
     }
@@ -152,7 +168,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
     try {
       await postsApi.delete(postId);
       setPosts((prev) => prev.filter((post) => post.id !== postId));
-      setPostStatus(t(currentLang, 'Post deleted.', 'تم حذف المنشور.', 'بابەتەکە سڕایەوە.'));
+      setPostStatus(t(currentLang, 'Post deleted.', 'ØªÙ… Ø­Ø°Ù Ø§Ù„Ù…Ù†Ø´ÙˆØ±.', 'Ø¨Ø§Ø¨Û•ØªÛ•Ú©Û• Ø³Ú•Ø§ÛŒÛ•ÙˆÛ•.'));
     } catch (error) {
       setPostStatus(getApiErrorMessage(error));
     }
@@ -228,8 +244,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
       setPostStatus(t(
         currentLang,
         'Compressing image...',
-        'جاري ضغط الصورة...',
-        'پەستاندنی وێنە...'
+        'Ø¬Ø§Ø±ÙŠ Ø¶ØºØ· Ø§Ù„ØµÙˆØ±Ø©...',
+        'Ù¾Û•Ø³ØªØ§Ù†Ø¯Ù†ÛŒ ÙˆÛŽÙ†Û•...'
       ));
 
       const compressed = await compressImageFileForPost(file);
@@ -242,15 +258,15 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
       setPostStatus(t(
         currentLang,
         'Image ready. You can publish now.',
-        'الصورة جاهزة. يمكنك النشر الآن.',
-        'وێنەکە ئامادەیە. ئێستا دەتوانیت بڵاوی بکەیتەوە.'
+        'Ø§Ù„ØµÙˆØ±Ø© Ø¬Ø§Ù‡Ø²Ø©. ÙŠÙ…ÙƒÙ†Ùƒ Ø§Ù„Ù†Ø´Ø± Ø§Ù„Ø¢Ù†.',
+        'ÙˆÛŽÙ†Û•Ú©Û• Ø¦Ø§Ù…Ø§Ø¯Û•ÛŒÛ•. Ø¦ÛŽØ³ØªØ§ Ø¯Û•ØªÙˆØ§Ù†ÛŒØª Ø¨ÚµØ§ÙˆÛŒ Ø¨Ú©Û•ÛŒØªÛ•ÙˆÛ•.'
       ));
     } catch (error: any) {
       setPostStatus(t(
         currentLang,
         error?.message || 'Image upload failed.',
-        'فشل رفع الصورة. جرّب صورة أصغر.',
-        'بارکردنی وێنە شکستی هێنا. وێنەیەکی بچووکتر تاقیبکەوە.'
+        'ÙØ´Ù„ Ø±ÙØ¹ Ø§Ù„ØµÙˆØ±Ø©. Ø¬Ø±Ù‘Ø¨ ØµÙˆØ±Ø© Ø£ØµØºØ±.',
+        'Ø¨Ø§Ø±Ú©Ø±Ø¯Ù†ÛŒ ÙˆÛŽÙ†Û• Ø´Ú©Ø³ØªÛŒ Ù‡ÛŽÙ†Ø§. ÙˆÛŽÙ†Û•ÛŒÛ•Ú©ÛŒ Ø¨Ú†ÙˆÙˆÚ©ØªØ± ØªØ§Ù‚ÛŒØ¨Ú©Û•ÙˆÛ•.'
       ));
     }
   }
@@ -281,8 +297,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
       setPostStatus(t(
         currentLang,
         'The selected image is too large to save directly. Please use an image URL for now.',
-        'الصورة المختارة كبيرة جداً للحفظ المباشر. حالياً استخدم رابط صورة.',
-        'وێنەی هەڵبژێردراو زۆر گەورەیە. تکایە ئێستا لینکی وێنە بەکاربهێنە.'
+        'Ø§Ù„ØµÙˆØ±Ø© Ø§Ù„Ù…Ø®ØªØ§Ø±Ø© ÙƒØ¨ÙŠØ±Ø© Ø¬Ø¯Ø§Ù‹ Ù„Ù„Ø­ÙØ¸ Ø§Ù„Ù…Ø¨Ø§Ø´Ø±. Ø­Ø§Ù„ÙŠØ§Ù‹ Ø§Ø³ØªØ®Ø¯Ù… Ø±Ø§Ø¨Ø· ØµÙˆØ±Ø©.',
+        'ÙˆÛŽÙ†Û•ÛŒ Ù‡Û•ÚµØ¨Ú˜ÛŽØ±Ø¯Ø±Ø§Ùˆ Ø²Û†Ø± Ú¯Û•ÙˆØ±Û•ÛŒÛ•. ØªÚ©Ø§ÛŒÛ• Ø¦ÛŽØ³ØªØ§ Ù„ÛŒÙ†Ú©ÛŒ ÙˆÛŽÙ†Û• Ø¨Û•Ú©Ø§Ø±Ø¨Ù‡ÛŽÙ†Û•.'
       ));
       return;
     }
@@ -294,17 +310,17 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
     const videoUrl = newPostDraft.videoUrl.trim();
 
     if (!captionAr && !captionKu && !captionEn) {
-      setPostStatus(t(currentLang, 'Write a caption first.', 'اكتب النص أولاً.', 'سەرەتا دەقێک بنووسە.'));
+      setPostStatus(t(currentLang, 'Write a caption first.', 'Ø§ÙƒØªØ¨ Ø§Ù„Ù†Øµ Ø£ÙˆÙ„Ø§Ù‹.', 'Ø³Û•Ø±Û•ØªØ§ Ø¯Û•Ù‚ÛŽÚ© Ø¨Ù†ÙˆÙˆØ³Û•.'));
       return;
     }
 
     if (!linkedBusiness) {
-      setPostStatus(t(currentLang, 'No business available to link this post.', 'لا يوجد نشاط لربط المنشور به.', 'هیچ بازرگانییەک نییە.'));
+      setPostStatus(t(currentLang, 'No business available to link this post.', 'Ù„Ø§ ÙŠÙˆØ¬Ø¯ Ù†Ø´Ø§Ø· Ù„Ø±Ø¨Ø· Ø§Ù„Ù…Ù†Ø´ÙˆØ± Ø¨Ù‡.', 'Ù‡ÛŒÚ† Ø¨Ø§Ø²Ø±Ú¯Ø§Ù†ÛŒÛŒÛ•Ú© Ù†ÛŒÛŒÛ•.'));
       return;
     }
 
     if (!newPostDraft.governorate || !newPostDraft.category) {
-      setPostStatus(t(currentLang, 'Please choose governorate and category.', 'يرجى اختيار المحافظة والتصنيف.', 'تکایە پارێزگا و پۆل هەڵبژێرە.'));
+      setPostStatus(t(currentLang, 'Please choose governorate and category.', 'ÙŠØ±Ø¬Ù‰ Ø§Ø®ØªÙŠØ§Ø± Ø§Ù„Ù…Ø­Ø§ÙØ¸Ø© ÙˆØ§Ù„ØªØµÙ†ÙŠÙ.', 'ØªÚ©Ø§ÛŒÛ• Ù¾Ø§Ø±ÛŽØ²Ú¯Ø§ Ùˆ Ù¾Û†Ù„ Ù‡Û•ÚµØ¨Ú˜ÛŽØ±Û•.'));
       return;
     }
 
@@ -325,7 +341,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
       commentsCount: 0,
       shares: 0,
       views: 0,
-      timeAgo: { ar: 'الآن', ku: 'ئێستا', en: 'Just now' },
+      timeAgo: { ar: 'Ø§Ù„Ø¢Ù†', ku: 'Ø¦ÛŽØ³ØªØ§', en: 'Just now' },
       likedByUser: false,
       savedByUser: false,
       comments: [],
@@ -353,11 +369,11 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
 
         const createdId = created?.id || created?.data?.id || optimisticPost.id;
         setPosts((prev) => [{ ...optimisticPost, id: String(createdId) }, ...prev]);
-        setPostStatus(t(currentLang, 'Post added.', 'تمت إضافة المنشور.', 'بابەتەکە زیادکرا.'));
+        setPostStatus(t(currentLang, 'Post added.', 'ØªÙ…Øª Ø¥Ø¶Ø§ÙØ© Ø§Ù„Ù…Ù†Ø´ÙˆØ±.', 'Ø¨Ø§Ø¨Û•ØªÛ•Ú©Û• Ø²ÛŒØ§Ø¯Ú©Ø±Ø§.'));
       } catch (backendError) {
         console.warn('Post backend create failed, using local fallback:', backendError);
         setPosts((prev) => [optimisticPost, ...prev]);
-        setPostStatus(t(currentLang, 'Post added locally. Backend create route may need review.', 'تمت إضافة المنشور محلياً. قد يحتاج الخادم للمراجعة.', 'بابەتەکە ناوخۆیی زیادکرا.'));
+        setPostStatus(t(currentLang, 'Post added locally. Backend create route may need review.', 'ØªÙ…Øª Ø¥Ø¶Ø§ÙØ© Ø§Ù„Ù…Ù†Ø´ÙˆØ± Ù…Ø­Ù„ÙŠØ§Ù‹. Ù‚Ø¯ ÙŠØ­ØªØ§Ø¬ Ø§Ù„Ø®Ø§Ø¯Ù… Ù„Ù„Ù…Ø±Ø§Ø¬Ø¹Ø©.', 'Ø¨Ø§Ø¨Û•ØªÛ•Ú©Û• Ù†Ø§ÙˆØ®Û†ÛŒÛŒ Ø²ÛŒØ§Ø¯Ú©Ø±Ø§.'));
       }
 
       setNewPostDraft({
@@ -390,7 +406,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
       );
       setEditingPostId(null);
       setEditingPostText('');
-      setPostStatus(t(currentLang, 'Post updated.', 'تم تحديث المنشور.', 'بابەتەکە نوێکرایەوە.'));
+      setPostStatus(t(currentLang, 'Post updated.', 'ØªÙ… ØªØ­Ø¯ÙŠØ« Ø§Ù„Ù…Ù†Ø´ÙˆØ±.', 'Ø¨Ø§Ø¨Û•ØªÛ•Ú©Û• Ù†ÙˆÛŽÚ©Ø±Ø§ÛŒÛ•ÙˆÛ•.'));
     } catch (error) {
       setPostStatus(getApiErrorMessage(error));
     }
@@ -447,7 +463,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
             : business
         )
       );
-      setBusinessStatus(t(currentLang, 'Business saved.', 'تم حفظ النشاط.', 'بازرگانی پاشەکەوت کرا.'));
+      setBusinessStatus(t(currentLang, 'Business saved.', 'ØªÙ… Ø­ÙØ¸ Ø§Ù„Ù†Ø´Ø§Ø·.', 'Ø¨Ø§Ø²Ø±Ú¯Ø§Ù†ÛŒ Ù¾Ø§Ø´Û•Ú©Û•ÙˆØª Ú©Ø±Ø§.'));
       setEditingBusinessId(null);
     } catch (error) {
       setBusinessStatus(getApiErrorMessage(error));
@@ -458,12 +474,52 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
     try {
       await businessesApi.delete(businessId);
       setBusinesses((prev) => prev.filter((business) => business.id !== businessId));
-      setBusinessStatus(t(currentLang, 'Business deleted.', 'تم حذف النشاط.', 'بازرگانی سڕایەوە.'));
+      setBusinessStatus(t(currentLang, 'Business deleted.', 'ØªÙ… Ø­Ø°Ù Ø§Ù„Ù†Ø´Ø§Ø·.', 'Ø¨Ø§Ø²Ø±Ú¯Ø§Ù†ÛŒ Ø³Ú•Ø§ÛŒÛ•ÙˆÛ•.'));
     } catch (error) {
       setBusinessStatus(getApiErrorMessage(error));
     }
   };
 
+  const loadBusinessSubmissions = async () => {
+    setBusinessSubmissionsLoading(true);
+    setBusinessSubmissionsStatus('');
+
+    try {
+      const response = await api.get('/business-submissions', { params: { status: 'all', limit: 100 } });
+      const rows = response?.data?.data || response?.data || response || [];
+      setBusinessSubmissions(Array.isArray(rows) ? rows : []);
+      setBusinessSubmissionsStatus(t(currentLang, 'Business requests loaded.', 'تم تحميل طلبات الأنشطة.', 'داواکارییەکانی بازرگانی بارکران.'));
+    } catch (error) {
+      setBusinessSubmissionsStatus(getApiErrorMessage(error));
+    } finally {
+      setBusinessSubmissionsLoading(false);
+    }
+  };
+
+  const updateBusinessSubmissionStatus = async (submissionId: string, status: 'approved' | 'rejected') => {
+    setBusinessSubmissionsLoading(true);
+    setBusinessSubmissionsStatus('');
+
+    try {
+      await api.patch(`/business-submissions/${submissionId}`, { status });
+      setBusinessSubmissions((prev) =>
+        prev.map((item) =>
+          item.id === submissionId
+            ? { ...item, status }
+            : item
+        )
+      );
+      setBusinessSubmissionsStatus(
+        status === 'approved'
+          ? t(currentLang, 'Request approved.', 'تمت الموافقة على الطلب.', 'داواکارییەکە پەسەندکرا.')
+          : t(currentLang, 'Request rejected.', 'تم رفض الطلب.', 'داواکارییەکە ڕەتکرایەوە.')
+      );
+    } catch (error) {
+      setBusinessSubmissionsStatus(getApiErrorMessage(error));
+    } finally {
+      setBusinessSubmissionsLoading(false);
+    }
+  };
   const runDiagnostics = async () => {
     setDiagnosticsLoading(true);
     const next: DiagnosticItem[] = [];
@@ -519,27 +575,99 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
     <div className="max-w-6xl mx-auto p-4 md:p-6 space-y-6" dir={currentLang === 'en' ? 'ltr' : 'rtl'}>
       <div className="bg-[#18191a] border border-white/10 rounded-2xl p-5 text-white">
         <h1 className="text-2xl font-black mb-2">
-          {t(currentLang, 'Admin Control Center', 'مركز تحكم الإدارة', 'ناوەندی کۆنترۆڵی بەڕێوەبەر')}
+          {t(currentLang, 'Admin Control Center', 'Ù…Ø±ÙƒØ² ØªØ­ÙƒÙ… Ø§Ù„Ø¥Ø¯Ø§Ø±Ø©', 'Ù†Ø§ÙˆÛ•Ù†Ø¯ÛŒ Ú©Û†Ù†ØªØ±Û†ÚµÛŒ Ø¨Û•Ú•ÛŽÙˆÛ•Ø¨Û•Ø±')}
         </h1>
         <p className="text-sm text-zinc-400">{displayEmail}</p>
         <div className="grid sm:grid-cols-3 gap-3 mt-5">
           <div className="bg-white/5 rounded-xl p-4 border border-white/10">
-            <span className="text-xs text-zinc-400">{t(currentLang, 'Businesses', 'الأعمال', 'بازرگانییەکان')}</span>
+            <span className="text-xs text-zinc-400">{t(currentLang, 'Businesses', 'Ø§Ù„Ø£Ø¹Ù…Ø§Ù„', 'Ø¨Ø§Ø²Ø±Ú¯Ø§Ù†ÛŒÛŒÛ•Ú©Ø§Ù†')}</span>
             <strong className="block text-2xl">{businesses.length}</strong>
           </div>
           <div className="bg-white/5 rounded-xl p-4 border border-white/10">
-            <span className="text-xs text-zinc-400">{t(currentLang, 'Posts', 'المنشورات', 'بابەتەکان')}</span>
+            <span className="text-xs text-zinc-400">{t(currentLang, 'Posts', 'Ø§Ù„Ù…Ù†Ø´ÙˆØ±Ø§Øª', 'Ø¨Ø§Ø¨Û•ØªÛ•Ú©Ø§Ù†')}</span>
             <strong className="block text-2xl">{posts.length}</strong>
           </div>
           <div className="bg-white/5 rounded-xl p-4 border border-amber-500/25">
             <span className="text-xs text-zinc-400">
-              {t(currentLang, 'Pending Approval', 'بانتظار الموافقة', 'چاوەڕوانی پەسەندکردن')}
+              {t(currentLang, 'Pending Approval', 'Ø¨Ø§Ù†ØªØ¸Ø§Ø± Ø§Ù„Ù…ÙˆØ§ÙÙ‚Ø©', 'Ú†Ø§ÙˆÛ•Ú•ÙˆØ§Ù†ÛŒ Ù¾Û•Ø³Û•Ù†Ø¯Ú©Ø±Ø¯Ù†')}
             </span>
             <strong className="block text-2xl text-amber-300">{pendingPosts}</strong>
           </div>
         </div>
-      </div>
+      </div>      <section className="bg-[#18191a] border border-white/10 rounded-2xl p-5 text-white space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <h2 className="text-lg font-black">
+              {t(currentLang, 'Business Owner Requests', 'طلبات أصحاب الأنشطة', 'داواکاری خاوەن بازرگانییەکان')}
+            </h2>
+            <p className="text-xs text-zinc-400 mt-1">
+              {t(currentLang, 'Review businesses submitted by normal users before publishing.', 'راجع الأنشطة المرسلة من المستخدمين قبل النشر.', 'پێداچوونەوە بکە بە بازرگانییە نێردراوەکان پێش بڵاوکردنەوە.')}
+            </p>
+          </div>
 
+          <button
+            type="button"
+            onClick={loadBusinessSubmissions}
+            disabled={businessSubmissionsLoading}
+            className="px-3 py-2 rounded-lg bg-luxury-gold text-black text-xs font-black disabled:opacity-60"
+          >
+            {businessSubmissionsLoading
+              ? t(currentLang, 'Loading...', 'جاري التحميل...', 'بارکردن...')
+              : t(currentLang, 'Load Requests', 'تحميل الطلبات', 'بارکردنی داواکارییەکان')}
+          </button>
+        </div>
+
+        {businessSubmissionsStatus && (
+          <div className="text-sm font-semibold text-amber-300">
+            {businessSubmissionsStatus}
+          </div>
+        )}
+
+        {businessSubmissions.length === 0 ? (
+          <div className="text-sm text-zinc-400 bg-white/5 rounded-xl p-4 border border-white/10">
+            {t(currentLang, 'No requests loaded yet. Click Load Requests.', 'لا توجد طلبات محملة حالياً. اضغط تحميل الطلبات.', 'هێشتا هیچ داواکارییەک بار نەکراوە. کرتە لە بارکردنی داواکارییەکان بکە.')}
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {businessSubmissions.map((item) => (
+              <div key={item.id} className="bg-white/5 border border-white/10 rounded-xl p-4">
+                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
+                  <div className="space-y-1">
+                    <h3 className="font-black text-white">{item.name}</h3>
+                    <p className="text-sm text-zinc-300">{item.description || '-'}</p>
+                    <p className="text-xs text-zinc-400">
+                      {item.phone} · {item.governorate || '-'} · {item.category || '-'}
+                    </p>
+                    <p className="text-xs text-zinc-500">{item.address || ''}</p>
+                    <span className="inline-flex text-xs px-2 py-1 rounded-full bg-black/30 border border-white/10 text-amber-200">
+                      {item.status}
+                    </span>
+                  </div>
+
+                  <div className="flex gap-2 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => updateBusinessSubmissionStatus(item.id, 'approved')}
+                      disabled={businessSubmissionsLoading || item.status === 'approved'}
+                      className="px-3 py-2 rounded-lg bg-emerald-600 text-white text-xs font-black disabled:opacity-50"
+                    >
+                      {t(currentLang, 'Approve', 'موافقة', 'پەسەندکردن')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => updateBusinessSubmissionStatus(item.id, 'rejected')}
+                      disabled={businessSubmissionsLoading || item.status === 'rejected'}
+                      className="px-3 py-2 rounded-lg bg-red-600 text-white text-xs font-black disabled:opacity-50"
+                    >
+                      {t(currentLang, 'Reject', 'رفض', 'ڕەتکردنەوە')}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
       <section className="bg-[#18191a] border border-white/10 rounded-2xl p-5 text-white space-y-3">
         <div className="flex items-center justify-between gap-3">
           <h2 className="text-lg font-black">Admin API Diagnostics</h2>
@@ -577,7 +705,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
       <section className="bg-[#18191a] border border-white/10 rounded-2xl p-5 text-white space-y-4">
         <h2 className="text-lg font-black flex items-center gap-2">
           <ImageIcon className="w-5 h-5 text-luxury-gold" />
-          {t(currentLang, 'Hero Editor', 'تعديل الواجهة الرئيسية', 'دەستکاری هیرو')}
+          {t(currentLang, 'Hero Editor', 'ØªØ¹Ø¯ÙŠÙ„ Ø§Ù„ÙˆØ§Ø¬Ù‡Ø© Ø§Ù„Ø±Ø¦ÙŠØ³ÙŠØ©', 'Ø¯Û•Ø³ØªÚ©Ø§Ø±ÛŒ Ù‡ÛŒØ±Ùˆ')}
         </h2>
         <p className="text-xs text-amber-300">
           Hero edits save to this app immediately and persist in browser storage.
@@ -618,7 +746,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
                   onClick={() => setHeroSlides((prev) => [slide, ...prev.filter((item) => item.id !== slide.id)])}
                   className="px-3 py-2 rounded-lg bg-blue-500/15 text-blue-200 border border-blue-400/30 text-xs font-black"
                 >
-                  ⭐ Use as main slide
+                  â­ Use as main slide
                 </button>
 
                 <button
@@ -626,7 +754,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
                   onClick={() => deleteHeroSlide(slide.id)}
                   className="px-3 py-2 rounded-lg bg-red-500/15 text-red-200 border border-red-400/30 text-xs font-black"
                 >
-                  🗑 Delete this slide
+                  ðŸ—‘ Delete this slide
                 </button>
               </div>
             </div>
@@ -636,12 +764,12 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
 
       <section className="bg-[#18191a] border border-white/10 rounded-2xl p-5 text-white space-y-4">
         <h2 className="text-lg font-black">
-          {t(currentLang, 'Social Feed Moderation', 'إدارة المنشورات', 'بەڕێوەبردنی بابەتەکان')}
+          {t(currentLang, 'Social Feed Moderation', 'Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ù…Ù†Ø´ÙˆØ±Ø§Øª', 'Ø¨Û•Ú•ÛŽÙˆÛ•Ø¨Ø±Ø¯Ù†ÛŒ Ø¨Ø§Ø¨Û•ØªÛ•Ú©Ø§Ù†')}
         </h2>
         
               <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
                 <label className="text-xs font-black text-zinc-300">
-                  {t(currentLang, 'Upload post photo', 'رفع صورة المنشور', 'بارکردنی وێنەی بابەت')}
+                  {t(currentLang, 'Upload post photo', 'Ø±ÙØ¹ ØµÙˆØ±Ø© Ø§Ù„Ù…Ù†Ø´ÙˆØ±', 'Ø¨Ø§Ø±Ú©Ø±Ø¯Ù†ÛŒ ÙˆÛŽÙ†Û•ÛŒ Ø¨Ø§Ø¨Û•Øª')}
                   <input
                     type="file"
                     accept="image/*"
@@ -653,8 +781,8 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
                   {t(
                     currentLang,
                     'The app will compress the image automatically before posting.',
-                    'سيقوم التطبيق بضغط الصورة تلقائياً قبل النشر.',
-                    'ئەپەکە وێنەکە خۆکارانە پێش بڵاوکردنەوە پەستان دەکات.'
+                    'Ø³ÙŠÙ‚ÙˆÙ… Ø§Ù„ØªØ·Ø¨ÙŠÙ‚ Ø¨Ø¶ØºØ· Ø§Ù„ØµÙˆØ±Ø© ØªÙ„Ù‚Ø§Ø¦ÙŠØ§Ù‹ Ù‚Ø¨Ù„ Ø§Ù„Ù†Ø´Ø±.',
+                    'Ø¦Û•Ù¾Û•Ú©Û• ÙˆÛŽÙ†Û•Ú©Û• Ø®Û†Ú©Ø§Ø±Ø§Ù†Û• Ù¾ÛŽØ´ Ø¨ÚµØ§ÙˆÚ©Ø±Ø¯Ù†Û•ÙˆÛ• Ù¾Û•Ø³ØªØ§Ù† Ø¯Û•Ú©Ø§Øª.'
                   )}
                 </p>
               </div>
@@ -679,13 +807,13 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
           </select>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <label className="text-xs font-black text-zinc-300">
-                  {t(currentLang, 'Governorate', 'المحافظة', 'پارێزگا')}
+                  {t(currentLang, 'Governorate', 'Ø§Ù„Ù…Ø­Ø§ÙØ¸Ø©', 'Ù¾Ø§Ø±ÛŽØ²Ú¯Ø§')}
                   <select
                     value={newPostDraft.governorate}
                     onChange={(event) => setNewPostDraft((prev) => ({ ...prev, governorate: event.target.value }))}
                     className="mt-2 w-full rounded-xl bg-black/40 border border-white/10 px-3 py-3 text-sm text-white"
                   >
-                    <option value="">{t(currentLang, 'Choose governorate for this post', 'اختر محافظة المنشور', 'پارێزگای بابەتەکە هەڵبژێرە')}</option>
+                    <option value="">{t(currentLang, 'Choose governorate for this post', 'Ø§Ø®ØªØ± Ù…Ø­Ø§ÙØ¸Ø© Ø§Ù„Ù…Ù†Ø´ÙˆØ±', 'Ù¾Ø§Ø±ÛŽØ²Ú¯Ø§ÛŒ Ø¨Ø§Ø¨Û•ØªÛ•Ú©Û• Ù‡Û•ÚµØ¨Ú˜ÛŽØ±Û•')}</option>
                     {IRAQ_GOVERNORATES.map((gov) => (
                       <option key={gov.id} value={gov.id}>
                         {getGovernorateLabel(gov.id, currentLang)}
@@ -695,13 +823,13 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
                 </label>
 
                 <label className="text-xs font-black text-zinc-300">
-                  {t(currentLang, 'Category', 'التصنيف', 'پۆل')}
+                  {t(currentLang, 'Category', 'Ø§Ù„ØªØµÙ†ÙŠÙ', 'Ù¾Û†Ù„')}
                   <select
                     value={newPostDraft.category}
                     onChange={(event) => setNewPostDraft((prev) => ({ ...prev, category: event.target.value }))}
                     className="mt-2 w-full rounded-xl bg-black/40 border border-white/10 px-3 py-3 text-sm text-white"
                   >
-                    <option value="">{t(currentLang, 'Choose category for this post', 'اختر تصنيف المنشور', 'پۆلی بابەتەکە هەڵبژێرە')}</option>
+                    <option value="">{t(currentLang, 'Choose category for this post', 'Ø§Ø®ØªØ± ØªØµÙ†ÙŠÙ Ø§Ù„Ù…Ù†Ø´ÙˆØ±', 'Ù¾Û†Ù„ÛŒ Ø¨Ø§Ø¨Û•ØªÛ•Ú©Û• Ù‡Û•ÚµØ¨Ú˜ÛŽØ±Û•')}</option>
                     {APP_CATEGORIES.map((category) => (
                       <option key={category.id} value={category.id}>
                         {getCategoryLabel(category.id, currentLang)}
@@ -768,7 +896,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
         <div className="space-y-3">
           {posts.length === 0 && (
             <p className="text-sm text-zinc-400">
-              {t(currentLang, 'No posts yet.', 'لا توجد منشورات بعد.', 'هێشتا هیچ بابەتێک نییە.')}
+              {t(currentLang, 'No posts yet.', 'Ù„Ø§ ØªÙˆØ¬Ø¯ Ù…Ù†Ø´ÙˆØ±Ø§Øª Ø¨Ø¹Ø¯.', 'Ù‡ÛŽØ´ØªØ§ Ù‡ÛŒÚ† Ø¨Ø§Ø¨Û•ØªÛŽÚ© Ù†ÛŒÛŒÛ•.')}
             </p>
           )}
           {posts.map((post) => (
@@ -845,7 +973,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
 
       <section className="bg-[#18191a] border border-white/10 rounded-2xl p-5 text-white space-y-4">
         <h2 className="text-lg font-black">
-          {t(currentLang, 'Business Listings', 'قوائم الأعمال', 'لیستی بازرگانییەکان')}
+          {t(currentLang, 'Business Listings', 'Ù‚ÙˆØ§Ø¦Ù… Ø§Ù„Ø£Ø¹Ù…Ø§Ù„', 'Ù„ÛŒØ³ØªÛŒ Ø¨Ø§Ø²Ø±Ú¯Ø§Ù†ÛŒÛŒÛ•Ú©Ø§Ù†')}
         </h2>
         {businessStatus && <p className="text-xs text-zinc-300">{businessStatus}</p>}
         <div className="grid md:grid-cols-2 gap-3">
@@ -940,3 +1068,4 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
 };
 
 export default AdminPanel;
+
