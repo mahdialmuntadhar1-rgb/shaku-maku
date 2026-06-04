@@ -46,12 +46,12 @@ export default function BusinessFeed({
   });
   
   // Keep track of counts of displayed items per category
-  const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({});
+  const [categoryVisibleCounts, setCategoryVisibleCounts] = useState<Record<string, number>>({});
   const [loadingCategories, setLoadingCategories] = useState<Record<string, boolean>>({});
 
   // Reset pagination/expanded categories when governorate or category changes
   React.useEffect(() => {
-    setExpandedCategories({});
+    setCategoryVisibleCounts({});
     setLoadingCategories({});
   }, [selectedGov, selectedCategory]);
   
@@ -62,6 +62,8 @@ export default function BusinessFeed({
   const [newReviewRating, setNewReviewRating] = useState(5);
 
   const t = TRANSLATIONS[currentLang];
+  const INITIAL_CATEGORY_LIMIT = 2;
+  const LOAD_MORE_STEP = 4;
 
   function cleanBusinessDisplayText(value: string | undefined): string {
     const raw = String(value || '').trim();
@@ -234,18 +236,22 @@ export default function BusinessFeed({
   }, [selectedGov, normalizedSelectedGov, selectedCategory, businesses.length, govFiltered.length, visibleCount]);
 
   const handleToggleCategoryExpand = (catId: string) => {
-    const isCurrentlyExpanded = expandedCategories[catId] || false;
-    
-    if (isCurrentlyExpanded) {
-      setExpandedCategories(prev => ({ ...prev, [catId]: false }));
-    } else {
-      if (loadingCategories[catId]) return;
-      setLoadingCategories(prev => ({ ...prev, [catId]: true }));
-      setTimeout(() => {
-        setExpandedCategories(prev => ({ ...prev, [catId]: true }));
-        setLoadingCategories(prev => ({ ...prev, [catId]: false }));
-      }, 750);
-    }
+    if (loadingCategories[catId]) return;
+
+    const total = (groupedBusinesses[catId] || []).length;
+    const current = categoryVisibleCounts[catId] || INITIAL_CATEGORY_LIMIT;
+    const next = Math.min(total, current + LOAD_MORE_STEP);
+
+    setLoadingCategories(prev => ({ ...prev, [catId]: true }));
+
+    setTimeout(() => {
+      setCategoryVisibleCounts(prev => ({ ...prev, [catId]: next }));
+      setLoadingCategories(prev => ({ ...prev, [catId]: false }));
+    }, 250);
+  };
+
+  const handleShowLessCategory = (catId: string) => {
+    setCategoryVisibleCounts(prev => ({ ...prev, [catId]: INITIAL_CATEGORY_LIMIT }));
   };
 
   const handleShare = (biz: Business) => {
@@ -334,8 +340,10 @@ export default function BusinessFeed({
         // Skip rendering category section if there are no matching businesses
         if (categoryBizs.length === 0) return null;
 
-        const isExpanded = expandedCategories[category.id] || false;
-        const visibleBizs = isExpanded ? categoryBizs : categoryBizs.slice(0, 3);
+        const visibleLimit = categoryVisibleCounts[category.id] || INITIAL_CATEGORY_LIMIT;
+        const visibleBizs = categoryBizs.slice(0, visibleLimit);
+        const hasMore = visibleLimit < categoryBizs.length;
+        const canShowLess = visibleLimit > INITIAL_CATEGORY_LIMIT;
 
         return (
           <div key={category.id} className="relative bg-[#07111f]/95 p-5 rounded-3xl border border-blue-400/25 shadow-[0_0_38px_rgba(59,130,246,0.18)] overflow-hidden">
@@ -359,7 +367,7 @@ export default function BusinessFeed({
             </div>
 
             {/* Grid of Business Cards */}
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3.5 sm:gap-6 [&>*:nth-child(odd)]:md:-translate-y-3 [&>*:nth-child(even)]:md:translate-y-3">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3.5 sm:gap-6">
               {visibleBizs.map((biz) => {
                 const hasStories = biz.stories && biz.stories.length > 0;
                 
@@ -612,7 +620,7 @@ export default function BusinessFeed({
             {/* Skeletons load indicator */}
             {loadingCategories[category.id] && (
               <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3.5 sm:gap-6 mt-4">
-                {[1, 2, 3].slice(0, Math.min(3, categoryBizs.length - 3)).map((n) => (
+                {[1, 2].slice(0, Math.min(2, Math.max(0, categoryBizs.length - visibleLimit))).map((n) => (
                   <div key={n} className="flex flex-col h-full bg-slate-100/50 border border-zinc-200/50 rounded-2xl overflow-hidden animate-pulse min-h-[180px] xs:min-h-[220px]">
                     <div className="h-28 xs:h-36 sm:h-44 md:h-48 w-full bg-zinc-200/80"></div>
                     <div className="p-4 space-y-2 flex-1 flex flex-col justify-between">
@@ -627,16 +635,29 @@ export default function BusinessFeed({
               </div>
             )}
 
-            {/* Load More Button for current Category block */}
-            {categoryBizs.length > 3 && (
-              <div className="flex justify-center mt-5">
-                <button
-                  onClick={() => handleToggleCategoryExpand(category.id)}
-                  disabled={loadingCategories[category.id]}
-                  className="text-[11px] font-bold text-luxury-teal hover:text-white bg-white hover:bg-luxury-teal px-4 py-1.5 rounded-full border border-luxury-teal/30 transition-all cursor-pointer shadow-sm disabled:opacity-50"
-                >
-                  {loadingCategories[category.id] ? (currentLang === 'en' ? 'Fetching...' : currentLang === 'ku' ? 'تۆمارکردن...' : 'جاري التحميل...') : (isExpanded ? t.showLess : `${t.loadMore} (${categoryBizs.length - 3}) +`)}
-                </button>
+            {/* Incremental Load More Button for current Category block */}
+            {(hasMore || canShowLess) && (
+              <div className="flex flex-wrap justify-center gap-2 mt-5">
+                {hasMore && (
+                  <button
+                    onClick={() => handleToggleCategoryExpand(category.id)}
+                    disabled={loadingCategories[category.id]}
+                    className="text-[11px] font-bold text-luxury-teal hover:text-white bg-white hover:bg-luxury-teal px-4 py-1.5 rounded-full border border-luxury-teal/30 transition-all cursor-pointer shadow-sm disabled:opacity-50"
+                  >
+                    {loadingCategories[category.id]
+                      ? (currentLang === 'en' ? 'Fetching...' : currentLang === 'ku' ? 'بارکردن...' : 'جاري التحميل...')
+                      : `${t.loadMore} (${categoryBizs.length - visibleLimit}) +`}
+                  </button>
+                )}
+
+                {canShowLess && (
+                  <button
+                    onClick={() => handleShowLessCategory(category.id)}
+                    className="text-[11px] font-bold text-zinc-300 hover:text-white bg-zinc-800 hover:bg-zinc-700 px-4 py-1.5 rounded-full border border-zinc-600/50 transition-all cursor-pointer shadow-sm"
+                  >
+                    {t.showLess}
+                  </button>
+                )}
               </div>
             )}
 

@@ -96,7 +96,8 @@ export default function CategorySwiper({
   };
 
   const handleSelect = (catId: string | null) => {
-    onSelectCategory(catId);
+    // Clicking the same category again clears the filter, so users never get stuck.
+    onSelectCategory(selectedCategory === catId ? null : catId);
   };
 
   return (
@@ -122,9 +123,9 @@ export default function CategorySwiper({
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             onClick={() => handleSelect(null)}
-            className="text-[10px] font-bold text-cyan-400 hover:text-white bg-cyan-950/40 px-2.5 py-1 rounded-full border border-cyan-500/20 transition-all cursor-pointer flex items-center gap-1 shrink-0"
+            className="text-[11px] font-black text-white bg-cyan-700 hover:bg-cyan-600 px-3 py-1.5 rounded-full border border-cyan-300/40 transition-all cursor-pointer flex items-center gap-1 shrink-0 shadow-[0_0_18px_rgba(34,211,238,0.25)]"
           >
-            <span>{currentLang === 'en' ? 'Reset' : currentLang === 'ku' ? 'پاککردنەوە' : 'إعادة تعيين'} ↺</span>
+            <span>{currentLang === 'en' ? 'Show all' : currentLang === 'ku' ? 'هەموو پیشان بدە' : 'عرض الكل'} ↺</span>
           </motion.button>
         )}
       </div>
