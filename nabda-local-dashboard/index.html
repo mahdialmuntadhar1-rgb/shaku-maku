@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Shaku Maku Nabda Sender — Upgraded</title>
+  <style>
+    :root{
+      --bg:#0d1112;--panel:#151b1d;--panel2:#101617;--gold:#c8a95f;--text:#f8f4ea;--muted:#a9afa9;
+      --danger:#ff6b4a;--ok:#49d17c;--warn:#ffd36d;--border:rgba(200,169,95,.24);--line:rgba(255,255,255,.09)
+    }
+    *{box-sizing:border-box} body{margin:0;font-family:"Segoe UI",Tahoma,Arial,sans-serif;background:radial-gradient(circle at top,#173638,var(--bg));color:var(--text)}
+    .wrap{max-width:1180px;margin:0 auto;padding:28px 16px 70px}.hero,.card{border:1px solid var(--border);background:rgba(21,27,29,.93);border-radius:20px;padding:20px;box-shadow:0 16px 45px rgba(0,0,0,.28);margin-bottom:16px}
+    .hero{background:linear-gradient(135deg,rgba(15,46,47,.96),rgba(17,17,17,.97))}h1{margin:0 0 8px;color:var(--gold);font-size:29px}h2{margin:0 0 10px;color:var(--gold);font-size:20px}p{color:var(--muted);line-height:1.7}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}@media(max-width:900px){.grid{grid-template-columns:1fr}}
+    label{display:block;margin:12px 0 6px;color:var(--gold);font-weight:700}input,textarea,select{width:100%;border:1px solid rgba(255,255,255,.12);background:#0b1011;color:var(--text);border-radius:12px;padding:12px;outline:none;font-size:15px}textarea{min-height:130px;resize:vertical}button{border:0;border-radius:12px;padding:12px 16px;cursor:pointer;font-weight:800;color:#151515;background:var(--gold);margin:8px 6px 0 0}button.secondary{background:#e8e1ce}button.danger{background:var(--danger);color:white}button.ok{background:var(--ok);color:#07130b}button.warn{background:var(--warn);color:#17120a}button:disabled{opacity:.5;cursor:not-allowed}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:700px){.row{grid-template-columns:1fr}}.small{font-size:13px;color:var(--muted)}.pill{display:inline-block;border:1px solid var(--border);border-radius:999px;padding:5px 10px;margin:3px;color:var(--muted);font-size:12px}.stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-top:12px}@media(max-width:900px){.stats{grid-template-columns:repeat(2,1fr)}}.stat{border:1px solid var(--line);background:rgba(0,0,0,.22);border-radius:14px;padding:12px}.stat b{color:var(--gold);font-size:22px;display:block}table{width:100%;border-collapse:collapse;margin-top:12px;direction:ltr}th,td{border-bottom:1px solid var(--line);padding:9px;text-align:left;font-size:13px;vertical-align:top}th{color:var(--gold)}.log{max-height:360px;overflow:auto;background:#080c0d;border-radius:12px;padding:12px;margin-top:12px;direction:ltr;white-space:pre-wrap;font-family:Consolas,monospace;font-size:13px}.bad{color:var(--danger)}.good{color:var(--ok)}.note{border:1px solid rgba(255,211,109,.25);background:rgba(255,211,109,.08);border-radius:12px;padding:10px;color:#f2dfaa}.ltr{direction:ltr;text-align:left}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <h1>شكو ماكو — Nabda WhatsApp Sender Pro</h1>
+    <p>نسخة مطوّرة للداشبورد المحلي: Preview أقوى، تنظيف أرقام، إظهار الأرقام المرفوضة، Pause/Resume، حد أقصى للدفعة، اختبار رقم مخصص، وتقرير CSV كامل.</p>
+    <p class="small">مهم: استخدمه فقط مع جهات عندك إذن بمراسلتها. خلي التأخير 1200ms أو أكثر، والأفضل 3000–8000ms للحملات الكبيرة.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>1) إعدادات Nabda / Local Proxy</h2>
+      <label>Local send endpoint</label>
+      <input id="sendEndpoint" class="ltr" value="/send" placeholder="/send أو http://localhost:8787/send" />
+      <label>API Key</label>
+      <input id="apiKey" type="password" placeholder="ضع Nabda API key هنا" autocomplete="off" />
+      <div class="row">
+        <div><label>Delay بين الرسائل ms</label><input id="delayMs" type="number" value="3000" min="1200" /></div>
+        <div><label>Max per batch</label><input id="maxBatch" type="number" value="50" min="1" /></div>
+      </div>
+      <label>Test number</label>
+      <input id="testNumber" class="ltr" value="+9647704413300" />
+      <button onclick="saveSettings()">💾 Save</button><button class="secondary" onclick="loadSettings()">↩ Load</button>
+      <p class="small">الداشبورد يرسل إلى local proxy حتى لا ينكشف API key داخل المتصفح. Header في السيرفر يكون: Authorization = API KEY فقط، بدون Bearer.</p>
+    </div>
+
+    <div class="card">
+      <h2>2) الرسالة</h2>
+      <textarea id="message" placeholder="اكتب الرسالة هنا..."></textarea>
+      <div><span id="charCount" class="pill">0 chars</span><span class="pill">يفضل رسالة قصيرة وواضحة</span></div>
+      <button onclick="setSample(1)">رسالة 1</button><button onclick="setSample(2)">رسالة 2</button><button class="secondary" onclick="copyMessage()">Copy message</button>
+    </div>
+
+    <div class="card">
+      <h2>3) قائمة الأرقام</h2>
+      <label>Mode</label>
+      <select id="mode" onchange="toggleMode()"><option value="manual">قائمة أرقام يدوية</option><option value="csv">استيراد CSV حسب المحافظة</option></select>
+      <div id="manualBox"><label>الأرقام اليدوية</label><textarea id="manualNumbers" class="ltr" placeholder="9647704413300&#10;07701234567&#10;+9647500000000"></textarea></div>
+      <div id="csvBox" style="display:none"><label>Import CSV / استيراد ملف CSV</label><input id="csvFile" type="file" accept=".csv,text/csv" onchange="loadCsv()" /><button class="secondary" type="button" onclick="document.getElementById('csvFile').click()">📥 Import CSV</button><label>Governorate / المحافظة</label><select id="governorateFilter"><option value="ALL">ALL</option></select><p class="small">Accepted columns: phone, phone_number, mobile, number, whatsapp, wa — governorate, province, city, محافظة. اختر Mode = استيراد CSV، ثم اضغط Import CSV، ثم Preview.</p></div>
+      <button class="secondary" onclick="setCsvMode()">📥 Import CSV mode</button><button onclick="previewTargets()">👁 Preview</button><button class="ok" onclick="sendTest()">📤 Test</button><button class="secondary" onclick="exportInvalids()">⬇ Invalid numbers</button>
+    </div>
+
+    <div class="card">
+      <h2>4) الإرسال</h2>
+      <div class="stats"><div class="stat"><b id="validCount">0</b>Valid</div><div class="stat"><b id="invalidCount">0</b>Invalid</div><div class="stat"><b id="sentCount">0</b>Sent</div><div class="stat"><b id="failedCount">0</b>Failed</div><div class="stat"><b id="dupeCount">0</b>Dupes</div></div>
+      <button id="sendBtn" class="ok" onclick="sendBulk()">🚀 Send preview list</button><button id="pauseBtn" class="warn" onclick="pauseSending()">⏸ Pause</button><button class="ok" onclick="resumeSending()">▶ Resume</button><button class="danger" onclick="stopSending()">⏹ Stop</button><button class="secondary" onclick="exportReport()">⬇ Report CSV</button><button class="secondary" onclick="clearLog()">🗑 Clear log</button>
+      <div class="note small">قبل الإرسال الحقيقي: اعمل Test على رقمك، ثم أرسل دفعة صغيرة 5–10 أرقام، بعدها كبّر العدد.</div>
+      <div class="log" id="log"></div>
+    </div>
+  </div>
+
+  <div class="card"><h2>Preview — Valid targets</h2><table><thead><tr><th>#</th><th>Phone</th><th>Governorate</th><th>Source</th></tr></thead><tbody id="previewBody"></tbody></table></div>
+  <div class="card"><h2>Invalid / Rejected numbers</h2><table><thead><tr><th>#</th><th>Raw</th><th>Reason</th></tr></thead><tbody id="invalidBody"></tbody></table></div>
+</div>
+<script>
+let csvRows=[],targets=[],invalids=[],report=[],sending=false,paused=false,sendIndex=0;
+const $=id=>document.getElementById(id);
+function log(msg){const el=$('log');el.textContent+=`[${new Date().toLocaleTimeString()}] ${msg}\n`;el.scrollTop=el.scrollHeight}function clearLog(){ $('log').textContent=''}function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
+function saveSettings(){['sendEndpoint','apiKey','delayMs','maxBatch','testNumber'].forEach(id=>localStorage.setItem('nabda_'+id,$(id).value));log('Settings saved locally.')}function loadSettings(){['sendEndpoint','apiKey','delayMs','maxBatch','testNumber'].forEach(id=>{const v=localStorage.getItem('nabda_'+id);if(v!==null)$(id).value=v})}
+function setSample(n){$('message').value=n===2?'كل منافسينك صاروا يظهرون أونلاين. سجّل عملك مجاناً في شكو ماكو وخلي الزبائن يوصلون لك أسهل: https://shakumaku.pages.dev/':'أهلاً، شكو ماكو منصة عراقية تساعد الناس يكتشفون الأعمال والخدمات المحلية بسهولة. الانضمام مجاني حالياً، سجّل عملك هنا: https://shakumaku.pages.dev/';updateChars()}function copyMessage(){navigator.clipboard.writeText($('message').value||'');log('Message copied.')}function updateChars(){ $('charCount').textContent=($('message').value||'').length+' chars'}$('message').addEventListener('input',updateChars);
+function toggleMode(){const m=$('mode').value;$('manualBox').style.display=m==='manual'?'block':'none';$('csvBox').style.display=m==='csv'?'block':'none'}
+function setCsvMode(){ $('mode').value='csv'; toggleMode(); setTimeout(()=>$('csvFile').click(),50); }
+function normalizePhone(raw){if(!raw)return {phone:null,reason:'empty'};let p=String(raw).trim().replace(/[\u200e\u200f\s\-().]/g,'').replace(/[^\d+]/g,'');if(p.startsWith('+'))p=p.slice(1);if(p.startsWith('00'))p=p.slice(2);if(p.startsWith('0')&&p.length===11)p='964'+p.slice(1);if(p.length===10&&p.startsWith('7'))p='964'+p;if(!p.startsWith('964'))return {phone:null,reason:'not Iraq 964 format'};if(p.length!==13)return {phone:null,reason:'wrong length after normalize'};if(!/^9647\d{9}$/.test(p))return {phone:null,reason:'not Iraqi mobile pattern 9647xxxxxxxxx'};return {phone:'+'+p,reason:''}}
+function parseCsvLine(line){const r=[];let c='',q=false;for(let i=0;i<line.length;i++){const ch=line[i];if(ch==='"'){if(q&&line[i+1]==='"'){c+='"';i++}else q=!q}else if((ch===','||ch===';')&&!q){r.push(c.trim().replace(/^"|"$/g,''));c=''}else c+=ch}r.push(c.trim().replace(/^"|"$/g,''));return r}
+function parseCsv(text){const lines=text.split(/\r?\n/).filter(x=>x.trim());if(!lines.length)return[];const headers=parseCsvLine(lines[0]).map(h=>h.trim());return lines.slice(1).map(line=>{const vals=parseCsvLine(line),o={};headers.forEach((h,i)=>o[h]=vals[i]||'');return o})}function findCol(row,names){const keys=Object.keys(row||{});for(const n of names){const f=keys.find(k=>k.toLowerCase().trim()===n.toLowerCase().trim());if(f)return f}return null}
+function loadCsv(){const file=$('csvFile').files[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{csvRows=parseCsv(reader.result);const sel=$('governorateFilter');sel.innerHTML='<option value="ALL">ALL</option>';if(!csvRows.length){log('CSV empty.');return}const govCol=findCol(csvRows[0],['governorate','province','city','محافظة','المحافظة']);if(govCol){[...new Set(csvRows.map(r=>r[govCol]).filter(Boolean))].sort().forEach(g=>{const opt=document.createElement('option');opt.value=g;opt.textContent=g;sel.appendChild(opt)})}log(`CSV loaded: ${csvRows.length} rows.`)};reader.readAsText(file,'UTF-8')}
+function previewTargets(){const mode=$('mode').value;const seen=new Set();let dupes=0,raw=[];targets=[];invalids=[];if(mode==='manual'){raw=$('manualNumbers').value.split(/\r?\n/).map((x,i)=>({phone:x,governorate:'',source:'manual line '+(i+1)})).filter(x=>String(x.phone).trim())}else{if(!csvRows.length)return alert('Upload CSV first.');const selected=$('governorateFilter').value;const phoneCol=findCol(csvRows[0],['phone','phone_number','PhoneNumber','mobile','number','whatsapp','wa']);const govCol=findCol(csvRows[0],['governorate','province','city','محافظة','المحافظة']);if(!phoneCol)return alert('Could not find phone column.');raw=csvRows.filter(r=>selected==='ALL'||!govCol||r[govCol]===selected).map((r,i)=>({phone:r[phoneCol],governorate:govCol?r[govCol]:'',source:'csv row '+(i+2)}))}for(const item of raw){const n=normalizePhone(item.phone);if(!n.phone){invalids.push({raw:item.phone,reason:n.reason});continue}if(seen.has(n.phone)){dupes++;continue}seen.add(n.phone);targets.push({phone:n.phone,governorate:item.governorate||'',source:item.source||''})}sendIndex=0;report=[];$('validCount').textContent=targets.length;$('invalidCount').textContent=invalids.length;$('dupeCount').textContent=dupes;$('sentCount').textContent='0';$('failedCount').textContent='0';renderTables();log(`Preview ready: ${targets.length} valid, ${invalids.length} invalid, ${dupes} duplicates removed.`)}
+function renderTables(){const tb=$('previewBody');tb.innerHTML='';targets.slice(0,500).forEach((t,i)=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${i+1}</td><td>${t.phone}</td><td>${t.governorate||''}</td><td>${t.source||''}</td>`;tb.appendChild(tr)});const ib=$('invalidBody');ib.innerHTML='';invalids.slice(0,300).forEach((x,i)=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${i+1}</td><td>${String(x.raw||'').replace(/[<>&]/g,'')}</td><td>${x.reason}</td>`;ib.appendChild(tr)})}
+async function sendOne(apiKey,phone,message){const endpoint=$('sendEndpoint').value.trim()||'/send';const res=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({apiKey,phone,message})});let data;try{data=await res.json()}catch{data={success:false,error:'Invalid JSON response'}}return {httpStatus:res.status,data}}
+async function sendTest(){const apiKey=$('apiKey').value.trim(),message=$('message').value.trim();const n=normalizePhone($('testNumber').value);if(!apiKey)return alert('Paste API key first.');if(!message)return alert('Write message first.');if(!n.phone)return alert('Invalid test number: '+n.reason);log('Sending test to '+n.phone+'...');const result=await sendOne(apiKey,n.phone,message);log(`TEST HTTP ${result.httpStatus}: ${JSON.stringify(result.data)}`)}
+async function sendBulk(){const apiKey=$('apiKey').value.trim(),message=$('message').value.trim();const delayMs=Math.max(1200,Number($('delayMs').value||3000));const maxBatch=Math.max(1,Number($('maxBatch').value||50));if(!apiKey)return alert('Paste API key first.');if(!message)return alert('Write message first.');if(!targets.length)return alert('Preview numbers first.');const remaining=targets.length-sendIndex;const count=Math.min(maxBatch,remaining);if(count<=0)return alert('No remaining targets. Preview again to restart.');if(!confirm(`Send ${count} numbers now? Remaining after this batch: ${remaining-count}`))return;sending=true;paused=false;let sent=Number($('sentCount').textContent||0),failed=Number($('failedCount').textContent||0);for(;sendIndex<targets.length && sendIndex<sent+failed+count;sendIndex++){while(paused&&sending){await sleep(500)}if(!sending){log('Stopped by user.');break}const t=targets[sendIndex];log(`Sending ${sendIndex+1}/${targets.length} to ${t.phone}...`);let result,ok=false;try{result=await sendOne(apiKey,t.phone,message);ok=!!(result.data&&result.data.success)}catch(e){result={httpStatus:'FETCH_ERROR',data:{success:false,error:String(e.message||e)}}}if(ok){sent++;log(`✅ SENT ${t.phone} HTTP ${result.httpStatus}`)}else{failed++;log(`❌ FAILED ${t.phone} HTTP ${result.httpStatus}: ${JSON.stringify(result.data)}`)}report.push({index:sendIndex+1,phone:t.phone,governorate:t.governorate||'',status:ok?'SENT':'FAILED',httpStatus:result.httpStatus,response:JSON.stringify(result.data),time:new Date().toISOString()});$('sentCount').textContent=sent;$('failedCount').textContent=failed;await sleep(delayMs)}sending=false;paused=false;log(`Batch done. Sent: ${sent}, Failed: ${failed}, Next index: ${sendIndex+1}`)}
+function pauseSending(){if(sending){paused=true;log('Paused.')}}function resumeSending(){if(sending&&paused){paused=false;log('Resumed.')}}function stopSending(){sending=false;paused=false}
+function toCsv(rows,headers){return [headers.join(','),...rows.map(r=>headers.map(h=>`"${String(r[h]??'').replace(/"/g,'""')}"`).join(','))].join('\n')}function download(name,text){const blob=new Blob([text],{type:'text/csv;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;a.click();URL.revokeObjectURL(url)}function exportReport(){if(!report.length)return alert('No report yet.');download(`nabda-report-${Date.now()}.csv`,toCsv(report,['index','phone','governorate','status','httpStatus','response','time']))}function exportInvalids(){if(!invalids.length)return alert('No invalid numbers.');download(`nabda-invalids-${Date.now()}.csv`,toCsv(invalids,['raw','reason']))}
+loadSettings();updateChars();
+</script>
+</body>
+</html>
