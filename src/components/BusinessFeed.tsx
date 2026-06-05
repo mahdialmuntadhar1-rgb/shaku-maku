@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Heart, Bookmark, Star, MapPin, Phone, Share2, Edit3, Save, 
@@ -71,11 +71,11 @@ export default function BusinessFeed({
 
     // Hide generated/fake placeholder metadata from cards.
     if (
-      lower.includes('street 1,') ||
-      lower.includes('website: www.') ||
-      lower.includes('facebook: facebook.com/') ||
-      lower.includes('instagram: instagram.com/') ||
-      lower.includes('city: ')
+      /^street\s+\d+\s*,/i.test(raw) ||
+      lower.includes('website: www.biz.iq') || lower.includes('www.biz.iq') ||
+      lower.includes('facebook: fb.com/biz') || lower.includes('facebook.com/biz') ||
+      lower.includes('instagram: @biz') || lower.includes('instagram.com/biz') ||
+      lower.includes('city: ') || lower.includes('email: biz@')
     ) {
       return '';
     }
@@ -97,13 +97,13 @@ export default function BusinessFeed({
     const facebook = raw.match(/facebook:\s*([^|\n]+)/i)?.[1]?.trim();
     const instagram = raw.match(/instagram:\s*([^|\n]+)/i)?.[1]?.trim();
 
-    if (website && !website.includes('example.com')) {
+    if (website && !website.includes('example.com') && !website.includes('www.biz.iq')) {
       links.push({ label: 'Website', href: website.startsWith('http') ? website : `https://${website}` });
     }
-    if (facebook) {
+    if (facebook && !facebook.includes('fb.com/biz') && !facebook.includes('facebook.com/biz')) {
       links.push({ label: 'Facebook', href: facebook.startsWith('http') ? facebook : `https://${facebook}` });
     }
-    if (instagram) {
+    if (instagram && instagram !== '@biz' && !instagram.includes('instagram.com/biz')) {
       links.push({ label: 'Instagram', href: instagram.startsWith('http') ? instagram : `https://${instagram}` });
     }
 
@@ -968,3 +968,4 @@ export default function BusinessFeed({
     </div>
   );
 }
+
