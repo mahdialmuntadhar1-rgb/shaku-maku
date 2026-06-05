@@ -6,6 +6,9 @@ import { requireAuth } from './_authz';
 type Env = {
   DB: any;
   JWT_SECRET: string;
+  RESEND_API_KEY?: string;
+  PASSWORD_RESET_FROM_EMAIL?: string;
+  FRONTEND_URL?: string;
 };
 
 const authRoutes = new Hono<{ Bindings: Env }>();
@@ -13,6 +16,19 @@ const authRoutes = new Hono<{ Bindings: Env }>();
 // Helper: Generate ID
 function generateId(): string {
   return crypto.randomUUID();
+}
+
+function normalizeEmail(value: unknown): string {
+  return String(value || '').trim().toLowerCase();
+}
+
+function isValidEmail(value: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+
+function isValidPassword(value: unknown): boolean {
+  const password = String(value || '');
+  return password.length >= 8 && password.length <= 128;
 }
 
 // Helper: Hash password
@@ -39,6 +55,55 @@ async function generateToken(payload: any, secret: string): Promise<string> {
 
 const PASSWORD_RESET_MESSAGE = 'If the email exists, a reset link has been sent';
 
+function getFrontendUrl(c: any): string {
+  return String(c.env.FRONTEND_URL || 'https://shakumaku.pages.dev').replace(/\/+$/, '');
+}
+
+async function sendPasswordResetEmail(c: any, email: string, token: string): Promise<boolean> {
+  const apiKey = String(c.env.RESEND_API_KEY || '').trim();
+  const fromEmail = String(c.env.PASSWORD_RESET_FROM_EMAIL || 'Shaku Maku <noreply@shakumaku.pages.dev>').trim();
+
+  if (!apiKey) {
+    console.warn('[ShakuMaku] Password reset email not sent: RESEND_API_KEY is not configured.');
+    return false;
+  }
+
+  const resetUrl = `${getFrontendUrl(c)}/?resetToken=${encodeURIComponent(token)}&email=${encodeURIComponent(email)}`;
+
+  const response = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      from: fromEmail,
+      to: [email],
+      subject: 'Reset your Shaku Maku password',
+      html: `
+        <div style="font-family:Arial,sans-serif;line-height:1.6;color:#111">
+          <h2>Reset your Shaku Maku password</h2>
+          <p>Click the button below to reset your password. This link expires in 1 hour.</p>
+          <p>
+            <a href="${resetUrl}" style="display:inline-block;background:#0F2E2F;color:#fff;padding:12px 18px;border-radius:10px;text-decoration:none;font-weight:bold">
+              Reset Password
+            </a>
+          </p>
+          <p>If you did not request this, you can ignore this email.</p>
+        </div>
+      `
+    })
+  });
+
+  if (!response.ok) {
+    const text = await response.text().catch(() => '');
+    console.warn('[ShakuMaku] Password reset email failed:', response.status, text.slice(0, 300));
+    return false;
+  }
+
+  return true;
+}
+
 // Register
 authRoutes.post('/register', async (c) => {
   try {
@@ -48,16 +113,25 @@ authRoutes.post('/register', async (c) => {
       return c.json({ error: 'Email and password are required' }, 400);
     }
 
+    const normalizedEmail = normalizeEmail(email);
+
+    if (!isValidEmail(normalizedEmail)) {
+      return c.json({ error: 'Invalid email address' }, 400);
+    }
+
+    if (!isValidPassword(password)) {
+      return c.json({ error: 'Password must be between 8 and 128 characters' }, 400);
+    }
+
     // Check if user already exists
     const existingUser = await c.env.DB.prepare(
       'SELECT id FROM users WHERE email = ?'
-    ).bind(email.toLowerCase()).first();
+    ).bind(normalizedEmail).first();
 
     if (existingUser) {
       return c.json({ error: 'User already exists' }, 409);
     }
 
-    const normalizedEmail = email.toLowerCase();
     // Hash password
     const passwordHash = await hashPassword(password);
     const userId = generateId();
@@ -225,6 +299,10 @@ authRoutes.post('/forgot-password', async (c) => {
        VALUES (?, ?, ?, ?)`
     ).bind(tokenId, user.id, resetToken, expiresAt).run();
 
+    // Send reset email when email provider is configured.
+    // Do not expose the token in API response.
+    await sendPasswordResetEmail(c, email.toLowerCase(), resetToken);
+
     return c.json({
       success: true,
       message: PASSWORD_RESET_MESSAGE
@@ -242,6 +320,10 @@ authRoutes.post('/reset-password', async (c) => {
 
     if (!email || !token || !newPassword) {
       return c.json({ error: 'Email, token, and new password are required' }, 400);
+    }
+
+    if (!isValidPassword(newPassword)) {
+      return c.json({ error: 'Password must be between 8 and 128 characters' }, 400);
     }
 
     // Find valid token

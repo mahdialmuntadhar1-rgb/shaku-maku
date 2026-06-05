@@ -1,4 +1,4 @@
-﻿import { Hono } from 'hono';
+import { Hono } from 'hono';
 import { requireAuth } from './_authz';
 
 type Env = {
@@ -170,6 +170,10 @@ feedRoutes.post('/posts', async (c) => {
 
     if (!caption) {
       return c.json({ success: false, error: 'Caption is required' }, 400);
+    }
+
+    if (caption.length > 2000) {
+      return c.json({ success: false, error: 'Caption is too long' }, 400);
     }
 
     let businessId = cleanText(data?.business_id);
@@ -407,13 +411,19 @@ feedRoutes.post('/posts/:id/comments', async (c) => {
     const { id } = c.req.param();
     const { text } = await c.req.json();
 
-    if (!cleanText(text)) return c.json({ success: false, error: 'Invalid input' }, 400);
+    const commentText = cleanText(text);
+
+    if (!commentText) return c.json({ success: false, error: 'Invalid input' }, 400);
+
+    if (commentText.length > 1000) {
+      return c.json({ success: false, error: 'Comment is too long' }, 400);
+    }
 
     const commentId = generateId();
 
     await c.env.DB.prepare(
       'INSERT INTO comments (id, post_id, user_id, text) VALUES (?, ?, ?, ?)'
-    ).bind(commentId, id, payload.id, cleanText(text)).run();
+    ).bind(commentId, id, payload.id, commentText).run();
 
     await c.env.DB.prepare(
       'UPDATE posts SET comments_count = comments_count + 1 WHERE id = ?'

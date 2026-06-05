@@ -1,4 +1,4 @@
-﻿
+
 function cleanTaxonomyValue(value) {
   return String(value || '')
     .toLowerCase()
@@ -124,6 +124,110 @@ app.use('/*', cors({
   maxAge: 86400,
 }));
 
+// Public launch API security headers.
+// These protect API responses from common browser-side risks.
+app.use('/*', async (c, next) => {
+  c.header('X-Content-Type-Options', 'nosniff');
+  c.header('Referrer-Policy', 'strict-origin-when-cross-origin');
+  c.header('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=(), usb=()');
+  c.header('X-Frame-Options', 'DENY');
+
+  if (c.req.path.startsWith('/api/auth/')) {
+    c.header('Cache-Control', 'no-store');
+  }
+
+  await next();
+});
+// Public launch safety rate limiter.
+// This protects sensitive public endpoints from simple spam/brute-force abuse.
+// Cloudflare WAF/Turnstile is still recommended later for stronger protection.
+type RateLimitRule = {
+  keyPrefix: string;
+  windowMs: number;
+  max: number;
+};
+
+const RATE_LIMIT_BUCKETS = new Map<string, { count: number; resetAt: number }>();
+
+function getClientIp(c: any): string {
+  const forwarded = c.req.header('CF-Connecting-IP')
+    || c.req.header('X-Forwarded-For')
+    || c.req.header('X-Real-IP')
+    || 'unknown';
+
+  return String(forwarded).split(',')[0].trim() || 'unknown';
+}
+
+function getRateLimitRule(method: string, path: string): RateLimitRule | null {
+  const m = String(method || '').toUpperCase();
+  const p = String(path || '').toLowerCase();
+
+  if (m === 'POST' && p === '/api/auth/login') {
+    return { keyPrefix: 'auth-login', windowMs: 15 * 60 * 1000, max: 12 };
+  }
+
+  if (m === 'POST' && p === '/api/auth/register') {
+    return { keyPrefix: 'auth-register', windowMs: 60 * 60 * 1000, max: 6 };
+  }
+
+  if (m === 'POST' && p === '/api/auth/forgot-password') {
+    return { keyPrefix: 'auth-forgot-password', windowMs: 60 * 60 * 1000, max: 5 };
+  }
+
+  if (m === 'POST' && p === '/api/auth/reset-password') {
+    return { keyPrefix: 'auth-reset-password', windowMs: 60 * 60 * 1000, max: 8 };
+  }
+
+  if (m === 'POST' && p === '/api/feed/posts') {
+    return { keyPrefix: 'feed-create-post', windowMs: 10 * 60 * 1000, max: 15 };
+  }
+
+  if (m === 'POST' && /^\/api\/feed\/posts\/[^/]+\/comments$/.test(p)) {
+    return { keyPrefix: 'feed-create-comment', windowMs: 10 * 60 * 1000, max: 25 };
+  }
+
+  return null;
+}
+
+app.use('/*', async (c, next) => {
+  const rule = getRateLimitRule(c.req.method, c.req.path);
+
+  if (!rule) {
+    return next();
+  }
+
+  const now = Date.now();
+  const ip = getClientIp(c);
+  const key = `${rule.keyPrefix}:${ip}`;
+  const current = RATE_LIMIT_BUCKETS.get(key);
+
+  if (!current || current.resetAt <= now) {
+    RATE_LIMIT_BUCKETS.set(key, {
+      count: 1,
+      resetAt: now + rule.windowMs
+    });
+
+    return next();
+  }
+
+  if (current.count >= rule.max) {
+    const retryAfterSeconds = Math.max(1, Math.ceil((current.resetAt - now) / 1000));
+
+    c.header('Retry-After', String(retryAfterSeconds));
+
+    return c.json({
+      success: false,
+      error: 'Too many requests. Please try again later.'
+    }, 429);
+  }
+
+  current.count += 1;
+  RATE_LIMIT_BUCKETS.set(key, current);
+
+  return next();
+});
+
+
 app.get('/', (c) => {
   return c.json({ 
     status: 'ok', 
@@ -149,63 +253,10 @@ app.get('/api/health', async (c) => {
 });
 
 app.get('/api/debug/db', async (c) => {
-  try {
-    const bindingExists = Boolean(c.env.DB);
-    if (!bindingExists) {
-      return c.json({
-        success: false,
-        error: 'Database binding missing',
-        binding_exists: false
-      }, 500);
-    }
-
-    const tablesResult = await c.env.DB.prepare(
-      `SELECT name FROM sqlite_master WHERE type='table' ORDER BY name`
-    ).all();
-    const tableNames = (tablesResult.results || []).map((row: any) => String(row.name));
-    const hasTable = (name: string) => tableNames.includes(name);
-
-    const businessCountRow = hasTable('businesses')
-      ? await c.env.DB.prepare('SELECT COUNT(*) as count FROM businesses').first() as any
-      : { count: 0 };
-
-    const categoryCountRow = hasTable('categories')
-      ? await c.env.DB.prepare('SELECT COUNT(*) as count FROM categories').first() as any
-      : hasTable('businesses')
-        ? await c.env.DB.prepare('SELECT COUNT(DISTINCT category) as count FROM businesses').first() as any
-        : { count: 0 };
-
-    const governorateCountRow = hasTable('governorates')
-      ? await c.env.DB.prepare('SELECT COUNT(*) as count FROM governorates').first() as any
-      : hasTable('businesses')
-        ? await c.env.DB.prepare('SELECT COUNT(DISTINCT governorate) as count FROM businesses').first() as any
-        : { count: 0 };
-
-    const latestBusinessSample = hasTable('businesses')
-      ? await c.env.DB.prepare(
-          'SELECT id, name_ar, name_en, category, governorate, created_at FROM businesses ORDER BY created_at DESC LIMIT 1'
-        ).first()
-      : null;
-
-    return c.json({
-      success: true,
-      binding_exists: true,
-      tables: tableNames,
-      counts: {
-        businesses: Number(businessCountRow?.count || 0),
-        categories: Number(categoryCountRow?.count || 0),
-        governorates: Number(governorateCountRow?.count || 0),
-      },
-      latest_business_sample: latestBusinessSample
-    });
-  } catch (error: any) {
-    return c.json({
-      success: false,
-      error: error?.message || 'DB debug failed'
-    }, 500);
-  }
+  // Public launch safety:
+  // Do not expose database structure, counts, or sample rows publicly.
+  return c.json({ success: false, error: 'Not found' }, 404);
 });
-
 app.get('/api/categories', async (c) => {
   try {
     const rows = await c.env.DB.prepare(

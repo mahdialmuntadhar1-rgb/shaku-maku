@@ -25,3 +25,13 @@ node_modules/
 .env.local
 .env.development.local
 .env.production.local
+
+# Public repo cleanup
+.wrangler/
+nabda-local-dashboard/
+STABLE-WORKING-VERSION.txt
+*.BACKUP-*
+*.BACKUP-*.*
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal

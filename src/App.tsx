@@ -530,21 +530,21 @@ export default function App() {
     }
 
     const localEmail = String(user.email || '').toLowerCase();
-    setIsAdmin(user.role === 'admin' || localEmail === 'safaribosafar@gmail.com');
+    setIsAdmin(user.role === 'admin' || Number(user.is_admin || 0) === 1);
     setUserProfile((prev) => ({
       uid: String(user.id || prev?.uid || localEmail),
       displayName: user.name || user.email?.split('@')[0] || 'User',
       photoURL: '',
       email: user.email,
       createdAt: prev?.createdAt || new Date().toISOString(),
-      role: localEmail === 'safaribosafar@gmail.com' ? 'admin' : (user.role || prev?.role || 'user'),
+      role: user.role || prev?.role || 'user',
       onboarded: true,
       businessId: null
     }));
     authApi.getMe()
       .then((me) => {
         const meEmail = String(me.email || '').toLowerCase();
-        const role = meEmail === 'safaribosafar@gmail.com' ? 'admin' : ((me.role as any) || 'user');
+        const role = ((me.role as any) || 'user');
 
         setUserProfile({
           uid: me.id,
@@ -681,7 +681,7 @@ export default function App() {
           'Unknown backend error';
 
         window.alert(
-          `Hero change was saved locally, but database sync failed.\n\nReason: ${status} - ${backendMessage}\n\nFix: log out, log in again as safaribosafar@gmail.com, then try saving the hero again.`
+          `Hero change was saved locally, but database sync failed.\n\nReason: ${status} - ${backendMessage}\n\nFix: log out, log in again with an admin account, then try saving the hero again.`
         );
       }
     })();

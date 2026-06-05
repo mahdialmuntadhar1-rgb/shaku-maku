@@ -1,4 +1,4 @@
-﻿const RAW_API_BASE_URL = (import.meta as any).env?.VITE_API_URL || 'https://shaku-maku.mahdialmuntadhar1.workers.dev';
+const RAW_API_BASE_URL = (import.meta as any).env?.VITE_API_URL || 'https://shaku-maku.mahdialmuntadhar1.workers.dev';
 const RAW_API_BASE_URL_STRING = String(RAW_API_BASE_URL).trim();
 
 export const API_BASE_URL =
@@ -259,9 +259,7 @@ export const authApi = {
     const userStr = localStorage.getItem('current_user') || localStorage.getItem('user');
     if (!userStr) return null;
     try {
-      const parsed = JSON.parse(userStr);
-      const email = String(parsed?.email || '').trim().toLowerCase();
-      return email === 'safaribosafar@gmail.com' ? { ...parsed, role: 'admin' } : parsed;
+      return JSON.parse(userStr);
     } catch {
       localStorage.removeItem('current_user');
       localStorage.removeItem('user');
@@ -270,10 +268,8 @@ export const authApi = {
   },
 
   setCurrentUser(user: AuthResponse['user']): void {
-    const email = String(user?.email || '').trim().toLowerCase();
-    const safeUser = email === 'safaribosafar@gmail.com' ? { ...user, role: 'admin' } : user;
-    localStorage.setItem('current_user', JSON.stringify(safeUser));
-    localStorage.setItem('user', JSON.stringify(safeUser));
+    localStorage.setItem('current_user', JSON.stringify(user));
+    localStorage.setItem('user', JSON.stringify(user));
     emitAuthChanged();
   },
 
