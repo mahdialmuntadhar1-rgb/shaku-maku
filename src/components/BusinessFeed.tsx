@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Heart, Bookmark, Star, MapPin, Phone, Share2, Edit3, Save, 
@@ -63,24 +63,96 @@ export default function BusinessFeed({
 
   const t = TRANSLATIONS[currentLang];
 
-  function cleanBusinessDisplayText(value: string | undefined): string {
+  function isPlaceholderBusinessValue(value: string | undefined): boolean {
     const raw = String(value || '').trim();
-    if (!raw) return '';
-
+    if (!raw) return true;
     const lower = raw.toLowerCase();
 
-    // Hide generated/fake placeholder metadata from cards.
-    if (
-      lower.includes('street 1,') ||
-      lower.includes('website: www.') ||
-      lower.includes('facebook: facebook.com/') ||
-      lower.includes('instagram: instagram.com/') ||
-      lower.includes('city: ')
-    ) {
-      return '';
-    }
+    return (
+      /^street\s+\d+\s*,\s*[^,]+\s*,\s*[^,]+$/i.test(raw) ||
+      lower.includes('www.biz.iq') ||
+      lower.includes('fb.com/biz') ||
+      lower.includes('facebook.com/biz') ||
+      lower.includes('instagram: @biz') ||
+      lower.includes('instagram.com/biz') ||
+      lower.includes('email: biz@') ||
+      lower === '@biz' ||
+      lower === 'biz' ||
+      lower.includes('example.com')
+    );
+  }
 
-    return raw;
+  function cleanBusinessDisplayText(value: string | undefined): string {
+    const raw = String(value || '').trim();
+    if (!raw || isPlaceholderBusinessValue(raw)) return '';
+
+    // If description is only metadata, do not show it as a paragraph.
+    const withoutMetadata = raw
+      .replace(/email:\s*[^|\n]+/gi, '')
+      .replace(/website:\s*[^|\n]+/gi, '')
+      .replace(/facebook:\s*[^|\n]+/gi, '')
+      .replace(/instagram:\s*[^|\n]+/gi, '')
+      .replace(/[|]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    return withoutMetadata && !isPlaceholderBusinessValue(withoutMetadata) ? withoutMetadata : '';
+  }
+
+  function isValidExternalTarget(value: string | undefined): boolean {
+    const raw = String(value || '').trim();
+    if (!raw || isPlaceholderBusinessValue(raw)) return false;
+    const lower = raw.toLowerCase();
+    return !(
+      lower === 'www.biz.iq' ||
+      lower === 'fb.com/biz' ||
+      lower === 'facebook.com/biz' ||
+      lower === '@biz' ||
+      lower === 'instagram.com/biz'
+    );
+  }
+
+  function normalizeExternalHref(value: string): string {
+    const raw = value.trim();
+    if (raw.startsWith('@')) return `https://instagram.com/${raw.slice(1)}`;
+    return raw.startsWith('http') ? raw : `https://${raw}`;
+  }
+
+  function getBusinessExternalLinks(biz: Business): Array<{ label: string; href: string }> {
+    const raw = [
+      biz.description?.ar,
+      biz.description?.ku,
+      biz.description?.en
+    ].filter(Boolean).join(' | ');
+
+    const links: Array<{ label: string; href: string }> = [];
+    const seen = new Set<string>();
+
+    const add = (label: string, value: string | undefined) => {
+      const clean = String(value || '').trim();
+      if (!isValidExternalTarget(clean)) return;
+      const href = normalizeExternalHref(clean);
+      const key = `${label}:${href}`.toLowerCase();
+      if (seen.has(key)) return;
+      seen.add(key);
+      links.push({ label, href });
+    };
+
+    add('Website', raw.match(/website:\s*([^|\n]+)/i)?.[1]);
+    add('Email', raw.match(/email:\s*([^|\n]+)/i)?.[1]?.replace(/^mailto:/i, 'mailto:'));
+    add('Facebook', raw.match(/facebook:\s*([^|\n]+)/i)?.[1]);
+    add('Instagram', raw.match(/instagram:\s*([^|\n]+)/i)?.[1]);
+
+    return links.map((link) => ({
+      ...link,
+      href: link.label === 'Email' && !link.href.startsWith('mailto:')
+        ? `mailto:${link.href.replace(/^https?:\/\//, '')}`
+        : link.href
+    }));
+  }
+
+  function hasVerifiedRating(biz: Business): boolean {
+    return Number(biz.rating || 0) > 0 && Number(biz.reviewsCount || 0) > 0;
   }
 
 
@@ -424,10 +496,12 @@ export default function BusinessFeed({
                             {standardizeMosulNinevehDisplay(biz.name[currentLang])}
                           </h3>
                           
-                          <div className="flex items-center gap-0.5 xs:gap-1 text-[9px] xs:text-[11px] text-amber-805 font-black shrink-0 bg-amber-500/10 px-1 xs:px-1.5 py-0.5 rounded-lg border border-amber-500/20 w-fit">
-                            <Star className="w-2.5 h-2.5 xs:w-3.5 xs:h-3.5 fill-amber-600 text-amber-600" />
-                            <span>{biz.rating}</span>
-                          </div>
+                          {hasVerifiedRating(biz) && (
+                            <div className="flex items-center gap-0.5 xs:gap-1 text-[9px] xs:text-[11px] text-amber-805 font-black shrink-0 bg-amber-500/10 px-1 xs:px-1.5 py-0.5 rounded-lg border border-amber-500/20 w-fit">
+                              <Star className="w-2.5 h-2.5 xs:w-3.5 xs:h-3.5 fill-amber-600 text-amber-600" />
+                              <span>{biz.rating}</span>
+                            </div>
+                          )}
                         </div>
 
                         {isAdmin && editingBusinessId === biz.id ? (
@@ -504,7 +578,7 @@ export default function BusinessFeed({
                             )}
 
                             <div className="flex flex-wrap gap-1 mb-1">
-                              {extractExternalLinks(biz.description[currentLang]).slice(0, 3).map((link) => (
+                              {getBusinessExternalLinks(biz).slice(0, 3).map((link) => (
                                 <a
                                   key={link.label}
                                   href={link.href}
@@ -718,11 +792,13 @@ export default function BusinessFeed({
                     </h2>
                   </div>
 
-                  <div className="flex items-center gap-1 text-sm text-yellow-500 font-extrabold bg-slate-950/80 px-2.5 py-1 rounded-xl border border-yellow-500/20">
-                    <Star className="w-3.5 h-3.5 fill-yellow-500" />
-                    <span>{selectedBiz.rating}</span>
-                    <span className="text-zinc-500 font-normal text-xs">({selectedBiz.reviewsCount} {currentLang === 'en' ? 'reviews' : 'تقييم'})</span>
-                  </div>
+                  {hasVerifiedRating(selectedBiz) && (
+                    <div className="flex items-center gap-1 text-sm text-yellow-500 font-extrabold bg-slate-950/80 px-2.5 py-1 rounded-xl border border-yellow-500/20">
+                      <Star className="w-3.5 h-3.5 fill-yellow-500" />
+                      <span>{selectedBiz.rating}</span>
+                      <span className="text-zinc-500 font-normal text-xs">({selectedBiz.reviewsCount} {currentLang === 'en' ? 'verified reviews' : 'تقييم موثّق'})</span>
+                    </div>
+                  )}
                 </div>
 
               </div>
@@ -736,7 +812,7 @@ export default function BusinessFeed({
                     {currentLang === 'en' ? 'Lifestyle Description' : currentLang === 'ku' ? 'تایبەتمەندی شوێنەکە' : 'نبذة عن المكان التجاري'}
                   </h4>
                   <p className="text-sm text-zinc-300 leading-relaxed">
-                    {selectedBiz.description[currentLang]}
+                    {cleanBusinessDisplayText(selectedBiz.description[currentLang]) || (currentLang === 'en' ? 'No verified description available yet.' : currentLang === 'ku' ? 'هێشتا وەسفی پشتڕاستکراو نییە.' : 'لا توجد نبذة موثقة حالياً.')}
                   </p>
                 </div>
 
@@ -759,7 +835,7 @@ export default function BusinessFeed({
                     <span className="text-[10px] text-zinc-500 uppercase font-mono font-bold block">{t.address}</span>
                     <div className="flex items-center gap-1.5">
                       <MapPin className="w-3.5 h-3.5 text-rose-500 shrink-0" />
-                      <span className="text-xs text-zinc-300">{selectedBiz.address[currentLang]}</span>
+                      <span className="text-xs text-zinc-300">{standardizeMosulNinevehDisplay(cleanBusinessDisplayText(selectedBiz.address[currentLang])) || (currentLang === 'en' ? 'No verified address available' : currentLang === 'ku' ? 'ناونیشانی پشتڕاستکراو نییە' : 'لا يوجد عنوان موثّق')}</span>
                     </div>
                   </div>
 
@@ -782,7 +858,7 @@ export default function BusinessFeed({
                       <span>{t.reviewsTitle}</span>
                     </h3>
                     <span className="text-xs text-zinc-400">
-                      {(localReviews[selectedBiz.id] || []).length + 3} {currentLang === 'en' ? 'Reviews posted' : 'ردود'}
+                      {(localReviews[selectedBiz.id] || []).length} {currentLang === 'en' ? 'visitor reviews' : 'ردود الزوار'}
                     </span>
                   </div>
 
@@ -851,56 +927,7 @@ export default function BusinessFeed({
                         </div>
                       </div>
                     ))}
-
-                    {/* Preloaded reviews mock */}
-                    <div className="p-3 bg-slate-950/40 rounded-2xl border border-zinc-900 flex items-start gap-2.5">
-                      <div className="w-8 h-8 rounded-full bg-purple-950 text-pink-400 font-bold flex items-center justify-center text-xs shrink-0 select-none">
-                        Z
-                      </div>
-                      <div className="flex-1 space-y-1">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold text-white">zainab_ali_baghdad</span>
-                          <div className="flex items-center gap-1 bg-yellow-500/10 px-1 py-0.5 rounded text-[10px] text-yellow-500">
-                            <Star className="w-3.5 h-3.5 fill-yellow-500 text-yellow-500" />
-                            <span>5</span>
-                          </div>
-                        </div>
-                        <p className="text-xs text-zinc-300">
-                          {currentLang === 'en' 
-                            ? 'Absolutely breathtaking atmosphere! The staff is super respectful. Recommended for studying.' 
-                            : currentLang === 'ku'
-                              ? 'سەرنجڕاکێش بوو، خزمەتگوزارییەکان زۆر باش بوون.'
-                              : 'مكان خيالي وجلسة فد شي راقي للآخر، موظفين في غاية الاحترام والخدمة سريعة.'}
-                        </p>
-                        <span className="text-[10px] text-zinc-500 block">3 days ago</span>
-                      </div>
-                    </div>
-
-                    <div className="p-3 bg-slate-950/40 rounded-2xl border border-zinc-900 flex items-start gap-2.5">
-                      <div className="w-8 h-8 rounded-full bg-sky-950 text-cyan-400 font-bold flex items-center justify-center text-xs shrink-0 select-none">
-                        M
-                      </div>
-                      <div className="flex-1 space-y-1">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold text-white">mustafa_kurdish</span>
-                          <div className="flex items-center gap-1 bg-yellow-500/10 px-1 py-0.5 rounded text-[10px] text-yellow-500">
-                            <Star className="w-3.5 h-3.5 fill-yellow-500 text-yellow-500" />
-                            <span>4</span>
-                          </div>
-                        </div>
-                        <p className="text-xs text-zinc-300">
-                          {currentLang === 'en' 
-                            ? "Highly recommended! Delicious menu items and wonderful interior layout." 
-                            : currentLang === 'ku'
-                              ? 'زۆر بە تام بوو و شوێنەکە مۆدێرنە!'
-                              : 'الوجبات ممتازة والمكان يستحق الزيارة والتجربة مع الأصحاب والأهل.'}
-                        </p>
-                        <span className="text-[10px] text-zinc-500 block">1 week ago</span>
-                      </div>
-                    </div>
-
-                  </div>
-                </div>
+</div>
 
               </div>
 
@@ -968,3 +995,4 @@ export default function BusinessFeed({
     </div>
   );
 }
+
