@@ -1158,7 +1158,7 @@ export default function App() {
               >
                 <div className="flex items-center gap-2">
                   <span className="text-base">
-                    {selectedCategory ? CATEGORIES.find(c => c.id === selectedCategory)?.icon || 'ðŸ¢' : 'ðŸ¢'}
+                    {selectedCategory ? CATEGORIES.find(c => c.id === selectedCategory)?.icon || '🏷️' : '🏷️'}
                   </span>
                   <span>
                     {selectedCategory 
@@ -1183,8 +1183,8 @@ export default function App() {
                         : 'text-zinc-300 hover:bg-white/5 font-semibold'
                     }`}
                   >
-                      : (currentLang === 'en' ? 'All Categories' : currentLang === 'ku' ? 'هەموو پۆلەکان' : 'جميع الفئات')}
-                    {selectedCategory === null && <span className="text-[9px]">âœ¨</span>}
+                    <span>🏷️ {currentLang === 'en' ? 'All Categories' : currentLang === 'ku' ? 'هەموو پۆلەکان' : 'جميع الفئات'}</span>
+                    {selectedCategory === null && <span className="text-[9px]">✨</span>}
                   </button>
 
                   {CATEGORIES.map((cat) => (
