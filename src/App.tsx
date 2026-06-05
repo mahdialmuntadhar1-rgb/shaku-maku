@@ -487,6 +487,13 @@ export default function App() {
   const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('token') || params.get('resetToken')) {
+      setAuthModalOpen(true);
+    }
+  }, []);
+
   const t = TRANSLATIONS[currentLang];
   const isRtl = currentLang === 'ar' || currentLang === 'ku';
   const liveDataError = businessesLoadError || postsLoadError;

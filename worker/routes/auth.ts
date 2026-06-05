@@ -68,7 +68,7 @@ async function sendPasswordResetEmail(c: any, email: string, token: string): Pro
     return false;
   }
 
-  const resetUrl = `${getFrontendUrl(c)}/?resetToken=${encodeURIComponent(token)}&email=${encodeURIComponent(email)}`;
+  const resetUrl = `${getFrontendUrl(c)}/?token=${encodeURIComponent(token)}&email=${encodeURIComponent(email)}`;
 
   const response = await fetch('https://api.resend.com/emails', {
     method: 'POST',

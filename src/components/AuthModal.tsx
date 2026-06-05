@@ -22,7 +22,10 @@ export default function AuthModal({
 }: AuthModalProps) {
   
   const [isSignUp, setIsSignUp] = useState(false);
-  const [email, setEmail] = useState('');
+  const resetSearchParams = new URLSearchParams(window.location.search);
+  const initialResetToken = resetSearchParams.get('token') || resetSearchParams.get('resetToken') || '';
+  const initialResetEmail = resetSearchParams.get('email') || '';
+  const [email, setEmail] = useState(initialResetEmail);
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [role, setRole] = useState<'user' | 'owner'>('user');
@@ -33,7 +36,6 @@ export default function AuthModal({
   const [showPassword, setShowPassword] = useState(false);
 
   // Forgot password states
-  const initialResetToken = new URLSearchParams(window.location.search).get('token') || '';
   const [authMode, setAuthMode] = useState<'login' | 'forgot' | 'reset'>(initialResetToken ? 'reset' : 'login');
   const resetTokenRef = useRef<HTMLInputElement>(null);
   const [newPassword, setNewPassword] = useState('');
@@ -53,7 +55,7 @@ export default function AuthModal({
       email: "Email Address",
       email_placeholder: "e.g., ali@gmail.com",
       pwd: "Password",
-      pwd_placeholder: "Minimum 6 characters",
+      pwd_placeholder: "Minimum 8 characters",
       name: "Full Name",
       name_placeholder: "e.g., Ali Al-Baghdadi",
       role_label: "Register Account As",
@@ -98,7 +100,7 @@ export default function AuthModal({
       email: "البريد الإلكتروني",
       email_placeholder: "مثال: ali@gmail.com",
       pwd: "كلمة المرور",
-      pwd_placeholder: "لا تقل عن 6 أحرف",
+      pwd_placeholder: "لا تقل عن 8 أحرف",
       name: "الاسم الكامل",
       name_placeholder: "مثال: علي البغدادي",
       role_label: "التسجيل كـ",
@@ -143,7 +145,7 @@ export default function AuthModal({
       email: "ناونیشانی ئیمەیڵ",
       email_placeholder: "بۆ نموونە: ali@gmail.com",
       pwd: "وشەی تێپەڕ",
-      pwd_placeholder: "کەمتر نەبێت لە 6 پیت",
+      pwd_placeholder: "کەمتر نەبێت لە 8 پیت",
       name: "ناوی تەواو",
       name_placeholder: "بۆ نموونە: عەلی بەغدادی",
       role_label: "تۆمارکردنی ئەکاونت وەک",
@@ -194,8 +196,8 @@ export default function AuthModal({
       setErrorMsg(currentLang === 'en' ? 'Full name is required to sign up' : 'الاسم الكامل مطلوب للتسجيل');
       return;
     }
-    if (password.length < 6) {
-      setErrorMsg(currentLang === 'en' ? 'Password must be at least 6 characters' : 'يجب أن لا تقل كلمة المرور عن 6 أحرف');
+    if (password.length < 8) {
+      setErrorMsg(currentLang === 'en' ? 'Password must be at least 8 characters' : 'يجب أن لا تقل كلمة المرور عن 8 أحرف');
       return;
     }
 
