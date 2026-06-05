@@ -774,10 +774,29 @@ export default function App() {
     const fetchBusinesses = async () => {
       try {
         setBusinessesLoading(true);
+
+        // Progressive loading:
+        // Show the first batch fast, then continue loading the rest quietly.
         const limit = 50;
         const maxPages = 100;
         const allRows: any[] = [];
         const seenIds = new Set<string>();
+
+        const publishBusinesses = () => {
+          if (cancelled) return;
+
+          const transformedBusinesses = allRows.map(transformBusiness);
+          const dedupedBusinesses = dedupeBusinessesByIdentity(transformedBusinesses);
+
+          setBusinesses(dedupedBusinesses);
+          setBusinessesLoadError(null);
+
+          try {
+            localStorage.setItem('cached_businesses_v1', JSON.stringify(dedupedBusinesses));
+          } catch (cacheError) {
+            console.warn('[ShakuMaku] business cache skipped:', cacheError);
+          }
+        };
 
         for (let page = 1; page <= maxPages; page += 1) {
           const response = await businessesApi.list({ page, limit });
@@ -791,25 +810,30 @@ export default function App() {
             const id = String(row?.id || '');
             if (!id) continue;
             if (seenIds.has(id)) continue;
+
             seenIds.add(id);
             allRows.push(row);
             newRowsThisPage += 1;
           }
 
           if (newRowsThisPage === 0) break;
-          // Keep going until an empty or duplicate page. Backend may cap page size.
+
+          // First page appears quickly.
+          if (page === 1) {
+            publishBusinesses();
+            setBusinessesLoading(false);
+          }
+
+          // Update visible list during background loading.
+          if (page % 5 === 0) {
+            publishBusinesses();
+          }
         }
 
         if (cancelled) return;
 
-        const transformedBusinesses = allRows.map(transformBusiness);
-
-        console.log("[ShakuMaku] all businesses loaded:", transformedBusinesses.length);
-
-        const dedupedBusinesses = dedupeBusinessesByIdentity(transformedBusinesses);
-        setBusinesses(dedupedBusinesses);
-        localStorage.setItem('cached_businesses_v1', JSON.stringify(dedupedBusinesses));
-        setBusinessesLoadError(null);
+        publishBusinesses();
+        console.log("[ShakuMaku] all businesses loaded progressively:", allRows.length);
       } catch (error) {
         console.error("Error fetching all businesses from API:", error);
         if (cancelled) return;
@@ -1213,8 +1237,8 @@ export default function App() {
 
                         
         {/* Visual Dual Entry Cards: Chaykhana + Shko Maku */}
-        <div className="mt-7 mb-9 max-w-5xl mx-auto px-3" dir={currentLang === 'en' ? 'ltr' : 'rtl'}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <div className="mt-4 mb-6 max-w-5xl mx-auto px-1.5 sm:px-3" dir={currentLang === 'en' ? 'ltr' : 'rtl'}>
+          <div className="grid grid-cols-2 gap-2.5 sm:gap-5">
             {/* Chaykhana Social Card */}
             <button
               type="button"
@@ -1231,18 +1255,18 @@ export default function App() {
               }
             >
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(244,63,94,0.32),transparent_38%),radial-gradient(circle_at_bottom_right,rgba(251,113,133,0.22),transparent_42%)]" />
-              <div className="relative z-10 flex h-full flex-col items-center justify-between gap-4">
+              <div className="relative z-10 flex h-full flex-col items-center justify-between gap-2 sm:gap-4">
                 <div>
-                  <h3 className="text-4xl sm:text-5xl font-black text-rose-100 leading-tight [font-family:Tahoma,Arial,sans-serif]">
+                  <h3 className="text-lg xs:text-xl sm:text-5xl font-black text-rose-100 leading-tight [font-family:Tahoma,Arial,sans-serif]">
                     {currentLang === 'en' ? 'Chaykhana' : currentLang === 'ku' ? 'چایخانە' : 'چايخانة'}
                   </h3>
-                  <p className="mt-2 text-base sm:text-lg font-bold text-rose-100/75 [font-family:Tahoma,Arial,sans-serif]">
+                  <p className="mt-1 text-[11px] sm:text-lg font-bold text-rose-100/75 [font-family:Tahoma,Arial,sans-serif]">
                     {currentLang === 'en' ? 'See what is new' : currentLang === 'ku' ? 'ببینە چی نوێیە' : 'شوف شنو الجديد'}
                   </p>
                 </div>
 
                 <div className="relative flex items-center justify-center">
-                  <div className="absolute h-24 w-24 rounded-full bg-rose-400/20 blur-2xl" />
+                  <div className="absolute h-12 w-12 sm:h-24 sm:w-24 rounded-full bg-rose-400/20 blur-2xl" />
                   <Coffee className="relative h-20 w-20 text-rose-100 drop-shadow-[0_0_18px_rgba(255,190,190,0.5)]" />
                 </div>
 
@@ -1252,7 +1276,7 @@ export default function App() {
                   <span className="rounded-2xl bg-white/10 p-3 text-rose-100"><Share2 className="h-5 w-5" /></span>
                 </div>
 
-                <div className="w-full rounded-full border border-rose-200/45 px-5 py-3 text-sm font-black text-rose-50 [font-family:Tahoma,Arial,sans-serif]">
+                <div className="w-full rounded-full border border-rose-200/45 px-2 py-2 sm:px-5 sm:py-3 text-[11px] sm:text-sm font-black text-rose-50 [font-family:Tahoma,Arial,sans-serif]">
                   {currentLang === 'en' ? 'Enter' : currentLang === 'ku' ? 'چوونەژوور' : 'الدخول'}
                 </div>
               </div>
@@ -1274,18 +1298,18 @@ export default function App() {
               }
             >
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(34,211,238,0.30),transparent_38%),radial-gradient(circle_at_bottom_right,rgba(20,184,166,0.22),transparent_42%)]" />
-              <div className="relative z-10 flex h-full flex-col items-center justify-between gap-4">
+              <div className="relative z-10 flex h-full flex-col items-center justify-between gap-2 sm:gap-4">
                 <div>
-                  <h3 className="text-4xl sm:text-5xl font-black text-cyan-100 leading-tight [font-family:Tahoma,Arial,sans-serif]">
+                  <h3 className="text-lg xs:text-xl sm:text-5xl font-black text-cyan-100 leading-tight [font-family:Tahoma,Arial,sans-serif]">
                     {currentLang === 'en' ? 'Shko Maku' : currentLang === 'ku' ? 'شکو ماکو' : 'شكو ماكو'}
                   </h3>
-                  <p className="mt-2 text-base sm:text-lg font-bold text-cyan-100/75 [font-family:Tahoma,Arial,sans-serif]">
+                  <p className="mt-1 text-[11px] sm:text-lg font-bold text-cyan-100/75 [font-family:Tahoma,Arial,sans-serif]">
                     {currentLang === 'en' ? 'Business directory' : currentLang === 'ku' ? 'ڕێبەری کار و خزمەتگوزاری' : 'دليل الأعمال والخدمات'}
                   </p>
                 </div>
 
                 <div className="relative flex items-center justify-center">
-                  <div className="absolute h-24 w-24 rounded-full bg-cyan-300/20 blur-2xl" />
+                  <div className="absolute h-12 w-12 sm:h-24 sm:w-24 rounded-full bg-cyan-300/20 blur-2xl" />
                   <div className="relative grid grid-cols-2 gap-3 text-cyan-100">
                     <Search className="h-11 w-11" />
                     <Store className="h-11 w-11" />
@@ -1294,29 +1318,29 @@ export default function App() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 w-full text-sm font-black [font-family:Tahoma,Arial,sans-serif]">
-                  <span className="rounded-full border border-cyan-100/25 bg-white/10 px-3 py-2 text-cyan-50">
+                <div className="grid grid-cols-2 gap-1 sm:gap-2 w-full text-[9px] sm:text-sm font-black [font-family:Tahoma,Arial,sans-serif]">
+                  <span className="rounded-full border border-cyan-100/25 bg-white/10 px-1.5 py-1 sm:px-3 sm:py-2 text-cyan-50">
                     {currentLang === 'en' ? 'Cafes' : currentLang === 'ku' ? 'کافێ' : 'كافيهات'}
                   </span>
-                  <span className="rounded-full border border-cyan-100/25 bg-white/10 px-3 py-2 text-cyan-50">
+                  <span className="rounded-full border border-cyan-100/25 bg-white/10 px-1.5 py-1 sm:px-3 sm:py-2 text-cyan-50">
                     {currentLang === 'en' ? 'Restaurants' : currentLang === 'ku' ? 'چێشتخانە' : 'مطاعم'}
                   </span>
-                  <span className="rounded-full border border-cyan-100/25 bg-white/10 px-3 py-2 text-cyan-50">
+                  <span className="rounded-full border border-cyan-100/25 bg-white/10 px-1.5 py-1 sm:px-3 sm:py-2 text-cyan-50">
                     {currentLang === 'en' ? 'Doctors' : currentLang === 'ku' ? 'دکتۆر' : 'أطباء'}
                   </span>
-                  <span className="rounded-full border border-cyan-100/25 bg-white/10 px-3 py-2 text-cyan-50">
+                  <span className="rounded-full border border-cyan-100/25 bg-white/10 px-1.5 py-1 sm:px-3 sm:py-2 text-cyan-50">
                     {currentLang === 'en' ? 'More' : currentLang === 'ku' ? 'زیاتر' : 'المزيد'}
                   </span>
                 </div>
 
-                <div className="w-full rounded-full border border-cyan-100/45 px-5 py-3 text-sm font-black text-cyan-50 [font-family:Tahoma,Arial,sans-serif]">
+                <div className="w-full rounded-full border border-cyan-100/45 px-2 py-2 sm:px-5 sm:py-3 text-[11px] sm:text-sm font-black text-cyan-50 [font-family:Tahoma,Arial,sans-serif]">
                   {currentLang === 'en' ? 'Enter' : currentLang === 'ku' ? 'چوونەژوور' : 'الدخول'}
                 </div>
               </div>
             </button>
           </div>
 
-          <p className="mt-5 text-center text-sm font-bold text-zinc-400 [font-family:Tahoma,Arial,sans-serif]">
+          <p className="mt-3 sm:mt-5 text-center text-[11px] sm:text-sm font-bold text-zinc-400 [font-family:Tahoma,Arial,sans-serif]">
             {currentLang === 'en' ? 'Choose the section you want to enter' : currentLang === 'ku' ? 'ئەو بەشە هەڵبژێرە کە دەتەوێت بچیتە ناوی' : 'اختر القسم الذي تريد الدخول إليه'}
           </p>
         </div>

@@ -119,11 +119,11 @@ export default function Header({
 
   return (
     <header className="sticky top-0 z-50 flex flex-col w-full shadow-lg">
-<div className="backdrop-blur-md bg-luxury-bg/90 border-b border-luxury-gold/20 pb-3 pt-3.5 px-3 xs:px-6 w-full flex flex-col md:flex-row items-center justify-between gap-3.5 md:gap-4">
+<div className="backdrop-blur-md bg-luxury-bg/90 border-b border-luxury-gold/20 pb-2 pt-2.5 px-3 xs:px-6 w-full flex flex-wrap md:flex-nowrap items-center justify-between gap-2 md:gap-4">
         
         {/* Left/Right Brand Column */}
-        <div className="flex items-center justify-between w-full md:w-auto gap-3">
-          <div className="flex items-center gap-2.5">
+        <div className="order-1 flex items-center justify-between flex-1 min-w-0 md:w-auto gap-2">
+          <div className="flex items-center gap-1.5.5">
             <div className="relative group cursor-pointer" onClick={() => onChangeTab('discover')}>
               <div className="absolute -inset-0.5 bg-gradient-to-r from-luxury-teal via-luxury-gold to-white rounded-xl blur opacity-75 group-hover:opacity-100 transition duration-500"></div>
               <div className="relative px-3 py-1.5 bg-[#16161a] rounded-xl leading-none flex items-center border border-luxury-gold/30">
@@ -156,7 +156,7 @@ export default function Header({
         </div>
 
         {/* Center balanced Language bar (Unified, elegant UI Switcher row) */}
-        <div className="flex items-center justify-center gap-1 bg-white/5 p-1 rounded-2xl border border-white/10 shrink-0 w-full sm:w-auto shadow-inner relative">
+        <div className="order-3 md:order-2 flex items-center justify-center gap-1 bg-white/5 p-1 rounded-2xl border border-white/10 shrink-0 w-full md:w-auto shadow-inner relative">
           {languages.map((lang) => (
             <button
               key={lang.code}
@@ -178,14 +178,14 @@ export default function Header({
         </div>
 
         {/* Action Controls & User Identity */}
-        <div className="flex items-center gap-2 w-full md:w-auto justify-end">
+        <div className="order-2 md:order-3 flex items-center gap-2 w-auto justify-end shrink-0">
           
           {/* Real-time Google Sign-In with Firebase Auth */}
           {user ? (
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setProfileOpen(!profileOpen)}
-                className="flex items-center gap-2 bg-[#1A1A1A] hover:bg-[#222] border border-luxury-gold/20 rounded-full pl-2 pr-3.5 py-1.5 cursor-pointer hover:border-luxury-gold/50 transition duration-300 shrink-0 select-none shadow-md"
+                className="flex items-center gap-1.5 bg-[#1A1A1A] hover:bg-[#222] border border-luxury-gold/20 rounded-full pl-2 pr-3.5 py-1.5 cursor-pointer hover:border-luxury-gold/50 transition duration-300 shrink-0 select-none shadow-md"
                 id="sign-out-btn"
               >
                 <div className="relative w-8 h-8 rounded-full bg-gradient-to-tr from-luxury-teal via-luxury-gold to-white p-[1.5px] shrink-0">
@@ -337,7 +337,7 @@ export default function Header({
               id="google-sign-in-hdr"
             >
               <span>🔑</span>
-              <span>{currentLang === 'en' ? 'Access Portal' : currentLang === 'ku' ? 'چوونەژوور' : 'دخول المنصة'}</span>
+              <span>{currentLang === 'en' ? 'Login' : currentLang === 'ku' ? 'چوونەژوور' : 'دخول المنصة'}</span>
             </button>
           )}
 

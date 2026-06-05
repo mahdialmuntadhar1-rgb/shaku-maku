@@ -359,7 +359,7 @@ export default function BusinessFeed({
             </div>
 
             {/* Grid of Business Cards */}
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3.5 sm:gap-6 [&>*:nth-child(odd)]:md:-translate-y-3 [&>*:nth-child(even)]:md:translate-y-3">
+            <div className="grid grid-cols-3 gap-1.5 xs:gap-2 sm:gap-4">
               {visibleBizs.map((biz) => {
                 const hasStories = biz.stories && biz.stories.length > 0;
                 
@@ -420,7 +420,7 @@ export default function BusinessFeed({
                         
                         {/* Title & Category with governorate */}
                         <div className="flex flex-col xs:flex-row xs:items-start justify-between gap-1 mb-1 xs:mb-1.5">
-                          <h3 className="text-xs xs:text-sm font-black text-white group-hover:text-blue-200 transition-colors line-clamp-1 font-sans">
+                          <h3 className="text-[10px] xs:text-xs sm:text-sm font-black text-white group-hover:text-blue-200 transition-colors line-clamp-1 font-sans">
                             {standardizeMosulNinevehDisplay(biz.name[currentLang])}
                           </h3>
                           
@@ -611,7 +611,7 @@ export default function BusinessFeed({
 
             {/* Skeletons load indicator */}
             {loadingCategories[category.id] && (
-              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3.5 sm:gap-6 mt-4">
+              <div className="grid grid-cols-3 gap-1.5 xs:gap-2 sm:gap-4 mt-4">
                 {[1, 2, 3].slice(0, Math.min(3, categoryBizs.length - 3)).map((n) => (
                   <div key={n} className="flex flex-col h-full bg-slate-100/50 border border-zinc-200/50 rounded-2xl overflow-hidden animate-pulse min-h-[180px] xs:min-h-[220px]">
                     <div className="h-28 xs:h-36 sm:h-44 md:h-48 w-full bg-zinc-200/80"></div>
@@ -635,7 +635,15 @@ export default function BusinessFeed({
                   disabled={loadingCategories[category.id]}
                   className="text-[11px] font-bold text-luxury-teal hover:text-white bg-white hover:bg-luxury-teal px-4 py-1.5 rounded-full border border-luxury-teal/30 transition-all cursor-pointer shadow-sm disabled:opacity-50"
                 >
-                  {loadingCategories[category.id] ? (currentLang === 'en' ? 'Fetching...' : currentLang === 'ku' ? 'تۆمارکردن...' : 'جاري التحميل...') : (isExpanded ? t.showLess : `${t.loadMore} (${categoryBizs.length - 3}) +`)}
+                  {loadingCategories[category.id]
+                    ? (currentLang === 'en' ? 'Fetching...' : currentLang === 'ku' ? 'تۆمارکردن...' : 'جاري التحميل...')
+                    : isExpanded
+                      ? t.showLess
+                      : currentLang === 'en'
+                        ? `Load more ${category.name[currentLang]} (${categoryBizs.length - 3}) +`
+                        : currentLang === 'ku'
+                          ? `زیاتر لە ${category.name[currentLang]} (${categoryBizs.length - 3}) +`
+                          : `عرض المزيد من ${category.name[currentLang]} (${categoryBizs.length - 3}) +`}
                 </button>
               </div>
             )}

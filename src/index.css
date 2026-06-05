@@ -1,6 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap');
 @import "tailwindcss";
 
+/* Shaku Maku Arabic/Kurdish font fix */
+html,
+body,
+#root,
+.font-sans,
+[dir="rtl"],
+:lang(ar),
+:lang(ku) {
+  font-family: "Noto Sans Arabic", Tahoma, Arial, sans-serif !important;
+  text-rendering: optimizeLegibility;
+}
 @theme {
   --font-sans: "Cairo", "Noto Naskh Arabic", "Noto Sans Arabic", "Plus Jakarta Sans", "Segoe UI", Tahoma, ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
@@ -365,16 +377,3 @@ input,
   background: radial-gradient(circle, rgba(34,211,238,0.75), rgba(236,72,153,0.2) 62%, rgba(15,46,47,0.05));
 }
 
-/* Shaku Maku Arabic/Kurdish font fix */
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800;900&display=swap');
-
-html,
-body,
-#root,
-.font-sans,
-[dir="rtl"],
-:lang(ar),
-:lang(ku) {
-  font-family: "Noto Sans Arabic", Tahoma, Arial, sans-serif !important;
-  text-rendering: optimizeLegibility;
-}

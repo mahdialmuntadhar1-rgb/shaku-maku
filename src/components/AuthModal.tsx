@@ -46,7 +46,7 @@ export default function AuthModal({
   // Translation Strings
   const L = {
     en: {
-      title_login: "Access Saku Maku Portal",
+      title_login: "Login",
       title_signup: "Create Saku Maku Account",
       desc_login: "Log in with your email or social credentials to personalize listings, post updates, and chat with merchants.",
       desc_signup: "Join Iraq's fastest-growing hyper-local business discovery directory and community index.",
