@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Compass, Flame, Map, PlusCircle, BookOpen, Search, X, 
@@ -1100,7 +1100,7 @@ export default function App() {
           <div>
             <div className="text-[10px] font-black text-luxury-gold uppercase tracking-wider mb-1.5 text-center flex items-center justify-center gap-1.5">
               <MapPin className="w-3.5 h-3.5 text-luxury-gold shrink-0" />
-              <span>{currentLang === 'en' ? 'Select Iraqi Governorate / Region' : currentLang === 'ku' ? 'Ù¾Ø§Ø±ÛŽØ²Ú¯Ø§ÛŒÛ•Ú© Ø¯Û•Ø³ØªÙ†ÛŒØ´Ø§Ù† Ø¨Ú©Û•' : 'Ø§Ø®ØªØ± Ø§Ù„Ù…Ø­Ø§ÙØ¸Ø© Ø§Ù„Ø¹Ø±Ø§Ù‚ÙŠØ© Ù„ØªØµÙØ­ Ø§Ù„Ù…ØªØ§Ø¬Ø±'}</span>
+              <span>{currentLang === 'en' ? 'Select Iraqi Governorate / Region' : currentLang === 'ku' ? 'پارێزگایەک دەستنیشان بکە' : 'اختر المحافظة العراقية لتصفح المتاجر'}</span>
             </div>
             
             <div className="relative">
@@ -1112,7 +1112,7 @@ export default function App() {
                 className="w-full flex items-center justify-between text-xs font-bold bg-[#16161a] hover:bg-[#1f1f26] text-white px-4 py-3 rounded-xl border border-luxury-gold/30 hover:border-luxury-gold/60 transition-all shadow-xl shadow-black/40 cursor-pointer"
               >
                 <div className="flex items-center gap-2">
-                  <span className="text-base">ðŸ“</span>
+                  <span className="text-base">📍</span>
                   <span>{GOVERNORATES.find(g => g.code === selectedGov)?.name[currentLang]}</span>
                 </div>
                 <ChevronDown className={`w-4 h-4 text-luxury-gold transition-transform duration-300 ${govDropdownOpen ? 'rotate-180' : ''}`} />
@@ -1135,7 +1135,7 @@ export default function App() {
                       }`}
                     >
                       <span className="truncate">{gov.name[currentLang]}</span>
-                      {selectedGov === gov.code && <span className="text-[9px]">âœ¨</span>}
+                      {selectedGov === gov.code && <span className="text-[9px]">✨</span>}
                     </button>
                   ))}
                 </div>
@@ -1145,7 +1145,7 @@ export default function App() {
 
           <div>
             <div className="text-[10px] font-black text-luxury-gold uppercase tracking-wider mb-1.5 text-center flex items-center justify-center gap-1.5">
-              <span>{currentLang === 'en' ? 'ðŸ” Filter by Category' : currentLang === 'ku' ? 'ðŸ” Ø¨Û•Ù¾ÛŽÛŒ Ù¾Û†Ù„ Ø¯Û•Ø³ØªÙ†ÛŒØ´Ø§Ù† Ø¨Ú©Û•' : 'ðŸ” ØªØµÙÙŠØ© Ø­Ø³Ø¨ Ø§Ù„ÙØ¦Ø©'}</span>
+              <span>{currentLang === 'en' ? '🔎 Filter by Category' : currentLang === 'ku' ? '🔎 بەپێی پۆل دەستنیشان بکە' : '🔎 تصفية حسب الفئة'}</span>
             </div>
             
             <div className="relative">
@@ -1163,7 +1163,7 @@ export default function App() {
                   <span>
                     {selectedCategory 
                       ? CATEGORIES.find(c => c.id === selectedCategory)?.name[currentLang] 
-                      : (currentLang === 'en' ? 'All Categories' : currentLang === 'ku' ? 'Ù‡Û•Ù…ÙˆÙˆ Ù¾Û†Ù„Û•Ú©Ø§Ù†' : 'Ø¬Ù…ÙŠØ¹ Ø§Ù„ÙØ¦Ø§Øª')}
+                      : (currentLang === 'en' ? 'All Categories' : currentLang === 'ku' ? 'هەموو پۆلەکان' : 'جميع الفئات')}
                   </span>
                 </div>
                 <ChevronDown className={`w-4 h-4 text-luxury-gold transition-transform duration-300 ${categoryDropdownOpen ? 'rotate-180' : ''}`} />
@@ -1183,7 +1183,7 @@ export default function App() {
                         : 'text-zinc-300 hover:bg-white/5 font-semibold'
                     }`}
                   >
-                    <span>ðŸ” {currentLang === 'en' ? 'All Categories' : currentLang === 'ku' ? 'Ù‡Û•Ù…ÙˆÙˆ Ù¾Û†Ù„Û•Ú©Ø§Ù†' : 'Ø¬Ù…ÙŠØ¹ Ø§Ù„ÙØ¦Ø§Øª'}</span>
+                      : (currentLang === 'en' ? 'All Categories' : currentLang === 'ku' ? 'هەموو پۆلەکان' : 'جميع الفئات')}
                     {selectedCategory === null && <span className="text-[9px]">âœ¨</span>}
                   </button>
 
