@@ -14,24 +14,18 @@ interface PWAInstallButtonProps {
 const copyByLang = {
   en: {
     install: 'Install App',
-    ready: 'Install App',
     installed: 'Installed',
-    openChrome: 'Open in Chrome',
-    unavailable: 'Install is not ready yet. Open the site in Chrome/Edge and try again.'
+    openChrome: 'Open in Chrome'
   },
   ar: {
     install: 'ثبّت التطبيق',
-    ready: 'ثبّت التطبيق',
     installed: 'تم التثبيت',
-    openChrome: 'افتح في Chrome',
-    unavailable: 'التثبيت غير جاهز حالياً. افتح الموقع في Chrome أو Edge وحاول مرة أخرى.'
+    openChrome: 'افتح في Chrome'
   },
   ku: {
     install: 'دایبەزێنە',
-    ready: 'دایبەزێنە',
     installed: 'دامەزرا',
-    openChrome: 'لە Chrome بکەرەوە',
-    unavailable: 'دامەزراندن ئێستا ئامادە نییە. سایتەکە لە Chrome یان Edge بکەرەوە.'
+    openChrome: 'لە Chrome بکەرەوە'
   }
 };
 
@@ -58,9 +52,8 @@ function openInChrome() {
 
 export default function PWAInstallButton({ currentLang }: PWAInstallButtonProps) {
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
-  const [visible, setVisible] = useState(true);
-  const [status, setStatus] = useState<'waiting' | 'ready' | 'installed'>('waiting');
-  const [temporaryMessage, setTemporaryMessage] = useState('');
+  const [visible, setVisible] = useState(false);
+  const [installed, setInstalled] = useState(false);
 
   const copy = copyByLang[currentLang] || copyByLang.en;
   const isRtl = currentLang === 'ar' || currentLang === 'ku';
@@ -70,77 +63,68 @@ export default function PWAInstallButton({ currentLang }: PWAInstallButtonProps)
 
     if (isStandaloneMode()) {
       setVisible(false);
-      setStatus('installed');
+      setInstalled(true);
       return;
     }
-
-    // Keep the floating install button visible on the website.
-    // The browser will show the real install prompt only when it is available.
-    setVisible(true);
 
     const handleBeforeInstallPrompt = (event: Event) => {
       event.preventDefault();
 
       const promptEvent = event as BeforeInstallPromptEvent;
       setInstallPrompt(promptEvent);
-      setStatus('ready');
       setVisible(true);
-      setTemporaryMessage('');
+      setInstalled(false);
     };
 
     const handleAppInstalled = () => {
       setInstallPrompt(null);
-      setStatus('installed');
       setVisible(false);
-      setTemporaryMessage(copy.installed);
+      setInstalled(true);
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     window.addEventListener('appinstalled', handleAppInstalled);
 
+    // Show button in WhatsApp/Facebook/Instagram browser only to open Chrome.
+    if (isAndroid() && isInAppBrowser()) {
+      setVisible(true);
+    }
+
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
       window.removeEventListener('appinstalled', handleAppInstalled);
     };
-  }, [copy.installed]);
+  }, []);
 
   const handleInstallClick = async () => {
     if (isStandaloneMode()) {
       setVisible(false);
-      setStatus('installed');
+      setInstalled(true);
       return;
     }
 
-    if (installPrompt) {
-      const promptEvent = installPrompt;
-      setInstallPrompt(null);
-
-      try {
-        await promptEvent.prompt();
-        const choice = await promptEvent.userChoice.catch(() => null);
-
-        if (choice?.outcome === 'accepted') {
-          setStatus('installed');
-          setVisible(false);
-          setTemporaryMessage(copy.installed);
-        } else {
-          setStatus('waiting');
-          setTemporaryMessage('');
-        }
-      } catch {
-        setTemporaryMessage(copy.unavailable);
-      }
-
-      return;
-    }
-
-    if (isAndroid() && isInAppBrowser()) {
+    if (isAndroid() && isInAppBrowser() && !installPrompt) {
       openInChrome();
       return;
     }
 
-    setTemporaryMessage(copy.unavailable);
-    window.setTimeout(() => setTemporaryMessage(''), 3500);
+    if (!installPrompt) {
+      return;
+    }
+
+    const promptEvent = installPrompt;
+    setInstallPrompt(null);
+
+    await promptEvent.prompt();
+    const choice = await promptEvent.userChoice.catch(() => null);
+
+    if (choice?.outcome === 'accepted') {
+      setInstalled(true);
+      setVisible(false);
+    } else {
+      // Browser may not allow showing the same prompt again immediately.
+      setVisible(false);
+    }
   };
 
   if (!visible) return null;
@@ -148,41 +132,30 @@ export default function PWAInstallButton({ currentLang }: PWAInstallButtonProps)
   const canOpenChrome = isAndroid() && isInAppBrowser() && !installPrompt;
 
   return (
-    <>
-      <button
-        type="button"
-        onClick={handleInstallClick}
-        className="fixed left-4 top-1/2 z-[9999] -translate-y-1/2 rounded-full border border-emerald-300/80 bg-gradient-to-br from-emerald-500 via-cyan-500 to-blue-500 px-4 py-3 text-white shadow-[0_0_26px_rgba(16,185,129,0.85)] backdrop-blur-xl transition hover:scale-110 active:scale-95 animate-pulse"
-        aria-label={canOpenChrome ? copy.openChrome : copy.install}
-        title={canOpenChrome ? copy.openChrome : copy.ready}
-        dir={isRtl ? 'rtl' : 'ltr'}
-      >
-        <span className="absolute inset-[-7px] -z-10 rounded-full bg-cyan-400/20 blur-xl" />
-        <span className="absolute inset-[-14px] -z-20 rounded-full bg-emerald-500/20 blur-2xl" />
+    <button
+      type="button"
+      onClick={handleInstallClick}
+      className="fixed left-4 top-1/2 z-[9999] -translate-y-1/2 rounded-full border border-emerald-300/80 bg-gradient-to-br from-emerald-500 via-cyan-500 to-blue-500 px-4 py-3 text-white shadow-[0_0_26px_rgba(16,185,129,0.85)] backdrop-blur-xl transition hover:scale-110 active:scale-95 animate-pulse"
+      aria-label={canOpenChrome ? copy.openChrome : copy.install}
+      title={canOpenChrome ? copy.openChrome : copy.install}
+      dir={isRtl ? 'rtl' : 'ltr'}
+    >
+      <span className="absolute inset-[-7px] -z-10 rounded-full bg-cyan-400/20 blur-xl" />
+      <span className="absolute inset-[-14px] -z-20 rounded-full bg-emerald-500/20 blur-2xl" />
 
-        <span className="flex flex-col items-center justify-center gap-1 text-[11px] font-black leading-tight">
-          {canOpenChrome ? (
-            <ExternalLink className="h-5 w-5 drop-shadow" />
-          ) : status === 'installed' ? (
-            <CheckCircle2 className="h-5 w-5 drop-shadow" />
-          ) : (
-            <Download className="h-5 w-5 drop-shadow" />
-          )}
+      <span className="flex flex-col items-center justify-center gap-1 text-[11px] font-black leading-tight">
+        {canOpenChrome ? (
+          <ExternalLink className="h-5 w-5 drop-shadow" />
+        ) : installed ? (
+          <CheckCircle2 className="h-5 w-5 drop-shadow" />
+        ) : (
+          <Download className="h-5 w-5 drop-shadow" />
+        )}
 
-          <span className="max-w-[82px] text-center">
-            {canOpenChrome ? copy.openChrome : copy.install}
-          </span>
+        <span className="max-w-[82px] text-center">
+          {canOpenChrome ? copy.openChrome : copy.install}
         </span>
-      </button>
-
-      {temporaryMessage ? (
-        <div
-          className="fixed left-1/2 top-5 z-[10000] max-w-[92vw] -translate-x-1/2 rounded-2xl border border-amber-400/30 bg-black/85 px-4 py-3 text-center text-xs font-bold leading-6 text-amber-100 shadow-2xl"
-          dir={isRtl ? 'rtl' : 'ltr'}
-        >
-          {temporaryMessage}
-        </div>
-      ) : null}
-    </>
+      </span>
+    </button>
   );
 }
