@@ -1030,8 +1030,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-luxury-neutral pb-28 text-[#1A1A1A] flex flex-col selection:bg-luxury-gold selection:text-[#1A1A1A] relative overflow-hidden" dir={isRtl ? 'rtl' : 'ltr'}>
-      
-      {/* Elegant Warm Luxury Atmosphere Glow */}
+{/* Elegant Warm Luxury Atmosphere Glow */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute top-[-5%] left-[-5%] w-[450px] h-[450px] bg-luxury-gold/10 rounded-full blur-[130px]"></div>
         <div className="absolute bottom-[-5%] right-[-5%] w-[450px] h-[450px] bg-luxury-teal/5 rounded-full blur-[130px]"></div>
@@ -1126,14 +1125,22 @@ export default function App() {
           }}
         />
 
+
+
         {/* Custom Premium Governorate & Category Filtering Dropdowns (Directly beneath Hero Banner) */}
         <div className="mb-6 max-w-sm mx-auto px-2 space-y-4 relative z-30">
           <div>
             <div className="text-[10px] font-black text-luxury-gold uppercase tracking-wider mb-1.5 text-center flex items-center justify-center gap-1.5">
               <MapPin className="w-3.5 h-3.5 text-luxury-gold shrink-0" />
-              <span>{currentLang === 'en' ? 'Select Iraqi Governorate / Region' : currentLang === 'ku' ? 'Ù¾Ø§Ø±ÛŽØ²Ú¯Ø§ÛŒÛ•Ú© Ø¯Û•Ø³ØªÙ†ÛŒØ´Ø§Ù† Ø¨Ú©Û•' : 'Ø§Ø®ØªØ± Ø§Ù„Ù…Ø­Ø§ÙØ¸Ø© Ø§Ù„Ø¹Ø±Ø§Ù‚ÙŠØ© Ù„ØªØµÙØ­ Ø§Ù„Ù…ØªØ§Ø¬Ø±'}</span>
+              <span>
+                {currentLang === 'en'
+                  ? 'Select Iraqi Governorate / Region'
+                  : currentLang === 'ku'
+                    ? "\u067e\u0627\u0631\u06ce\u0632\u06af\u0627 \u0647\u06d5\u06b5\u0628\u0698\u06ce\u0631\u06d5"
+                    : "\u0627\u062e\u062a\u0631 \u0627\u0644\u0645\u062d\u0627\u0641\u0638\u0629 \u0627\u0644\u0639\u0631\u0627\u0642\u064a\u0629"}
+              </span>
             </div>
-            
+
             <div className="relative">
               <button
                 onClick={() => {
@@ -1143,10 +1150,10 @@ export default function App() {
                 className="w-full flex items-center justify-between text-xs font-bold bg-[#16161a] hover:bg-[#1f1f26] text-white px-4 py-3 rounded-xl border border-luxury-gold/30 hover:border-luxury-gold/60 transition-all shadow-xl shadow-black/40 cursor-pointer"
               >
                 <div className="flex items-center gap-2">
-                  <span className="text-base">ðŸ“</span>
+                  <span className="text-base">📍</span>
                   <span>{GOVERNORATES.find(g => g.code === selectedGov)?.name[currentLang]}</span>
                 </div>
-                <ChevronDown className={`w-4 h-4 text-luxury-gold transition-transform duration-300 ${govDropdownOpen ? 'rotate-180' : ''}`} />
+                <ChevronDown className={'w-4 h-4 text-luxury-gold transition-transform duration-300 ' + (govDropdownOpen ? 'rotate-180' : '')} />
               </button>
 
               {govDropdownOpen && (
@@ -1159,14 +1166,15 @@ export default function App() {
                         setGovDropdownOpen(false);
                         setActiveTab('discover');
                       }}
-                      className={`text-left px-2.5 py-1.5 text-[11px] rounded-lg flex items-center justify-between transition-all cursor-pointer ${
-                        selectedGov === gov.code
+                      className={
+                        'text-left px-2.5 py-1.5 text-[11px] rounded-lg flex items-center justify-between transition-all cursor-pointer ' +
+                        (selectedGov === gov.code
                           ? 'bg-gradient-to-r from-luxury-teal to-luxury-gold/85 text-white font-extrabold shadow'
-                          : 'text-zinc-300 hover:bg-white/5 font-semibold'
-                      }`}
+                          : 'text-zinc-300 hover:bg-white/5 font-semibold')
+                      }
                     >
                       <span className="truncate">{gov.name[currentLang]}</span>
-                      {selectedGov === gov.code && <span className="text-[9px]">âœ¨</span>}
+                      {selectedGov === gov.code && <span className="text-[9px]">✨</span>}
                     </button>
                   ))}
                 </div>
@@ -1176,9 +1184,15 @@ export default function App() {
 
           <div>
             <div className="text-[10px] font-black text-luxury-gold uppercase tracking-wider mb-1.5 text-center flex items-center justify-center gap-1.5">
-              <span>{currentLang === 'en' ? 'ðŸ”Ž Filter by Category' : currentLang === 'ku' ? 'ðŸ”Ž Ø¨Û•Ù¾ÛŽÛŒ Ù¾Û†Ù„ Ø¯Û•Ø³ØªÙ†ÛŒØ´Ø§Ù† Ø¨Ú©Û•' : 'ðŸ”Ž ØªØµÙÙŠØ© Ø­Ø³Ø¨ Ø§Ù„ÙØ¦Ø©'}</span>
+              <span>
+                {currentLang === 'en'
+                  ? '🔎 Filter by Category'
+                  : currentLang === 'ku'
+                    ? "\u{1F50E} \u0628\u06d5\u067e\u06ce\u06cc \u067e\u06c6\u0644 \u0647\u06d5\u06b5\u0628\u0698\u06ce\u0631\u06d5"
+                    : "\u{1F50E} \u062a\u0635\u0641\u064a\u0629 \u062d\u0633\u0628 \u0627\u0644\u0641\u0626\u0629"}
+              </span>
             </div>
-            
+
             <div className="relative">
               <button
                 onClick={() => {
@@ -1189,33 +1203,44 @@ export default function App() {
               >
                 <div className="flex items-center gap-2">
                   <span className="text-base">
-                    {selectedCategory ? CATEGORIES.find(c => c.id === selectedCategory)?.icon || 'ðŸ·ï¸' : 'ðŸ·ï¸'}
+                    {selectedCategory ? CATEGORIES.find(c => c.id === selectedCategory)?.icon || '🏷️' : '🏷️'}
                   </span>
                   <span>
-                    {selectedCategory 
-                      ? CATEGORIES.find(c => c.id === selectedCategory)?.name[currentLang] 
-                      : (currentLang === 'en' ? 'All Categories' : currentLang === 'ku' ? 'Ù‡Û•Ù…ÙˆÙˆ Ù¾Û†Ù„Û•Ú©Ø§Ù†' : 'Ø¬Ù…ÙŠØ¹ Ø§Ù„ÙØ¦Ø§Øª')}
+                    {selectedCategory
+                      ? CATEGORIES.find(c => c.id === selectedCategory)?.name[currentLang]
+                      : (currentLang === 'en'
+                          ? 'All Categories'
+                          : currentLang === 'ku'
+                            ? "\u0647\u06d5\u0645\u0648\u0648 \u067e\u06c6\u0644\u06d5\u06a9\u0627\u0646"
+                            : "\u062c\u0645\u064a\u0639 \u0627\u0644\u0641\u0626\u0627\u062a")}
                   </span>
                 </div>
-                <ChevronDown className={`w-4 h-4 text-luxury-gold transition-transform duration-300 ${categoryDropdownOpen ? 'rotate-180' : ''}`} />
+                <ChevronDown className={'w-4 h-4 text-luxury-gold transition-transform duration-300 ' + (categoryDropdownOpen ? 'rotate-180' : '')} />
               </button>
 
               {categoryDropdownOpen && (
-                <div className="absolute top-full left-0 right-0 mt-1.5 bg-[#121215] border border-luxury-gold/20 rounded-xl shadow-2xl p-1 z-50 grid grid-cols-2 gap-1 animate-fade-in max-h-[220px] overflow-y-auto custom-scrollbar font-sans animate-fade-in">
+                <div className="absolute top-full left-0 right-0 mt-1.5 bg-[#121215] border border-luxury-gold/20 rounded-xl shadow-2xl p-1 z-50 grid grid-cols-2 gap-1 animate-fade-in max-h-[220px] overflow-y-auto custom-scrollbar font-sans">
                   <button
                     onClick={() => {
                       setSelectedCategory(null);
                       setCategoryDropdownOpen(false);
                       setActiveTab('discover');
                     }}
-                    className={`text-left px-2.5 py-1.5 text-[11px] rounded-lg flex items-center justify-between transition-all cursor-pointer ${
-                      selectedCategory === null
+                    className={
+                      'text-left px-2.5 py-1.5 text-[11px] rounded-lg flex items-center justify-between transition-all cursor-pointer ' +
+                      (selectedCategory === null
                         ? 'bg-gradient-to-r from-luxury-teal to-luxury-gold/85 text-white font-extrabold shadow'
-                        : 'text-zinc-300 hover:bg-white/5 font-semibold'
-                    }`}
+                        : 'text-zinc-300 hover:bg-white/5 font-semibold')
+                    }
                   >
-                    <span>ðŸ·ï¸ {currentLang === 'en' ? 'All Categories' : currentLang === 'ku' ? 'Ù‡Û•Ù…ÙˆÙˆ Ù¾Û†Ù„Û•Ú©Ø§Ù†' : 'Ø¬Ù…ÙŠØ¹ Ø§Ù„ÙØ¦Ø§Øª'}</span>
-                    {selectedCategory === null && <span className="text-[9px]">âœ¨</span>}
+                    <span>
+                      🏷️ {currentLang === 'en'
+                        ? 'All Categories'
+                        : currentLang === 'ku'
+                          ? "\u0647\u06d5\u0645\u0648\u0648 \u067e\u06c6\u0644\u06d5\u06a9\u0627\u0646"
+                          : "\u062c\u0645\u064a\u0639 \u0627\u0644\u0641\u0626\u0627\u062a"}
+                    </span>
+                    {selectedCategory === null && <span className="text-[9px]">✨</span>}
                   </button>
 
                   {CATEGORIES.map((cat) => (
@@ -1226,14 +1251,15 @@ export default function App() {
                         setCategoryDropdownOpen(false);
                         setActiveTab('discover');
                       }}
-                      className={`text-left px-2.5 py-1.5 text-[11px] rounded-lg flex items-center justify-between transition-all cursor-pointer ${
-                        selectedCategory === cat.id
+                      className={
+                        'text-left px-2.5 py-1.5 text-[11px] rounded-lg flex items-center justify-between transition-all cursor-pointer ' +
+                        (selectedCategory === cat.id
                           ? 'bg-gradient-to-r from-luxury-teal to-luxury-gold/85 text-white font-extrabold shadow'
-                          : 'text-zinc-300 hover:bg-white/5 font-semibold'
-                      }`}
+                          : 'text-zinc-300 hover:bg-white/5 font-semibold')
+                      }
                     >
                       <span className="truncate">{cat.icon} {cat.name[currentLang]}</span>
-                      {selectedCategory === cat.id && <span className="text-[9px]">Ã¢Å“Â¨</span>}
+                      {selectedCategory === cat.id && <span className="text-[9px]">✨</span>}
                     </button>
                   ))}
                 </div>
@@ -1242,7 +1268,6 @@ export default function App() {
           </div>
         </div>
 
-                        
         {/* Visual Dual Entry Cards: Chaykhana + Shko Maku */}
         <div className="mt-4 mb-6 max-w-5xl mx-auto px-1.5 sm:px-3" dir={currentLang === 'en' ? 'ltr' : 'rtl'}>
           <div className="grid grid-cols-2 gap-2.5 sm:gap-5">
@@ -1265,10 +1290,10 @@ export default function App() {
               <div className="relative z-10 flex h-full flex-col items-center justify-between gap-2 sm:gap-4">
                 <div>
                   <h3 className="text-lg xs:text-xl sm:text-5xl font-black text-rose-100 leading-tight [font-family:Tahoma,Arial,sans-serif]">
-                    {currentLang === 'en' ? 'Chaykhana' : currentLang === 'ku' ? 'Ú†Ø§ÛŒØ®Ø§Ù†Û•' : 'Ú†Ø§ÙŠØ®Ø§Ù†Ø©'}
+                    {currentLang === 'en' ? 'Chaykhana' : currentLang === 'ku' ? 'چایخانە' : 'چايخانة'}
                   </h3>
                   <p className="mt-1 text-[11px] sm:text-lg font-bold text-rose-100/75 [font-family:Tahoma,Arial,sans-serif]">
-                    {currentLang === 'en' ? 'See what is new' : currentLang === 'ku' ? 'Ø¨Ø¨ÛŒÙ†Û• Ú†ÛŒ Ù†ÙˆÛŽÛŒÛ•' : 'Ø´ÙˆÙ Ø´Ù†Ùˆ Ø§Ù„Ø¬Ø¯ÙŠØ¯'}
+                    {currentLang === 'en' ? 'See what is new' : currentLang === 'ku' ? 'ببینە چی نوێیە' : 'شوف شنو الجديد'}
                   </p>
                 </div>
 
@@ -1284,7 +1309,7 @@ export default function App() {
                 </div>
 
                 <div className="w-full rounded-full border border-rose-200/45 px-2 py-2 sm:px-5 sm:py-3 text-[11px] sm:text-sm font-black text-rose-50 [font-family:Tahoma,Arial,sans-serif]">
-                  {currentLang === 'en' ? 'Enter' : currentLang === 'ku' ? 'Ú†ÙˆÙˆÙ†Û•Ú˜ÙˆÙˆØ±' : 'Ø§Ù„Ø¯Ø®ÙˆÙ„'}
+                  {currentLang === 'en' ? 'Enter' : currentLang === 'ku' ? 'چوونەژوور' : 'الدخول'}
                 </div>
               </div>
             </button>
@@ -1308,10 +1333,10 @@ export default function App() {
               <div className="relative z-10 flex h-full flex-col items-center justify-between gap-2 sm:gap-4">
                 <div>
                   <h3 className="text-lg xs:text-xl sm:text-5xl font-black text-cyan-100 leading-tight [font-family:Tahoma,Arial,sans-serif]">
-                    {currentLang === 'en' ? 'Shko Maku' : currentLang === 'ku' ? 'Ø´Ú©Ùˆ Ù…Ø§Ú©Ùˆ' : 'Ø´ÙƒÙˆ Ù…Ø§ÙƒÙˆ'}
+                    {currentLang === 'en' ? 'Shko Maku' : currentLang === 'ku' ? 'شکو ماکو' : 'شكو ماكو'}
                   </h3>
                   <p className="mt-1 text-[11px] sm:text-lg font-bold text-cyan-100/75 [font-family:Tahoma,Arial,sans-serif]">
-                    {currentLang === 'en' ? 'Business directory' : currentLang === 'ku' ? 'Ú•ÛŽØ¨Û•Ø±ÛŒ Ú©Ø§Ø± Ùˆ Ø®Ø²Ù…Û•ØªÚ¯ÙˆØ²Ø§Ø±ÛŒ' : 'Ø¯Ù„ÙŠÙ„ Ø§Ù„Ø£Ø¹Ù…Ø§Ù„ ÙˆØ§Ù„Ø®Ø¯Ù…Ø§Øª'}
+                    {currentLang === 'en' ? 'Business directory' : currentLang === 'ku' ? 'ڕێبەری کار و خزمەتگوزاری' : 'دليل الأعمال والخدمات'}
                   </p>
                 </div>
 
@@ -1327,28 +1352,28 @@ export default function App() {
 
                 <div className="grid grid-cols-2 gap-1 sm:gap-2 w-full text-[9px] sm:text-sm font-black [font-family:Tahoma,Arial,sans-serif]">
                   <span className="rounded-full border border-cyan-100/25 bg-white/10 px-1.5 py-1 sm:px-3 sm:py-2 text-cyan-50">
-                    {currentLang === 'en' ? 'Cafes' : currentLang === 'ku' ? 'Ú©Ø§ÙÛŽ' : 'ÙƒØ§ÙÙŠÙ‡Ø§Øª'}
+                    {currentLang === 'en' ? 'Cafes' : currentLang === 'ku' ? 'کافێ' : 'كافيهات'}
                   </span>
                   <span className="rounded-full border border-cyan-100/25 bg-white/10 px-1.5 py-1 sm:px-3 sm:py-2 text-cyan-50">
-                    {currentLang === 'en' ? 'Restaurants' : currentLang === 'ku' ? 'Ú†ÛŽØ´ØªØ®Ø§Ù†Û•' : 'Ù…Ø·Ø§Ø¹Ù…'}
+                    {currentLang === 'en' ? 'Restaurants' : currentLang === 'ku' ? 'چێشتخانە' : 'مطاعم'}
                   </span>
                   <span className="rounded-full border border-cyan-100/25 bg-white/10 px-1.5 py-1 sm:px-3 sm:py-2 text-cyan-50">
-                    {currentLang === 'en' ? 'Doctors' : currentLang === 'ku' ? 'Ø¯Ú©ØªÛ†Ø±' : 'Ø£Ø·Ø¨Ø§Ø¡'}
+                    {currentLang === 'en' ? 'Doctors' : currentLang === 'ku' ? 'دکتۆر' : 'أطباء'}
                   </span>
                   <span className="rounded-full border border-cyan-100/25 bg-white/10 px-1.5 py-1 sm:px-3 sm:py-2 text-cyan-50">
-                    {currentLang === 'en' ? 'More' : currentLang === 'ku' ? 'Ø²ÛŒØ§ØªØ±' : 'Ø§Ù„Ù…Ø²ÙŠØ¯'}
+                    {currentLang === 'en' ? 'More' : currentLang === 'ku' ? 'زیاتر' : 'المزيد'}
                   </span>
                 </div>
 
                 <div className="w-full rounded-full border border-cyan-100/45 px-2 py-2 sm:px-5 sm:py-3 text-[11px] sm:text-sm font-black text-cyan-50 [font-family:Tahoma,Arial,sans-serif]">
-                  {currentLang === 'en' ? 'Enter' : currentLang === 'ku' ? 'Ú†ÙˆÙˆÙ†Û•Ú˜ÙˆÙˆØ±' : 'Ø§Ù„Ø¯Ø®ÙˆÙ„'}
+                  {currentLang === 'en' ? 'Enter' : currentLang === 'ku' ? 'چوونەژوور' : 'الدخول'}
                 </div>
               </div>
             </button>
           </div>
 
           <p className="mt-3 sm:mt-5 text-center text-[11px] sm:text-sm font-bold text-zinc-400 [font-family:Tahoma,Arial,sans-serif]">
-            {currentLang === 'en' ? 'Choose the section you want to enter' : currentLang === 'ku' ? 'Ø¦Û•Ùˆ Ø¨Û•Ø´Û• Ù‡Û•ÚµØ¨Ú˜ÛŽØ±Û• Ú©Û• Ø¯Û•ØªÛ•ÙˆÛŽØª Ø¨Ú†ÛŒØªÛ• Ù†Ø§ÙˆÛŒ' : 'Ø§Ø®ØªØ± Ø§Ù„Ù‚Ø³Ù… Ø§Ù„Ø°ÙŠ ØªØ±ÙŠØ¯ Ø§Ù„Ø¯Ø®ÙˆÙ„ Ø¥Ù„ÙŠÙ‡'}
+            {currentLang === 'en' ? 'Choose the section you want to enter' : currentLang === 'ku' ? 'ئەو بەشە هەڵبژێرە کە دەتەوێت بچیتە ناوی' : 'اختر القسم الذي تريد الدخول إليه'}
           </p>
         </div>
 
@@ -1680,6 +1705,5 @@ export default function App() {
     </div>
   );
 }
-
 
 

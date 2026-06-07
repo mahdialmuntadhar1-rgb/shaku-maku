@@ -24,7 +24,6 @@
 <meta name="twitter:image" content="https://shakumaku.pages.dev/og-image.png">
 
 
-
 <style id="register-business-global-cta-style">
   #shaku-register-business-debug-banner {
     position: fixed !important;
@@ -45,87 +44,23 @@
   #shaku-register-business-debug-banner a {
     color: #111 !important;
     text-decoration: none !important;
-    display: inline-block !important;
   }
 
   body {
     padding-top: 54px !important;
   }
-
-  @media (max-width: 640px) {
-    #shaku-register-business-debug-banner {
-      font-size: 13px !important;
-      padding: 12px 8px !important;
-    }
-
-    body {
-      padding-top: 48px !important;
-    }
-  }
 </style>
 </head>
   <body>
-<div id="shaku-register-business-debug-banner" dir="rtl">
-  <a id="shaku-register-business-debug-link" href="/register-business.html">
-    ✨ سجّل نشاطك التجاري مجاناً ✨
-  </a>
+<div id="shaku-register-business-debug-banner">
+  <a href="/register-business.html">✨ سجّل نشاطك التجاري مجاناً | Register Your Business ✨</a>
 </div>
-
     
 
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-  <script id="register-business-global-cta-script">
-  (function () {
-    var labels = {
-      ar: "✨ سجّل نشاطك التجاري مجاناً ✨",
-      ku: "✨ بزنسەکەت بەخۆڕایی تۆمار بکە ✨",
-      en: "✨ Register Your Business Free ✨"
-    };
-
-    function getLang() {
-      var saved = "";
-      try {
-        saved = localStorage.getItem("preferred_lang") || "";
-      } catch (e) {}
-
-      var htmlLang = document.documentElement.getAttribute("lang") || "";
-      var lang = saved || htmlLang || "ar";
-
-      if (lang.indexOf("ku") === 0) return "ku";
-      if (lang.indexOf("en") === 0) return "en";
-      return "ar";
-    }
-
-    function updateBannerLanguage() {
-      var lang = getLang();
-      var banner = document.getElementById("shaku-register-business-debug-banner");
-      var link = document.getElementById("shaku-register-business-debug-link");
-
-      if (!banner || !link) return;
-
-      link.textContent = labels[lang] || labels.ar;
-      banner.setAttribute("dir", lang === "en" ? "ltr" : "rtl");
-      banner.setAttribute("lang", lang);
-    }
-
-    updateBannerLanguage();
-    window.addEventListener("storage", updateBannerLanguage);
-
-    var oldSetItem = localStorage.setItem;
-    localStorage.setItem = function (key, value) {
-      oldSetItem.apply(this, arguments);
-      if (key === "preferred_lang") {
-        setTimeout(updateBannerLanguage, 0);
-      }
-    };
-
-    setInterval(updateBannerLanguage, 700);
-  })();
-</script>
-</body>
+  </body>
 </html>
-
 
 
 
