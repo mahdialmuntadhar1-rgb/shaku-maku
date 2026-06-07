@@ -14,21 +14,21 @@ interface PWAInstallButtonProps {
 const copyByLang = {
   en: {
     install: 'Install App',
-    ready: 'Install Ready',
+    ready: 'Install App',
     installed: 'Installed',
     openChrome: 'Open in Chrome',
     unavailable: 'Install is not ready yet. Open the site in Chrome/Edge and try again.'
   },
   ar: {
     install: 'ثبّت التطبيق',
-    ready: 'جاهز للتثبيت',
+    ready: 'ثبّت التطبيق',
     installed: 'تم التثبيت',
     openChrome: 'افتح في Chrome',
     unavailable: 'التثبيت غير جاهز حالياً. افتح الموقع في Chrome أو Edge وحاول مرة أخرى.'
   },
   ku: {
-    install: 'دامەزراندنی ئەپ',
-    ready: 'ئامادەی دامەزراندنە',
+    install: 'دایبەزێنە',
+    ready: 'دایبەزێنە',
     installed: 'دامەزرا',
     openChrome: 'لە Chrome بکەرەوە',
     unavailable: 'دامەزراندن ئێستا ئامادە نییە. سایتەکە لە Chrome یان Edge بکەرەوە.'
@@ -58,7 +58,7 @@ function openInChrome() {
 
 export default function PWAInstallButton({ currentLang }: PWAInstallButtonProps) {
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(true);
   const [status, setStatus] = useState<'waiting' | 'ready' | 'installed'>('waiting');
   const [temporaryMessage, setTemporaryMessage] = useState('');
 
@@ -73,6 +73,10 @@ export default function PWAInstallButton({ currentLang }: PWAInstallButtonProps)
       setStatus('installed');
       return;
     }
+
+    // Keep the floating install button visible on the website.
+    // The browser will show the real install prompt only when it is available.
+    setVisible(true);
 
     const handleBeforeInstallPrompt = (event: Event) => {
       event.preventDefault();
@@ -93,15 +97,6 @@ export default function PWAInstallButton({ currentLang }: PWAInstallButtonProps)
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     window.addEventListener('appinstalled', handleAppInstalled);
-
-    /*
-      Fallback:
-      If the user is inside WhatsApp/Facebook/Instagram browser on Android,
-      show only "Open in Chrome". No share instructions, no help popup.
-    */
-    if (isAndroid() && isInAppBrowser()) {
-      setVisible(true);
-    }
 
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
@@ -129,10 +124,6 @@ export default function PWAInstallButton({ currentLang }: PWAInstallButtonProps)
           setVisible(false);
           setTemporaryMessage(copy.installed);
         } else {
-          /*
-            User cancelled. Do not open share instructions.
-            Browser may not allow the same prompt again until later.
-          */
           setStatus('waiting');
           setTemporaryMessage('');
         }
@@ -143,11 +134,6 @@ export default function PWAInstallButton({ currentLang }: PWAInstallButtonProps)
       return;
     }
 
-    /*
-      No native install prompt available.
-      Do NOT show share instructions.
-      For Android in-app browsers, open Chrome directly.
-    */
     if (isAndroid() && isInAppBrowser()) {
       openInChrome();
       return;
@@ -157,12 +143,6 @@ export default function PWAInstallButton({ currentLang }: PWAInstallButtonProps)
     window.setTimeout(() => setTemporaryMessage(''), 3500);
   };
 
-  /*
-    Clean behavior:
-    - show button only when native install is ready
-    - or when Android in-app browser can open Chrome
-    - otherwise no confusing share popup
-  */
   if (!visible) return null;
 
   const canOpenChrome = isAndroid() && isInAppBrowser() && !installPrompt;
