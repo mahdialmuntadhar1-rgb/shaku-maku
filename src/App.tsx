@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+﻿import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Compass, Flame, Map, PlusCircle, BookOpen, Search, X, 
@@ -133,27 +133,27 @@ function normalizeList(payload: any): any[] {
 function normalizeGovernorate(value: unknown): GovernorateCode {
   const raw = String(value || '').toLowerCase().trim();
   if (!raw) return 'all';
-  const compact = raw.replace(/[\s_\-ØŒ]+/g, '');
+  const compact = raw.replace(/[\s_\-Ã˜Å’]+/g, '');
 
   const map: Record<string, GovernorateCode> = {
     all: 'all',
     iraq: 'all',
-    'Ø§Ù„Ø¹Ø±Ø§Ù‚': 'all',
-    'Ø¹ÛŽØ±Ø§Ù‚': 'all',
+    'Ã˜Â§Ã™â€žÃ˜Â¹Ã˜Â±Ã˜Â§Ã™â€š': 'all',
+    'Ã˜Â¹Ã›Å½Ã˜Â±Ã˜Â§Ã™â€š': 'all',
     baghdad: 'baghdad',
-    'Ø¨ØºØ¯Ø§Ø¯': 'baghdad',
+    'Ã˜Â¨Ã˜ÂºÃ˜Â¯Ã˜Â§Ã˜Â¯': 'baghdad',
     erbil: 'erbil',
-    'Ø§Ø±Ø¨ÙŠÙ„': 'erbil',
-    'Ø£Ø±Ø¨ÙŠÙ„': 'erbil',
-    'Ù‡Û•ÙˆÙ„ÛŽØ±': 'erbil',
+    'Ã˜Â§Ã˜Â±Ã˜Â¨Ã™Å Ã™â€ž': 'erbil',
+    'Ã˜Â£Ã˜Â±Ã˜Â¨Ã™Å Ã™â€ž': 'erbil',
+    'Ã™â€¡Ã›â€¢Ã™Ë†Ã™â€žÃ›Å½Ã˜Â±': 'erbil',
     basra: 'basra',
-    'Ø§Ù„Ø¨ØµØ±Ø©': 'basra',
-    'Ø¨Û•Ø³Ø±Û•': 'basra',
+    'Ã˜Â§Ã™â€žÃ˜Â¨Ã˜ÂµÃ˜Â±Ã˜Â©': 'basra',
+    'Ã˜Â¨Ã›â€¢Ã˜Â³Ã˜Â±Ã›â€¢': 'basra',
     sulaymaniyah: 'sulaymaniyah',
     sulaymania: 'sulaymaniyah',
     slemani: 'sulaymaniyah',
-    'Ø§Ù„Ø³Ù„ÙŠÙ…Ø§Ù†ÙŠØ©': 'sulaymaniyah',
-    'Ø³Ù„ÛŽÙ…Ø§Ù†ÛŒ': 'sulaymaniyah',
+    'Ã˜Â§Ã™â€žÃ˜Â³Ã™â€žÃ™Å Ã™â€¦Ã˜Â§Ã™â€ Ã™Å Ã˜Â©': 'sulaymaniyah',
+    'Ã˜Â³Ã™â€žÃ›Å½Ã™â€¦Ã˜Â§Ã™â€ Ã›Å’': 'sulaymaniyah',
     mosul: 'mosul',
     mousl: 'mosul',
     mousul: 'mosul',
@@ -163,53 +163,53 @@ function normalizeGovernorate(value: unknown): GovernorateCode {
     nainawa: 'mosul',
     niniveh: 'mosul',
     neneveh: 'mosul',
-    'Ù†ÙŠÙ†ÙˆÙ‰': 'mosul',
-    'Ù†ÙŠÙ†ÙˆÙŠ': 'mosul',
-    'Ø§Ù„Ù…ÙˆØµÙ„': 'mosul',
+    'Ã™â€ Ã™Å Ã™â€ Ã™Ë†Ã™â€°': 'mosul',
+    'Ã™â€ Ã™Å Ã™â€ Ã™Ë†Ã™Å ': 'mosul',
+    'Ã˜Â§Ã™â€žÃ™â€¦Ã™Ë†Ã˜ÂµÃ™â€ž': 'mosul',
     najaf: 'najaf',
-    'Ø§Ù„Ù†Ø¬Ù': 'najaf',
+    'Ã˜Â§Ã™â€žÃ™â€ Ã˜Â¬Ã™Â': 'najaf',
     karbala: 'karbala',
-    'ÙƒØ±Ø¨Ù„Ø§Ø¡': 'karbala',
+    'Ã™Æ’Ã˜Â±Ã˜Â¨Ã™â€žÃ˜Â§Ã˜Â¡': 'karbala',
     kirkuk: 'kirkuk',
-    'ÙƒØ±ÙƒÙˆÙƒ': 'kirkuk',
+    'Ã™Æ’Ã˜Â±Ã™Æ’Ã™Ë†Ã™Æ’': 'kirkuk',
     anbar: 'anbar',
-    'Ø§Ù„Ø£Ù†Ø¨Ø§Ø±': 'anbar',
+    'Ã˜Â§Ã™â€žÃ˜Â£Ã™â€ Ã˜Â¨Ã˜Â§Ã˜Â±': 'anbar',
     duhok: 'duhok',
-    'Ø¯Ù‡ÙˆÙƒ': 'duhok',
-    'Ø¯Ù‡ÙˆÚ©': 'duhok',
+    'Ã˜Â¯Ã™â€¡Ã™Ë†Ã™Æ’': 'duhok',
+    'Ã˜Â¯Ã™â€¡Ã™Ë†ÃšÂ©': 'duhok',
     babil: 'babil',
     babylon: 'babil',
-    'Ø¨Ø§Ø¨Ù„': 'babil',
+    'Ã˜Â¨Ã˜Â§Ã˜Â¨Ã™â€ž': 'babil',
     diyala: 'diyala',
-    'Ø¯ÙŠØ§Ù„Ù‰': 'diyala',
+    'Ã˜Â¯Ã™Å Ã˜Â§Ã™â€žÃ™â€°': 'diyala',
     wasit: 'wasit',
-    'ÙˆØ§Ø³Ø·': 'wasit',
+    'Ã™Ë†Ã˜Â§Ã˜Â³Ã˜Â·': 'wasit',
     saladin: 'saladin',
     salahaddin: 'saladin',
     salahaldin: 'saladin',
-    'ØµÙ„Ø§Ø­Ø§Ù„Ø¯ÙŠÙ†': 'saladin',
+    'Ã˜ÂµÃ™â€žÃ˜Â§Ã˜Â­Ã˜Â§Ã™â€žÃ˜Â¯Ã™Å Ã™â€ ': 'saladin',
     maysan: 'maysan',
-    'Ù…ÙŠØ³Ø§Ù†': 'maysan',
+    'Ã™â€¦Ã™Å Ã˜Â³Ã˜Â§Ã™â€ ': 'maysan',
     dhiqar: 'dhiqar',
-    'Ø°ÙŠÙ‚Ø§Ø±': 'dhiqar',
-    'Ø°ÙŠ_Ù‚Ø§Ø±': 'dhiqar',
+    'Ã˜Â°Ã™Å Ã™â€šÃ˜Â§Ã˜Â±': 'dhiqar',
+    'Ã˜Â°Ã™Å _Ã™â€šÃ˜Â§Ã˜Â±': 'dhiqar',
     muthanna: 'muthanna',
-    'Ø§Ù„Ù…Ø«Ù†Ù‰': 'muthanna',
+    'Ã˜Â§Ã™â€žÃ™â€¦Ã˜Â«Ã™â€ Ã™â€°': 'muthanna',
     qadisiya: 'qadisiya',
     qadisiyah: 'qadisiya',
-    'Ø§Ù„Ù‚Ø§Ø¯Ø³ÙŠØ©': 'qadisiya',
+    'Ã˜Â§Ã™â€žÃ™â€šÃ˜Â§Ã˜Â¯Ã˜Â³Ã™Å Ã˜Â©': 'qadisiya',
     halabja: 'halabja',
-    'Ø­Ù„Ø¨Ø¬Ø©': 'halabja',
+    'Ã˜Â­Ã™â€žÃ˜Â¨Ã˜Â¬Ã˜Â©': 'halabja',
   };
 
   if (map[compact]) return map[compact];
 
   for (const gov of GOVERNORATES) {
-    const codeKey = gov.code.toLowerCase().replace(/[\s_\-ØŒ]+/g, '');
-    const englishKey = gov.englishLabel.toLowerCase().replace(/[\s_\-ØŒ]+/g, '');
-    const enKey = gov.name.en.toLowerCase().replace(/[\s_\-ØŒ]+/g, '');
-    const arKey = gov.name.ar.toLowerCase().replace(/[\s_\-ØŒ]+/g, '');
-    const kuKey = gov.name.ku.toLowerCase().replace(/[\s_\-ØŒ]+/g, '');
+    const codeKey = gov.code.toLowerCase().replace(/[\s_\-Ã˜Å’]+/g, '');
+    const englishKey = gov.englishLabel.toLowerCase().replace(/[\s_\-Ã˜Å’]+/g, '');
+    const enKey = gov.name.en.toLowerCase().replace(/[\s_\-Ã˜Å’]+/g, '');
+    const arKey = gov.name.ar.toLowerCase().replace(/[\s_\-Ã˜Å’]+/g, '');
+    const kuKey = gov.name.ku.toLowerCase().replace(/[\s_\-Ã˜Å’]+/g, '');
     if (compact === codeKey || compact === englishKey || compact === enKey || compact === arKey || compact === kuKey) {
       return gov.code;
     }
@@ -218,10 +218,10 @@ function normalizeGovernorate(value: unknown): GovernorateCode {
   const administrativeWordsRemoved = compact
     .replace(/governorate/g, '')
     .replace(/province/g, '')
-    .replace(/Ù…Ø­Ø§ÙØ¸Ø©/g, '')
-    .replace(/Ø§Ù„Ù…Ø­Ø§ÙØ¸Ø©/g, '')
-    .replace(/Ù¾Ø§Ø±ÛŽØ²Ú¯Ø§ÛŒ/g, '')
-    .replace(/Ù¾Ø§Ø±ÛŽØ²Ú¯Ø§/g, '');
+    .replace(/Ã™â€¦Ã˜Â­Ã˜Â§Ã™ÂÃ˜Â¸Ã˜Â©/g, '')
+    .replace(/Ã˜Â§Ã™â€žÃ™â€¦Ã˜Â­Ã˜Â§Ã™ÂÃ˜Â¸Ã˜Â©/g, '')
+    .replace(/Ã™Â¾Ã˜Â§Ã˜Â±Ã›Å½Ã˜Â²ÃšÂ¯Ã˜Â§Ã›Å’/g, '')
+    .replace(/Ã™Â¾Ã˜Â§Ã˜Â±Ã›Å½Ã˜Â²ÃšÂ¯Ã˜Â§/g, '');
 
   if (map[administrativeWordsRemoved]) {
     return map[administrativeWordsRemoved];
@@ -244,7 +244,7 @@ function normalizeDedupeText(value: unknown): string {
   return String(value || '')
     .toLowerCase()
     .trim()
-    .replace(/[\s\-_ØŒ.,()\[\]{}]+/g, '')
+    .replace(/[\s\-_Ã˜Å’.,()\[\]{}]+/g, '')
     .replace(/[^\p{L}\p{N}]+/gu, '');
 }
 
@@ -275,14 +275,14 @@ function normalizeCategory(value: unknown): string {
   const raw = String(value || '').trim();
   if (!raw) return 'other';
 
-  const compact = raw.toLowerCase().replace(/[\s_\-&/ØŒ]+/g, '');
+  const compact = raw.toLowerCase().replace(/[\s_\-&/Ã˜Å’]+/g, '');
   const byId = CATEGORIES.find((cat) => cat.id.toLowerCase() === compact || cat.id.toLowerCase() === raw.toLowerCase());
   if (byId) return byId.id;
 
   const byName = CATEGORIES.find((cat) => {
-    const en = cat.name.en.toLowerCase().replace(/[\s_\-&/ØŒ]+/g, '');
-    const ar = cat.name.ar.toLowerCase().replace(/[\s_\-&/ØŒ]+/g, '');
-    const ku = cat.name.ku.toLowerCase().replace(/[\s_\-&/ØŒ]+/g, '');
+    const en = cat.name.en.toLowerCase().replace(/[\s_\-&/Ã˜Å’]+/g, '');
+    const ar = cat.name.ar.toLowerCase().replace(/[\s_\-&/Ã˜Å’]+/g, '');
+    const ku = cat.name.ku.toLowerCase().replace(/[\s_\-&/Ã˜Å’]+/g, '');
     return compact === en || compact === ar || compact === ku;
   });
   if (byName) return byName.id;
@@ -291,81 +291,81 @@ function normalizeCategory(value: unknown): string {
     restaurant: 'restaurant',
     restaurants: 'restaurant',
     food: 'restaurant',
-    'Ù…Ø·Ø¹Ù…': 'restaurant',
-    'Ù…Ø·Ø§Ø¹Ù…': 'restaurant',
-    'Ø®ÙˆØ§Ø±Ø¯Ù†Ú¯Ù‡': 'restaurant',
-    'Ú†ÛŽØ´ØªØ®Ø§Ù†Ù‡': 'restaurant',
+    'Ã™â€¦Ã˜Â·Ã˜Â¹Ã™â€¦': 'restaurant',
+    'Ã™â€¦Ã˜Â·Ã˜Â§Ã˜Â¹Ã™â€¦': 'restaurant',
+    'Ã˜Â®Ã™Ë†Ã˜Â§Ã˜Â±Ã˜Â¯Ã™â€ ÃšÂ¯Ã™â€¡': 'restaurant',
+    'Ãšâ€ Ã›Å½Ã˜Â´Ã˜ÂªÃ˜Â®Ã˜Â§Ã™â€ Ã™â€¡': 'restaurant',
     'restaurants & cafes': 'restaurant',
     cafe: 'cafe_bakery',
-    'cafÃ©': 'cafe_bakery',
+    'cafÃƒÂ©': 'cafe_bakery',
     bakery: 'cafe_bakery',
-    'ÙƒØ§ÙÙŠÙ‡': 'cafe_bakery',
-    'Ù…Ø®Ø¨Ø²': 'cafe_bakery',
-    'Ú©Ø§ÙÛŽ': 'cafe_bakery',
-    'Ù†Ø§Ù†Û•ÙˆØ§Ø®Ø§Ù†Ù‡': 'cafe_bakery',
-    'cafÃ©s & bakeries': 'cafe_bakery',
+    'Ã™Æ’Ã˜Â§Ã™ÂÃ™Å Ã™â€¡': 'cafe_bakery',
+    'Ã™â€¦Ã˜Â®Ã˜Â¨Ã˜Â²': 'cafe_bakery',
+    'ÃšÂ©Ã˜Â§Ã™ÂÃ›Å½': 'cafe_bakery',
+    'Ã™â€ Ã˜Â§Ã™â€ Ã›â€¢Ã™Ë†Ã˜Â§Ã˜Â®Ã˜Â§Ã™â€ Ã™â€¡': 'cafe_bakery',
+    'cafÃƒÂ©s & bakeries': 'cafe_bakery',
     'cafes & bakeries': 'cafe_bakery',
     supermarket: 'supermarket',
     supermarkets: 'supermarket',
     market: 'supermarket',
     shopping: 'mall',
     mall: 'mall',
-    'Ù…ÙˆÙ„': 'mall',
+    'Ã™â€¦Ã™Ë†Ã™â€ž': 'mall',
     'malls & shopping': 'mall',
     pharmacy: 'pharmacy',
-    'ØµÙŠØ¯Ù„ÙŠØ©': 'pharmacy',
-    'Ø¯Û•Ø±Ù…Ø§Ù†Ø®Ø§Ù†Ù‡': 'pharmacy',
+    'Ã˜ÂµÃ™Å Ã˜Â¯Ã™â€žÃ™Å Ã˜Â©': 'pharmacy',
+    'Ã˜Â¯Ã›â€¢Ã˜Â±Ã™â€¦Ã˜Â§Ã™â€ Ã˜Â®Ã˜Â§Ã™â€ Ã™â€¡': 'pharmacy',
     pharmacies: 'pharmacy',
     hospital: 'hospital',
-    'Ù…Ø³ØªØ´ÙÙ‰': 'hospital',
-    'Ù†Û•Ø®Û†Ø´Ø®Ø§Ù†Ù‡': 'hospital',
+    'Ã™â€¦Ã˜Â³Ã˜ÂªÃ˜Â´Ã™ÂÃ™â€°': 'hospital',
+    'Ã™â€ Ã›â€¢Ã˜Â®Ã›â€ Ã˜Â´Ã˜Â®Ã˜Â§Ã™â€ Ã™â€¡': 'hospital',
     hospitals: 'hospital',
     clinic: 'clinic',
-    'Ø¹ÙŠØ§Ø¯Ø©': 'clinic',
-    'Ú©Ù„ÛŒÙ†ÛŒÚ©': 'clinic',
+    'Ã˜Â¹Ã™Å Ã˜Â§Ã˜Â¯Ã˜Â©': 'clinic',
+    'ÃšÂ©Ã™â€žÃ›Å’Ã™â€ Ã›Å’ÃšÂ©': 'clinic',
     clinics: 'clinic',
     doctor: 'doctor',
-    'Ø·Ø¨ÙŠØ¨': 'doctor',
-    'Ø¯Ú©ØªÛ†Ø±': 'doctor',
+    'Ã˜Â·Ã˜Â¨Ã™Å Ã˜Â¨': 'doctor',
+    'Ã˜Â¯ÃšÂ©Ã˜ÂªÃ›â€ Ã˜Â±': 'doctor',
     doctors: 'doctor',
     dentist: 'dentist',
-    'Ø·Ø¨ÙŠØ¨Ø§Ø³Ù†Ø§Ù†': 'dentist',
-    'Ù¾Ø²ÛŒØ´Ú©ÛŒØ¯Ø¯Ø§Ù†': 'dentist',
+    'Ã˜Â·Ã˜Â¨Ã™Å Ã˜Â¨Ã˜Â§Ã˜Â³Ã™â€ Ã˜Â§Ã™â€ ': 'dentist',
+    'Ã™Â¾Ã˜Â²Ã›Å’Ã˜Â´ÃšÂ©Ã›Å’Ã˜Â¯Ã˜Â¯Ã˜Â§Ã™â€ ': 'dentist',
     dentists: 'dentist',
     salon: 'salon',
-    'ØªØ¬Ù…ÙŠÙ„': 'salon',
-    'Ø³Ø§ÚµÛ†Ù†': 'salon',
+    'Ã˜ÂªÃ˜Â¬Ã™â€¦Ã™Å Ã™â€ž': 'salon',
+    'Ã˜Â³Ã˜Â§ÃšÂµÃ›â€ Ã™â€ ': 'salon',
     'beauty salons': 'salon',
     'beauty & salons': 'salon',
     gym: 'gym',
-    'Ù†Ø§Ø¯ÙŠ': 'gym',
-    'ÙˆÛ•Ø±Ø²Ø´': 'gym',
+    'Ã™â€ Ã˜Â§Ã˜Â¯Ã™Å ': 'gym',
+    'Ã™Ë†Ã›â€¢Ã˜Â±Ã˜Â²Ã˜Â´': 'gym',
     'spas & wellness': 'spa',
     'fitness & gyms': 'gym',
     'gyms & fitness': 'gym',
     hotel: 'hotel',
-    'ÙÙ†Ø¯Ù‚': 'hotel',
-    'Ù‡Û†ØªÛŽÙ„': 'hotel',
+    'Ã™ÂÃ™â€ Ã˜Â¯Ã™â€š': 'hotel',
+    'Ã™â€¡Ã›â€ Ã˜ÂªÃ›Å½Ã™â€ž': 'hotel',
     'hotels & hospitality': 'hotel',
     'hotels & resorts': 'hotel',
     'travel agencies': 'travel_agency',
     education: 'university',
     school: 'university',
     university: 'university',
-    'Ø¬Ø§Ù…Ø¹Ø©': 'university',
-    'Ø²Ø§Ù†Ú©Û†': 'university',
+    'Ã˜Â¬Ã˜Â§Ã™â€¦Ã˜Â¹Ã˜Â©': 'university',
+    'Ã˜Â²Ã˜Â§Ã™â€ ÃšÂ©Ã›â€ ': 'university',
     universities: 'university',
     electronics: 'mobile_shop',
     mobile: 'mobile_shop',
-    'Ù…ÙˆØ¨Ø§ÙŠÙ„': 'mobile_shop',
-    'Ù…Û†Ø¨Ø§ÛŒÙ„': 'mobile_shop',
+    'Ã™â€¦Ã™Ë†Ã˜Â¨Ã˜Â§Ã™Å Ã™â€ž': 'mobile_shop',
+    'Ã™â€¦Ã›â€ Ã˜Â¨Ã˜Â§Ã›Å’Ã™â€ž': 'mobile_shop',
     services: 'other',
     service: 'other',
-    'Ø®Ø¯Ù…Ø©': 'other',
-    'Ø®Ø¯Ù…Ø§Øª': 'other',
+    'Ã˜Â®Ã˜Â¯Ã™â€¦Ã˜Â©': 'other',
+    'Ã˜Â®Ã˜Â¯Ã™â€¦Ã˜Â§Ã˜Âª': 'other',
     other: 'other',
-    'Ø§Ø®Ø±Ù‰': 'other',
-    'Ù‡ÛŒØªØ±': 'other',
+    'Ã˜Â§Ã˜Â®Ã˜Â±Ã™â€°': 'other',
+    'Ã™â€¡Ã›Å’Ã˜ÂªÃ˜Â±': 'other',
     'banks & finance': 'bank',
     'real estate': 'real_estate',
     'lawyers & legal': 'lawyer',
@@ -392,7 +392,7 @@ function normalizeCategory(value: unknown): string {
 
   const compactMap: Record<string, string> = {};
   Object.entries(map).forEach(([k, v]) => {
-    compactMap[k.toLowerCase().replace(/[\s_\-&/ØŒ]+/g, '')] = v;
+    compactMap[k.toLowerCase().replace(/[\s_\-&/Ã˜Å’]+/g, '')] = v;
   });
 
   const exact = compactMap[compact];
@@ -883,7 +883,7 @@ export default function App() {
           commentsCount: Number(post.comments_count || 0),
           shares: Number(post.shares || 0),
           views: Number(post.views || 0),
-          timeAgo: { ar: 'Ø§Ù„Ø¢Ù†', ku: 'Ø¦ÛŽØ³ØªØ§', en: 'Just now' },
+          timeAgo: { ar: 'Ã˜Â§Ã™â€žÃ˜Â¢Ã™â€ ', ku: 'Ã˜Â¦Ã›Å½Ã˜Â³Ã˜ÂªÃ˜Â§', en: 'Just now' },
           likedByUser: false,
           savedByUser: false,
           comments: [],
@@ -1019,9 +1019,9 @@ export default function App() {
       <div className="min-h-screen bg-[#1A1A1A] flex items-center justify-center p-6">
         <div className="w-full max-w-md bg-[#111] border border-luxury-gold/30 rounded-3xl p-6 space-y-4 text-center">
           <h2 className="text-white font-black text-xl">Choose Language</h2>
-          <p className="text-zinc-400 text-sm">Ø§Ø®ØªØ± Ù„ØºØªÙƒ / Ø²Ù…Ø§Ù†Û•Ú©Û•Øª Ù‡Û•ÚµØ¨Ú˜ÛŽØ±Û•</p>
-          <button onClick={() => chooseLanguage('ar')} className="w-full py-3 rounded-2xl bg-gradient-to-r from-luxury-teal to-luxury-gold text-white font-black cursor-pointer">Ø§Ù„Ø¹Ø±Ø¨ÙŠØ©</button>
-          <button onClick={() => chooseLanguage('ku')} className="w-full py-3 rounded-2xl bg-gradient-to-r from-luxury-teal to-luxury-gold text-white font-black cursor-pointer">Ú©ÙˆØ±Ø¯ÛŒ</button>
+          <p className="text-zinc-400 text-sm">Ã˜Â§Ã˜Â®Ã˜ÂªÃ˜Â± Ã™â€žÃ˜ÂºÃ˜ÂªÃ™Æ’ / Ã˜Â²Ã™â€¦Ã˜Â§Ã™â€ Ã›â€¢ÃšÂ©Ã›â€¢Ã˜Âª Ã™â€¡Ã›â€¢ÃšÂµÃ˜Â¨ÃšËœÃ›Å½Ã˜Â±Ã›â€¢</p>
+          <button onClick={() => chooseLanguage('ar')} className="w-full py-3 rounded-2xl bg-gradient-to-r from-luxury-teal to-luxury-gold text-white font-black cursor-pointer">Ã˜Â§Ã™â€žÃ˜Â¹Ã˜Â±Ã˜Â¨Ã™Å Ã˜Â©</button>
+          <button onClick={() => chooseLanguage('ku')} className="w-full py-3 rounded-2xl bg-gradient-to-r from-luxury-teal to-luxury-gold text-white font-black cursor-pointer">ÃšÂ©Ã™Ë†Ã˜Â±Ã˜Â¯Ã›Å’</button>
           <button onClick={() => chooseLanguage('en')} className="w-full py-3 rounded-2xl bg-gradient-to-r from-luxury-teal to-luxury-gold text-white font-black cursor-pointer">English</button>
         </div>
       </div>
@@ -1131,7 +1131,7 @@ export default function App() {
           <div>
             <div className="text-[10px] font-black text-luxury-gold uppercase tracking-wider mb-1.5 text-center flex items-center justify-center gap-1.5">
               <MapPin className="w-3.5 h-3.5 text-luxury-gold shrink-0" />
-              <span>{currentLang === 'en' ? 'Select Iraqi Governorate / Region' : currentLang === 'ku' ? 'پارێزگایەک دەستنیشان بکە' : 'اختر المحافظة العراقية لتصفح المتاجر'}</span>
+              <span>{currentLang === 'en' ? 'Select Iraqi Governorate / Region' : currentLang === 'ku' ? 'Ù¾Ø§Ø±ÛŽØ²Ú¯Ø§ÛŒÛ•Ú© Ø¯Û•Ø³ØªÙ†ÛŒØ´Ø§Ù† Ø¨Ú©Û•' : 'Ø§Ø®ØªØ± Ø§Ù„Ù…Ø­Ø§ÙØ¸Ø© Ø§Ù„Ø¹Ø±Ø§Ù‚ÙŠØ© Ù„ØªØµÙØ­ Ø§Ù„Ù…ØªØ§Ø¬Ø±'}</span>
             </div>
             
             <div className="relative">
@@ -1143,7 +1143,7 @@ export default function App() {
                 className="w-full flex items-center justify-between text-xs font-bold bg-[#16161a] hover:bg-[#1f1f26] text-white px-4 py-3 rounded-xl border border-luxury-gold/30 hover:border-luxury-gold/60 transition-all shadow-xl shadow-black/40 cursor-pointer"
               >
                 <div className="flex items-center gap-2">
-                  <span className="text-base">📍</span>
+                  <span className="text-base">ðŸ“</span>
                   <span>{GOVERNORATES.find(g => g.code === selectedGov)?.name[currentLang]}</span>
                 </div>
                 <ChevronDown className={`w-4 h-4 text-luxury-gold transition-transform duration-300 ${govDropdownOpen ? 'rotate-180' : ''}`} />
@@ -1166,7 +1166,7 @@ export default function App() {
                       }`}
                     >
                       <span className="truncate">{gov.name[currentLang]}</span>
-                      {selectedGov === gov.code && <span className="text-[9px]">✨</span>}
+                      {selectedGov === gov.code && <span className="text-[9px]">âœ¨</span>}
                     </button>
                   ))}
                 </div>
@@ -1176,7 +1176,7 @@ export default function App() {
 
           <div>
             <div className="text-[10px] font-black text-luxury-gold uppercase tracking-wider mb-1.5 text-center flex items-center justify-center gap-1.5">
-              <span>{currentLang === 'en' ? '🔎 Filter by Category' : currentLang === 'ku' ? '🔎 بەپێی پۆل دەستنیشان بکە' : '🔎 تصفية حسب الفئة'}</span>
+              <span>{currentLang === 'en' ? 'ðŸ”Ž Filter by Category' : currentLang === 'ku' ? 'ðŸ”Ž Ø¨Û•Ù¾ÛŽÛŒ Ù¾Û†Ù„ Ø¯Û•Ø³ØªÙ†ÛŒØ´Ø§Ù† Ø¨Ú©Û•' : 'ðŸ”Ž ØªØµÙÙŠØ© Ø­Ø³Ø¨ Ø§Ù„ÙØ¦Ø©'}</span>
             </div>
             
             <div className="relative">
@@ -1189,12 +1189,12 @@ export default function App() {
               >
                 <div className="flex items-center gap-2">
                   <span className="text-base">
-                    {selectedCategory ? CATEGORIES.find(c => c.id === selectedCategory)?.icon || '🏷️' : '🏷️'}
+                    {selectedCategory ? CATEGORIES.find(c => c.id === selectedCategory)?.icon || 'ðŸ·ï¸' : 'ðŸ·ï¸'}
                   </span>
                   <span>
                     {selectedCategory 
                       ? CATEGORIES.find(c => c.id === selectedCategory)?.name[currentLang] 
-                      : (currentLang === 'en' ? 'All Categories' : currentLang === 'ku' ? 'هەموو پۆلەکان' : 'جميع الفئات')}
+                      : (currentLang === 'en' ? 'All Categories' : currentLang === 'ku' ? 'Ù‡Û•Ù…ÙˆÙˆ Ù¾Û†Ù„Û•Ú©Ø§Ù†' : 'Ø¬Ù…ÙŠØ¹ Ø§Ù„ÙØ¦Ø§Øª')}
                   </span>
                 </div>
                 <ChevronDown className={`w-4 h-4 text-luxury-gold transition-transform duration-300 ${categoryDropdownOpen ? 'rotate-180' : ''}`} />
@@ -1214,8 +1214,8 @@ export default function App() {
                         : 'text-zinc-300 hover:bg-white/5 font-semibold'
                     }`}
                   >
-                    <span>🏷️ {currentLang === 'en' ? 'All Categories' : currentLang === 'ku' ? 'هەموو پۆلەکان' : 'جميع الفئات'}</span>
-                    {selectedCategory === null && <span className="text-[9px]">✨</span>}
+                    <span>ðŸ·ï¸ {currentLang === 'en' ? 'All Categories' : currentLang === 'ku' ? 'Ù‡Û•Ù…ÙˆÙˆ Ù¾Û†Ù„Û•Ú©Ø§Ù†' : 'Ø¬Ù…ÙŠØ¹ Ø§Ù„ÙØ¦Ø§Øª'}</span>
+                    {selectedCategory === null && <span className="text-[9px]">âœ¨</span>}
                   </button>
 
                   {CATEGORIES.map((cat) => (
@@ -1233,7 +1233,7 @@ export default function App() {
                       }`}
                     >
                       <span className="truncate">{cat.icon} {cat.name[currentLang]}</span>
-                      {selectedCategory === cat.id && <span className="text-[9px]">âœ¨</span>}
+                      {selectedCategory === cat.id && <span className="text-[9px]">Ã¢Å“Â¨</span>}
                     </button>
                   ))}
                 </div>
@@ -1265,10 +1265,10 @@ export default function App() {
               <div className="relative z-10 flex h-full flex-col items-center justify-between gap-2 sm:gap-4">
                 <div>
                   <h3 className="text-lg xs:text-xl sm:text-5xl font-black text-rose-100 leading-tight [font-family:Tahoma,Arial,sans-serif]">
-                    {currentLang === 'en' ? 'Chaykhana' : currentLang === 'ku' ? 'چایخانە' : 'چايخانة'}
+                    {currentLang === 'en' ? 'Chaykhana' : currentLang === 'ku' ? 'Ú†Ø§ÛŒØ®Ø§Ù†Û•' : 'Ú†Ø§ÙŠØ®Ø§Ù†Ø©'}
                   </h3>
                   <p className="mt-1 text-[11px] sm:text-lg font-bold text-rose-100/75 [font-family:Tahoma,Arial,sans-serif]">
-                    {currentLang === 'en' ? 'See what is new' : currentLang === 'ku' ? 'ببینە چی نوێیە' : 'شوف شنو الجديد'}
+                    {currentLang === 'en' ? 'See what is new' : currentLang === 'ku' ? 'Ø¨Ø¨ÛŒÙ†Û• Ú†ÛŒ Ù†ÙˆÛŽÛŒÛ•' : 'Ø´ÙˆÙ Ø´Ù†Ùˆ Ø§Ù„Ø¬Ø¯ÙŠØ¯'}
                   </p>
                 </div>
 
@@ -1284,7 +1284,7 @@ export default function App() {
                 </div>
 
                 <div className="w-full rounded-full border border-rose-200/45 px-2 py-2 sm:px-5 sm:py-3 text-[11px] sm:text-sm font-black text-rose-50 [font-family:Tahoma,Arial,sans-serif]">
-                  {currentLang === 'en' ? 'Enter' : currentLang === 'ku' ? 'چوونەژوور' : 'الدخول'}
+                  {currentLang === 'en' ? 'Enter' : currentLang === 'ku' ? 'Ú†ÙˆÙˆÙ†Û•Ú˜ÙˆÙˆØ±' : 'Ø§Ù„Ø¯Ø®ÙˆÙ„'}
                 </div>
               </div>
             </button>
@@ -1308,10 +1308,10 @@ export default function App() {
               <div className="relative z-10 flex h-full flex-col items-center justify-between gap-2 sm:gap-4">
                 <div>
                   <h3 className="text-lg xs:text-xl sm:text-5xl font-black text-cyan-100 leading-tight [font-family:Tahoma,Arial,sans-serif]">
-                    {currentLang === 'en' ? 'Shko Maku' : currentLang === 'ku' ? 'شکو ماکو' : 'شكو ماكو'}
+                    {currentLang === 'en' ? 'Shko Maku' : currentLang === 'ku' ? 'Ø´Ú©Ùˆ Ù…Ø§Ú©Ùˆ' : 'Ø´ÙƒÙˆ Ù…Ø§ÙƒÙˆ'}
                   </h3>
                   <p className="mt-1 text-[11px] sm:text-lg font-bold text-cyan-100/75 [font-family:Tahoma,Arial,sans-serif]">
-                    {currentLang === 'en' ? 'Business directory' : currentLang === 'ku' ? 'ڕێبەری کار و خزمەتگوزاری' : 'دليل الأعمال والخدمات'}
+                    {currentLang === 'en' ? 'Business directory' : currentLang === 'ku' ? 'Ú•ÛŽØ¨Û•Ø±ÛŒ Ú©Ø§Ø± Ùˆ Ø®Ø²Ù…Û•ØªÚ¯ÙˆØ²Ø§Ø±ÛŒ' : 'Ø¯Ù„ÙŠÙ„ Ø§Ù„Ø£Ø¹Ù…Ø§Ù„ ÙˆØ§Ù„Ø®Ø¯Ù…Ø§Øª'}
                   </p>
                 </div>
 
@@ -1327,28 +1327,28 @@ export default function App() {
 
                 <div className="grid grid-cols-2 gap-1 sm:gap-2 w-full text-[9px] sm:text-sm font-black [font-family:Tahoma,Arial,sans-serif]">
                   <span className="rounded-full border border-cyan-100/25 bg-white/10 px-1.5 py-1 sm:px-3 sm:py-2 text-cyan-50">
-                    {currentLang === 'en' ? 'Cafes' : currentLang === 'ku' ? 'کافێ' : 'كافيهات'}
+                    {currentLang === 'en' ? 'Cafes' : currentLang === 'ku' ? 'Ú©Ø§ÙÛŽ' : 'ÙƒØ§ÙÙŠÙ‡Ø§Øª'}
                   </span>
                   <span className="rounded-full border border-cyan-100/25 bg-white/10 px-1.5 py-1 sm:px-3 sm:py-2 text-cyan-50">
-                    {currentLang === 'en' ? 'Restaurants' : currentLang === 'ku' ? 'چێشتخانە' : 'مطاعم'}
+                    {currentLang === 'en' ? 'Restaurants' : currentLang === 'ku' ? 'Ú†ÛŽØ´ØªØ®Ø§Ù†Û•' : 'Ù…Ø·Ø§Ø¹Ù…'}
                   </span>
                   <span className="rounded-full border border-cyan-100/25 bg-white/10 px-1.5 py-1 sm:px-3 sm:py-2 text-cyan-50">
-                    {currentLang === 'en' ? 'Doctors' : currentLang === 'ku' ? 'دکتۆر' : 'أطباء'}
+                    {currentLang === 'en' ? 'Doctors' : currentLang === 'ku' ? 'Ø¯Ú©ØªÛ†Ø±' : 'Ø£Ø·Ø¨Ø§Ø¡'}
                   </span>
                   <span className="rounded-full border border-cyan-100/25 bg-white/10 px-1.5 py-1 sm:px-3 sm:py-2 text-cyan-50">
-                    {currentLang === 'en' ? 'More' : currentLang === 'ku' ? 'زیاتر' : 'المزيد'}
+                    {currentLang === 'en' ? 'More' : currentLang === 'ku' ? 'Ø²ÛŒØ§ØªØ±' : 'Ø§Ù„Ù…Ø²ÙŠØ¯'}
                   </span>
                 </div>
 
                 <div className="w-full rounded-full border border-cyan-100/45 px-2 py-2 sm:px-5 sm:py-3 text-[11px] sm:text-sm font-black text-cyan-50 [font-family:Tahoma,Arial,sans-serif]">
-                  {currentLang === 'en' ? 'Enter' : currentLang === 'ku' ? 'چوونەژوور' : 'الدخول'}
+                  {currentLang === 'en' ? 'Enter' : currentLang === 'ku' ? 'Ú†ÙˆÙˆÙ†Û•Ú˜ÙˆÙˆØ±' : 'Ø§Ù„Ø¯Ø®ÙˆÙ„'}
                 </div>
               </div>
             </button>
           </div>
 
           <p className="mt-3 sm:mt-5 text-center text-[11px] sm:text-sm font-bold text-zinc-400 [font-family:Tahoma,Arial,sans-serif]">
-            {currentLang === 'en' ? 'Choose the section you want to enter' : currentLang === 'ku' ? 'ئەو بەشە هەڵبژێرە کە دەتەوێت بچیتە ناوی' : 'اختر القسم الذي تريد الدخول إليه'}
+            {currentLang === 'en' ? 'Choose the section you want to enter' : currentLang === 'ku' ? 'Ø¦Û•Ùˆ Ø¨Û•Ø´Û• Ù‡Û•ÚµØ¨Ú˜ÛŽØ±Û• Ú©Û• Ø¯Û•ØªÛ•ÙˆÛŽØª Ø¨Ú†ÛŒØªÛ• Ù†Ø§ÙˆÛŒ' : 'Ø§Ø®ØªØ± Ø§Ù„Ù‚Ø³Ù… Ø§Ù„Ø°ÙŠ ØªØ±ÙŠØ¯ Ø§Ù„Ø¯Ø®ÙˆÙ„ Ø¥Ù„ÙŠÙ‡'}
           </p>
         </div>
 
@@ -1680,4 +1680,6 @@ export default function App() {
     </div>
   );
 }
+
+
 

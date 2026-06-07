@@ -1,0 +1,276 @@
+﻿<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Business Registrations | Shaku Maku</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Tahoma, Arial, sans-serif;
+      background: #070807;
+      color: #fff;
+      padding: 24px;
+    }
+    h1 { margin: 0 0 8px; }
+    .subtitle {
+      color: #a1a1aa;
+      margin-bottom: 20px;
+      line-height: 1.7;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+    .box {
+      background: #111413;
+      border: 1px solid rgba(245, 197, 66, .2);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 14px 40px rgba(0,0,0,.28);
+    }
+    .count {
+      font-size: 42px;
+      font-weight: bold;
+      color: #86efac;
+      margin-top: 6px;
+    }
+    .today { color: #facc15; }
+    .pending { color: #93c5fd; }
+    a, button {
+      display: inline-block;
+      margin: 8px 8px 8px 0;
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: #facc15;
+      color: #1a1400;
+      text-decoration: none;
+      border: 0;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .secondary {
+      background: #334155;
+      color: #e2e8f0;
+    }
+    .danger {
+      background: #7f1d1d;
+      color: #fecaca;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #0f172a;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      text-align: right;
+      font-size: 14px;
+      vertical-align: top;
+    }
+    th {
+      background: #1e293b;
+      color: #cbd5e1;
+    }
+    .muted { color: #94a3b8; }
+    .ltr {
+      direction: ltr;
+      text-align: left;
+      font-family: Consolas, monospace;
+    }
+    .notice {
+      background: rgba(239,68,68,.13);
+      border: 1px solid rgba(239,68,68,.35);
+      color: #fecaca;
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 18px;
+      display: none;
+      line-height: 1.7;
+    }
+  </style>
+</head>
+<body>
+  <h1>تسجيلات أصحاب الأعمال</h1>
+
+  <div class="subtitle">
+    هذه الصفحة تعرض التسجيلات القادمة من زر "سجّل نشاطك التجاري".
+    يجب أن تكون مسجل دخول كأدمن في التطبيق حتى تظهر البيانات.
+  </div>
+
+  <div id="notice" class="notice"></div>
+
+  <div class="grid">
+    <div class="box">
+      <div class="muted">إجمالي التسجيلات</div>
+      <div id="totalCount" class="count">0</div>
+    </div>
+
+    <div class="box">
+      <div class="muted">تسجيلات اليوم</div>
+      <div id="todayCount" class="count today">0</div>
+    </div>
+
+    <div class="box">
+      <div class="muted">بانتظار المراجعة</div>
+      <div id="pendingCount" class="count pending">0</div>
+    </div>
+  </div>
+
+  <div class="box" style="margin-bottom:18px;">
+    <button onclick="loadData()">تحديث</button>
+    <button onclick="downloadCsv()" class="secondary">تحميل CSV</button>
+    <a href="/register-business.html" target="_blank">فتح صفحة التسجيل</a>
+    <a href="/" class="secondary">الرجوع للتطبيق</a>
+  </div>
+
+  <div class="box">
+    <h2>آخر التسجيلات</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>التاريخ</th>
+          <th>اسم النشاط</th>
+          <th>الهاتف</th>
+          <th>المحافظة</th>
+          <th>الحالة</th>
+          <th>المصدر</th>
+        </tr>
+      </thead>
+      <tbody id="rows">
+        <tr><td colspan="6">جاري التحميل...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    const API_BASE = "https://shaku-maku.mahdialmuntadhar1.workers.dev";
+    let cachedItems = [];
+
+    function getToken() {
+      return localStorage.getItem("auth_token") || "";
+    }
+
+    function showNotice(text) {
+      const notice = document.getElementById("notice");
+      notice.textContent = text;
+      notice.style.display = "block";
+    }
+
+    async function loadData() {
+      const rows = document.getElementById("rows");
+      rows.innerHTML = '<tr><td colspan="6">جاري التحميل...</td></tr>';
+      document.getElementById("notice").style.display = "none";
+
+      const token = getToken();
+
+      if (!token) {
+        showNotice("لا يوجد تسجيل دخول أدمن. افتح التطبيق الرئيسي، سجل دخول بحساب الأدمن، ثم ارجع لهذه الصفحة واضغط تحديث.");
+        rows.innerHTML = '<tr><td colspan="6">سجل دخول كأدمن أولاً.</td></tr>';
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/api/business-submissions?status=all&limit=100`, {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        const data = await res.json();
+
+        if (!res.ok || !data.success) {
+          throw new Error(data.error || "فشل تحميل البيانات");
+        }
+
+        const items = Array.isArray(data.data) ? data.data : [];
+        cachedItems = items;
+
+        document.getElementById("totalCount").textContent = items.length;
+
+        const todayKey = new Date().toISOString().slice(0, 10);
+        const todayItems = items.filter(item => {
+          if (!item.created_at) return false;
+          return new Date(item.created_at).toISOString().slice(0, 10) === todayKey;
+        });
+
+        const pendingItems = items.filter(item => item.status === "pending");
+
+        document.getElementById("todayCount").textContent = todayItems.length;
+        document.getElementById("pendingCount").textContent = pendingItems.length;
+
+        if (items.length === 0) {
+          rows.innerHTML = '<tr><td colspan="6">لا توجد تسجيلات بعد</td></tr>';
+          return;
+        }
+
+        rows.innerHTML = items.map(item => `
+          <tr>
+            <td>${formatDate(item.created_at)}</td>
+            <td>${escapeHtml(item.name)}</td>
+            <td class="ltr">${escapeHtml(item.phone)}</td>
+            <td>${escapeHtml(item.governorate)}</td>
+            <td>${escapeHtml(item.status)}</td>
+            <td>${escapeHtml(item.source || "")}</td>
+          </tr>
+        `).join("");
+      } catch (err) {
+        showNotice("فشل تحميل البيانات: " + err.message);
+        rows.innerHTML = '<tr><td colspan="6">فشل التحميل.</td></tr>';
+      }
+    }
+
+    function downloadCsv() {
+      if (!cachedItems.length) {
+        alert("لا توجد بيانات للتحميل. اضغط تحديث أولاً.");
+        return;
+      }
+
+      const header = ["created_at", "name", "phone", "governorate", "status", "source"];
+      const lines = [
+        header.join(","),
+        ...cachedItems.map(item => header.map(key => csvCell(item[key])).join(","))
+      ];
+
+      const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "shaku-maku-business-registrations.csv";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function csvCell(value) {
+      const text = String(value || "").replaceAll('"', '""');
+      return `"${text}"`;
+    }
+
+    function formatDate(value) {
+      if (!value) return "";
+      try {
+        return new Date(value).toLocaleString();
+      } catch {
+        return value;
+      }
+    }
+
+    function escapeHtml(value) {
+      return String(value || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    loadData();
+  </script>
+</body>
+</html>

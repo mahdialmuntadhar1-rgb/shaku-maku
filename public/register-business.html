@@ -1,0 +1,177 @@
+﻿<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>سجّل نشاطك التجاري | شكو ماكو</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Tahoma, Arial, sans-serif;
+      background: #070807;
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .card {
+      width: 100%;
+      max-width: 520px;
+      background: #111413;
+      border: 1px solid rgba(250,204,21,.35);
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.45);
+    }
+    h1 { margin-top: 0; }
+    p { color: #d4d4d8; line-height: 1.8; }
+    label {
+      display: block;
+      margin-top: 14px;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+    input, select {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(250,204,21,.25);
+      background: #090b0a;
+      color: white;
+      font-size: 16px;
+    }
+    button {
+      width: 100%;
+      margin-top: 20px;
+      padding: 15px;
+      border: 0;
+      border-radius: 16px;
+      background: linear-gradient(135deg,#facc15,#22c55e);
+      color: #1a1400;
+      font-weight: 900;
+      font-size: 18px;
+      cursor: pointer;
+    }
+    .msg {
+      display: none;
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 12px;
+      line-height: 1.7;
+    }
+    .ok {
+      display: block;
+      background: rgba(34,197,94,.15);
+      border: 1px solid rgba(34,197,94,.35);
+      color: #bbf7d0;
+    }
+    .err {
+      display: block;
+      background: rgba(239,68,68,.15);
+      border: 1px solid rgba(239,68,68,.35);
+      color: #fecaca;
+    }
+    a { color: #facc15; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>سجّل نشاطك التجاري في شكو ماكو</h1>
+    <p>املأ فقط اسم النشاط، رقم الهاتف، والمحافظة.</p>
+
+    <form id="businessForm">
+      <label>اسم النشاط التجاري</label>
+      <input id="businessName" required placeholder="مثال: مطعم الرافدين" />
+
+      <label>رقم الهاتف / واتساب</label>
+      <input id="phone" required placeholder="مثال: 07701234567" />
+
+      <label>المحافظة</label>
+      <select id="governorate" required>
+        <option value="">اختر المحافظة</option>
+        <option value="baghdad">بغداد</option>
+        <option value="basra">البصرة</option>
+        <option value="nineveh">نينوى / الموصل</option>
+        <option value="erbil">أربيل</option>
+        <option value="sulaymaniyah">السليمانية</option>
+        <option value="duhok">دهوك</option>
+        <option value="kirkuk">كركوك</option>
+        <option value="najaf">النجف</option>
+        <option value="karbala">كربلاء</option>
+        <option value="babil">بابل</option>
+        <option value="anbar">الأنبار</option>
+        <option value="diyala">ديالى</option>
+        <option value="wasit">واسط</option>
+        <option value="salah_ad_din">صلاح الدين</option>
+        <option value="maysan">ميسان</option>
+        <option value="dhi_qar">ذي قار</option>
+        <option value="muthanna">المثنى</option>
+        <option value="qadisiyyah">القادسية</option>
+        <option value="halabja">حلبجة</option>
+      </select>
+
+      <button id="submitBtn" type="submit">إرسال التسجيل الآن</button>
+    </form>
+
+    <div id="msg" class="msg"></div>
+
+    <p style="margin-top:16px;">
+      <a href="/">الرجوع إلى التطبيق</a>
+    </p>
+  </div>
+
+  <script>
+    const API_BASE = "https://shaku-maku.mahdialmuntadhar1.workers.dev";
+    const form = document.getElementById("businessForm");
+    const msg = document.getElementById("msg");
+    const btn = document.getElementById("submitBtn");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      msg.className = "msg";
+      msg.style.display = "none";
+
+      const payload = {
+        name: document.getElementById("businessName").value.trim(),
+        phone: document.getElementById("phone").value.trim(),
+        governorate: document.getElementById("governorate").value.trim(),
+        category: "services",
+        source: "public_register_business_button"
+      };
+
+      btn.disabled = true;
+      btn.textContent = "جاري الإرسال...";
+
+      try {
+        const res = await fetch(`${API_BASE}/api/business-submissions`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        if (!res.ok || !data.success) {
+          throw new Error(data.error || "حدث خطأ أثناء التسجيل");
+        }
+
+        msg.className = "msg ok";
+        msg.textContent = "تم استلام التسجيل بنجاح ✅";
+        msg.style.display = "block";
+        form.reset();
+      } catch (err) {
+        msg.className = "msg err";
+        msg.textContent = "لم يتم التسجيل: " + err.message;
+        msg.style.display = "block";
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "إرسال التسجيل الآن";
+      }
+    });
+  </script>
+</body>
+</html>
