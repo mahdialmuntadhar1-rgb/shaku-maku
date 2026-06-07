@@ -118,7 +118,7 @@ export default function Header({
   ];
 
   return (
-    <header className="sticky top-[var(--shaku-register-banner-height)] z-50 flex flex-col w-full shadow-lg">
+    <header className="sticky z-50 flex flex-col w-full shadow-lg" style={{ top: "calc(var(--shaku-register-banner-height) - 1px)" }}>
 <div className="backdrop-blur-md bg-luxury-bg/90 border-b border-luxury-gold/20 pb-2 pt-2.5 px-3 xs:px-6 w-full flex flex-wrap md:flex-nowrap items-center justify-between gap-2 md:gap-4">
         
         {/* Left/Right Brand Column */}
