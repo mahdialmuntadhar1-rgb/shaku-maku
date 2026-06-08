@@ -1,5 +1,5 @@
-﻿const CACHE_NAME = 'shaku-maku-phase1-install-20260603-201951';
-const APP_SHELL = ['/', '/manifest.webmanifest', '/icons/icon.svg', '/icons/icon-maskable.svg'];
+const CACHE_NAME = 'shaku-maku-pwa-refresh-20260608-1352';
+const APP_SHELL = ['/manifest.webmanifest', '/icons/icon.svg', '/icons/icon-maskable.svg'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -25,19 +25,18 @@ self.addEventListener('fetch', (event) => {
 
   const url = new URL(request.url);
 
-  if (request.mode === 'navigate') {
-    event.respondWith(fetch(request).catch(() => caches.match('/') || Response.error()));
-    return;
-  }
-
   if (url.origin !== self.location.origin) {
     return;
   }
 
-  // Never serve HTML fallback for module scripts or dev server resources.
   if (
+    request.mode === 'navigate' ||
+    request.destination === 'document' ||
     request.destination === 'script' ||
+    request.destination === 'style' ||
     request.destination === 'manifest' ||
+    url.pathname === '/' ||
+    url.pathname.startsWith('/assets/') ||
     url.pathname.startsWith('/src/') ||
     url.pathname.startsWith('/@vite/')
   ) {
@@ -63,4 +62,3 @@ self.addEventListener('fetch', (event) => {
     })
   );
 });
-
