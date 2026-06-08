@@ -1,18 +1,24 @@
-const CACHE_NAME = 'shaku-maku-pwa-refresh-20260608-1352';
-const APP_SHELL = ['/manifest.webmanifest', '/icons/icon.svg', '/icons/icon-maskable.svg'];
+const SW_VERSION = 'shaku-maku-pwa-reset-20260608-1408';
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)).then(() => self.skipWaiting())
-  );
+  event.waitUntil(self.skipWaiting());
 });
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches
       .keys()
-      .then((keys) => Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))))
+      .then((keys) => Promise.all(keys.map((key) => caches.delete(key))))
       .then(() => self.clients.claim())
+      .then(() =>
+        self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clients) =>
+          Promise.all(
+            clients
+              .filter((client) => client.url.startsWith(self.location.origin))
+              .map((client) => client.navigate(client.url))
+          )
+        )
+      )
   );
 });
 
@@ -29,36 +35,19 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  if (
-    request.mode === 'navigate' ||
-    request.destination === 'document' ||
-    request.destination === 'script' ||
-    request.destination === 'style' ||
-    request.destination === 'manifest' ||
-    url.pathname === '/' ||
-    url.pathname.startsWith('/assets/') ||
-    url.pathname.startsWith('/src/') ||
-    url.pathname.startsWith('/@vite/')
-  ) {
-    event.respondWith(fetch(request));
-    return;
-  }
-
   event.respondWith(
-    caches.match(request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
+    fetch(request).catch(() => {
+      if (request.mode === 'navigate') {
+        return fetch('/');
       }
 
-      return fetch(request)
-        .then((networkResponse) => {
-          if (networkResponse.ok) {
-            const responseClone = networkResponse.clone();
-            void caches.open(CACHE_NAME).then((cache) => cache.put(request, responseClone));
-          }
-          return networkResponse;
-        })
-        .catch(() => Response.error());
+      return Response.error();
     })
   );
+});
+
+self.addEventListener('message', (event) => {
+  if (event.data?.type === 'SHAKU_MAKU_SW_VERSION') {
+    event.source?.postMessage({ type: 'SHAKU_MAKU_SW_VERSION', version: SW_VERSION });
+  }
 });

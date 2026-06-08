@@ -29,6 +29,25 @@ if (typeof window !== "undefined") {
     const registrations = serviceWorkerSupported
       ? await navigator.serviceWorker.getRegistrations()
       : [];
+    const serviceWorkerVersion = await new Promise<string | null>((resolve) => {
+      if (!navigator.serviceWorker?.controller) {
+        resolve(null);
+        return;
+      }
+
+      const channel = new MessageChannel();
+      const timeoutId = window.setTimeout(() => resolve(null), 1200);
+
+      channel.port1.onmessage = (event) => {
+        window.clearTimeout(timeoutId);
+        resolve(event.data?.version || null);
+      };
+
+      navigator.serviceWorker.controller.postMessage(
+        { type: "SHAKU_MAKU_SW_VERSION" },
+        [channel.port2]
+      );
+    });
 
     const fetchStatus = async (url: string) => {
       try {
@@ -48,6 +67,7 @@ if (typeof window !== "undefined") {
         installing: registration.installing?.scriptURL || null,
         waiting: registration.waiting?.scriptURL || null,
       })),
+      serviceWorkerVersion,
       hasServiceWorkerController: Boolean(navigator.serviceWorker?.controller),
       isStandaloneDisplayMode:
         window.matchMedia?.("(display-mode: standalone)").matches ||
