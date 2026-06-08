@@ -20,6 +20,36 @@
         window.dispatchEvent(new Event("shaku-maku-install-prompt-ready"));
         console.info("[ShakuMaku] PWA install prompt captured");
       });
+      window.__shakuMakuPwaDebug = async function () {
+        var manifestLink = document.querySelector('link[rel="manifest"]');
+        var serviceWorkerSupported = "serviceWorker" in navigator;
+        var registrations = serviceWorkerSupported ? await navigator.serviceWorker.getRegistrations() : [];
+        async function fetchStatus(url) {
+          try {
+            var response = await fetch(url, { cache: "no-store" });
+            return response.status + " " + response.statusText;
+          } catch (error) {
+            return error && error.message ? error.message : String(error);
+          }
+        }
+        console.info("[ShakuMaku] PWA debug", {
+          manifestLinkHref: manifestLink ? manifestLink.href : null,
+          serviceWorkerSupported: serviceWorkerSupported,
+          serviceWorkerRegistrations: registrations.map(function (registration) {
+            return {
+              scope: registration.scope,
+              active: registration.active ? registration.active.scriptURL : null,
+              installing: registration.installing ? registration.installing.scriptURL : null,
+              waiting: registration.waiting ? registration.waiting.scriptURL : null
+            };
+          }),
+          hasServiceWorkerController: Boolean(navigator.serviceWorker && navigator.serviceWorker.controller),
+          isStandaloneDisplayMode: window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true,
+          hasInstallPrompt: Boolean(window.__shakuMakuInstallPrompt),
+          manifestFetchStatus: await fetchStatus("/manifest.webmanifest"),
+          serviceWorkerFetchStatus: await fetchStatus("/sw.js")
+        });
+      };
     </script>
     <title>Shaku Maku | Iraqi Business Directory</title>
   <meta property="og:title" content="شكو ماكو | دليل الأعمال العراقي">
@@ -138,7 +168,6 @@
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-
 
 
 
