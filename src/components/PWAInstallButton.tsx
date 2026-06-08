@@ -99,10 +99,18 @@ export default function PWAInstallButton({ currentLang }: PWAInstallButtonProps)
     window.addEventListener('appinstalled', handleAppInstalled);
     syncGlobalInstallPrompt();
 
+    const showButtonTimer = window.setTimeout(() => {
+      if (!isStandaloneMode()) {
+        syncGlobalInstallPrompt();
+        setVisible(true);
+      }
+    }, 1200);
+
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
       window.removeEventListener('shaku-maku-install-prompt-ready', syncGlobalInstallPrompt);
       window.removeEventListener('appinstalled', handleAppInstalled);
+      window.clearTimeout(showButtonTimer);
     };
   }, []);
 
@@ -125,7 +133,7 @@ export default function PWAInstallButton({ currentLang }: PWAInstallButtonProps)
 
     if (!activePrompt) {
       console.info('[ShakuMaku] PWA no install prompt available');
-      setVisible(false);
+      setVisible(true);
       return;
     }
 
@@ -186,4 +194,3 @@ export default function PWAInstallButton({ currentLang }: PWAInstallButtonProps)
     </button>
   );
 }
-
