@@ -32,7 +32,7 @@
             return error && error.message ? error.message : String(error);
           }
         }
-        console.info("[ShakuMaku] PWA debug", {
+        var debugInfo = {
           manifestLinkHref: manifestLink ? manifestLink.href : null,
           serviceWorkerSupported: serviceWorkerSupported,
           serviceWorkerRegistrations: registrations.map(function (registration) {
@@ -48,7 +48,9 @@
           hasInstallPrompt: Boolean(window.__shakuMakuInstallPrompt),
           manifestFetchStatus: await fetchStatus("/manifest.webmanifest"),
           serviceWorkerFetchStatus: await fetchStatus("/sw.js")
-        });
+        };
+        console.info("[ShakuMaku] PWA debug", debugInfo);
+        console.info("[ShakuMaku] PWA debug JSON", JSON.stringify(debugInfo));
       };
     </script>
     <title>Shaku Maku | Iraqi Business Directory</title>
@@ -168,6 +170,5 @@
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-
 
 

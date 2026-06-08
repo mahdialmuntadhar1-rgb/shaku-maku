@@ -39,7 +39,7 @@ if (typeof window !== "undefined") {
       }
     };
 
-    console.info("[ShakuMaku] PWA debug", {
+    const debugInfo = {
       manifestLinkHref: manifestLink?.href || null,
       serviceWorkerSupported,
       serviceWorkerRegistrations: registrations.map((registration) => ({
@@ -55,7 +55,10 @@ if (typeof window !== "undefined") {
       hasInstallPrompt: Boolean(window.__shakuMakuInstallPrompt),
       manifestFetchStatus: await fetchStatus("/manifest.webmanifest"),
       serviceWorkerFetchStatus: await fetchStatus("/sw.js"),
-    });
+    };
+
+    console.info("[ShakuMaku] PWA debug", debugInfo);
+    console.info("[ShakuMaku] PWA debug JSON", JSON.stringify(debugInfo));
   };
 
   window.setTimeout(() => {
