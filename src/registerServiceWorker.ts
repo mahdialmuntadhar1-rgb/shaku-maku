@@ -11,6 +11,12 @@ export const registerServiceWorker = (): void => {
   void navigator.serviceWorker.ready.then(() => {
     if (!navigator.serviceWorker.controller) {
       console.info('[ShakuMaku] PWA service worker ready; reload once if install prompt is still unavailable');
+      const reloadKey = 'shaku-maku-sw-controller-reload';
+
+      if (window.sessionStorage.getItem(reloadKey) !== 'done') {
+        window.sessionStorage.setItem(reloadKey, 'done');
+        window.location.reload();
+      }
     }
   });
 
