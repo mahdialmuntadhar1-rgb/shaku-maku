@@ -9,7 +9,11 @@
   "background_color": "#0a0a0f",
   "theme_color": "#0a0a0f",
   "orientation": "portrait-primary",
-  "categories": ["business", "social", "lifestyle"],
+  "categories": [
+    "business",
+    "social",
+    "lifestyle"
+  ],
   "icons": [
     {
       "src": "/icons/icon-192.png",
@@ -36,14 +40,41 @@
       "short_name": "Businesses",
       "description": "Explore Iraqi businesses",
       "url": "/?tab=discover",
-      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
     },
     {
       "name": "Social Feed",
       "short_name": "Feed",
       "description": "View local updates and offers",
       "url": "/?tab=feed",
-      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Shaku Maku desktop business discovery"
+    },
+    {
+      "src": "/screenshots/screenshot-mobile.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "label": "Shaku Maku mobile business discovery"
     }
   ]
 }
