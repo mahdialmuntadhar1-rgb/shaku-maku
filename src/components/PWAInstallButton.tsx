@@ -127,12 +127,16 @@ export default function PWAInstallButton({ currentLang }: PWAInstallButtonProps)
       return;
     }
 
-    if (!installPrompt) {
+    const globalPrompt = (window as any).__shakuMakuInstallPrompt as BeforeInstallPromptEvent | undefined;
+    const activePrompt = installPrompt || globalPrompt || null;
+
+    if (!activePrompt) {
       setShowHelp(true);
       return;
     }
 
-    const promptEvent = installPrompt;
+    const promptEvent = activePrompt;
+    (window as any).__shakuMakuInstallPrompt = null;
     setInstallPrompt(null);
 
     try {
@@ -214,5 +218,6 @@ export default function PWAInstallButton({ currentLang }: PWAInstallButtonProps)
     </>
   );
 }
+
 
 
