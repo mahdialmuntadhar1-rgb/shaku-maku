@@ -12,6 +12,15 @@
     <meta name="apple-mobile-web-app-title" content="Shaku Maku" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="apple-touch-icon" href="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=192&h=192&fit=crop&q=80" />
+    <script>
+      window.__shakuMakuInstallPrompt = window.__shakuMakuInstallPrompt || null;
+      window.addEventListener("beforeinstallprompt", function (event) {
+        event.preventDefault();
+        window.__shakuMakuInstallPrompt = event;
+        window.dispatchEvent(new Event("shaku-maku-install-prompt-ready"));
+        console.info("[ShakuMaku] PWA install prompt captured");
+      });
+    </script>
     <title>Shaku Maku | Iraqi Business Directory</title>
   <meta property="og:title" content="شكو ماكو | دليل الأعمال العراقي">
 <meta property="og:description" content="اكتشف الأعمال والخدمات القريبة منك في العراق وسجّل عملك مجاناً.">
@@ -129,7 +138,6 @@
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-
 
 
 

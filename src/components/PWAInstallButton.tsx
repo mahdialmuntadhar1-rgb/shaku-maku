@@ -123,13 +123,13 @@ export default function PWAInstallButton({ currentLang }: PWAInstallButtonProps)
       return;
     }
 
-    if (isAndroid() && isInAppBrowser() && !installPrompt) {
+    const globalPrompt = (window as any).__shakuMakuInstallPrompt as BeforeInstallPromptEvent | undefined;
+    const activePrompt = installPrompt || globalPrompt || null;
+
+    if (isAndroid() && isInAppBrowser() && !activePrompt) {
       openInChrome();
       return;
     }
-
-    const globalPrompt = (window as any).__shakuMakuInstallPrompt as BeforeInstallPromptEvent | undefined;
-    const activePrompt = installPrompt || globalPrompt || null;
 
     if (!activePrompt) {
       console.info('[ShakuMaku] PWA no install prompt available');
