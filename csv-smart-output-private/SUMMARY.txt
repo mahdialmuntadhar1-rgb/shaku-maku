@@ -1,0 +1,33 @@
+﻿SMART PRIVATE CSV SUMMARY
+=========================
+
+Input file:
+C:\Users\HB LAPTOP STORE\.windsurf\shaku-maku\only-private-all.csv
+
+Output folder:
+C:\Users\HB LAPTOP STORE\.windsurf\shaku-maku\csv-smart-output-private
+
+Total rows read: 57487
+Clean valid numbers: 229
+Arabic campaign numbers: 0
+Kurdish campaign numbers: 229
+Unknown governorate numbers: 0
+Rejected invalid/duplicate/fake numbers: 3221
+
+Main files:
+- clean_all_private.csv
+- arabic_campaign_private.csv
+- kurdish_campaign_private.csv
+- unknown_governorate_review.csv
+- rejected_invalid_duplicate.csv
+- detected_columns.txt
+
+Batches:
+- batches\arabic_batch_001.csv
+- batches\kurdish_batch_001.csv
+
+Important:
+Start with only 50 numbers.
+Watch replies and complaints.
+Keep 0 = opt-out.
+Do not send again to numbers that reply 0.

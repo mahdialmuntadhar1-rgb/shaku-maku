@@ -1,0 +1,193 @@
+﻿TASK: Upgrade the Shaku Maku / Nabda bulk sender UI.
+
+Live reference:
+https://bulk-sender-fairouzz11.pages.dev/
+
+Goal:
+Add a simple, clear bulk sender screen that supports:
+1. Manual phone-number input box.
+2. Per-governorate phone-number boxes.
+3. CSV upload.
+4. Governorate and category filtering.
+5. Start / Pause / Stop sending buttons.
+6. Safe dedupe and validation before sending.
+
+Important:
+Do NOT corrupt CSV data.
+Do NOT split uploaded CSV into destructive batches.
+Do NOT remove original columns.
+Do NOT overwrite existing working Nabda send logic.
+Do NOT expose or hardcode API keys.
+Keep existing endpoint behavior if already working.
+
+Required UI layout:
+
+A) Manual Numbers Box
+Add a large textarea titled:
+"Manual Phone Numbers"
+
+Placeholder:
+"Paste phone numbers here, one per line or separated by commas"
+
+Accept examples:
+07801234567
++9647801234567
+9647801234567
+0780 123 4567
+0780-123-4567
+
+Add a button:
+"Add Manual Numbers"
+
+When clicked:
+- Parse the textarea.
+- Normalize Iraqi numbers to +9647XXXXXXXXX.
+- Remove duplicates.
+- Add them to the sending queue.
+- Show count: valid, duplicate, invalid.
+
+B) Per-Governorate Boxes
+Create collapsible sections or cards for Iraqi governorates:
+Baghdad, Basra, Erbil, Sulaymaniyah, Duhok, Nineveh, Kirkuk, Najaf, Karbala, Anbar, Diyala, Wasit, Babylon, Diwaniyah, Maysan, Dhi Qar, Muthanna, Salahaddin.
+
+Each governorate card should have:
+- Governorate name.
+- Textarea for phone numbers.
+- Count of valid numbers.
+- Button: "Add This Governorate Numbers".
+- Optional category selector if available.
+
+When added:
+- Attach governorate value to each row.
+- Normalize phone.
+- Dedupe globally by normalized phone.
+- Do not send duplicates.
+
+C) CSV Upload
+Keep or add CSV upload area.
+
+CSV upload should:
+- Accept one CSV file or multiple CSV files.
+- Auto-detect columns:
+  phone, phone_number, mobile, whatsapp, tel, telephone, contact, رقم, هاتف, موبايل, واتساب
+  name, business_name, business name, title, company, store, اسم, اسم النشاط, اسم الشركة
+  governorate, city, المحافظة, المدينة
+  category, التصنيف, النوع
+
+After upload:
+- Show total rows.
+- Show valid phone rows.
+- Show invalid rows.
+- Show duplicates.
+- Show final queue count.
+- Preserve original CSV data in memory.
+- Normalize phone only into an extra field called normalized_phone.
+
+D) Governorate + Category Filters
+Add visible filters:
+- Governorate dropdown or checkboxes.
+- Category dropdown or checkboxes.
+- Button: "Preview Selected".
+- Button: "Add Selected To Queue".
+
+Preview should show:
+- selected governorates
+- selected categories
+- valid count
+- invalid count
+- duplicates count
+- already sent count if tracking exists
+
+E) Queue Preview
+Add a table showing:
+- business name
+- normalized phone
+- governorate
+- category
+- source: manual / governorate-box / csv
+- status: ready / sent / failed / skipped
+
+F) Sending Controls
+Add clear buttons:
+- Start Sending
+- Pause
+- Resume
+- Stop
+
+Start Sending should:
+- Send only rows with status ready.
+- Use existing Nabda API sending logic.
+- Use safe delay between messages.
+- Do not freeze the page.
+- Update each row status live.
+- Show progress: sent / failed / remaining.
+
+Pause:
+- Stop after current message finishes.
+
+Resume:
+- Continue from next ready row.
+
+Stop:
+- Stop sending and keep queue/results visible.
+
+G) Export Buttons
+Add:
+- Export Final Queue CSV
+- Export Sent CSV
+- Export Failed CSV
+- Export Invalid CSV
+- Export Duplicates CSV
+
+H) Data Safety
+Very important:
+- Do not delete the uploaded CSV rows.
+- Do not mutate original raw values.
+- Store original_phone and normalized_phone separately.
+- Dedupe by normalized_phone.
+- If same phone appears with different names, keep one in queue and put the others in duplicates report.
+- If same business name has different phones, keep them but mark needs_review.
+- Keep Arabic text UTF-8 safe.
+- Avoid mojibake.
+
+I) Phone Validation Rules
+Normalize:
+07801234567 -> +9647801234567
+7801234567 -> +9647801234567
+9647801234567 -> +9647801234567
++9647801234567 -> +9647801234567
+
+Valid mobile format:
++9647XXXXXXXXX
+
+Invalid:
+- empty
+- too short
+- too long
+- not Iraqi mobile format
+- repeated fake-looking numbers like +9647777777777 should be marked suspicious/needs_review
+
+J) UX Requirement
+Make the page beginner-friendly.
+No confusing hidden buttons.
+Use simple cards:
+1. Upload CSV
+2. Manual Numbers
+3. Governorate Boxes
+4. Filters
+5. Queue Preview
+6. Sending Controls
+7. Export Results
+
+K) Compliance / Safety Text
+Add a small notice:
+"Send only to businesses you have a legitimate reason to contact. Include opt-out text when appropriate."
+
+L) Final Result
+After implementation:
+- Run local build/test.
+- Fix TypeScript or lint errors.
+- Do not deploy unless I ask.
+- Tell me which files were changed.
+- Keep a backup copy of every changed file before editing.
+

@@ -1,0 +1,227 @@
+﻿<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>لوحة مشروعك | شكو ماكو</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Tahoma, Arial, sans-serif;
+      background: #f7f4ef;
+      color: #1f2933;
+    }
+    .wrap {
+      max-width: 1050px;
+      margin: auto;
+      padding: 22px;
+    }
+    .top {
+      background: #111827;
+      color: white;
+      border-radius: 26px;
+      padding: 28px;
+      box-shadow: 0 18px 45px rgba(0,0,0,.16);
+    }
+    .muted { color: #6b7280; }
+    .top .muted { color: #d1d5db; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .card {
+      background: white;
+      border-radius: 22px;
+      padding: 22px;
+      box-shadow: 0 10px 25px rgba(0,0,0,.08);
+    }
+    .stat {
+      font-size: 30px;
+      font-weight: bold;
+      margin: 8px 0;
+    }
+    .main {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 18px;
+      margin-top: 18px;
+    }
+    .btn {
+      border: 0;
+      border-radius: 999px;
+      padding: 13px 18px;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      background: #facc15;
+      color: #111827;
+      margin: 4px;
+    }
+    .btn-dark {
+      background: #111827;
+      color: white;
+    }
+    label {
+      display: block;
+      margin: 12px 0 6px;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 13px;
+      border-radius: 14px;
+      border: 1px solid #d1d5db;
+      font-size: 15px;
+      font-family: inherit;
+    }
+    .todo {
+      padding: 12px;
+      border-radius: 16px;
+      background: #f9fafb;
+      margin: 10px 0;
+      border: 1px solid #e5e7eb;
+    }
+    .success {
+      background: #ecfdf5;
+      border: 1px solid #10b981;
+      color: #065f46;
+    }
+    .warning {
+      background: #fff7ed;
+      border: 1px solid #fb923c;
+      color: #7c2d12;
+    }
+    @media (max-width: 850px) {
+      .grid, .main { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="top">
+      <h1 id="businessTitle">لوحة مشروعك</h1>
+      <p class="muted">
+        هنا صاحب المشروع يشوف بياناته، يعدّلها، ينشر عرض، ويتابع اهتمام الزبائن.
+      </p>
+      <a class="btn" href="/owner.html">تعديل بيانات المشروع</a>
+      <a class="btn btn-dark" href="/">العودة إلى شكو ماكو</a>
+    </section>
+
+    <section class="grid">
+      <div class="card">
+        <div class="muted">مشاهدات الصفحة</div>
+        <div class="stat">42</div>
+        <div class="muted">هذا الأسبوع</div>
+      </div>
+      <div class="card">
+        <div class="muted">ضغطات واتساب</div>
+        <div class="stat">9</div>
+        <div class="muted">زبائن محتملين</div>
+      </div>
+      <div class="card">
+        <div class="muted">ضغطات الاتصال</div>
+        <div class="stat">5</div>
+        <div class="muted">من صفحة المشروع</div>
+      </div>
+      <div class="card">
+        <div class="muted">اكتمال الصفحة</div>
+        <div class="stat" id="completeScore">70%</div>
+        <div class="muted">أضف صور وموقع لنتيجة أفضل</div>
+      </div>
+    </section>
+
+    <section class="main">
+      <div class="card">
+        <h2>بيانات المشروع</h2>
+        <div id="businessInfo"></div>
+
+        <h3>تحديث العرض الحالي</h3>
+        <form id="offerForm">
+          <label>العرض / الإعلان</label>
+          <input name="offer" id="offerInput" placeholder="مثال: خصم 10% هذا الأسبوع" />
+          <button class="btn" type="submit">حفظ العرض</button>
+        </form>
+
+        <div id="savedMsg" style="display:none;" class="todo success">
+          تم حفظ العرض داخل لوحة التجربة.
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>ماذا تفعل الآن؟</h2>
+        <div class="todo success">✅ تأكد من رقم الواتساب حتى الزبائن يتواصلون مباشرة.</div>
+        <div class="todo warning">⚠️ أضف صور حقيقية للمشروع حتى تزيد الثقة.</div>
+        <div class="todo warning">⚠️ أضف رابط الموقع على الخريطة حتى الناس يزورونك بسهولة.</div>
+        <div class="todo">💡 انشر عرض أسبوعي حتى يرجع الزبائن يشوفون صفحتك.</div>
+
+        <h3>رسالة تقرير أسبوعي مقترحة</h3>
+        <p class="muted">
+          هذا الأسبوع شاهد 42 شخص صفحة مشروعك، و9 ضغطوا واتساب.
+          أضف صور أو عرض جديد حتى تحصل على تفاعل أكثر.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const raw = localStorage.getItem("shaku_owner_business");
+    const data = raw ? JSON.parse(raw) : null;
+
+    const title = document.getElementById("businessTitle");
+    const info = document.getElementById("businessInfo");
+    const offerInput = document.getElementById("offerInput");
+    const completeScore = document.getElementById("completeScore");
+
+    if (!data) {
+      title.textContent = "لم يتم تسجيل مشروع بعد";
+      info.innerHTML = `
+        <p class="muted">ارجع إلى صفحة التسجيل وأدخل معلومات المشروع.</p>
+        <a class="btn" href="/owner.html">تسجيل مشروع الآن</a>
+      `;
+    } else {
+      title.textContent = "لوحة مشروعك: " + (data.businessName || "مشروعي");
+
+      const fields = [
+        ["اسم المشروع", data.businessName],
+        ["التصنيف", data.category],
+        ["المدينة", data.city],
+        ["واتساب", data.whatsapp],
+        ["الموقع", data.mapLink],
+        ["أوقات الدوام", data.hours],
+        ["الوصف", data.description],
+        ["العرض الحالي", data.offer]
+      ];
+
+      let completed = fields.filter(x => x[1] && String(x[1]).trim()).length;
+      let score = Math.round((completed / fields.length) * 100);
+      completeScore.textContent = score + "%";
+
+      info.innerHTML = fields.map(([label, value]) => `
+        <div class="todo">
+          <strong>${label}:</strong><br>
+          ${value && String(value).trim() ? value : '<span class="muted">غير مضاف</span>'}
+        </div>
+      `).join("");
+
+      offerInput.value = data.offer || "";
+    }
+
+    document.getElementById("offerForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      if (!data) return;
+
+      data.offer = offerInput.value;
+      localStorage.setItem("shaku_owner_business", JSON.stringify(data));
+      document.getElementById("savedMsg").style.display = "block";
+
+      setTimeout(() => location.reload(), 800);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+  <head>
+<meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#16a34a" />
+    <meta name="background-color" content="#0a0a0f" />
+    <meta name="description" content="Shaku Maku - Discover Iraqi businesses, share updates, and connect with your community." />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Shaku Maku" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+    <title>Shaku Maku | Iraqi Business Directory</title>
+  <meta property="og:title" content="Ø´ÙƒÙˆ Ù…Ø§ÙƒÙˆ | Ø¯Ù„ÙŠÙ„ Ø§Ù„Ø£Ø¹Ù…Ø§Ù„ Ø§Ù„Ø¹Ø±Ø§Ù‚ÙŠ">
+<meta property="og:description" content="Ø§ÙƒØªØ´Ù Ø§Ù„Ø£Ø¹Ù…Ø§Ù„ ÙˆØ§Ù„Ø®Ø¯Ù…Ø§Øª Ø§Ù„Ù‚Ø±ÙŠØ¨Ø© Ù…Ù†Ùƒ ÙÙŠ Ø§Ù„Ø¹Ø±Ø§Ù‚ ÙˆØ³Ø¬Ù‘Ù„ Ø¹Ù…Ù„Ùƒ Ù…Ø¬Ø§Ù†Ø§Ù‹.">
+<meta property="og:image" content="https://shakumaku.pages.dev/og-image.png">
+<meta property="og:url" content="https://shakumaku.pages.dev/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Ø´ÙƒÙˆ Ù…Ø§ÙƒÙˆ | Ø¯Ù„ÙŠÙ„ Ø§Ù„Ø£Ø¹Ù…Ø§Ù„ Ø§Ù„Ø¹Ø±Ø§Ù‚ÙŠ">
+<meta name="twitter:description" content="Ø¯Ù„ÙŠÙ„ Ø¹Ø±Ø§Ù‚ÙŠ Ù„Ø§ÙƒØªØ´Ø§Ù Ø§Ù„Ù…Ø·Ø§Ø¹Ù…ØŒ Ø§Ù„ÙƒØ§ÙÙŠÙ‡Ø§ØªØŒ Ø§Ù„Ø£Ø·Ø¨Ø§Ø¡ ÙˆØ§Ù„Ø®Ø¯Ù…Ø§Øª Ø§Ù„Ù…Ø­Ù„ÙŠØ©.">
+<meta name="twitter:image" content="https://shakumaku.pages.dev/og-image.png">
+
+
+<style id="register-business-global-cta-style">
+  #shaku-register-business-debug-banner {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 2147483647 !important;
+    background: linear-gradient(90deg, #facc15, #22c55e) !important;
+    color: #111 !important;
+    font-family: Tahoma, Arial, sans-serif !important;
+    font-size: 16px !important;
+    font-weight: 900 !important;
+    text-align: center !important;
+    padding: 14px 10px !important;
+    box-shadow: 0 0 30px rgba(250,204,21,.9) !important;
+  }
+
+  #shaku-register-business-debug-banner a {
+    color: #111 !important;
+    text-decoration: none !important;
+  }
+
+  body {
+    padding-top: 54px !important;
+  }
+</style>
+<script type="module" crossorigin src="/assets/index-BO4qk-Xu.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-DX1mRvrY.css">
+  <script id="shaku-maku-install-capture">
+    (function () {
+      window.__shakuDeferredInstallPrompt = null;
+      window.__shakuInstallReady = false;
+
+      window.addEventListener("beforeinstallprompt", function (event) {
+        event.preventDefault();
+        window.__shakuDeferredInstallPrompt = event;
+        window.__shakuInstallReady = true;
+        window.dispatchEvent(new CustomEvent("shaku-install-ready"));
+      });
+
+      window.addEventListener("appinstalled", function () {
+        window.__shakuDeferredInstallPrompt = null;
+        window.__shakuInstallReady = false;
+        window.dispatchEvent(new CustomEvent("shaku-app-installed"));
+      });
+    })();
+  </script>
+
+  <script id="shaku-maku-sw-register">
+    (function () {
+      if (!("serviceWorker" in navigator)) return;
+
+      window.addEventListener("load", function () {
+        navigator.serviceWorker.register("/sw.js", { scope: "/" })
+          .then(function () { return navigator.serviceWorker.ready; })
+          .then(function () { window.dispatchEvent(new CustomEvent("shaku-sw-ready")); })
+          .catch(function (err) { console.warn("Shaku Maku service worker failed:", err); });
+      });
+    })();
+  </script>
+
+  <script id="shaku-install-button-hotfix">
+    (function () {
+      function isInstallTarget(el) {
+        if (!el) return false;
+        var text = (el.innerText || el.textContent || "").trim().toLowerCase();
+        var cls = String(el.className || "").toLowerCase();
+        var title = String(el.getAttribute && (el.getAttribute("title") || el.getAttribute("aria-label")) || "").toLowerCase();
+
+        return (
+          text.indexOf("install") >= 0 ||
+          text.indexOf("ثب") >= 0 ||
+          text.indexOf("دایبەزێنە") >= 0 ||
+          cls.indexOf("install") >= 0 ||
+          cls.indexOf("pwa") >= 0 ||
+          title.indexOf("install") >= 0
+        );
+      }
+
+      function showNote(message) {
+        var old = document.getElementById("shaku-install-hotfix-note");
+        if (old) old.remove();
+
+        var note = document.createElement("div");
+        note.id = "shaku-install-hotfix-note";
+        note.textContent = message;
+        note.style.cssText =
+          "position:fixed;left:8px;top:calc(50% + 42px);z-index:2147483647;max-width:260px;padding:8px 10px;border-radius:12px;background:rgba(17,24,39,.95);color:white;font-size:12px;line-height:1.5;direction:rtl;box-shadow:0 10px 24px rgba(0,0,0,.3);";
+        document.body.appendChild(note);
+
+        setTimeout(function () {
+          if (note && note.parentNode) note.parentNode.removeChild(note);
+        }, 4200);
+      }
+
+      function tryInstall(e) {
+        var el = e.target && e.target.closest && e.target.closest("button,a,[role='button'],div,span");
+        if (!isInstallTarget(el)) return;
+
+        var promptEvent = window.__shakuDeferredInstallPrompt;
+
+        if (!promptEvent) {
+          showNote("التثبيت غير جاهز بعد. انتظر 10 ثواني أو افتح قائمة Chrome ⋮ واختر Install app.");
+          return;
+        }
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        try {
+          promptEvent.prompt();
+
+          promptEvent.userChoice.finally(function () {
+            window.__shakuDeferredInstallPrompt = null;
+            window.__shakuInstallReady = false;
+          });
+        } catch (err) {
+          showNote("Chrome لم يفتح نافذة التثبيت الآن. جرّب تحديث الصفحة أو القائمة ⋮.");
+        }
+      }
+
+      document.addEventListener("click", tryInstall, true);
+      document.addEventListener("touchend", tryInstall, true);
+    })();
+  </script>
+</head>
+  <body>
+<div id="shaku-register-business-debug-banner">
+  <a href="/register-business.html">âœ¨ Ø³Ø¬Ù‘Ù„ Ù†Ø´Ø§Ø·Ùƒ Ø§Ù„ØªØ¬Ø§Ø±ÙŠ Ù…Ø¬Ø§Ù†Ø§Ù‹ | Register Your Business âœ¨</a>
+</div>
+    
+
+    <div id="root"></div>
+  </body>
+</html>
+
+
+
+
+
+
+
