@@ -8,7 +8,6 @@ import { AdminProvider } from './contexts/AdminContext';
 import { registerServiceWorker } from './registerServiceWorker';
 import AppErrorBoundary from './components/AppErrorBoundary';
 import './index.css';
-import PersistentInstallButton from './components/PersistentInstallButton';
 
 registerServiceWorker();
 
@@ -18,7 +17,6 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
       <AuthProvider>
         <AdminProvider>
           <App />
-    <PersistentInstallButton />
         </AdminProvider>
       </AuthProvider>
     </AppErrorBoundary>
@@ -33,4 +31,5 @@ if ('serviceWorker' in navigator) {
     });
   });
 }
+
 
