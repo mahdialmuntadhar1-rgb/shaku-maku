@@ -57,6 +57,10 @@ if (typeof window !== "undefined") {
       serviceWorkerFetchStatus: await fetchStatus("/sw.js"),
     });
   };
+
+  window.setTimeout(() => {
+    void window.__shakuMakuPwaDebug?.();
+  }, 4000);
 }
 
 export {};

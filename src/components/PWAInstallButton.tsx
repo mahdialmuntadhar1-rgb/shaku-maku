@@ -7,6 +7,12 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>;
 }
 
+declare global {
+  interface Window {
+    __shakuMakuPwaDebug?: () => Promise<void>;
+  }
+}
+
 interface PWAInstallButtonProps {
   currentLang: Language;
 }
@@ -116,6 +122,7 @@ export default function PWAInstallButton({ currentLang }: PWAInstallButtonProps)
 
   const handleInstallClick = async () => {
     console.info('[ShakuMaku] PWA install button clicked');
+    void window.__shakuMakuPwaDebug?.();
 
     if (isStandaloneMode()) {
       setVisible(false);
