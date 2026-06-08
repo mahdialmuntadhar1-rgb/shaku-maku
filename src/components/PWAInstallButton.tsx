@@ -85,7 +85,19 @@ export default function PWAInstallButton({ currentLang }: PWAInstallButtonProps)
     const handleBeforeInstallPrompt = (event: Event) => {
       event.preventDefault();
       const promptEvent = event as BeforeInstallPromptEvent;
+      (window as any).__shakuMakuInstallPrompt = promptEvent;
       setInstallPrompt(promptEvent);
+      setVisible(true);
+      setInstalled(false);
+      setShowHelp(false);
+    };
+
+    const syncGlobalInstallPrompt = () => {
+      const globalPrompt = (window as any).__shakuMakuInstallPrompt as BeforeInstallPromptEvent | null | undefined;
+
+      if (!globalPrompt) return;
+
+      setInstallPrompt(globalPrompt);
       setVisible(true);
       setInstalled(false);
       setShowHelp(false);
@@ -99,22 +111,28 @@ export default function PWAInstallButton({ currentLang }: PWAInstallButtonProps)
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    window.addEventListener('shaku-maku-install-prompt-ready', syncGlobalInstallPrompt);
     window.addEventListener('appinstalled', handleAppInstalled);
+    syncGlobalInstallPrompt();
 
     const fallbackTimer = window.setTimeout(() => {
       if (!isStandaloneMode()) {
+        syncGlobalInstallPrompt();
         setVisible(true);
       }
     }, 1500);
 
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener('shaku-maku-install-prompt-ready', syncGlobalInstallPrompt);
       window.removeEventListener('appinstalled', handleAppInstalled);
       window.clearTimeout(fallbackTimer);
     };
   }, []);
 
   const handleInstallClick = async () => {
+    console.info('[ShakuMaku] PWA install button clicked');
+
     if (isStandaloneMode()) {
       setVisible(false);
       setInstalled(true);
@@ -131,6 +149,7 @@ export default function PWAInstallButton({ currentLang }: PWAInstallButtonProps)
     const activePrompt = installPrompt || globalPrompt || null;
 
     if (!activePrompt) {
+      console.info('[ShakuMaku] PWA no install prompt available');
       setShowHelp(true);
       return;
     }
@@ -159,8 +178,9 @@ export default function PWAInstallButton({ currentLang }: PWAInstallButtonProps)
 
   if (!visible) return null;
 
-  const canOpenChrome = isAndroid() && isInAppBrowser() && !installPrompt;
-  const canInstallNow = !!installPrompt;
+  const globalPrompt = (window as any).__shakuMakuInstallPrompt as BeforeInstallPromptEvent | null | undefined;
+  const canInstallNow = Boolean(installPrompt || globalPrompt);
+  const canOpenChrome = isAndroid() && isInAppBrowser() && !canInstallNow;
   const shouldPulse = canInstallNow || canOpenChrome;
 
   return (
@@ -218,6 +238,5 @@ export default function PWAInstallButton({ currentLang }: PWAInstallButtonProps)
     </>
   );
 }
-
 
 
