@@ -1,11 +1,5 @@
-const CACHE_NAME = 'shaku-maku-pwa-install-20260608-133127';
-const APP_SHELL = [
-  '/',
-  '/manifest.webmanifest',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png',
-  '/icons/icon-maskable-512.png'
-];
+﻿const CACHE_NAME = 'shaku-maku-phase1-install-20260603-201951';
+const APP_SHELL = ['/', '/manifest.webmanifest', '/icons/icon.svg', '/icons/icon-maskable.svg'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -69,3 +63,4 @@ self.addEventListener('fetch', (event) => {
     })
   );
 });
+
