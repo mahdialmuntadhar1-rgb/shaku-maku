@@ -16,27 +16,27 @@ const copyByLang = {
     install: 'Install App',
     installed: 'Installed',
     openChrome: 'Open in Chrome',
-    unavailableTitle: 'Install is not ready yet',
+    unavailableTitle: 'Install from browser menu',
     unavailableBody:
-      'Use Chrome or Edge, open the live HTTPS website, then wait a few seconds and try again. If the browser already installed the app, the install prompt will not appear.',
+      'Chrome did not open the install popup automatically. Use Chrome/Edge menu ⋮ → Cast, save, and share → Install Shaku Maku. On mobile, open Chrome menu ⋮ → Add to Home screen / Install app.',
     close: 'Close'
   },
   ar: {
     install: 'ثبّت التطبيق',
     installed: 'تم التثبيت',
     openChrome: 'افتح في Chrome',
-    unavailableTitle: 'التثبيت غير جاهز الآن',
+    unavailableTitle: 'ثبّت التطبيق من قائمة المتصفح',
     unavailableBody:
-      'استخدم Chrome أو Edge وافتح رابط الموقع المباشر HTTPS، انتظر ثواني ثم جرّب مرة أخرى. إذا كان التطبيق مثبت مسبقاً لن تظهر نافذة التثبيت.',
+      'إذا لم تظهر نافذة التثبيت تلقائياً، افتح قائمة Chrome أو Edge ⋮ ثم اختر Install Shaku Maku أو Add to Home screen.',
     close: 'إغلاق'
   },
   ku: {
     install: 'دایبەزێنە',
     installed: 'دامەزرا',
     openChrome: 'لە Chrome بکەرەوە',
-    unavailableTitle: 'دامەزراندن ئێستا ئامادە نییە',
+    unavailableTitle: 'لە لیستی وێبگەڕەوە دایبەزێنە',
     unavailableBody:
-      'لە Chrome یان Edge بەکاری بهێنە، لینکی HTTPS بکەرەوە، چەند چرکە چاوەڕێ بکە و دووبارە هەوڵ بدە.',
+      'ئەگەر پەنجەرەی دامەزراندن خۆکارانە دەرنەکەوت، لیستی Chrome یان Edge ⋮ بکەرەوە و Install Shaku Maku یان Add to Home screen هەڵبژێرە.',
     close: 'داخستن'
   }
 };
@@ -214,4 +214,5 @@ export default function PWAInstallButton({ currentLang }: PWAInstallButtonProps)
     </>
   );
 }
+
 
