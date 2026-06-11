@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Heart, Bookmark, Star, MapPin, Phone, Share2, Edit3, Save, 
@@ -196,7 +196,7 @@ export default function BusinessFeed({
     if (!acc[categoryId]) acc[categoryId] = [];
     acc[categoryId].push({
       ...biz,
-      governorate: normalizeGovernorate(biz.governorate),
+      governorate: normalizeGovernorate(biz.governorate) as GovernorateCode,
       category: categoryId
     });
     return acc;

@@ -1,4 +1,4 @@
-node_modules/
+﻿node_modules/
 build/
 dist/
 coverage/
@@ -35,3 +35,8 @@ STABLE-WORKING-VERSION.txt
 *.sqlite
 *.sqlite-shm
 *.sqlite-wal
+
+_local-backups/
+*.bak-*
+PUBLIC_READINESS_AUDIT_*.md
+SHAKU_MAKU_CHUNK_*.md

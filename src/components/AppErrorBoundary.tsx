@@ -1,32 +1,32 @@
 import React from 'react';
 
-type State = {
+type AppErrorBoundaryProps = {
+  children: React.ReactNode;
+};
+
+type AppErrorBoundaryState = {
   hasError: boolean;
   message: string;
 };
 
-type Props = {
-  children: React.ReactNode;
-};
-
-export default class AppErrorBoundary extends React.Component<Props, State> {
-  constructor(props: Props) {
+export default class AppErrorBoundary extends React.Component<AppErrorBoundaryProps, AppErrorBoundaryState> {
+  constructor(props: AppErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false, message: '' };
   }
 
-  static getDerivedStateFromError(error: Error): State {
+  static getDerivedStateFromError(error: Error): AppErrorBoundaryState {
     return {
       hasError: true,
       message: error?.message || 'Unknown error',
     };
   }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
     console.error('AppErrorBoundary caught an error:', error, errorInfo);
   }
 
-  render() {
+  render(): React.ReactNode {
     if (this.state.hasError) {
       return (
         <div className="min-h-screen bg-[#111] text-white flex items-center justify-center p-4">

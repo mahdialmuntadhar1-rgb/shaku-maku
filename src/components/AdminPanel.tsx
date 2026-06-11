@@ -1,8 +1,8 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { Check, Edit3, Image as ImageIcon, Lock, Save, Trash2 } from 'lucide-react';
 import { api, API_BASE_URL, businessesApi, getApiErrorMessage, postsApi } from '../api';
 import { readSession } from '../auth/session';
-import { Business, HeroSlide, Language, SocialPost, UserProfile } from '../types';
+import { Business, HeroSlide, Language, SocialPost, UserProfile, type GovernorateCode } from '../types';
 import { IRAQ_GOVERNORATES, APP_CATEGORIES, normalizeGovernorate, normalizeCategory, getGovernorateLabel, getCategoryLabel } from '../utils/taxonomy';
 
 interface AdminPanelProps {
@@ -93,7 +93,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
       <div className="max-w-3xl mx-auto bg-[#18191a] border border-red-500/25 rounded-2xl p-8 text-center shadow-xl">
         <Lock className="w-10 h-10 text-red-400 mx-auto mb-3" />
         <h1 className="text-xl font-black text-white">
-          {t(currentLang, 'Admin access required', 'ÙŠÙ„Ø²Ù… Ø­Ø³Ø§Ø¨ Ù…Ø¯ÙŠØ±', 'Ù‡Û•Ú˜Ù…Ø§Ø±ÛŒ Ø¨Û•Ú•ÛŽÙˆÛ•Ø¨Û•Ø± Ù¾ÛŽÙˆÛŒØ³ØªÛ•')}
+          {t(currentLang, 'Admin access required', 'Ã™Å Ã™â€žÃ˜Â²Ã™â€¦ Ã˜Â­Ã˜Â³Ã˜Â§Ã˜Â¨ Ã™â€¦Ã˜Â¯Ã™Å Ã˜Â±', 'Ã™â€¡Ã›â€¢ÃšËœÃ™â€¦Ã˜Â§Ã˜Â±Ã›Å’ Ã˜Â¨Ã›â€¢Ãšâ€¢Ã›Å½Ã™Ë†Ã›â€¢Ã˜Â¨Ã›â€¢Ã˜Â± Ã™Â¾Ã›Å½Ã™Ë†Ã›Å’Ã˜Â³Ã˜ÂªÃ›â€¢')}
         </h1>
       </div>
     );
@@ -126,15 +126,15 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
       id: `hero-${now}`,
       image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1400&auto=format&fit=crop&q=85',
       slogan: {
-        ar: 'Ø¥Ø¹Ù„Ø§Ù† Ø¬Ø¯ÙŠØ¯ Ù…Ù† Ø´ÙƒÙˆ Ù…Ø§ÙƒÙˆ',
-        ku: 'Ú•ÛŒÚ©Ù„Ø§Ù…ÛŒ Ù†ÙˆÛŽ Ù„Û• Ø´Û•Ú©Ùˆ Ù…Û•Ú©Ùˆ',
+        ar: 'Ã˜Â¥Ã˜Â¹Ã™â€žÃ˜Â§Ã™â€  Ã˜Â¬Ã˜Â¯Ã™Å Ã˜Â¯ Ã™â€¦Ã™â€  Ã˜Â´Ã™Æ’Ã™Ë† Ã™â€¦Ã˜Â§Ã™Æ’Ã™Ë†',
+        ku: 'Ãšâ€¢Ã›Å’ÃšÂ©Ã™â€žÃ˜Â§Ã™â€¦Ã›Å’ Ã™â€ Ã™Ë†Ã›Å½ Ã™â€žÃ›â€¢ Ã˜Â´Ã›â€¢ÃšÂ©Ã™Ë† Ã™â€¦Ã›â€¢ÃšÂ©Ã™Ë†',
         en: 'New Shaku Maku promotion'
       },
       governorate: 'all' as any,
       category: 'restaurant',
       badge: {
-        ar: 'Ù…Ø³Ø§Ø­Ø© ØªØ±ÙˆÙŠØ¬ÙŠØ©',
-        ku: 'Ø´ÙˆÛŽÙ†ÛŒ Ú•ÛŒÚ©Ù„Ø§Ù…',
+        ar: 'Ã™â€¦Ã˜Â³Ã˜Â§Ã˜Â­Ã˜Â© Ã˜ÂªÃ˜Â±Ã™Ë†Ã™Å Ã˜Â¬Ã™Å Ã˜Â©',
+        ku: 'Ã˜Â´Ã™Ë†Ã›Å½Ã™â€ Ã›Å’ Ãšâ€¢Ã›Å’ÃšÂ©Ã™â€žÃ˜Â§Ã™â€¦',
         en: 'Promotional space'
       }
     };
@@ -158,7 +158,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
           post.id === postId ? { ...post, status: 'approved', updatedAt: new Date().toISOString() } : post
         )
       );
-      setPostStatus(t(currentLang, 'Post approved.', 'ØªÙ…Øª Ø§Ù„Ù…ÙˆØ§ÙÙ‚Ø© Ø¹Ù„Ù‰ Ø§Ù„Ù…Ù†Ø´ÙˆØ±.', 'Ø¨Ø§Ø¨Û•ØªÛ•Ú©Û• Ù¾Û•Ø³Û•Ù†Ø¯Ú©Ø±Ø§.'));
+      setPostStatus(t(currentLang, 'Post approved.', 'Ã˜ÂªÃ™â€¦Ã˜Âª Ã˜Â§Ã™â€žÃ™â€¦Ã™Ë†Ã˜Â§Ã™ÂÃ™â€šÃ˜Â© Ã˜Â¹Ã™â€žÃ™â€° Ã˜Â§Ã™â€žÃ™â€¦Ã™â€ Ã˜Â´Ã™Ë†Ã˜Â±.', 'Ã˜Â¨Ã˜Â§Ã˜Â¨Ã›â€¢Ã˜ÂªÃ›â€¢ÃšÂ©Ã›â€¢ Ã™Â¾Ã›â€¢Ã˜Â³Ã›â€¢Ã™â€ Ã˜Â¯ÃšÂ©Ã˜Â±Ã˜Â§.'));
     } catch (error) {
       setPostStatus(getApiErrorMessage(error));
     }
@@ -168,7 +168,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
     try {
       await postsApi.delete(postId);
       setPosts((prev) => prev.filter((post) => post.id !== postId));
-      setPostStatus(t(currentLang, 'Post deleted.', 'ØªÙ… Ø­Ø°Ù Ø§Ù„Ù…Ù†Ø´ÙˆØ±.', 'Ø¨Ø§Ø¨Û•ØªÛ•Ú©Û• Ø³Ú•Ø§ÛŒÛ•ÙˆÛ•.'));
+      setPostStatus(t(currentLang, 'Post deleted.', 'Ã˜ÂªÃ™â€¦ Ã˜Â­Ã˜Â°Ã™Â Ã˜Â§Ã™â€žÃ™â€¦Ã™â€ Ã˜Â´Ã™Ë†Ã˜Â±.', 'Ã˜Â¨Ã˜Â§Ã˜Â¨Ã›â€¢Ã˜ÂªÃ›â€¢ÃšÂ©Ã›â€¢ Ã˜Â³Ãšâ€¢Ã˜Â§Ã›Å’Ã›â€¢Ã™Ë†Ã›â€¢.'));
     } catch (error) {
       setPostStatus(getApiErrorMessage(error));
     }
@@ -244,8 +244,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
       setPostStatus(t(
         currentLang,
         'Compressing image...',
-        'Ø¬Ø§Ø±ÙŠ Ø¶ØºØ· Ø§Ù„ØµÙˆØ±Ø©...',
-        'Ù¾Û•Ø³ØªØ§Ù†Ø¯Ù†ÛŒ ÙˆÛŽÙ†Û•...'
+        'Ã˜Â¬Ã˜Â§Ã˜Â±Ã™Å  Ã˜Â¶Ã˜ÂºÃ˜Â· Ã˜Â§Ã™â€žÃ˜ÂµÃ™Ë†Ã˜Â±Ã˜Â©...',
+        'Ã™Â¾Ã›â€¢Ã˜Â³Ã˜ÂªÃ˜Â§Ã™â€ Ã˜Â¯Ã™â€ Ã›Å’ Ã™Ë†Ã›Å½Ã™â€ Ã›â€¢...'
       ));
 
       const compressed = await compressImageFileForPost(file);
@@ -258,15 +258,15 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
       setPostStatus(t(
         currentLang,
         'Image ready. You can publish now.',
-        'Ø§Ù„ØµÙˆØ±Ø© Ø¬Ø§Ù‡Ø²Ø©. ÙŠÙ…ÙƒÙ†Ùƒ Ø§Ù„Ù†Ø´Ø± Ø§Ù„Ø¢Ù†.',
-        'ÙˆÛŽÙ†Û•Ú©Û• Ø¦Ø§Ù…Ø§Ø¯Û•ÛŒÛ•. Ø¦ÛŽØ³ØªØ§ Ø¯Û•ØªÙˆØ§Ù†ÛŒØª Ø¨ÚµØ§ÙˆÛŒ Ø¨Ú©Û•ÛŒØªÛ•ÙˆÛ•.'
+        'Ã˜Â§Ã™â€žÃ˜ÂµÃ™Ë†Ã˜Â±Ã˜Â© Ã˜Â¬Ã˜Â§Ã™â€¡Ã˜Â²Ã˜Â©. Ã™Å Ã™â€¦Ã™Æ’Ã™â€ Ã™Æ’ Ã˜Â§Ã™â€žÃ™â€ Ã˜Â´Ã˜Â± Ã˜Â§Ã™â€žÃ˜Â¢Ã™â€ .',
+        'Ã™Ë†Ã›Å½Ã™â€ Ã›â€¢ÃšÂ©Ã›â€¢ Ã˜Â¦Ã˜Â§Ã™â€¦Ã˜Â§Ã˜Â¯Ã›â€¢Ã›Å’Ã›â€¢. Ã˜Â¦Ã›Å½Ã˜Â³Ã˜ÂªÃ˜Â§ Ã˜Â¯Ã›â€¢Ã˜ÂªÃ™Ë†Ã˜Â§Ã™â€ Ã›Å’Ã˜Âª Ã˜Â¨ÃšÂµÃ˜Â§Ã™Ë†Ã›Å’ Ã˜Â¨ÃšÂ©Ã›â€¢Ã›Å’Ã˜ÂªÃ›â€¢Ã™Ë†Ã›â€¢.'
       ));
     } catch (error: any) {
       setPostStatus(t(
         currentLang,
         error?.message || 'Image upload failed.',
-        'ÙØ´Ù„ Ø±ÙØ¹ Ø§Ù„ØµÙˆØ±Ø©. Ø¬Ø±Ù‘Ø¨ ØµÙˆØ±Ø© Ø£ØµØºØ±.',
-        'Ø¨Ø§Ø±Ú©Ø±Ø¯Ù†ÛŒ ÙˆÛŽÙ†Û• Ø´Ú©Ø³ØªÛŒ Ù‡ÛŽÙ†Ø§. ÙˆÛŽÙ†Û•ÛŒÛ•Ú©ÛŒ Ø¨Ú†ÙˆÙˆÚ©ØªØ± ØªØ§Ù‚ÛŒØ¨Ú©Û•ÙˆÛ•.'
+        'Ã™ÂÃ˜Â´Ã™â€ž Ã˜Â±Ã™ÂÃ˜Â¹ Ã˜Â§Ã™â€žÃ˜ÂµÃ™Ë†Ã˜Â±Ã˜Â©. Ã˜Â¬Ã˜Â±Ã™â€˜Ã˜Â¨ Ã˜ÂµÃ™Ë†Ã˜Â±Ã˜Â© Ã˜Â£Ã˜ÂµÃ˜ÂºÃ˜Â±.',
+        'Ã˜Â¨Ã˜Â§Ã˜Â±ÃšÂ©Ã˜Â±Ã˜Â¯Ã™â€ Ã›Å’ Ã™Ë†Ã›Å½Ã™â€ Ã›â€¢ Ã˜Â´ÃšÂ©Ã˜Â³Ã˜ÂªÃ›Å’ Ã™â€¡Ã›Å½Ã™â€ Ã˜Â§. Ã™Ë†Ã›Å½Ã™â€ Ã›â€¢Ã›Å’Ã›â€¢ÃšÂ©Ã›Å’ Ã˜Â¨Ãšâ€ Ã™Ë†Ã™Ë†ÃšÂ©Ã˜ÂªÃ˜Â± Ã˜ÂªÃ˜Â§Ã™â€šÃ›Å’Ã˜Â¨ÃšÂ©Ã›â€¢Ã™Ë†Ã›â€¢.'
       ));
     }
   }
@@ -297,8 +297,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
       setPostStatus(t(
         currentLang,
         'The selected image is too large to save directly. Please use an image URL for now.',
-        'Ø§Ù„ØµÙˆØ±Ø© Ø§Ù„Ù…Ø®ØªØ§Ø±Ø© ÙƒØ¨ÙŠØ±Ø© Ø¬Ø¯Ø§Ù‹ Ù„Ù„Ø­ÙØ¸ Ø§Ù„Ù…Ø¨Ø§Ø´Ø±. Ø­Ø§Ù„ÙŠØ§Ù‹ Ø§Ø³ØªØ®Ø¯Ù… Ø±Ø§Ø¨Ø· ØµÙˆØ±Ø©.',
-        'ÙˆÛŽÙ†Û•ÛŒ Ù‡Û•ÚµØ¨Ú˜ÛŽØ±Ø¯Ø±Ø§Ùˆ Ø²Û†Ø± Ú¯Û•ÙˆØ±Û•ÛŒÛ•. ØªÚ©Ø§ÛŒÛ• Ø¦ÛŽØ³ØªØ§ Ù„ÛŒÙ†Ú©ÛŒ ÙˆÛŽÙ†Û• Ø¨Û•Ú©Ø§Ø±Ø¨Ù‡ÛŽÙ†Û•.'
+        'Ã˜Â§Ã™â€žÃ˜ÂµÃ™Ë†Ã˜Â±Ã˜Â© Ã˜Â§Ã™â€žÃ™â€¦Ã˜Â®Ã˜ÂªÃ˜Â§Ã˜Â±Ã˜Â© Ã™Æ’Ã˜Â¨Ã™Å Ã˜Â±Ã˜Â© Ã˜Â¬Ã˜Â¯Ã˜Â§Ã™â€¹ Ã™â€žÃ™â€žÃ˜Â­Ã™ÂÃ˜Â¸ Ã˜Â§Ã™â€žÃ™â€¦Ã˜Â¨Ã˜Â§Ã˜Â´Ã˜Â±. Ã˜Â­Ã˜Â§Ã™â€žÃ™Å Ã˜Â§Ã™â€¹ Ã˜Â§Ã˜Â³Ã˜ÂªÃ˜Â®Ã˜Â¯Ã™â€¦ Ã˜Â±Ã˜Â§Ã˜Â¨Ã˜Â· Ã˜ÂµÃ™Ë†Ã˜Â±Ã˜Â©.',
+        'Ã™Ë†Ã›Å½Ã™â€ Ã›â€¢Ã›Å’ Ã™â€¡Ã›â€¢ÃšÂµÃ˜Â¨ÃšËœÃ›Å½Ã˜Â±Ã˜Â¯Ã˜Â±Ã˜Â§Ã™Ë† Ã˜Â²Ã›â€ Ã˜Â± ÃšÂ¯Ã›â€¢Ã™Ë†Ã˜Â±Ã›â€¢Ã›Å’Ã›â€¢. Ã˜ÂªÃšÂ©Ã˜Â§Ã›Å’Ã›â€¢ Ã˜Â¦Ã›Å½Ã˜Â³Ã˜ÂªÃ˜Â§ Ã™â€žÃ›Å’Ã™â€ ÃšÂ©Ã›Å’ Ã™Ë†Ã›Å½Ã™â€ Ã›â€¢ Ã˜Â¨Ã›â€¢ÃšÂ©Ã˜Â§Ã˜Â±Ã˜Â¨Ã™â€¡Ã›Å½Ã™â€ Ã›â€¢.'
       ));
       return;
     }
@@ -310,17 +310,17 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
     const videoUrl = newPostDraft.videoUrl.trim();
 
     if (!captionAr && !captionKu && !captionEn) {
-      setPostStatus(t(currentLang, 'Write a caption first.', 'Ø§ÙƒØªØ¨ Ø§Ù„Ù†Øµ Ø£ÙˆÙ„Ø§Ù‹.', 'Ø³Û•Ø±Û•ØªØ§ Ø¯Û•Ù‚ÛŽÚ© Ø¨Ù†ÙˆÙˆØ³Û•.'));
+      setPostStatus(t(currentLang, 'Write a caption first.', 'Ã˜Â§Ã™Æ’Ã˜ÂªÃ˜Â¨ Ã˜Â§Ã™â€žÃ™â€ Ã˜Âµ Ã˜Â£Ã™Ë†Ã™â€žÃ˜Â§Ã™â€¹.', 'Ã˜Â³Ã›â€¢Ã˜Â±Ã›â€¢Ã˜ÂªÃ˜Â§ Ã˜Â¯Ã›â€¢Ã™â€šÃ›Å½ÃšÂ© Ã˜Â¨Ã™â€ Ã™Ë†Ã™Ë†Ã˜Â³Ã›â€¢.'));
       return;
     }
 
     if (!linkedBusiness) {
-      setPostStatus(t(currentLang, 'No business available to link this post.', 'Ù„Ø§ ÙŠÙˆØ¬Ø¯ Ù†Ø´Ø§Ø· Ù„Ø±Ø¨Ø· Ø§Ù„Ù…Ù†Ø´ÙˆØ± Ø¨Ù‡.', 'Ù‡ÛŒÚ† Ø¨Ø§Ø²Ø±Ú¯Ø§Ù†ÛŒÛŒÛ•Ú© Ù†ÛŒÛŒÛ•.'));
+      setPostStatus(t(currentLang, 'No business available to link this post.', 'Ã™â€žÃ˜Â§ Ã™Å Ã™Ë†Ã˜Â¬Ã˜Â¯ Ã™â€ Ã˜Â´Ã˜Â§Ã˜Â· Ã™â€žÃ˜Â±Ã˜Â¨Ã˜Â· Ã˜Â§Ã™â€žÃ™â€¦Ã™â€ Ã˜Â´Ã™Ë†Ã˜Â± Ã˜Â¨Ã™â€¡.', 'Ã™â€¡Ã›Å’Ãšâ€  Ã˜Â¨Ã˜Â§Ã˜Â²Ã˜Â±ÃšÂ¯Ã˜Â§Ã™â€ Ã›Å’Ã›Å’Ã›â€¢ÃšÂ© Ã™â€ Ã›Å’Ã›Å’Ã›â€¢.'));
       return;
     }
 
     if (!newPostDraft.governorate || !newPostDraft.category) {
-      setPostStatus(t(currentLang, 'Please choose governorate and category.', 'ÙŠØ±Ø¬Ù‰ Ø§Ø®ØªÙŠØ§Ø± Ø§Ù„Ù…Ø­Ø§ÙØ¸Ø© ÙˆØ§Ù„ØªØµÙ†ÙŠÙ.', 'ØªÚ©Ø§ÛŒÛ• Ù¾Ø§Ø±ÛŽØ²Ú¯Ø§ Ùˆ Ù¾Û†Ù„ Ù‡Û•ÚµØ¨Ú˜ÛŽØ±Û•.'));
+      setPostStatus(t(currentLang, 'Please choose governorate and category.', 'Ã™Å Ã˜Â±Ã˜Â¬Ã™â€° Ã˜Â§Ã˜Â®Ã˜ÂªÃ™Å Ã˜Â§Ã˜Â± Ã˜Â§Ã™â€žÃ™â€¦Ã˜Â­Ã˜Â§Ã™ÂÃ˜Â¸Ã˜Â© Ã™Ë†Ã˜Â§Ã™â€žÃ˜ÂªÃ˜ÂµÃ™â€ Ã™Å Ã™Â.', 'Ã˜ÂªÃšÂ©Ã˜Â§Ã›Å’Ã›â€¢ Ã™Â¾Ã˜Â§Ã˜Â±Ã›Å½Ã˜Â²ÃšÂ¯Ã˜Â§ Ã™Ë† Ã™Â¾Ã›â€ Ã™â€ž Ã™â€¡Ã›â€¢ÃšÂµÃ˜Â¨ÃšËœÃ›Å½Ã˜Â±Ã›â€¢.'));
       return;
     }
 
@@ -330,7 +330,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
       businessName: linkedBusiness.name[currentLang] || linkedBusiness.name.en,
       businessAvatar: linkedBusiness.avatar,
       category: normalizeCategory(newPostDraft.category || linkedBusiness.category),
-      governorate: normalizeGovernorate(newPostDraft.governorate || linkedBusiness.governorate),
+      governorate: normalizeGovernorate(newPostDraft.governorate || linkedBusiness.governorate) as GovernorateCode,
       mediaUrl,
       caption: {
         ar: captionAr || captionKu || captionEn,
@@ -341,7 +341,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
       commentsCount: 0,
       shares: 0,
       views: 0,
-      timeAgo: { ar: 'Ø§Ù„Ø¢Ù†', ku: 'Ø¦ÛŽØ³ØªØ§', en: 'Just now' },
+      timeAgo: { ar: 'Ã˜Â§Ã™â€žÃ˜Â¢Ã™â€ ', ku: 'Ã˜Â¦Ã›Å½Ã˜Â³Ã˜ÂªÃ˜Â§', en: 'Just now' },
       likedByUser: false,
       savedByUser: false,
       comments: [],
@@ -363,17 +363,17 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
           media_url: mediaUrl,
           video_url: videoUrl || null,
           category: normalizeCategory(newPostDraft.category || linkedBusiness.category),
-          governorate: normalizeGovernorate(newPostDraft.governorate || linkedBusiness.governorate),
+          governorate: normalizeGovernorate(newPostDraft.governorate || linkedBusiness.governorate) as GovernorateCode,
           status: 'approved'
         });
 
         const createdId = created?.id || created?.data?.id || optimisticPost.id;
         setPosts((prev) => [{ ...optimisticPost, id: String(createdId) }, ...prev]);
-        setPostStatus(t(currentLang, 'Post added.', 'ØªÙ…Øª Ø¥Ø¶Ø§ÙØ© Ø§Ù„Ù…Ù†Ø´ÙˆØ±.', 'Ø¨Ø§Ø¨Û•ØªÛ•Ú©Û• Ø²ÛŒØ§Ø¯Ú©Ø±Ø§.'));
+        setPostStatus(t(currentLang, 'Post added.', 'Ã˜ÂªÃ™â€¦Ã˜Âª Ã˜Â¥Ã˜Â¶Ã˜Â§Ã™ÂÃ˜Â© Ã˜Â§Ã™â€žÃ™â€¦Ã™â€ Ã˜Â´Ã™Ë†Ã˜Â±.', 'Ã˜Â¨Ã˜Â§Ã˜Â¨Ã›â€¢Ã˜ÂªÃ›â€¢ÃšÂ©Ã›â€¢ Ã˜Â²Ã›Å’Ã˜Â§Ã˜Â¯ÃšÂ©Ã˜Â±Ã˜Â§.'));
       } catch (backendError) {
         console.warn('Post backend create failed, using local fallback:', backendError);
         setPosts((prev) => [optimisticPost, ...prev]);
-        setPostStatus(t(currentLang, 'Post added locally. Backend create route may need review.', 'ØªÙ…Øª Ø¥Ø¶Ø§ÙØ© Ø§Ù„Ù…Ù†Ø´ÙˆØ± Ù…Ø­Ù„ÙŠØ§Ù‹. Ù‚Ø¯ ÙŠØ­ØªØ§Ø¬ Ø§Ù„Ø®Ø§Ø¯Ù… Ù„Ù„Ù…Ø±Ø§Ø¬Ø¹Ø©.', 'Ø¨Ø§Ø¨Û•ØªÛ•Ú©Û• Ù†Ø§ÙˆØ®Û†ÛŒÛŒ Ø²ÛŒØ§Ø¯Ú©Ø±Ø§.'));
+        setPostStatus(t(currentLang, 'Post added locally. Backend create route may need review.', 'Ã˜ÂªÃ™â€¦Ã˜Âª Ã˜Â¥Ã˜Â¶Ã˜Â§Ã™ÂÃ˜Â© Ã˜Â§Ã™â€žÃ™â€¦Ã™â€ Ã˜Â´Ã™Ë†Ã˜Â± Ã™â€¦Ã˜Â­Ã™â€žÃ™Å Ã˜Â§Ã™â€¹. Ã™â€šÃ˜Â¯ Ã™Å Ã˜Â­Ã˜ÂªÃ˜Â§Ã˜Â¬ Ã˜Â§Ã™â€žÃ˜Â®Ã˜Â§Ã˜Â¯Ã™â€¦ Ã™â€žÃ™â€žÃ™â€¦Ã˜Â±Ã˜Â§Ã˜Â¬Ã˜Â¹Ã˜Â©.', 'Ã˜Â¨Ã˜Â§Ã˜Â¨Ã›â€¢Ã˜ÂªÃ›â€¢ÃšÂ©Ã›â€¢ Ã™â€ Ã˜Â§Ã™Ë†Ã˜Â®Ã›â€ Ã›Å’Ã›Å’ Ã˜Â²Ã›Å’Ã˜Â§Ã˜Â¯ÃšÂ©Ã˜Â±Ã˜Â§.'));
       }
 
       setNewPostDraft({
@@ -406,7 +406,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
       );
       setEditingPostId(null);
       setEditingPostText('');
-      setPostStatus(t(currentLang, 'Post updated.', 'ØªÙ… ØªØ­Ø¯ÙŠØ« Ø§Ù„Ù…Ù†Ø´ÙˆØ±.', 'Ø¨Ø§Ø¨Û•ØªÛ•Ú©Û• Ù†ÙˆÛŽÚ©Ø±Ø§ÛŒÛ•ÙˆÛ•.'));
+      setPostStatus(t(currentLang, 'Post updated.', 'Ã˜ÂªÃ™â€¦ Ã˜ÂªÃ˜Â­Ã˜Â¯Ã™Å Ã˜Â« Ã˜Â§Ã™â€žÃ™â€¦Ã™â€ Ã˜Â´Ã™Ë†Ã˜Â±.', 'Ã˜Â¨Ã˜Â§Ã˜Â¨Ã›â€¢Ã˜ÂªÃ›â€¢ÃšÂ©Ã›â€¢ Ã™â€ Ã™Ë†Ã›Å½ÃšÂ©Ã˜Â±Ã˜Â§Ã›Å’Ã›â€¢Ã™Ë†Ã›â€¢.'));
     } catch (error) {
       setPostStatus(getApiErrorMessage(error));
     }
@@ -463,7 +463,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
             : business
         )
       );
-      setBusinessStatus(t(currentLang, 'Business saved.', 'ØªÙ… Ø­ÙØ¸ Ø§Ù„Ù†Ø´Ø§Ø·.', 'Ø¨Ø§Ø²Ø±Ú¯Ø§Ù†ÛŒ Ù¾Ø§Ø´Û•Ú©Û•ÙˆØª Ú©Ø±Ø§.'));
+      setBusinessStatus(t(currentLang, 'Business saved.', 'Ã˜ÂªÃ™â€¦ Ã˜Â­Ã™ÂÃ˜Â¸ Ã˜Â§Ã™â€žÃ™â€ Ã˜Â´Ã˜Â§Ã˜Â·.', 'Ã˜Â¨Ã˜Â§Ã˜Â²Ã˜Â±ÃšÂ¯Ã˜Â§Ã™â€ Ã›Å’ Ã™Â¾Ã˜Â§Ã˜Â´Ã›â€¢ÃšÂ©Ã›â€¢Ã™Ë†Ã˜Âª ÃšÂ©Ã˜Â±Ã˜Â§.'));
       setEditingBusinessId(null);
     } catch (error) {
       setBusinessStatus(getApiErrorMessage(error));
@@ -474,7 +474,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
     try {
       await businessesApi.delete(businessId);
       setBusinesses((prev) => prev.filter((business) => business.id !== businessId));
-      setBusinessStatus(t(currentLang, 'Business deleted.', 'ØªÙ… Ø­Ø°Ù Ø§Ù„Ù†Ø´Ø§Ø·.', 'Ø¨Ø§Ø²Ø±Ú¯Ø§Ù†ÛŒ Ø³Ú•Ø§ÛŒÛ•ÙˆÛ•.'));
+      setBusinessStatus(t(currentLang, 'Business deleted.', 'Ã˜ÂªÃ™â€¦ Ã˜Â­Ã˜Â°Ã™Â Ã˜Â§Ã™â€žÃ™â€ Ã˜Â´Ã˜Â§Ã˜Â·.', 'Ã˜Â¨Ã˜Â§Ã˜Â²Ã˜Â±ÃšÂ¯Ã˜Â§Ã™â€ Ã›Å’ Ã˜Â³Ãšâ€¢Ã˜Â§Ã›Å’Ã›â€¢Ã™Ë†Ã›â€¢.'));
     } catch (error) {
       setBusinessStatus(getApiErrorMessage(error));
     }
@@ -488,7 +488,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
       const response = await api.get('/business-submissions', { params: { status: 'pending', limit: 100 } });
       const rows = response?.data?.data || response?.data || response || [];
       setBusinessSubmissions(Array.isArray(rows) ? rows : []);
-      setBusinessSubmissionsStatus(t(currentLang, 'Business requests loaded.', 'تم تحميل طلبات الأنشطة.', 'داواکارییەکانی بازرگانی بارکران.'));
+      setBusinessSubmissionsStatus(t(currentLang, 'Business requests loaded.', 'ØªÙ… ØªØ­Ù…ÙŠÙ„ Ø·Ù„Ø¨Ø§Øª Ø§Ù„Ø£Ù†Ø´Ø·Ø©.', 'Ø¯Ø§ÙˆØ§Ú©Ø§Ø±ÛŒÛŒÛ•Ú©Ø§Ù†ÛŒ Ø¨Ø§Ø²Ø±Ú¯Ø§Ù†ÛŒ Ø¨Ø§Ø±Ú©Ø±Ø§Ù†.'));
     } catch (error) {
       setBusinessSubmissionsStatus(getApiErrorMessage(error));
     } finally {
@@ -648,21 +648,21 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
     <div className="max-w-6xl mx-auto p-4 md:p-6 space-y-6" dir={currentLang === 'en' ? 'ltr' : 'rtl'}>
       <div className="bg-[#18191a] border border-white/10 rounded-2xl p-5 text-white">
         <h1 className="text-2xl font-black mb-2">
-          {t(currentLang, 'Admin Control Center', 'Ù…Ø±ÙƒØ² ØªØ­ÙƒÙ… Ø§Ù„Ø¥Ø¯Ø§Ø±Ø©', 'Ù†Ø§ÙˆÛ•Ù†Ø¯ÛŒ Ú©Û†Ù†ØªØ±Û†ÚµÛŒ Ø¨Û•Ú•ÛŽÙˆÛ•Ø¨Û•Ø±')}
+          {t(currentLang, 'Admin Control Center', 'Ã™â€¦Ã˜Â±Ã™Æ’Ã˜Â² Ã˜ÂªÃ˜Â­Ã™Æ’Ã™â€¦ Ã˜Â§Ã™â€žÃ˜Â¥Ã˜Â¯Ã˜Â§Ã˜Â±Ã˜Â©', 'Ã™â€ Ã˜Â§Ã™Ë†Ã›â€¢Ã™â€ Ã˜Â¯Ã›Å’ ÃšÂ©Ã›â€ Ã™â€ Ã˜ÂªÃ˜Â±Ã›â€ ÃšÂµÃ›Å’ Ã˜Â¨Ã›â€¢Ãšâ€¢Ã›Å½Ã™Ë†Ã›â€¢Ã˜Â¨Ã›â€¢Ã˜Â±')}
         </h1>
         <p className="text-sm text-zinc-400">{displayEmail}</p>
         <div className="grid sm:grid-cols-3 gap-3 mt-5">
           <div className="bg-white/5 rounded-xl p-4 border border-white/10">
-            <span className="text-xs text-zinc-400">{t(currentLang, 'Businesses', 'Ø§Ù„Ø£Ø¹Ù…Ø§Ù„', 'Ø¨Ø§Ø²Ø±Ú¯Ø§Ù†ÛŒÛŒÛ•Ú©Ø§Ù†')}</span>
+            <span className="text-xs text-zinc-400">{t(currentLang, 'Businesses', 'Ã˜Â§Ã™â€žÃ˜Â£Ã˜Â¹Ã™â€¦Ã˜Â§Ã™â€ž', 'Ã˜Â¨Ã˜Â§Ã˜Â²Ã˜Â±ÃšÂ¯Ã˜Â§Ã™â€ Ã›Å’Ã›Å’Ã›â€¢ÃšÂ©Ã˜Â§Ã™â€ ')}</span>
             <strong className="block text-2xl">{businesses.length}</strong>
           </div>
           <div className="bg-white/5 rounded-xl p-4 border border-white/10">
-            <span className="text-xs text-zinc-400">{t(currentLang, 'Posts', 'Ø§Ù„Ù…Ù†Ø´ÙˆØ±Ø§Øª', 'Ø¨Ø§Ø¨Û•ØªÛ•Ú©Ø§Ù†')}</span>
+            <span className="text-xs text-zinc-400">{t(currentLang, 'Posts', 'Ã˜Â§Ã™â€žÃ™â€¦Ã™â€ Ã˜Â´Ã™Ë†Ã˜Â±Ã˜Â§Ã˜Âª', 'Ã˜Â¨Ã˜Â§Ã˜Â¨Ã›â€¢Ã˜ÂªÃ›â€¢ÃšÂ©Ã˜Â§Ã™â€ ')}</span>
             <strong className="block text-2xl">{posts.length}</strong>
           </div>
           <div className="bg-white/5 rounded-xl p-4 border border-amber-500/25">
             <span className="text-xs text-zinc-400">
-              {t(currentLang, 'Pending Approval', 'Ø¨Ø§Ù†ØªØ¸Ø§Ø± Ø§Ù„Ù…ÙˆØ§ÙÙ‚Ø©', 'Ú†Ø§ÙˆÛ•Ú•ÙˆØ§Ù†ÛŒ Ù¾Û•Ø³Û•Ù†Ø¯Ú©Ø±Ø¯Ù†')}
+              {t(currentLang, 'Pending Approval', 'Ã˜Â¨Ã˜Â§Ã™â€ Ã˜ÂªÃ˜Â¸Ã˜Â§Ã˜Â± Ã˜Â§Ã™â€žÃ™â€¦Ã™Ë†Ã˜Â§Ã™ÂÃ™â€šÃ˜Â©', 'Ãšâ€ Ã˜Â§Ã™Ë†Ã›â€¢Ãšâ€¢Ã™Ë†Ã˜Â§Ã™â€ Ã›Å’ Ã™Â¾Ã›â€¢Ã˜Â³Ã›â€¢Ã™â€ Ã˜Â¯ÃšÂ©Ã˜Â±Ã˜Â¯Ã™â€ ')}
             </span>
             <strong className="block text-2xl text-amber-300">{pendingPosts}</strong>
           </div>
@@ -671,10 +671,10 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <h2 className="text-lg font-black">
-              {t(currentLang, 'Business Owner Requests', 'طلبات أصحاب الأنشطة', 'داواکاری خاوەن بازرگانییەکان')}
+              {t(currentLang, 'Business Owner Requests', 'Ø·Ù„Ø¨Ø§Øª Ø£ØµØ­Ø§Ø¨ Ø§Ù„Ø£Ù†Ø´Ø·Ø©', 'Ø¯Ø§ÙˆØ§Ú©Ø§Ø±ÛŒ Ø®Ø§ÙˆÛ•Ù† Ø¨Ø§Ø²Ø±Ú¯Ø§Ù†ÛŒÛŒÛ•Ú©Ø§Ù†')}
             </h2>
             <p className="text-xs text-zinc-400 mt-1">
-              {t(currentLang, 'Review businesses submitted by normal users before publishing.', 'راجع الأنشطة المرسلة من المستخدمين قبل النشر.', 'پێداچوونەوە بکە بە بازرگانییە نێردراوەکان پێش بڵاوکردنەوە.')}
+              {t(currentLang, 'Review businesses submitted by normal users before publishing.', 'Ø±Ø§Ø¬Ø¹ Ø§Ù„Ø£Ù†Ø´Ø·Ø© Ø§Ù„Ù…Ø±Ø³Ù„Ø© Ù…Ù† Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù…ÙŠÙ† Ù‚Ø¨Ù„ Ø§Ù„Ù†Ø´Ø±.', 'Ù¾ÛŽØ¯Ø§Ú†ÙˆÙˆÙ†Û•ÙˆÛ• Ø¨Ú©Û• Ø¨Û• Ø¨Ø§Ø²Ø±Ú¯Ø§Ù†ÛŒÛŒÛ• Ù†ÛŽØ±Ø¯Ø±Ø§ÙˆÛ•Ú©Ø§Ù† Ù¾ÛŽØ´ Ø¨ÚµØ§ÙˆÚ©Ø±Ø¯Ù†Û•ÙˆÛ•.')}
             </p>
           </div>
 
@@ -685,8 +685,8 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
             className="px-3 py-2 rounded-lg bg-luxury-gold text-black text-xs font-black disabled:opacity-60"
           >
             {businessSubmissionsLoading
-              ? t(currentLang, 'Loading...', 'جاري التحميل...', 'بارکردن...')
-              : t(currentLang, 'Load Requests', 'تحميل الطلبات', 'بارکردنی داواکارییەکان')}
+              ? t(currentLang, 'Loading...', 'Ø¬Ø§Ø±ÙŠ Ø§Ù„ØªØ­Ù…ÙŠÙ„...', 'Ø¨Ø§Ø±Ú©Ø±Ø¯Ù†...')
+              : t(currentLang, 'Load Requests', 'ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ø·Ù„Ø¨Ø§Øª', 'Ø¨Ø§Ø±Ú©Ø±Ø¯Ù†ÛŒ Ø¯Ø§ÙˆØ§Ú©Ø§Ø±ÛŒÛŒÛ•Ú©Ø§Ù†')}
           </button>
         </div>
 
@@ -698,7 +698,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
 
         {businessSubmissions.length === 0 ? (
           <div className="text-sm text-zinc-400 bg-white/5 rounded-xl p-4 border border-white/10">
-            {t(currentLang, 'No requests loaded yet. Click Load Requests.', 'لا توجد طلبات محملة حالياً. اضغط تحميل الطلبات.', 'هێشتا هیچ داواکارییەک بار نەکراوە. کرتە لە بارکردنی داواکارییەکان بکە.')}
+            {t(currentLang, 'No requests loaded yet. Click Load Requests.', 'Ù„Ø§ ØªÙˆØ¬Ø¯ Ø·Ù„Ø¨Ø§Øª Ù…Ø­Ù…Ù„Ø© Ø­Ø§Ù„ÙŠØ§Ù‹. Ø§Ø¶ØºØ· ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ø·Ù„Ø¨Ø§Øª.', 'Ù‡ÛŽØ´ØªØ§ Ù‡ÛŒÚ† Ø¯Ø§ÙˆØ§Ú©Ø§Ø±ÛŒÛŒÛ•Ú© Ø¨Ø§Ø± Ù†Û•Ú©Ø±Ø§ÙˆÛ•. Ú©Ø±ØªÛ• Ù„Û• Ø¨Ø§Ø±Ú©Ø±Ø¯Ù†ÛŒ Ø¯Ø§ÙˆØ§Ú©Ø§Ø±ÛŒÛŒÛ•Ú©Ø§Ù† Ø¨Ú©Û•.')}
           </div>
         ) : (
           <div className="space-y-3">
@@ -709,7 +709,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
                     <h3 className="font-black text-white">{item.name}</h3>
                     <p className="text-sm text-zinc-300">{item.description || '-'}</p>
                     <p className="text-xs text-zinc-400">
-                      {item.phone} · {item.governorate || '-'} · {item.category || '-'}
+                      {item.phone} Â· {item.governorate || '-'} Â· {item.category || '-'}
                     </p>
                     <p className="text-xs text-zinc-500">{item.address || ''}</p>
                     <span className="inline-flex text-xs px-2 py-1 rounded-full bg-black/30 border border-white/10 text-amber-200">
@@ -724,7 +724,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
                       disabled={businessSubmissionsLoading || item.status === 'approved'}
                       className="px-3 py-2 rounded-lg bg-emerald-600 text-white text-xs font-black disabled:opacity-50"
                     >
-                      {t(currentLang, 'Approve', 'موافقة', 'پەسەندکردن')}
+                      {t(currentLang, 'Approve', 'Ù…ÙˆØ§ÙÙ‚Ø©', 'Ù¾Û•Ø³Û•Ù†Ø¯Ú©Ø±Ø¯Ù†')}
                     </button>
                     <button
                       type="button"
@@ -732,7 +732,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
                       disabled={businessSubmissionsLoading || item.status === 'rejected'}
                       className="px-3 py-2 rounded-lg bg-red-600 text-white text-xs font-black disabled:opacity-50"
                     >
-                      {t(currentLang, 'Reject', 'رفض', 'ڕەتکردنەوە')}
+                      {t(currentLang, 'Reject', 'Ø±ÙØ¶', 'Ú•Û•ØªÚ©Ø±Ø¯Ù†Û•ÙˆÛ•')}
                     </button>
                     <button
                       type="button"
@@ -786,7 +786,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
       <section className="bg-[#18191a] border border-white/10 rounded-2xl p-5 text-white space-y-4">
         <h2 className="text-lg font-black flex items-center gap-2">
           <ImageIcon className="w-5 h-5 text-luxury-gold" />
-          {t(currentLang, 'Hero Editor', 'ØªØ¹Ø¯ÙŠÙ„ Ø§Ù„ÙˆØ§Ø¬Ù‡Ø© Ø§Ù„Ø±Ø¦ÙŠØ³ÙŠØ©', 'Ø¯Û•Ø³ØªÚ©Ø§Ø±ÛŒ Ù‡ÛŒØ±Ùˆ')}
+          {t(currentLang, 'Hero Editor', 'Ã˜ÂªÃ˜Â¹Ã˜Â¯Ã™Å Ã™â€ž Ã˜Â§Ã™â€žÃ™Ë†Ã˜Â§Ã˜Â¬Ã™â€¡Ã˜Â© Ã˜Â§Ã™â€žÃ˜Â±Ã˜Â¦Ã™Å Ã˜Â³Ã™Å Ã˜Â©', 'Ã˜Â¯Ã›â€¢Ã˜Â³Ã˜ÂªÃšÂ©Ã˜Â§Ã˜Â±Ã›Å’ Ã™â€¡Ã›Å’Ã˜Â±Ã™Ë†')}
         </h2>
         <p className="text-xs text-amber-300">
           Hero edits save to this app immediately and persist in browser storage.
@@ -827,7 +827,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
                   onClick={() => setHeroSlides((prev) => [slide, ...prev.filter((item) => item.id !== slide.id)])}
                   className="px-3 py-2 rounded-lg bg-blue-500/15 text-blue-200 border border-blue-400/30 text-xs font-black"
                 >
-                  â­ Use as main slide
+                  Ã¢Â­Â Use as main slide
                 </button>
 
                 <button
@@ -835,7 +835,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
                   onClick={() => deleteHeroSlide(slide.id)}
                   className="px-3 py-2 rounded-lg bg-red-500/15 text-red-200 border border-red-400/30 text-xs font-black"
                 >
-                  ðŸ—‘ Delete this slide
+                  Ã°Å¸â€”â€˜ Delete this slide
                 </button>
               </div>
             </div>
@@ -845,12 +845,12 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
 
       <section className="bg-[#18191a] border border-white/10 rounded-2xl p-5 text-white space-y-4">
         <h2 className="text-lg font-black">
-          {t(currentLang, 'Social Feed Moderation', 'Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ù…Ù†Ø´ÙˆØ±Ø§Øª', 'Ø¨Û•Ú•ÛŽÙˆÛ•Ø¨Ø±Ø¯Ù†ÛŒ Ø¨Ø§Ø¨Û•ØªÛ•Ú©Ø§Ù†')}
+          {t(currentLang, 'Social Feed Moderation', 'Ã˜Â¥Ã˜Â¯Ã˜Â§Ã˜Â±Ã˜Â© Ã˜Â§Ã™â€žÃ™â€¦Ã™â€ Ã˜Â´Ã™Ë†Ã˜Â±Ã˜Â§Ã˜Âª', 'Ã˜Â¨Ã›â€¢Ãšâ€¢Ã›Å½Ã™Ë†Ã›â€¢Ã˜Â¨Ã˜Â±Ã˜Â¯Ã™â€ Ã›Å’ Ã˜Â¨Ã˜Â§Ã˜Â¨Ã›â€¢Ã˜ÂªÃ›â€¢ÃšÂ©Ã˜Â§Ã™â€ ')}
         </h2>
         
               <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
                 <label className="text-xs font-black text-zinc-300">
-                  {t(currentLang, 'Upload post photo', 'Ø±ÙØ¹ ØµÙˆØ±Ø© Ø§Ù„Ù…Ù†Ø´ÙˆØ±', 'Ø¨Ø§Ø±Ú©Ø±Ø¯Ù†ÛŒ ÙˆÛŽÙ†Û•ÛŒ Ø¨Ø§Ø¨Û•Øª')}
+                  {t(currentLang, 'Upload post photo', 'Ã˜Â±Ã™ÂÃ˜Â¹ Ã˜ÂµÃ™Ë†Ã˜Â±Ã˜Â© Ã˜Â§Ã™â€žÃ™â€¦Ã™â€ Ã˜Â´Ã™Ë†Ã˜Â±', 'Ã˜Â¨Ã˜Â§Ã˜Â±ÃšÂ©Ã˜Â±Ã˜Â¯Ã™â€ Ã›Å’ Ã™Ë†Ã›Å½Ã™â€ Ã›â€¢Ã›Å’ Ã˜Â¨Ã˜Â§Ã˜Â¨Ã›â€¢Ã˜Âª')}
                   <input
                     type="file"
                     accept="image/*"
@@ -862,8 +862,8 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
                   {t(
                     currentLang,
                     'The app will compress the image automatically before posting.',
-                    'Ø³ÙŠÙ‚ÙˆÙ… Ø§Ù„ØªØ·Ø¨ÙŠÙ‚ Ø¨Ø¶ØºØ· Ø§Ù„ØµÙˆØ±Ø© ØªÙ„Ù‚Ø§Ø¦ÙŠØ§Ù‹ Ù‚Ø¨Ù„ Ø§Ù„Ù†Ø´Ø±.',
-                    'Ø¦Û•Ù¾Û•Ú©Û• ÙˆÛŽÙ†Û•Ú©Û• Ø®Û†Ú©Ø§Ø±Ø§Ù†Û• Ù¾ÛŽØ´ Ø¨ÚµØ§ÙˆÚ©Ø±Ø¯Ù†Û•ÙˆÛ• Ù¾Û•Ø³ØªØ§Ù† Ø¯Û•Ú©Ø§Øª.'
+                    'Ã˜Â³Ã™Å Ã™â€šÃ™Ë†Ã™â€¦ Ã˜Â§Ã™â€žÃ˜ÂªÃ˜Â·Ã˜Â¨Ã™Å Ã™â€š Ã˜Â¨Ã˜Â¶Ã˜ÂºÃ˜Â· Ã˜Â§Ã™â€žÃ˜ÂµÃ™Ë†Ã˜Â±Ã˜Â© Ã˜ÂªÃ™â€žÃ™â€šÃ˜Â§Ã˜Â¦Ã™Å Ã˜Â§Ã™â€¹ Ã™â€šÃ˜Â¨Ã™â€ž Ã˜Â§Ã™â€žÃ™â€ Ã˜Â´Ã˜Â±.',
+                    'Ã˜Â¦Ã›â€¢Ã™Â¾Ã›â€¢ÃšÂ©Ã›â€¢ Ã™Ë†Ã›Å½Ã™â€ Ã›â€¢ÃšÂ©Ã›â€¢ Ã˜Â®Ã›â€ ÃšÂ©Ã˜Â§Ã˜Â±Ã˜Â§Ã™â€ Ã›â€¢ Ã™Â¾Ã›Å½Ã˜Â´ Ã˜Â¨ÃšÂµÃ˜Â§Ã™Ë†ÃšÂ©Ã˜Â±Ã˜Â¯Ã™â€ Ã›â€¢Ã™Ë†Ã›â€¢ Ã™Â¾Ã›â€¢Ã˜Â³Ã˜ÂªÃ˜Â§Ã™â€  Ã˜Â¯Ã›â€¢ÃšÂ©Ã˜Â§Ã˜Âª.'
                   )}
                 </p>
               </div>
@@ -888,13 +888,13 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
           </select>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <label className="text-xs font-black text-zinc-300">
-                  {t(currentLang, 'Governorate', 'Ø§Ù„Ù…Ø­Ø§ÙØ¸Ø©', 'Ù¾Ø§Ø±ÛŽØ²Ú¯Ø§')}
+                  {t(currentLang, 'Governorate', 'Ã˜Â§Ã™â€žÃ™â€¦Ã˜Â­Ã˜Â§Ã™ÂÃ˜Â¸Ã˜Â©', 'Ã™Â¾Ã˜Â§Ã˜Â±Ã›Å½Ã˜Â²ÃšÂ¯Ã˜Â§')}
                   <select
                     value={newPostDraft.governorate}
                     onChange={(event) => setNewPostDraft((prev) => ({ ...prev, governorate: event.target.value }))}
                     className="mt-2 w-full rounded-xl bg-black/40 border border-white/10 px-3 py-3 text-sm text-white"
                   >
-                    <option value="">{t(currentLang, 'Choose governorate for this post', 'Ø§Ø®ØªØ± Ù…Ø­Ø§ÙØ¸Ø© Ø§Ù„Ù…Ù†Ø´ÙˆØ±', 'Ù¾Ø§Ø±ÛŽØ²Ú¯Ø§ÛŒ Ø¨Ø§Ø¨Û•ØªÛ•Ú©Û• Ù‡Û•ÚµØ¨Ú˜ÛŽØ±Û•')}</option>
+                    <option value="">{t(currentLang, 'Choose governorate for this post', 'Ã˜Â§Ã˜Â®Ã˜ÂªÃ˜Â± Ã™â€¦Ã˜Â­Ã˜Â§Ã™ÂÃ˜Â¸Ã˜Â© Ã˜Â§Ã™â€žÃ™â€¦Ã™â€ Ã˜Â´Ã™Ë†Ã˜Â±', 'Ã™Â¾Ã˜Â§Ã˜Â±Ã›Å½Ã˜Â²ÃšÂ¯Ã˜Â§Ã›Å’ Ã˜Â¨Ã˜Â§Ã˜Â¨Ã›â€¢Ã˜ÂªÃ›â€¢ÃšÂ©Ã›â€¢ Ã™â€¡Ã›â€¢ÃšÂµÃ˜Â¨ÃšËœÃ›Å½Ã˜Â±Ã›â€¢')}</option>
                     {IRAQ_GOVERNORATES.map((gov) => (
                       <option key={gov.id} value={gov.id}>
                         {getGovernorateLabel(gov.id, currentLang)}
@@ -904,13 +904,13 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
                 </label>
 
                 <label className="text-xs font-black text-zinc-300">
-                  {t(currentLang, 'Category', 'Ø§Ù„ØªØµÙ†ÙŠÙ', 'Ù¾Û†Ù„')}
+                  {t(currentLang, 'Category', 'Ã˜Â§Ã™â€žÃ˜ÂªÃ˜ÂµÃ™â€ Ã™Å Ã™Â', 'Ã™Â¾Ã›â€ Ã™â€ž')}
                   <select
                     value={newPostDraft.category}
                     onChange={(event) => setNewPostDraft((prev) => ({ ...prev, category: event.target.value }))}
                     className="mt-2 w-full rounded-xl bg-black/40 border border-white/10 px-3 py-3 text-sm text-white"
                   >
-                    <option value="">{t(currentLang, 'Choose category for this post', 'Ø§Ø®ØªØ± ØªØµÙ†ÙŠÙ Ø§Ù„Ù…Ù†Ø´ÙˆØ±', 'Ù¾Û†Ù„ÛŒ Ø¨Ø§Ø¨Û•ØªÛ•Ú©Û• Ù‡Û•ÚµØ¨Ú˜ÛŽØ±Û•')}</option>
+                    <option value="">{t(currentLang, 'Choose category for this post', 'Ã˜Â§Ã˜Â®Ã˜ÂªÃ˜Â± Ã˜ÂªÃ˜ÂµÃ™â€ Ã™Å Ã™Â Ã˜Â§Ã™â€žÃ™â€¦Ã™â€ Ã˜Â´Ã™Ë†Ã˜Â±', 'Ã™Â¾Ã›â€ Ã™â€žÃ›Å’ Ã˜Â¨Ã˜Â§Ã˜Â¨Ã›â€¢Ã˜ÂªÃ›â€¢ÃšÂ©Ã›â€¢ Ã™â€¡Ã›â€¢ÃšÂµÃ˜Â¨ÃšËœÃ›Å½Ã˜Â±Ã›â€¢')}</option>
                     {APP_CATEGORIES.map((category) => (
                       <option key={category.id} value={category.id}>
                         {getCategoryLabel(category.id, currentLang)}
@@ -977,7 +977,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
         <div className="space-y-3">
           {posts.length === 0 && (
             <p className="text-sm text-zinc-400">
-              {t(currentLang, 'No posts yet.', 'Ù„Ø§ ØªÙˆØ¬Ø¯ Ù…Ù†Ø´ÙˆØ±Ø§Øª Ø¨Ø¹Ø¯.', 'Ù‡ÛŽØ´ØªØ§ Ù‡ÛŒÚ† Ø¨Ø§Ø¨Û•ØªÛŽÚ© Ù†ÛŒÛŒÛ•.')}
+              {t(currentLang, 'No posts yet.', 'Ã™â€žÃ˜Â§ Ã˜ÂªÃ™Ë†Ã˜Â¬Ã˜Â¯ Ã™â€¦Ã™â€ Ã˜Â´Ã™Ë†Ã˜Â±Ã˜Â§Ã˜Âª Ã˜Â¨Ã˜Â¹Ã˜Â¯.', 'Ã™â€¡Ã›Å½Ã˜Â´Ã˜ÂªÃ˜Â§ Ã™â€¡Ã›Å’Ãšâ€  Ã˜Â¨Ã˜Â§Ã˜Â¨Ã›â€¢Ã˜ÂªÃ›Å½ÃšÂ© Ã™â€ Ã›Å’Ã›Å’Ã›â€¢.')}
             </p>
           )}
           {posts.map((post) => (
@@ -1054,7 +1054,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
 
       <section className="bg-[#18191a] border border-white/10 rounded-2xl p-5 text-white space-y-4">
         <h2 className="text-lg font-black">
-          {t(currentLang, 'Business Listings', 'Ù‚ÙˆØ§Ø¦Ù… Ø§Ù„Ø£Ø¹Ù…Ø§Ù„', 'Ù„ÛŒØ³ØªÛŒ Ø¨Ø§Ø²Ø±Ú¯Ø§Ù†ÛŒÛŒÛ•Ú©Ø§Ù†')}
+          {t(currentLang, 'Business Listings', 'Ã™â€šÃ™Ë†Ã˜Â§Ã˜Â¦Ã™â€¦ Ã˜Â§Ã™â€žÃ˜Â£Ã˜Â¹Ã™â€¦Ã˜Â§Ã™â€ž', 'Ã™â€žÃ›Å’Ã˜Â³Ã˜ÂªÃ›Å’ Ã˜Â¨Ã˜Â§Ã˜Â²Ã˜Â±ÃšÂ¯Ã˜Â§Ã™â€ Ã›Å’Ã›Å’Ã›â€¢ÃšÂ©Ã˜Â§Ã™â€ ')}
         </h2>
         {businessStatus && <p className="text-xs text-zinc-300">{businessStatus}</p>}
         <div className="grid md:grid-cols-2 gap-3">
