@@ -129,15 +129,15 @@ const AddBusinessForm: React.FC<AddBusinessFormProps> = ({ currentLang, onAddBus
     <div className="max-w-3xl mx-auto bg-white border border-luxury-teal/20 rounded-2xl p-5 md:p-7 shadow-sm" dir={currentLang === 'en' ? 'ltr' : 'rtl'}>
       {!user ? (
         <div className="text-center py-8 space-y-4">
-          <h2 className="text-xl font-black text-luxury-bg">{label(currentLang, 'Sign in required', 'ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„ Ù…Ø·Ù„ÙˆØ¨', 'Ú†ÙˆÙˆÙ†Û•Ú˜ÙˆÙˆØ±Û•ÙˆÛ• Ù¾ÛŽÙˆÛŒØ³ØªÛ•')}</h2>
-          <p className="text-zinc-600 text-sm">{label(currentLang, 'Please sign in to add your business.', 'ÙŠØ±Ø¬Ù‰ ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„ Ù„Ø¥Ø¶Ø§ÙØ© Ù†Ø´Ø§Ø·Ùƒ.', 'ØªÚ©Ø§ÛŒÛ• Ø¨Ú†Û† Ú˜ÙˆÙˆØ±Û•ÙˆÛ• Ø¨Û† Ø²ÛŒØ§Ø¯Ú©Ø±Ø¯Ù†ÛŒ Ø¨Ø§Ø²Ø±Ú¯Ø§Ù†ÛŒÛŒÛ•Ú©Û•Øª.')}</p>
+          <h2 className="text-xl font-black text-luxury-bg">{label(currentLang, 'Sign in required', 'تسجيل الدخول مطلوب', 'چوونەژوورەوە پێویستە')}</h2>
+          <p className="text-zinc-600 text-sm">{label(currentLang, 'Please sign in to add your business.', 'يرجى تسجيل الدخول لإضافة نشاطك.', 'تکایە بچۆ ژوورەوە بۆ زیادکردنی بازرگانییەکەت.')}</p>
           <button type="button" onClick={onSignIn} className="px-5 py-2.5 bg-luxury-teal text-white rounded-lg font-bold">
-            {label(currentLang, 'Sign in', 'ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„', 'Ú†ÙˆÙˆÙ†Û•Ú˜ÙˆÙˆØ±Û•ÙˆÛ•')}
+            {label(currentLang, 'Sign in', 'تسجيل الدخول', 'چوونەژوورەوە')}
           </button>
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-4">
-          <h2 className="text-2xl font-black text-luxury-bg">{label(currentLang, 'Add Business', 'Ø¥Ø¶Ø§ÙØ© Ù†Ø´Ø§Ø· Ø¬Ø¯ÙŠØ¯', 'Ø²ÛŒØ§Ø¯Ú©Ø±Ø¯Ù†ÛŒ Ø¨Ø§Ø²Ø±Ú¯Ø§Ù†ÛŒ Ù†ÙˆÛŽ')}</h2>
+          <h2 className="text-2xl font-black text-luxury-bg">{label(currentLang, 'Add Business', 'إضافة نشاط جديد', 'زیادکردنی بازرگانی نوێ')}</h2>
           {!isAdmin && (
             <div className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
               {label(currentLang, 'You are signed in. Your request will be sent for admin review before publishing.', '\u0623\u0646\u062a \u0645\u0633\u062c\u0644 \u0627\u0644\u062f\u062e\u0648\u0644. \u0633\u064a\u062a\u0645 \u0625\u0631\u0633\u0627\u0644 \u0637\u0644\u0628\u0643 \u0644\u0644\u0645\u0631\u0627\u062c\u0639\u0629 \u0645\u0646 \u0627\u0644\u0645\u0634\u0631\u0641 \u0642\u0628\u0644 \u0627\u0644\u0646\u0634\u0631.', '\u0686\u0648\u0648\u06cc\u062a\u06d5 \u0698\u0648\u0648\u0631\u06d5\u0648\u06d5. \u062f\u0627\u0648\u0627\u06a9\u0627\u0631\u06cc\u06cc\u06d5\u06a9\u06d5\u062a \u0628\u06c6 \u067e\u06ce\u062f\u0627\u0686\u0648\u0648\u0646\u06d5\u0648\u06d5\u06cc \u0628\u06d5\u0695\u06ce\u0648\u06d5\u0628\u06d5\u0631 \u062f\u06d5\u0646\u06ce\u0631\u062f\u0631\u06ce\u062a \u067e\u06ce\u0634 \u0628\u06b5\u0627\u0648\u06a9\u0631\u062f\u0646\u06d5\u0648\u06d5.')}
@@ -147,35 +147,35 @@ const AddBusinessForm: React.FC<AddBusinessFormProps> = ({ currentLang, onAddBus
           <input
             value={name}
             onChange={(event) => setName(event.target.value)}
-            placeholder={label(currentLang, 'Business name', 'Ø§Ø³Ù… Ø§Ù„Ù†Ø´Ø§Ø·', 'Ù†Ø§ÙˆÛŒ Ø¨Ø§Ø²Ø±Ú¯Ø§Ù†ÛŒ')}
+            placeholder={label(currentLang, 'Business name', 'اسم النشاط', 'ناوی بازرگانی')}
             className="w-full px-4 py-2.5 border border-zinc-300 rounded-lg"
             required
           />
           <textarea
             value={description}
             onChange={(event) => setDescription(event.target.value)}
-            placeholder={label(currentLang, 'Description', 'Ø§Ù„ÙˆØµÙ', 'ÙˆÛ•Ø³Ù')}
+            placeholder={label(currentLang, 'Description', 'الوصف', 'وەسف')}
             className="w-full px-4 py-2.5 border border-zinc-300 rounded-lg min-h-[110px]"
             required
           />
           <input
             value={address}
             onChange={(event) => setAddress(event.target.value)}
-            placeholder={label(currentLang, 'Address', 'Ø§Ù„Ø¹Ù†ÙˆØ§Ù†', 'Ù†Ø§ÙˆÙ†ÛŒØ´Ø§Ù†')}
+            placeholder={label(currentLang, 'Address', 'العنوان', 'ناونیشان')}
             className="w-full px-4 py-2.5 border border-zinc-300 rounded-lg"
             required
           />
           <input
             value={phone}
             onChange={(event) => setPhone(event.target.value)}
-            placeholder={label(currentLang, 'Phone number', 'Ø±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙ', 'Ú˜Ù…Ø§Ø±Û•ÛŒ ØªÛ•Ù„Û•ÙÙˆÙ†')}
+            placeholder={label(currentLang, 'Phone number', 'رقم الهاتف', 'ژمارەی تەلەفون')}
             className="w-full px-4 py-2.5 border border-zinc-300 rounded-lg"
             required
           />
           <input
             value={mediaUrl}
             onChange={(event) => setMediaUrl(event.target.value)}
-            placeholder={label(currentLang, 'Image URL (optional)', 'Ø±Ø§Ø¨Ø· Ø§Ù„ØµÙˆØ±Ø© (Ø§Ø®ØªÙŠØ§Ø±ÙŠ)', 'Ù„ÛŒÙ†Ú©ÛŒ ÙˆÛŽÙ†Û• (Ø¦Ø§Ø±Û•Ø²ÙˆÙˆÙ…Û•Ù†Ø¯Ø§Ù†Û•)')}
+            placeholder={label(currentLang, 'Image URL (optional)', 'رابط الصورة (اختياري)', 'لینکی وێنە (ئارەزوومەندانە)')}
             className="w-full px-4 py-2.5 border border-zinc-300 rounded-lg"
           />
 
