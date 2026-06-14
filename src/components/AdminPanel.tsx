@@ -330,7 +330,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
       businessName: linkedBusiness.name[currentLang] || linkedBusiness.name.en,
       businessAvatar: linkedBusiness.avatar,
       category: normalizeCategory(newPostDraft.category || linkedBusiness.category),
-      governorate: normalizeGovernorate(newPostDraft.governorate || linkedBusiness.governorate),
+      governorate: normalizeGovernorate(newPostDraft.governorate || linkedBusiness.governorate) as SocialPost['governorate'],
       mediaUrl,
       caption: {
         ar: captionAr || captionKu || captionEn,
@@ -363,7 +363,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
           media_url: mediaUrl,
           video_url: videoUrl || null,
           category: normalizeCategory(newPostDraft.category || linkedBusiness.category),
-          governorate: normalizeGovernorate(newPostDraft.governorate || linkedBusiness.governorate),
+          governorate: normalizeGovernorate(newPostDraft.governorate || linkedBusiness.governorate) as SocialPost['governorate'],
           status: 'approved'
         });
 
@@ -1149,6 +1149,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
 };
 
 export default AdminPanel;
+
 
 
 

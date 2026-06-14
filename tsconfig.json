@@ -1,26 +1,58 @@
-{
-  "compilerOptions": {
-    "target": "ES2022",
-    "experimentalDecorators": true,
-    "useDefineForClassFields": false,
-    "module": "ESNext",
-    "lib": [
-      "ES2022",
-      "DOM",
-      "DOM.Iterable"
-    ],
-    "skipLibCheck": true,
-    "moduleResolution": "bundler",
-    "isolatedModules": true,
-    "moduleDetection": "force",
-    "allowJs": true,
-    "jsx": "react-jsx",
-    "paths": {
-      "@/*": [
-        "./*"
-      ]
-    },
-    "allowImportingTsExtensions": true,
-    "noEmit": true
-  }
+﻿{
+    "compilerOptions":  {
+                            "target":  "ES2022",
+                            "experimentalDecorators":  true,
+                            "useDefineForClassFields":  false,
+                            "module":  "ESNext",
+                            "lib":  [
+                                        "ES2022",
+                                        "DOM",
+                                        "DOM.Iterable"
+                                    ],
+                            "skipLibCheck":  true,
+                            "moduleResolution":  "bundler",
+                            "isolatedModules":  true,
+                            "moduleDetection":  "force",
+                            "allowJs":  true,
+                            "jsx":  "react-jsx",
+                            "paths":  {
+                                          "@/*":  [
+                                                      "./*"
+                                                  ]
+                                      },
+                            "allowImportingTsExtensions":  true,
+                            "noEmit":  true,
+                            "types":  [
+                                          "node",
+                                          "react",
+                                          "react-dom"
+                                      ]
+                        },
+    "include":  [
+                    "src/**/*.ts",
+                    "src/**/*.tsx",
+                    "src/**/*.d.ts",
+                    "vite-env.d.ts",
+                    "env.d.ts"
+                ],
+    "exclude":  [
+                    "node_modules",
+                    "dist",
+                    "build",
+                    "coverage",
+                    ".git",
+                    ".vercel",
+                    ".wrangler",
+                    "SAFE-BACKUP-*",
+                    "LIVE-GOOD-*",
+                    "LIVE-GOOD-PWA-HOTFIX-*",
+                    "_SHAKU_FIX_REPORT_*",
+                    "backup-*",
+                    "vitest.config.ts",
+                    "**/SAFE-BACKUP-*",
+                    "**/LIVE-GOOD-*",
+                    "**/_SHAKU_FIX_REPORT_*",
+                    "**/dist",
+                    "**/node_modules"
+                ]
 }

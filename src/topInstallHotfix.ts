@@ -1,4 +1,4 @@
-const installLike = /(install|add to home|تثبيت|تنزيل التطبيق|pwa)/i;
+﻿const installLike = /(install|add to home|ØªØ«Ø¨ÙŠØª|ØªÙ†Ø²ÙŠÙ„ Ø§Ù„ØªØ·Ø¨ÙŠÙ‚|pwa)/i;
 const TOP_LIMIT = 220;
 
 function isTopInstallButton(el) {
@@ -21,7 +21,7 @@ function hideTopInstallButton() {
   const candidates = Array.from(document.querySelectorAll('button, a, [role="button"]'))
     .filter(isTopInstallButton)
     .sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top);
-  const target = candidates[0];
+  const target = candidates[0] as HTMLElement | undefined;
   if (!target) return;
   target.style.display = 'none';
   target.style.visibility = 'hidden';
