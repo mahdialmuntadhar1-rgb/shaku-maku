@@ -37,3 +37,4 @@ STABLE-WORKING-VERSION.txt
 *.sqlite-wal
 .dev.vars
 .dev.vars.*
+_SHAKU_FIX_REPORT_*/
