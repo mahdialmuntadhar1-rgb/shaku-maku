@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { AuthResponse, authApi, requestPasswordReset, resetPassword as apiResetPassword } from '../api';
-import { AUTH_CHANGE_EVENT, readSession, SessionUser } from '../auth/session';
+import { AUTH_CHANGE_EVENT, clearSession, readSession, writeSession, SessionUser } from '../auth/session';
 
 interface RegisterPayload {
   email: string;
@@ -64,20 +64,39 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (email: string, password: string): Promise<AuthResponse> => {
     const response = await authApi.login(email, password);
-    refreshSession();
+    
+    // Sync complete profile from backend after successful login
+    try {
+      const me = await authApi.getMe();
+      writeSession(response.token, me);
+      refreshSession();
+    } catch (error) {
+      // If /auth/me fails, still use the login response
+      refreshSession();
+    }
 
     return response;
   };
 
   const register = async (userData: RegisterPayload): Promise<AuthResponse> => {
     const response = await authApi.register(userData);
-    refreshSession();
+    
+    // Sync complete profile from backend after successful registration
+    try {
+      const me = await authApi.getMe();
+      writeSession(response.token, me);
+      refreshSession();
+    } catch (error) {
+      // If /auth/me fails, still use the register response
+      refreshSession();
+    }
 
     return response;
   };
 
   const logout = (): void => {
     authApi.logout();
+    clearSession();
     setUser(null);
   };
 

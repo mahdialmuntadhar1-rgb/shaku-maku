@@ -232,6 +232,15 @@ export const authApi = {
     return unwrap<AuthResponse['user']>(response);
   },
 
+  // TODO-safe adapter for profile update
+  // Backend endpoint for profile update needs to be implemented
+  // This is a placeholder that will be updated when the backend endpoint is available
+  async updateProfile(profileData: Partial<AuthResponse['user']>): Promise<AuthResponse['user']> {
+    // TODO: Replace with actual backend endpoint when available
+    // Expected endpoint: PATCH /auth/profile or PUT /users/me
+    throw new Error('Profile update endpoint not yet implemented in backend. TODO: Add backend endpoint for profile updates.');
+  },
+
   async forgotPassword(email: string): Promise<{ message: string }> {
     localStorage.setItem('password_reset_email', email);
     const response = await apiRequest<any>('/auth/forgot-password', {
