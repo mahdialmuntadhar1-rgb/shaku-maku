@@ -19,24 +19,24 @@ function normalizeGovernorate(value) {
   const raw = cleanTaxonomyValue(value);
   const compact = compactTaxonomyValue(value);
   const aliases = {
-    baghdad: ['baghdad','Ã˜Â¨Ã˜ÂºÃ˜Â¯Ã˜Â§Ã˜Â¯'],
-    basra: ['basra','basrah','Ã˜Â§Ã™â€žÃ˜Â¨Ã˜ÂµÃ˜Â±Ã™â€¡','Ã˜Â§Ã™â€žÃ˜Â¨Ã˜ÂµÃ˜Â±Ã˜Â©','Ã˜Â¨Ã˜ÂµÃ˜Â±Ã™â€¡','Ã˜Â¨Ã˜ÂµÃ˜Â±Ã˜Â©'],
-    nineveh: ['nineveh','ninewa','ninawa','nainawa','mosul','mousl','mousul','Ã™â€ Ã™Å Ã™â€ Ã™Ë†Ã™â€°','Ã™â€ Ã™Å Ã™â€ Ã™Ë†Ã™Å ','Ã˜Â§Ã™â€žÃ™â€¦Ã™Ë†Ã˜ÂµÃ™â€ž','Ã™â€¦Ã™Ë†Ã˜ÂµÃ™â€ž'],
-    erbil: ['erbil','arbil','hawler','hewler','Ã˜Â§Ã˜Â±Ã˜Â¨Ã™Å Ã™â€ž','Ã˜Â£Ã˜Â±Ã˜Â¨Ã™Å Ã™â€ž','Ã™â€¡Ã›â€¢Ã™Ë†Ã™â€žÃ›Å½Ã˜Â±'],
-    sulaymaniyah: ['sulaymaniyah','sulaimani','sulaymaniya','suleimani','slemani','Ã˜Â§Ã™â€žÃ˜Â³Ã™â€žÃ™Å Ã™â€¦Ã˜Â§Ã™â€ Ã™Å Ã™â€¡','Ã˜Â§Ã™â€žÃ˜Â³Ã™â€žÃ™Å Ã™â€¦Ã˜Â§Ã™â€ Ã™Å Ã˜Â©','Ã˜Â³Ã™â€žÃ™Å Ã™â€¦Ã˜Â§Ã™â€ Ã™Å Ã™â€¡','Ã˜Â³Ã™â€žÃ™Å Ã™â€¦Ã˜Â§Ã™â€ Ã™Å Ã˜Â©','Ã˜Â³Ã™â€žÃ›Å½Ã™â€¦Ã˜Â§Ã™â€ Ã›Å’'],
-    duhok: ['duhok','dohuk','Ã˜Â¯Ã™â€¡Ã™Ë†Ã™Æ’','Ã˜Â¯Ã™â€¡Ã›â€ Ã™Æ’'],
-    kirkuk: ['kirkuk','Ã™Æ’Ã˜Â±Ã™Æ’Ã™Ë†Ã™Æ’','ÃšÂ©Ã˜Â±ÃšÂ©Ã™Ë†ÃšÂ©','ÃšÂ©Ã›â€¢Ã˜Â±ÃšÂ©Ã™Ë†Ã™Ë†ÃšÂ©'],
-    najaf: ['najaf','Ã˜Â§Ã™â€žÃ™â€ Ã˜Â¬Ã™Â','Ã™â€ Ã˜Â¬Ã™Â'],
-    karbala: ['karbala','kerbala','Ã™Æ’Ã˜Â±Ã˜Â¨Ã™â€žÃ˜Â§Ã˜Â¡','ÃšÂ©Ã˜Â±Ã˜Â¨Ã™â€žÃ˜Â§'],
-    babil: ['babil','babylon','hillah','hilla','Ã˜Â¨Ã˜Â§Ã˜Â¨Ã™â€ž','Ã˜Â§Ã™â€žÃ˜Â­Ã™â€žÃ™â€¡','Ã˜Â§Ã™â€žÃ˜Â­Ã™â€žÃ˜Â©'],
-    anbar: ['anbar','Ã˜Â§Ã™â€žÃ˜Â§Ã™â€ Ã˜Â¨Ã˜Â§Ã˜Â±','Ã˜Â§Ã™â€žÃ˜Â£Ã™â€ Ã˜Â¨Ã˜Â§Ã˜Â±','Ã˜Â±Ã™â€¦Ã˜Â§Ã˜Â¯Ã™Å ','ramadi'],
-    diyala: ['diyala','Ã˜Â¯Ã™Å Ã˜Â§Ã™â€žÃ™â€°','Ã˜Â¨Ã˜Â¹Ã™â€šÃ™Ë†Ã˜Â¨Ã™â€¡','Ã˜Â¨Ã˜Â¹Ã™â€šÃ™Ë†Ã˜Â¨Ã˜Â©','baquba'],
-    wasit: ['wasit','Ã™Ë†Ã˜Â§Ã˜Â³Ã˜Â·','Ã˜Â§Ã™â€žÃ™Æ’Ã™Ë†Ã˜Âª','kut'],
-    salah_ad_din: ['salah_ad_din','salahaddin','salah al din','salah ad din','Ã˜ÂµÃ™â€žÃ˜Â§Ã˜Â­ Ã˜Â§Ã™â€žÃ˜Â¯Ã™Å Ã™â€ ','Ã˜ÂªÃ™Æ’Ã˜Â±Ã™Å Ã˜Âª','tikrit'],
-    maysan: ['maysan','Ã™â€¦Ã™Å Ã˜Â³Ã˜Â§Ã™â€ ','Ã˜Â§Ã™â€žÃ˜Â¹Ã™â€¦Ã˜Â§Ã˜Â±Ã™â€¡','Ã˜Â§Ã™â€žÃ˜Â¹Ã™â€¦Ã˜Â§Ã˜Â±Ã˜Â©','amara'],
-    dhi_qar: ['dhi_qar','dhiqar','Ã˜Â°Ã™Å  Ã™â€šÃ˜Â§Ã˜Â±','Ã˜Â°Ã™â€° Ã™â€šÃ˜Â§Ã˜Â±','Ã˜Â§Ã™â€žÃ™â€ Ã˜Â§Ã˜ÂµÃ˜Â±Ã™Å Ã™â€¡','Ã˜Â§Ã™â€žÃ™â€ Ã˜Â§Ã˜ÂµÃ˜Â±Ã™Å Ã˜Â©','nasiriyah','nasiriya'],
-    muthanna: ['muthanna','Ã˜Â§Ã™â€žÃ™â€¦Ã˜Â«Ã™â€ Ã™â€°','Ã˜Â§Ã™â€žÃ˜Â³Ã™â€¦Ã˜Â§Ã™Ë†Ã™â€¡','Ã˜Â§Ã™â€žÃ˜Â³Ã™â€¦Ã˜Â§Ã™Ë†Ã˜Â©','samawah'],
-    qadisiyyah: ['qadisiyyah','qadisiyah','diwaniyah','Ã˜Â§Ã™â€žÃ™â€šÃ˜Â§Ã˜Â¯Ã˜Â³Ã™Å Ã™â€¡','Ã˜Â§Ã™â€žÃ™â€šÃ˜Â§Ã˜Â¯Ã˜Â³Ã™Å Ã˜Â©','Ã˜Â§Ã™â€žÃ˜Â¯Ã™Å Ã™Ë†Ã˜Â§Ã™â€ Ã™Å Ã™â€¡','Ã˜Â§Ã™â€žÃ˜Â¯Ã™Å Ã™Ë†Ã˜Â§Ã™â€ Ã™Å Ã˜Â©','diwaniya']
+    baghdad: ['baghdad', 'بغداد'],
+    basra: ['basra', 'basrah', 'البصرة', 'بصرة', 'بەسرە'],
+    nineveh: ['nineveh', 'ninewa', 'ninawa', 'mosul', 'الموصل', 'موصل', 'نينوى', 'مووسڵ', 'نەینەوا'],
+    erbil: ['erbil', 'arbil', 'hawler', 'hewler', 'اربيل', 'أربيل', 'هەولێر'],
+    sulaymaniyah: ['sulaymaniyah', 'sulaimani', 'sulaymaniya', 'slemani', 'السليمانية', 'سليمانية', 'سلێمانی'],
+    duhok: ['duhok', 'dohuk', 'دهوك', 'دهۆک'],
+    kirkuk: ['kirkuk', 'كركوك', 'کرکوک', 'کەرکووک'],
+    najaf: ['najaf', 'النجف', 'نجف', 'نەجەف'],
+    karbala: ['karbala', 'kerbala', 'كربلاء', 'کەربەلا'],
+    babil: ['babil', 'babylon', 'hillah', 'hilla', 'بابل', 'الحلة', 'حلة'],
+    anbar: ['anbar', 'الانبار', 'الأنبار', 'رمادي', 'ramadi', 'ئەنبار'],
+    diyala: ['diyala', 'ديالى', 'بعقوبة', 'baquba', 'دیالە'],
+    wasit: ['wasit', 'واسط', 'الكوت', 'kut'],
+    salah_ad_din: ['salah_ad_din', 'salahaddin', 'salah al din', 'salah ad din', 'صلاح الدين', 'تكريت', 'tikrit', 'سەڵاحەددین'],
+    maysan: ['maysan', 'ميسان', 'العمارة', 'amara', 'میسان'],
+    dhi_qar: ['dhi_qar', 'dhiqar', 'dhi qar', 'ذي قار', 'الناصرية', 'nasiriyah', 'nasiriya', 'زیقار'],
+    muthanna: ['muthanna', 'المثنى', 'السماوة', 'samawah', 'موسەنا'],
+    qadisiyyah: ['qadisiyyah', 'qadisiyah', 'diwaniyah', 'القادسية', 'الديوانية', 'diwaniya', 'قادسیە']
   };
 
   for (const [id, values] of Object.entries(aliases)) {
@@ -51,22 +51,22 @@ function normalizeCategory(value) {
   const raw = cleanTaxonomyValue(value);
   const compact = compactTaxonomyValue(value);
   const aliases = {
-    restaurant: ['restaurant','restaurants','food','Ã™â€¦Ã˜Â·Ã˜Â¹Ã™â€¦','Ã™â€¦Ã˜Â·Ã˜Â§Ã˜Â¹Ã™â€¦','Ã˜Â§Ã™Æ’Ã™â€ž','Ã˜Â£Ã™Æ’Ã™â€ž'],
-    cafe: ['cafe','cafes','coffee','Ã™Æ’Ã™Ë†Ã™ÂÃ™Å ','Ã™Æ’Ã˜Â§Ã™ÂÃ™Å Ã™â€¡','Ã™Æ’Ã˜Â§Ã™ÂÃ™Å Ã™â€¡Ã˜Â§Ã˜Âª','Ã™â€¦Ã™â€šÃ™â€¡Ã™â€°'],
-    doctor: ['doctor','doctors','Ã˜Â·Ã˜Â¨Ã™Å Ã˜Â¨','Ã˜Â§Ã˜Â·Ã˜Â¨Ã˜Â§Ã˜Â¡','Ã˜Â£Ã˜Â·Ã˜Â¨Ã˜Â§Ã˜Â¡','Ã˜Â¯Ã™Æ’Ã˜ÂªÃ™Ë†Ã˜Â±'],
-    clinic: ['clinic','clinics','Ã˜Â¹Ã™Å Ã˜Â§Ã˜Â¯Ã™â€¡','Ã˜Â¹Ã™Å Ã˜Â§Ã˜Â¯Ã˜Â©','Ã˜Â¹Ã™Å Ã˜Â§Ã˜Â¯Ã˜Â§Ã˜Âª','medical'],
-    pharmacy: ['pharmacy','pharmacies','Ã˜ÂµÃ™Å Ã˜Â¯Ã™â€žÃ™Å Ã™â€¡','Ã˜ÂµÃ™Å Ã˜Â¯Ã™â€žÃ™Å Ã˜Â©','Ã˜ÂµÃ™Å Ã˜Â¯Ã™â€žÃ™Å Ã˜Â§Ã˜Âª'],
-    shopping: ['shopping','shop','market','mall','Ã˜ÂªÃ˜Â³Ã™Ë†Ã™â€š','Ã˜Â³Ã™Ë†Ã™â€š','Ã™â€¦Ã™Ë†Ã™â€ž'],
-    clothing: ['clothing','fashion','Ã™â€¦Ã™â€žÃ˜Â§Ã˜Â¨Ã˜Â³','Ã˜Â§Ã˜Â²Ã™Å Ã˜Â§Ã˜Â¡','Ã˜Â£Ã˜Â²Ã™Å Ã˜Â§Ã˜Â¡'],
-    cars: ['cars','car','auto','automotive','Ã˜Â³Ã™Å Ã˜Â§Ã˜Â±Ã˜Â§Ã˜Âª','Ã˜Â³Ã™Å Ã˜Â§Ã˜Â±Ã™â€¡','Ã˜Â³Ã™Å Ã˜Â§Ã˜Â±Ã˜Â©'],
-    hotel: ['hotel','hotels','Ã™ÂÃ™â€ Ã˜Â§Ã˜Â¯Ã™â€š','Ã™ÂÃ™â€ Ã˜Â¯Ã™â€š'],
-    beauty: ['beauty','salon','spa','Ã˜ÂªÃ˜Â¬Ã™â€¦Ã™Å Ã™â€ž','Ã˜ÂµÃ˜Â§Ã™â€žÃ™Ë†Ã™â€ '],
-    education: ['education','school','academy','Ã˜ÂªÃ˜Â¹Ã™â€žÃ™Å Ã™â€¦','Ã™â€¦Ã˜Â¯Ã˜Â±Ã˜Â³Ã™â€¡','Ã™â€¦Ã˜Â¯Ã˜Â±Ã˜Â³Ã˜Â©','Ã™â€¦Ã˜Â¹Ã™â€¡Ã˜Â¯'],
-    real_estate: ['real_estate','real estate','property','Ã˜Â¹Ã™â€šÃ˜Â§Ã˜Â±','Ã˜Â¹Ã™â€šÃ˜Â§Ã˜Â±Ã˜Â§Ã˜Âª'],
-    services: ['services','service','Ã˜Â®Ã˜Â¯Ã™â€¦Ã˜Â§Ã˜Âª','Ã˜Â®Ã˜Â¯Ã™â€¦Ã™â€¡','Ã˜Â®Ã˜Â¯Ã™â€¦Ã˜Â©'],
-    electronics: ['electronics','mobile','phone','computer','Ã˜Â§Ã™â€žÃ™Æ’Ã˜ÂªÃ˜Â±Ã™Ë†Ã™â€ Ã™Å Ã˜Â§Ã˜Âª','Ã˜Â¥Ã™â€žÃ™Æ’Ã˜ÂªÃ˜Â±Ã™Ë†Ã™â€ Ã™Å Ã˜Â§Ã˜Âª','Ã™â€¦Ã™Ë†Ã˜Â¨Ã˜Â§Ã™Å Ã™â€ž'],
-    gym: ['gym','fitness','sport','sports','Ã™â€ Ã˜Â§Ã˜Â¯Ã™Å ','Ã™â€ Ã™Ë†Ã˜Â§Ã˜Â¯Ã™Å ','Ã˜Â±Ã™Å Ã˜Â§Ã˜Â¶Ã™â€¡','Ã˜Â±Ã™Å Ã˜Â§Ã˜Â¶Ã˜Â©'],
-    entertainment: ['entertainment','fun','cinema','Ã˜ÂªÃ˜Â±Ã™ÂÃ™Å Ã™â€¡','Ã˜Â³Ã™Å Ã™â€ Ã™â€¦Ã˜Â§']
+    restaurant: ['restaurant', 'restaurants', 'food', 'مطعم', 'مطاعم', 'اكل', 'أكل', 'چێشتخانە'],
+    cafe: ['cafe', 'cafes', 'coffee', 'كوفي', 'كافيه', 'كافيهات', 'مقهى', 'کافێ'],
+    doctor: ['doctor', 'doctors', 'طبيب', 'اطباء', 'أطباء', 'دكتور', 'دکتۆر'],
+    clinic: ['clinic', 'clinics', 'عياده', 'عيادة', 'عيادات', 'medical', 'کلینیک'],
+    pharmacy: ['pharmacy', 'pharmacies', 'صيدليه', 'صيدلية', 'صيدليات', 'دەرمانخانە'],
+    shopping: ['shopping', 'shop', 'market', 'mall', 'تسوق', 'سوق', 'مول', 'مۆڵ'],
+    clothing: ['clothing', 'fashion', 'ملابس', 'ازياء', 'أزياء', 'جلوبەرگ'],
+    cars: ['cars', 'car', 'auto', 'automotive', 'سيارات', 'سياره', 'سيارة', 'ئۆتۆمبێل'],
+    hotel: ['hotel', 'hotels', 'فنادق', 'فندق', 'هۆتێل'],
+    beauty: ['beauty', 'salon', 'spa', 'تجميل', 'صالون', 'جوانکاری'],
+    education: ['education', 'school', 'academy', 'تعليم', 'مدرسه', 'مدرسة', 'معهد', 'زانکۆ', 'قوتابخانە'],
+    real_estate: ['real_estate', 'real estate', 'property', 'عقار', 'عقارات', 'عەقارات'],
+    services: ['services', 'service', 'خدمات', 'خدمه', 'خدمة', 'خزمەتگوزاری'],
+    electronics: ['electronics', 'mobile', 'phone', 'computer', 'الكترونيات', 'إلكترونيات', 'موبايل', 'مۆبایل'],
+    gym: ['gym', 'fitness', 'sport', 'sports', 'نادي', 'نوادي', 'رياضه', 'رياضة', 'وەرزش'],
+    entertainment: ['entertainment', 'fun', 'cinema', 'ترفيه', 'سينما', 'سینەما']
   };
 
   for (const [id, values] of Object.entries(aliases)) {
