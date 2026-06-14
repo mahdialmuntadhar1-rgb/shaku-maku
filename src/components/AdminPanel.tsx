@@ -827,7 +827,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
                   onClick={() => setHeroSlides((prev) => [slide, ...prev.filter((item) => item.id !== slide.id)])}
                   className="px-3 py-2 rounded-lg bg-blue-500/15 text-blue-200 border border-blue-400/30 text-xs font-black"
                 >
-                  â­ Use as main slide
+                  ⭐ Use as main slide
                 </button>
 
                 <button
@@ -1149,6 +1149,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
 };
 
 export default AdminPanel;
+
 
 
 

@@ -133,7 +133,7 @@ function normalizeList(payload: any): any[] {
 function normalizeGovernorate(value: unknown): GovernorateCode {
   const raw = String(value || '').toLowerCase().trim();
   if (!raw) return 'all';
-  const compact = raw.replace(/[\s_\-Ã˜Å’]+/g, '');
+  const compact = raw.replace(/[\s_\-،]+/g, '');
 
   const map: Record<string, GovernorateCode> = {
     all: 'all',
@@ -205,11 +205,11 @@ function normalizeGovernorate(value: unknown): GovernorateCode {
   if (map[compact]) return map[compact];
 
   for (const gov of GOVERNORATES) {
-    const codeKey = gov.code.toLowerCase().replace(/[\s_\-Ã˜Å’]+/g, '');
-    const englishKey = gov.englishLabel.toLowerCase().replace(/[\s_\-Ã˜Å’]+/g, '');
-    const enKey = gov.name.en.toLowerCase().replace(/[\s_\-Ã˜Å’]+/g, '');
-    const arKey = gov.name.ar.toLowerCase().replace(/[\s_\-Ã˜Å’]+/g, '');
-    const kuKey = gov.name.ku.toLowerCase().replace(/[\s_\-Ã˜Å’]+/g, '');
+    const codeKey = gov.code.toLowerCase().replace(/[\s_\-،]+/g, '');
+    const englishKey = gov.englishLabel.toLowerCase().replace(/[\s_\-،]+/g, '');
+    const enKey = gov.name.en.toLowerCase().replace(/[\s_\-،]+/g, '');
+    const arKey = gov.name.ar.toLowerCase().replace(/[\s_\-،]+/g, '');
+    const kuKey = gov.name.ku.toLowerCase().replace(/[\s_\-،]+/g, '');
     if (compact === codeKey || compact === englishKey || compact === enKey || compact === arKey || compact === kuKey) {
       return gov.code;
     }
@@ -218,10 +218,10 @@ function normalizeGovernorate(value: unknown): GovernorateCode {
   const administrativeWordsRemoved = compact
     .replace(/governorate/g, '')
     .replace(/province/g, '')
-    .replace(/Ã™â€¦Ã˜Â­Ã˜Â§Ã™ÂÃ˜Â¸Ã˜Â©/g, '')
-    .replace(/Ã˜Â§Ã™â€žÃ™â€¦Ã˜Â­Ã˜Â§Ã™ÂÃ˜Â¸Ã˜Â©/g, '')
-    .replace(/Ã™Â¾Ã˜Â§Ã˜Â±Ã›Å½Ã˜Â²ÃšÂ¯Ã˜Â§Ã›Å’/g, '')
-    .replace(/Ã™Â¾Ã˜Â§Ã˜Â±Ã›Å½Ã˜Â²ÃšÂ¯Ã˜Â§/g, '');
+    .replace(/محافظة/g, '')
+    .replace(/المحافظة/g, '')
+    .replace(/پارێزگای/g, '')
+    .replace(/پارێزگا/g, '');
 
   if (map[administrativeWordsRemoved]) {
     return map[administrativeWordsRemoved];
@@ -244,7 +244,7 @@ function normalizeDedupeText(value: unknown): string {
   return String(value || '')
     .toLowerCase()
     .trim()
-    .replace(/[\s\-_Ã˜Å’.,()\[\]{}]+/g, '')
+    .replace(/[\s\-_،.,()\[\]{}]+/g, '')
     .replace(/[^\p{L}\p{N}]+/gu, '');
 }
 
@@ -275,14 +275,14 @@ function normalizeCategory(value: unknown): string {
   const raw = String(value || '').trim();
   if (!raw) return 'other';
 
-  const compact = raw.toLowerCase().replace(/[\s_\-&/Ã˜Å’]+/g, '');
+  const compact = raw.toLowerCase().replace(/[\s_\-&/،]+/g, '');
   const byId = CATEGORIES.find((cat) => cat.id.toLowerCase() === compact || cat.id.toLowerCase() === raw.toLowerCase());
   if (byId) return byId.id;
 
   const byName = CATEGORIES.find((cat) => {
-    const en = cat.name.en.toLowerCase().replace(/[\s_\-&/Ã˜Å’]+/g, '');
-    const ar = cat.name.ar.toLowerCase().replace(/[\s_\-&/Ã˜Å’]+/g, '');
-    const ku = cat.name.ku.toLowerCase().replace(/[\s_\-&/Ã˜Å’]+/g, '');
+    const en = cat.name.en.toLowerCase().replace(/[\s_\-&/،]+/g, '');
+    const ar = cat.name.ar.toLowerCase().replace(/[\s_\-&/،]+/g, '');
+    const ku = cat.name.ku.toLowerCase().replace(/[\s_\-&/،]+/g, '');
     return compact === en || compact === ar || compact === ku;
   });
   if (byName) return byName.id;
@@ -392,7 +392,7 @@ function normalizeCategory(value: unknown): string {
 
   const compactMap: Record<string, string> = {};
   Object.entries(map).forEach(([k, v]) => {
-    compactMap[k.toLowerCase().replace(/[\s_\-&/Ã˜Å’]+/g, '')] = v;
+    compactMap[k.toLowerCase().replace(/[\s_\-&/،]+/g, '')] = v;
   });
 
   const exact = compactMap[compact];
@@ -1019,9 +1019,9 @@ export default function App() {
       <div className="min-h-screen bg-[#1A1A1A] flex items-center justify-center p-6">
         <div className="w-full max-w-md bg-[#111] border border-luxury-gold/30 rounded-3xl p-6 space-y-4 text-center">
           <h2 className="text-white font-black text-xl">Choose Language</h2>
-          <p className="text-zinc-400 text-sm">Ã˜Â§Ã˜Â®Ã˜ÂªÃ˜Â± Ã™â€žÃ˜ÂºÃ˜ÂªÃ™Æ’ / Ã˜Â²Ã™â€¦Ã˜Â§Ã™â€ Ã›â€¢ÃšÂ©Ã›â€¢Ã˜Âª Ã™â€¡Ã›â€¢ÃšÂµÃ˜Â¨ÃšËœÃ›Å½Ã˜Â±Ã›â€¢</p>
-          <button onClick={() => chooseLanguage('ar')} className="w-full py-3 rounded-2xl bg-gradient-to-r from-luxury-teal to-luxury-gold text-white font-black cursor-pointer">Ã˜Â§Ã™â€žÃ˜Â¹Ã˜Â±Ã˜Â¨Ã™Å Ã˜Â©</button>
-          <button onClick={() => chooseLanguage('ku')} className="w-full py-3 rounded-2xl bg-gradient-to-r from-luxury-teal to-luxury-gold text-white font-black cursor-pointer">ÃšÂ©Ã™Ë†Ã˜Â±Ã˜Â¯Ã›Å’</button>
+          <p className="text-zinc-400 text-sm">اختر لغتك / زمانەکەت هەڵبژێرە</p>
+          <button onClick={() => chooseLanguage('ar')} className="w-full py-3 rounded-2xl bg-gradient-to-r from-luxury-teal to-luxury-gold text-white font-black cursor-pointer">العربية</button>
+          <button onClick={() => chooseLanguage('ku')} className="w-full py-3 rounded-2xl bg-gradient-to-r from-luxury-teal to-luxury-gold text-white font-black cursor-pointer">کوردی</button>
           <button onClick={() => chooseLanguage('en')} className="w-full py-3 rounded-2xl bg-gradient-to-r from-luxury-teal to-luxury-gold text-white font-black cursor-pointer">English</button>
         </div>
       </div>

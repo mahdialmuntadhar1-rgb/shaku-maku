@@ -1,4 +1,4 @@
-﻿const installLike = /(install|add to home|ØªØ«Ø¨ÙŠØª|ØªÙ†Ø²ÙŠÙ„ Ø§Ù„ØªØ·Ø¨ÙŠÙ‚|pwa)/i;
+﻿const installLike = /(install|add to home|تثبيت|تنزيل التطبيق|pwa)/i;
 const TOP_LIMIT = 220;
 
 function isTopInstallButton(el) {

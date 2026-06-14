@@ -3,11 +3,11 @@ function cleanTaxonomyValue(value) {
   return String(value || '')
     .toLowerCase()
     .trim()
-    .replace(/[Ã˜Â£Ã˜Â¥Ã˜Â¢]/g, 'Ã˜Â§')
-    .replace(/Ã˜Â©/g, 'Ã™â€¡')
-    .replace(/Ã™â€°/g, 'Ã™Å ')
+    .replace(/[أإآ]/g, 'ا')
+    .replace(/ة/g, 'ه')
+    .replace(/ى/g, 'ي')
     .replace(/[_\-]+/g, ' ')
-    .replace(/[\sÃ˜Å’,./()\[\]{}]+/g, ' ')
+    .replace(/[\s،,./()\[\]{}]+/g, ' ')
     .trim();
 }
 

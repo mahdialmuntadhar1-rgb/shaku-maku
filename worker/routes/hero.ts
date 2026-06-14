@@ -17,7 +17,7 @@ function fixMojibakeText(value: unknown): string {
   const text = String(value || '');
 
   // Common Arabic/Kurdish mojibake markers caused by UTF-8 bytes read as Latin-1.
-  if (!/[ØÙÛÚ]/.test(text) && !/[\u0080-\u00FF]/.test(text)) {
+  if (!/[\u0080-\u00FF]/.test(text)) {
     return text;
   }
 
