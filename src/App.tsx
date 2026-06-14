@@ -21,6 +21,7 @@ import AddBusinessForm from './components/AddBusinessForm';
 import AboutSakuMaku from './components/AboutSakuMaku';
 import AdminPanel from './components/AdminPanel';
 import AuthModal from './components/AuthModal';
+import { isAdmin as isAdminEmail } from './config/admin';
 
 export default function App() {
   const [currentLang, setCurrentLang] = useState<Language>('ar'); // Default: Arabic
@@ -57,12 +58,17 @@ export default function App() {
   // Hero Slides (static for now, can be moved to backend later)
   const [heroSlides, setHeroSlides] = useState<HeroSlide[]>(HERO_SLIDES);
 
+  useEffect(() => {
+    document.documentElement.lang = currentLang;
+    document.documentElement.dir = isRtl ? 'rtl' : 'ltr';
+  }, [currentLang, isRtl]);
+
   // Check for existing auth on mount
   useEffect(() => {
     const currentUser = authApi.getCurrentUser();
     if (currentUser) {
       setUser(currentUser);
-      const isAdmin = currentUser.email === 'safaribosafar@gmail.com' || currentUser.email === 'mahdialmuntadhar1@gmail.com';
+      const isAdmin = isAdminEmail(currentUser.email);
       setUserProfile({
         uid: currentUser.id,
         displayName: currentUser.name || currentUser.email.split('@')[0],
@@ -75,56 +81,6 @@ export default function App() {
       });
     }
   }, []);
-
-  const handleCustomEmailLogin = async (customEmail: string) => {
-    const cleanEmail = customEmail.trim().toLowerCase();
-    if (!cleanEmail) return;
-
-    const dummyPassword = "SandboxPassword123!";
-
-    try {
-      // Try login first
-      try {
-        const response = await authApi.login(cleanEmail, dummyPassword);
-        setUser(response.user);
-        localStorage.setItem("user", JSON.stringify(response.user));
-        const isAdmin = response.user.email === 'mahdialmuntadhar1@gmail.com' || response.user.email === 'safaribosafar@gmail.com';
-        setUserProfile({
-          uid: response.user.id,
-          displayName: response.user.name || cleanEmail.split('@')[0],
-          photoURL: '',
-          email: cleanEmail,
-          createdAt: new Date().toISOString(),
-          role: isAdmin ? 'admin' : 'user',
-          onboarded: false,
-          businessId: null
-        });
-      } catch (loginErr: any) {
-        // If login fails, try signup
-        try {
-          const response = await authApi.signup({ email: cleanEmail, password: dummyPassword, name: cleanEmail.split('@')[0] });
-          setUser(response.user);
-          localStorage.setItem("user", JSON.stringify(response.user));
-          const isAdmin = response.user.email === 'mahdialmuntadhar1@gmail.com' || response.user.email === 'safaribosafar@gmail.com';
-          setUserProfile({
-            uid: response.user.id,
-            displayName: response.user.name || cleanEmail.split('@')[0],
-            photoURL: '',
-            email: cleanEmail,
-            createdAt: new Date().toISOString(),
-            role: isAdmin ? 'admin' : 'user',
-            onboarded: false,
-            businessId: null
-          });
-        } catch (signupErr) {
-          throw signupErr;
-        }
-      }
-      console.log("Auth session authenticated successfully for: ", cleanEmail);
-    } catch (err) {
-      console.error("Error setting custom user: ", err);
-    }
-  };
 
   // Secure logout
   const handleSecureLogout = async () => {
@@ -140,9 +96,8 @@ export default function App() {
     }
   };
 
-  const handleUpdateRole = async (newRole: 'user' | 'owner' | 'admin') => {
-    // Role updates would need backend API support
-    console.log("Role update not implemented in backend yet");
+  const handleUpdateRole = async (_newRole: 'user' | 'owner' | 'admin') => {
+    console.warn("Role changes are disabled in production. Admin status is controlled by the email whitelist.");
   };
 
   const handleUpdateProfile = async (updatedFields: Partial<UserProfile>) => {
@@ -345,7 +300,6 @@ export default function App() {
         onUpdateRole={handleUpdateRole}
         activeTab={activeTab}
         onChangeTab={(tab: any) => setActiveTab(tab)}
-        onCustomEmailLogin={handleCustomEmailLogin}
       />
 
       <AuthModal
@@ -353,7 +307,7 @@ export default function App() {
         onClose={() => setAuthModalOpen(false)}
         onAuthSuccess={(userObj) => {
           setUser(userObj);
-          const isAdmin = userObj.email === 'mahdialmuntadhar1@gmail.com' || userObj.email === 'safaribosafar@gmail.com';
+          const isAdmin = isAdminEmail(userObj.email);
           setUserProfile({
             uid: userObj.id,
             displayName: userObj.name || userObj.email.split('@')[0],

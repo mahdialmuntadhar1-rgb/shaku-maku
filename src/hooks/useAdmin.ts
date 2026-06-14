@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ADMIN_EMAIL } from '../config/admin';
+import { isAdmin as isAdminEmail } from '../config/admin';
 import { authApi } from '../api';
 
 export const useAdmin = () => {
@@ -9,7 +9,7 @@ export const useAdmin = () => {
 
   useEffect(() => {
     const user = authApi.getCurrentUser();
-    if (user && user.email === ADMIN_EMAIL) {
+    if (user?.email && isAdminEmail(user.email)) {
       setIsAdmin(true);
       setAdminEmail(user.email);
     }

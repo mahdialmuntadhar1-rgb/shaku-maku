@@ -1,6 +1,7 @@
-﻿import axios from 'axios';
+import axios from 'axios';
+import { MOCK_BUSINESSES } from './mockData';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://shaku-maku-api.mahdialmuntadhar1.workers.dev';
+export const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://shaku-maku.mahdialmuntadhar1.workers.dev';
 
 export const api = axios.create({
   baseURL: API_BASE_URL,
@@ -8,7 +9,6 @@ export const api = axios.create({
   timeout: 15000
 });
 
-// Add token to requests if it exists
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('auth_token');
   if (token && !config.headers.Authorization) {
@@ -17,7 +17,6 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Response interceptor for error handling
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -26,7 +25,6 @@ api.interceptors.response.use(
   }
 );
 
-// ===== TYPES =====
 export interface AuthResponse {
   success: boolean;
   token?: string;
@@ -35,16 +33,30 @@ export interface AuthResponse {
   message?: string;
 }
 
-// ===== BUSINESS API with fallback to mock data on 404 =====
+const normalizeApiUser = (user: any) => {
+  if (!user) return null;
+  const id = user.id ?? user.uid;
+  if (!id || !user.email) return null;
+  const email = String(user.email).trim().toLowerCase();
+  return {
+    ...user,
+    id,
+    email,
+    name: user.name || user.displayName || email.split('@')[0]
+  };
+};
+
 export const businessesApi = {
   getAll: async (params?: any) => {
     try {
       const response = await api.get('/businesses', { params });
+      if (typeof response.data === 'string') {
+        throw new Error('API returned HTML/text instead of business JSON');
+      }
       return response.data;
     } catch (error: any) {
       if (!error.response || error.response.status === 404) {
-        console.warn('Backend unavailable, using mock data');
-        const { MOCK_BUSINESSES } = await import('./mockData');
+        console.warn('Backend unavailable, using bundled business data');
         let filtered = [...MOCK_BUSINESSES];
         if (params?.governorate) {
           filtered = filtered.filter(b => b.governorate === params.governorate);
@@ -57,10 +69,8 @@ export const businessesApi = {
       throw error;
     }
   },
-  list: async (params?: any) => {
-    return businessesApi.getAll(params);
-  },
-  getById: async (id: number) => {
+  list: async (params?: any) => businessesApi.getAll(params),
+  getById: async (id: number | string) => {
     const response = await api.get(`/businesses/${id}`);
     return response.data;
   },
@@ -68,27 +78,26 @@ export const businessesApi = {
     const response = await api.post('/businesses', business);
     return response.data;
   },
-  update: async (id: number, business: any) => {
+  update: async (id: number | string, business: any) => {
     const response = await api.put(`/businesses/${id}`, business);
     return response.data;
   },
-  delete: async (id: number) => {
+  delete: async (id: number | string) => {
     const response = await api.delete(`/businesses/${id}`);
     return response.data;
   }
 };
 
-// ===== POSTS API =====
 export const postsApi = {
   getAll: async () => {
     const response = await api.get('/posts');
+    if (typeof response.data === 'string') {
+      throw new Error('API returned HTML/text instead of posts JSON');
+    }
     return response.data;
   },
-  list: async () => {
-    const response = await api.get('/posts');
-    return response.data;
-  },
-  getById: async (id: number) => {
+  list: async () => postsApi.getAll(),
+  getById: async (id: number | string) => {
     const response = await api.get(`/posts/${id}`);
     return response.data;
   },
@@ -96,61 +105,46 @@ export const postsApi = {
     const response = await api.post('/posts', post);
     return response.data;
   },
-  update: async (id: number, post: any) => {
+  update: async (id: number | string, post: any) => {
     const response = await api.put(`/posts/${id}`, post);
     return response.data;
   },
-  delete: async (id: number, adminEmail?: string) => {
-    const response = await api.delete(`/posts/${id}`, {
-      data: adminEmail ? { adminEmail } : undefined
-    });
+  delete: async (id: number | string) => {
+    const response = await api.delete(`/posts/${id}`);
     return response.data;
   }
 };
 
-// ===== AUTH API =====
 export const authApi = {
   login: async (email: string, password: string): Promise<AuthResponse> => {
     try {
-      const response = await api.post('/auth/login', { email, password });
-      if (response.data.token) {
+      const response = await api.post('/auth/login', { email: email.trim().toLowerCase(), password });
+      const user = normalizeApiUser(response.data.user || response.data.data);
+      if (response.data.token && user) {
         localStorage.setItem('auth_token', response.data.token);
-        if (response.data.user) {
-          localStorage.setItem('user', JSON.stringify(response.data.user));
-        }
+        localStorage.setItem('user', JSON.stringify(user));
+        return { success: true, ...response.data, user };
       }
-      return { success: true, ...response.data };
+      return { success: false, error: response.data?.error || 'Login failed: invalid API response' };
     } catch (error: any) {
-      if (error.response?.status === 404) {
-        // Demo mode: create a fake user
-        const fakeUser = { id: Date.now(), email, name: email.split('@')[0] };
-        const fakeToken = 'demo_' + Date.now();
-        localStorage.setItem('auth_token', fakeToken);
-        localStorage.setItem('user', JSON.stringify(fakeUser));
-        return { success: true, user: fakeUser, token: fakeToken, message: 'Demo login (backend offline)' };
-      }
       return { success: false, error: error.response?.data?.error || 'Login failed' };
     }
   },
   register: async (userData: any): Promise<AuthResponse> => {
     try {
-      const response = await api.post('/auth/register', userData);
-      if (response.data.token) {
+      const response = await api.post('/auth/register', {
+        email: String(userData.email || '').trim().toLowerCase(),
+        password: userData.password,
+        name: userData.name
+      });
+      const user = normalizeApiUser(response.data.user || response.data.data);
+      if (response.data.token && user) {
         localStorage.setItem('auth_token', response.data.token);
-        if (response.data.user) {
-          localStorage.setItem('user', JSON.stringify(response.data.user));
-        }
+        localStorage.setItem('user', JSON.stringify(user));
+        return { success: true, ...response.data, user };
       }
-      return { success: true, ...response.data };
+      return { success: false, error: response.data?.error || 'Registration failed: invalid API response' };
     } catch (error: any) {
-      if (error.response?.status === 404) {
-        // Demo mode: create a fake user
-        const fakeUser = { id: Date.now(), email: userData.email, name: userData.name || userData.email };
-        const fakeToken = 'demo_' + Date.now();
-        localStorage.setItem('auth_token', fakeToken);
-        localStorage.setItem('user', JSON.stringify(fakeUser));
-        return { success: true, user: fakeUser, token: fakeToken, message: 'Demo account created (backend offline)' };
-      }
       return { success: false, error: error.response?.data?.error || 'Registration failed' };
     }
   },
@@ -160,22 +154,25 @@ export const authApi = {
   },
   getCurrentUser: () => {
     const userStr = localStorage.getItem('user');
-    return userStr ? JSON.parse(userStr) : null;
+    if (!userStr || !localStorage.getItem('auth_token')) return null;
+    try {
+      return normalizeApiUser(JSON.parse(userStr));
+    } catch {
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('user');
+      return null;
+    }
   },
-  isAuthenticated: () => {
-    return !!localStorage.getItem('auth_token');
-  },
+  isAuthenticated: () => Boolean(localStorage.getItem('auth_token') && localStorage.getItem('user')),
   setCurrentUser: (user: any) => {
-    localStorage.setItem('user', JSON.stringify(user));
+    const normalizedUser = normalizeApiUser(user);
+    if (normalizedUser) localStorage.setItem('user', JSON.stringify(normalizedUser));
   },
-  signup: async (userData: any) => {
-    return authApi.register(userData);
-  }
+  signup: async (userData: any) => authApi.register(userData)
 };
 
-// ===== PASSWORD RESET =====
 export const requestPasswordReset = async (identifier: string) => {
-  const response = await api.post('/auth/request-reset', { username: identifier });
+  const response = await api.post('/auth/request-reset', { username: identifier.trim().toLowerCase() });
   return response.data;
 };
 
@@ -184,7 +181,6 @@ export const resetPassword = async (token: string, newPassword: string) => {
   return response.data;
 };
 
-// ===== LEGACY EXPORTS =====
 export const getBusinesses = businessesApi.getAll;
 export const login = authApi.login;
 export const register = authApi.register;

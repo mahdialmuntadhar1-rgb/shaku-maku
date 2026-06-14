@@ -215,7 +215,7 @@ export default function SocialFeed({
     if (!newCaption.trim()) return;
 
     const imgToUse = uploadedImage || customPhotoInput.trim() || (uploadedVideo ? '' : newPhotoUrl);
-    const bizNameToUse = newBizName.trim() || (user?.displayName) || (currentLang === 'en' ? 'Saku Maku Guest' : currentLang === 'ku' ? 'Ù…ÛŒÙˆØ§Ù†ÛŒ Ø³Ø§ÙƒÛ† Ù…Ø§ÙƒÛ†' : 'Ø¶ÙŠÙ Ø´ÙƒÙˆ Ù…Ø§ÙƒÙˆ');
+    const bizNameToUse = newBizName.trim() || user?.displayName || user?.name || (currentLang === 'en' ? 'Saku Maku User' : currentLang === 'ku' ? 'بەکارهێنەری شکو ماکو' : 'مستخدم شكو ماكو');
 
     const newPostItem: SocialPost = {
       id: `post-${Date.now()}`,
@@ -226,8 +226,8 @@ export default function SocialFeed({
       category: newCategory,
       mediaUrl: imgToUse,
       timeAgo: {
-        ar: 'Ø§Ù„Ø¢Ù†',
-        ku: 'Ø¦ÛŽØ³ØªØ§',
+        ar: 'الآن',
+        ku: 'ئێستا',
         en: 'Just Now'
       },
       caption: {
@@ -235,14 +235,14 @@ export default function SocialFeed({
         ku: newCaption.trim(),
         en: newCaption.trim()
       },
-      likes: 1,
+      likes: 0,
       comments: [],
       commentsCount: 0,
-      likedByUser: true,
+      likedByUser: false,
       savedByUser: false,
       shares: 0,
       views: 1,
-      authorUid: user?.uid || 'anonymous'
+      authorUid: user?.uid || user?.id
     };
 
     if (uploadedVideo) {
@@ -260,8 +260,8 @@ export default function SocialFeed({
     }
 
     try {
-      // Add to local state
-      setPosts(prev => [newPostItem, ...prev]);
+      const savedPost = await postsApi.create(newPostItem);
+      setPosts(prev => [savedPost.data || savedPost.post || newPostItem, ...prev]);
 
       // Reset fields & collapse
       setNewBizName('');
@@ -280,6 +280,13 @@ export default function SocialFeed({
       setShowPresetGallery(false);
     } catch (err) {
       console.error("Error creating post: ", err);
+      alert(
+        currentLang === 'en'
+          ? 'Post could not be published. Please try again when the API is available.'
+          : currentLang === 'ku'
+          ? 'نەتوانرا بابەتەکە بڵاو بکرێتەوە. تکایە دووبارە هەوڵ بدەوە.'
+          : 'تعذر نشر المنشور. حاول مرة أخرى عندما تكون الخدمة متاحة.'
+      );
     }
   };
 

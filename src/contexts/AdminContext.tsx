@@ -1,4 +1,5 @@
-﻿import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { isAdmin as isAdminEmail } from '../config/admin';
 
 interface AdminContextType {
   isAdmin: boolean;
@@ -18,8 +19,6 @@ interface AdminProviderProps {
   children: ReactNode;
 }
 
-const ADMIN_EMAILS = ['mahdialmuntadhar1@gmail.com', 'admin@aku-maku.com'];
-
 export const AdminProvider: React.FC<AdminProviderProps> = ({ children }) => {
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -29,7 +28,7 @@ export const AdminProvider: React.FC<AdminProviderProps> = ({ children }) => {
       try {
         const user = JSON.parse(userStr);
         const email = user.email || user.user?.email;
-        setIsAdmin(ADMIN_EMAILS.includes(email));
+        setIsAdmin(Boolean(email && isAdminEmail(email)));
       } catch (e) {
         setIsAdmin(false);
       }
@@ -39,7 +38,7 @@ export const AdminProvider: React.FC<AdminProviderProps> = ({ children }) => {
   };
 
   const setAdminByEmail = (email: string) => {
-    setIsAdmin(ADMIN_EMAILS.includes(email));
+    setIsAdmin(isAdminEmail(email));
   };
 
   useEffect(() => {

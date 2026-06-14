@@ -20,6 +20,35 @@ body {
   color: #1A1A1A; /* Deep Charcoal primary text */
   font-family: var(--font-sans);
   overflow-x: hidden;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+[dir="rtl"] {
+  text-align: right;
+}
+
+p,
+span,
+button,
+input,
+textarea,
+li,
+h1,
+h2,
+h3,
+h4 {
+  unicode-bidi: plaintext;
+}
+
+input[type="email"],
+input[type="url"],
+input[type="tel"],
+input[type="password"],
+.font-mono {
+  direction: ltr;
+  text-align: left;
+  unicode-bidi: isolate;
 }
 
 /* Stunning custom dark-glass scrollbar for smooth scrolling feeds */

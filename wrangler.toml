@@ -1,0 +1,20 @@
+name = "shaku-maku"
+main = "worker/src/index.ts"
+compatibility_date = "2026-05-31"
+
+[vars]
+SERVICE_NAME = "shaku-maku-api"
+
+# Optional production persistence:
+# Create KV namespaces and uncomment these bindings after replacing the IDs.
+# [[kv_namespaces]]
+# binding = "USERS_KV"
+# id = "replace-with-users-kv-id"
+#
+# [[kv_namespaces]]
+# binding = "POSTS_KV"
+# id = "replace-with-posts-kv-id"
+#
+# [[kv_namespaces]]
+# binding = "BUSINESSES_KV"
+# id = "replace-with-businesses-kv-id"

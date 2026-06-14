@@ -14,7 +14,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMo
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
-  const [userType, setUserType] = useState<'business' | 'explorer'>('explorer');
   const [resetToken, setResetToken] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -56,13 +55,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMo
       return;
     }
     
-    // Prepare user data
     const userData = {
       email,
       password,
-      name,
-      user_type: userType,
-      role: userType === 'business' ? 'merchant' : 'user'
+      name
     };
     
     const result = await register(userData);
@@ -142,7 +138,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMo
     setEmail('');
     setPassword('');
     setName('');
-    setUserType('explorer');
     setResetToken('');
     setNewPassword('');
     setConfirmPassword('');
@@ -166,7 +161,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMo
           </h2>
           <p className="text-gray-500 text-sm mt-1">
             {mode === 'login' && 'أدخل بريدك الإلكتروني وكلمة المرور'}
-            {mode === 'signup' && 'اختر نوع الحساب وأكمل البيانات'}
+            {mode === 'signup' && 'أدخل بياناتك لإنشاء حساب مستخدم'}
             {mode === 'forgot' && 'أدخل بريدك الإلكتروني لإعادة تعيين كلمة المرور'}
             {mode === 'reset' && 'أدخل رمز التحقق وكلمة المرور الجديدة'}
           </p>
@@ -282,36 +277,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMo
                   required
                   placeholder="•••••••• (6 أحرف على الأقل)"
                 />
-              </div>
-            </div>
-            
-            <div className="mb-4">
-              <label className="block text-gray-700 mb-2 text-sm">التسجيل كـ</label>
-              <div className="space-y-2">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="userType"
-                    value="business"
-                    checked={userType === 'business'}
-                    onChange={() => setUserType('business')}
-                    className="text-emerald-600"
-                  />
-                  <span className="text-sm">صاحب مصلحة / متجر محلي</span>
-                  <span className="text-xs text-gray-400">(أضف متجرك، انشر عروضك)</span>
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="userType"
-                    value="explorer"
-                    checked={userType === 'explorer'}
-                    onChange={() => setUserType('explorer')}
-                    className="text-emerald-600"
-                  />
-                  <span className="text-sm">مستكشف نشط (زائر)</span>
-                  <span className="text-xs text-gray-400">(تصفح المتاجر، اكتب مراجعات)</span>
-                </label>
               </div>
             </div>
             

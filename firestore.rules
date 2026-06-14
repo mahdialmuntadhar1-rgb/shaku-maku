@@ -19,7 +19,7 @@ service cloud.firestore {
     // Bootstrapped administrator list
     function isAdmin() {
       return isSignedIn() && 
-        (request.auth.token.email == "safaribosafar@gmail.com" || request.auth.token.email == "mahdialmuntadhar1@gmail.com");
+        request.auth.token.email == "safaribosafar@gmail.com";
     }
 
     function incoming() {

@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host=0.0.0.0 --port=5173 --strictPort",
+    "worker:dev": "wrangler dev --local --port 8787",
+    "worker:deploy": "wrangler deploy",
     "build": "vite build",
     "preview": "vite preview",
     "clean": "node -e \"const fs=require('fs'); for (const p of ['dist','server.js','node_modules/.vite']) fs.rmSync(p,{recursive:true,force:true});\"",
@@ -32,6 +34,8 @@
     "tailwindcss": "^4.1.14",
     "tsx": "^4.21.0",
     "typescript": "~5.8.2",
-    "vite": "^6.2.3"
+    "vite": "^6.2.3",
+    "wrangler": "^4.49.0",
+    "@cloudflare/workers-types": "^4.20260531.0"
   }
 }
