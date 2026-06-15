@@ -125,7 +125,7 @@ const PWAInstallButton: React.FC<PWAInstallButtonProps> = ({ currentLang = 'en' 
         onClick={handleInstallClick}
         aria-label={text.install}
         title={text.install}
-        className="h-10 min-w-[74px] px-3 rounded-r-xl bg-luxury-teal text-white text-xs font-black shadow-xl border border-white/20 active:scale-95"
+        className="h-11 min-w-[86px] px-4 rounded-r-2xl bg-gradient-to-r from-emerald-400 via-teal-400 to-yellow-300 text-zinc-900 text-sm font-black shadow-[0_0_20px_rgba(45,212,191,0.85)] border-2 border-white/70 active:scale-95 animate-pulse"
         style={{
           pointerEvents: 'auto',
           touchAction: 'manipulation',
