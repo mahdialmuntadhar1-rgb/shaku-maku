@@ -15,6 +15,7 @@ if (typeof window !== "undefined") {
     event.preventDefault();
     window.__shakuMakuInstallPrompt = event as BeforeInstallPromptEvent;
     window.dispatchEvent(new Event("shaku-maku-install-prompt-ready"));
+    window.dispatchEvent(new Event("shaku-maku-install-ready"));
     console.info("[ShakuMaku] PWA install prompt captured");
   });
 

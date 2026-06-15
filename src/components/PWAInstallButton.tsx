@@ -80,10 +80,12 @@ const PWAInstallButton: React.FC<PWAInstallButtonProps> = ({ currentLang = 'en' 
     };
 
     window.addEventListener('shaku-maku-install-ready', onInstallReady);
+    window.addEventListener('shaku-maku-install-prompt-ready', onInstallReady);
     window.addEventListener('shaku-maku-installed', onInstalled);
 
     return () => {
       window.removeEventListener('shaku-maku-install-ready', onInstallReady);
+      window.removeEventListener('shaku-maku-install-prompt-ready', onInstallReady);
       window.removeEventListener('shaku-maku-installed', onInstalled);
     };
   }, []);
