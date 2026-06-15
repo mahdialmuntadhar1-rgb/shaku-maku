@@ -2,7 +2,7 @@
 import { Check, Edit3, Image as ImageIcon, Lock, Save, Trash2 } from 'lucide-react';
 import { api, API_BASE_URL, businessesApi, getApiErrorMessage, postsApi } from '../api';
 import { readSession } from '../auth/session';
-import { Business, HeroSlide, Language, SocialPost, UserProfile } from '../types';
+import { Business, GovernorateCode, HeroSlide, Language, SocialPost, UserProfile } from '../types';
 import { IRAQ_GOVERNORATES, APP_CATEGORIES, normalizeGovernorate, normalizeCategory, getGovernorateLabel, getCategoryLabel } from '../utils/taxonomy';
 
 interface AdminPanelProps {
@@ -330,7 +330,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
       businessName: linkedBusiness.name[currentLang] || linkedBusiness.name.en,
       businessAvatar: linkedBusiness.avatar,
       category: normalizeCategory(newPostDraft.category || linkedBusiness.category),
-      governorate: normalizeGovernorate(newPostDraft.governorate || linkedBusiness.governorate),
+      governorate: normalizeGovernorate(newPostDraft.governorate || linkedBusiness.governorate) as GovernorateCode,
       mediaUrl,
       caption: {
         ar: captionAr || captionKu || captionEn,
@@ -363,7 +363,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
           media_url: mediaUrl,
           video_url: videoUrl || null,
           category: normalizeCategory(newPostDraft.category || linkedBusiness.category),
-          governorate: normalizeGovernorate(newPostDraft.governorate || linkedBusiness.governorate),
+          governorate: normalizeGovernorate(newPostDraft.governorate || linkedBusiness.governorate) as GovernorateCode,
           status: 'approved'
         });
 
@@ -1149,6 +1149,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
 };
 
 export default AdminPanel;
+
 
 
 

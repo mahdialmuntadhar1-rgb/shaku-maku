@@ -1,7 +1,6 @@
-import '@testing-library/jest-dom';
-import { beforeEach } from 'vitest';
+﻿import '@testing-library/jest-dom/vitest';
 
 beforeEach(() => {
-  localStorage.clear();
-  sessionStorage.clear();
+  window.localStorage.clear();
+  window.sessionStorage.clear();
 });

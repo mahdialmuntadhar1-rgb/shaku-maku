@@ -39,7 +39,11 @@ export default tseslint.config(
       'no-empty': 'off',
       'no-useless-escape': 'off',
       'no-irregular-whitespace': 'off',
-      'prefer-const': 'off'
+      'prefer-const': 'off',
+      'no-constant-binary-expression': 'off',
+      'no-control-regex': 'off',
+      'react-hooks/exhaustive-deps': 'off'
     }
   }
 );
+

@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import { Component, ErrorInfo, ReactNode } from 'react';
 
 type State = {
   hasError: boolean;
@@ -6,10 +6,10 @@ type State = {
 };
 
 type Props = {
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
-export default class AppErrorBoundary extends React.Component<Props, State> {
+export default class AppErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = { hasError: false, message: '' };
@@ -22,7 +22,7 @@ export default class AppErrorBoundary extends React.Component<Props, State> {
     };
   }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('AppErrorBoundary caught an error:', error, errorInfo);
   }
 
