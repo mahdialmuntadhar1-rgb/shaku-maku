@@ -111,6 +111,26 @@
     }
   }
 </style>
+
+<!-- SHAKU_MAKU_PWA_INSTALL_CAPTURE_START -->
+<script>
+  window.__shakuMakuInstallPrompt = null;
+  window.__shakuMakuInstalled = false;
+
+  window.addEventListener('beforeinstallprompt', function(event) {
+    event.preventDefault();
+    window.__shakuMakuInstallPrompt = event;
+    window.dispatchEvent(new CustomEvent('shaku-maku-install-ready'));
+  });
+
+  window.addEventListener('appinstalled', function() {
+    window.__shakuMakuInstalled = true;
+    window.__shakuMakuInstallPrompt = null;
+    window.dispatchEvent(new CustomEvent('shaku-maku-installed'));
+  });
+</script>
+<!-- SHAKU_MAKU_PWA_INSTALL_CAPTURE_END -->
+
 </head>
   <body>
 <div id="shaku-register-business-debug-banner">

@@ -5,46 +5,50 @@ type BeforeInstallPromptEvent = Event & {
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>;
 };
 
+declare global {
+  interface Window {
+    __shakuMakuInstallPrompt?: BeforeInstallPromptEvent | null;
+    __shakuMakuInstalled?: boolean;
+  }
+}
+
 type PWAInstallButtonProps = {
   currentLang?: 'ar' | 'ku' | 'en' | string;
 };
 
 const isStandaloneMode = () => {
   const nav = window.navigator as Navigator & { standalone?: boolean };
-  return window.matchMedia('(display-mode: standalone)').matches || nav.standalone === true;
+  return window.matchMedia('(display-mode: standalone)').matches || nav.standalone === true || window.__shakuMakuInstalled === true;
 };
 
 const getText = (lang?: string) => {
   if (lang === 'ar') {
     return {
       install: 'تثبيت',
-      title: 'تثبيت التطبيق',
-      body: 'إذا لم تظهر نافذة التثبيت، افتح قائمة المتصفح واختر إضافة إلى الشاشة الرئيسية.',
-      close: 'إغلاق'
+      wait: 'افتح من قائمة المتصفح',
+      manual: 'إذا لم تظهر نافذة التثبيت، اضغط قائمة المتصفح واختر تثبيت التطبيق أو إضافة إلى الشاشة الرئيسية.'
     };
   }
 
   if (lang === 'ku') {
     return {
       install: 'دامەزراندن',
-      title: 'دامەزراندنی ئەپ',
-      body: 'ئەگەر پەنجەرەی دامەزراندن دەرنەکەوت، لیستی وێبگەڕ بکەرەوە و Add to Home screen هەڵبژێرە.',
-      close: 'داخستن'
+      wait: 'لە لیستی وێبگەڕەوە',
+      manual: 'ئەگەر پەنجەرەی دامەزراندن دەرنەکەوت، لیستی وێبگەڕ بکەرەوە و Install app یان Add to Home screen هەڵبژێرە.'
     };
   }
 
   return {
     install: 'Install',
-    title: 'Install app',
-    body: 'If the install prompt does not appear, open your browser menu and choose Add to Home screen.',
-    close: 'Close'
+    wait: 'Use browser menu',
+    manual: 'If the install prompt does not appear, open the browser menu and choose Install app or Add to Home screen.'
   };
 };
 
 const PWAInstallButton: React.FC<PWAInstallButtonProps> = ({ currentLang = 'en' }) => {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [visible, setVisible] = useState(false);
-  const [showHelp, setShowHelp] = useState(false);
+  const [message, setMessage] = useState('');
 
   const text = getText(currentLang);
 
@@ -56,53 +60,70 @@ const PWAInstallButton: React.FC<PWAInstallButtonProps> = ({ currentLang = 'en' 
 
     setVisible(true);
 
-    const onBeforeInstallPrompt = (event: Event) => {
-      event.preventDefault();
-      setDeferredPrompt(event as BeforeInstallPromptEvent);
-      setVisible(true);
+    if (window.__shakuMakuInstallPrompt) {
+      setDeferredPrompt(window.__shakuMakuInstallPrompt);
+    }
+
+    const onInstallReady = () => {
+      if (window.__shakuMakuInstallPrompt) {
+        setDeferredPrompt(window.__shakuMakuInstallPrompt);
+        setVisible(true);
+        setMessage('');
+      }
     };
 
     const onInstalled = () => {
       setDeferredPrompt(null);
+      window.__shakuMakuInstallPrompt = null;
       setVisible(false);
-      setShowHelp(false);
+      setMessage('');
     };
 
-    window.addEventListener('beforeinstallprompt', onBeforeInstallPrompt);
-    window.addEventListener('appinstalled', onInstalled);
+    window.addEventListener('shaku-maku-install-ready', onInstallReady);
+    window.addEventListener('shaku-maku-installed', onInstalled);
 
     return () => {
-      window.removeEventListener('beforeinstallprompt', onBeforeInstallPrompt);
-      window.removeEventListener('appinstalled', onInstalled);
+      window.removeEventListener('shaku-maku-install-ready', onInstallReady);
+      window.removeEventListener('shaku-maku-installed', onInstalled);
     };
   }, []);
 
   const handleInstallClick = async () => {
-    if (deferredPrompt) {
-      try {
-        await deferredPrompt.prompt();
-        await deferredPrompt.userChoice;
-        setDeferredPrompt(null);
-      } catch (error) {
-        console.warn('PWA install prompt failed:', error);
-        setShowHelp(true);
-      }
+    const promptEvent = deferredPrompt || window.__shakuMakuInstallPrompt;
+
+    if (!promptEvent) {
+      setMessage(text.manual);
       return;
     }
 
-    setShowHelp(true);
+    try {
+      await promptEvent.prompt();
+      const choice = await promptEvent.userChoice;
+
+      if (choice.outcome === 'accepted') {
+        setVisible(false);
+      } else {
+        setMessage(text.manual);
+      }
+
+      setDeferredPrompt(null);
+      window.__shakuMakuInstallPrompt = null;
+    } catch (error) {
+      console.warn('PWA install prompt failed:', error);
+      setMessage(text.manual);
+    }
   };
 
   if (!visible) return null;
 
   return (
-    <>
+    <div className="fixed left-0 top-1/2 -translate-y-1/2 z-[99999] flex items-center">
       <button
         type="button"
         onClick={handleInstallClick}
-        aria-label={text.title}
-        title={text.title}
-        className="fixed left-0 top-1/2 -translate-y-1/2 z-[99999] h-10 px-3 rounded-r-xl bg-luxury-teal text-white text-xs font-black shadow-xl border border-white/20 active:scale-95"
+        aria-label={text.install}
+        title={text.install}
+        className="h-10 min-w-[74px] px-3 rounded-r-xl bg-luxury-teal text-white text-xs font-black shadow-xl border border-white/20 active:scale-95"
         style={{
           pointerEvents: 'auto',
           touchAction: 'manipulation',
@@ -112,29 +133,15 @@ const PWAInstallButton: React.FC<PWAInstallButtonProps> = ({ currentLang = 'en' 
         {text.install}
       </button>
 
-      {showHelp && (
+      {message && (
         <div
-          className="fixed inset-0 z-[100000] bg-black/45 flex items-center justify-center p-4"
-          onClick={() => setShowHelp(false)}
+          className="ml-2 max-w-[210px] rounded-xl bg-white text-zinc-800 shadow-xl border border-zinc-200 px-3 py-2 text-xs leading-5"
+          dir={currentLang === 'en' ? 'ltr' : 'rtl'}
         >
-          <div
-            className="w-full max-w-sm rounded-2xl bg-white text-zinc-900 shadow-2xl p-5 space-y-3"
-            onClick={(event) => event.stopPropagation()}
-            dir={currentLang === 'en' ? 'ltr' : 'rtl'}
-          >
-            <h3 className="text-lg font-black">{text.title}</h3>
-            <p className="text-sm text-zinc-600 leading-6">{text.body}</p>
-            <button
-              type="button"
-              onClick={() => setShowHelp(false)}
-              className="w-full py-2.5 rounded-xl bg-luxury-teal text-white font-bold"
-            >
-              {text.close}
-            </button>
-          </div>
+          {message}
         </div>
       )}
-    </>
+    </div>
   );
 };
 
