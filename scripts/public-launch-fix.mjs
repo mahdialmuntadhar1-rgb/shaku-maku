@@ -1,4 +1,87 @@
-import React, { useState } from 'react';
+﻿import fs from "node:fs";
+
+function read(path) {
+  return fs.readFileSync(path, "utf8");
+}
+
+function write(path, content) {
+  fs.writeFileSync(path, content, "utf8");
+  console.log("fixed:", path);
+}
+
+function replaceOrWarn(path, before, after, label) {
+  let content = read(path);
+  if (!content.includes(before)) {
+    console.warn("MISS:", path, label);
+    return;
+  }
+  content = content.replace(before, after);
+  write(path, content);
+}
+
+/**
+ * 1) Hide public Admin tab.
+ */
+{
+  const path = "src/App.tsx";
+  let content = read(path);
+
+  content = content.replace(
+`<p className="text-zinc-400 text-sm">Ã˜Â§Ã˜Â®Ã˜ÂªÃ˜Â± Ã™â€žÃ˜ÂºÃ˜ÂªÃ™Æ’ / Ã˜Â²Ã™â€¦Ã˜Â§Ã™â€ Ã›â€¢ÃšÂ©Ã›â€¢Ã˜Âª Ã™â€¡Ã›â€¢ÃšÂµÃ˜Â¨ÃšËœÃ›Å½Ã˜Â±Ã›â€¢</p>
+          <button onClick={() => chooseLanguage('ar')} className="w-full py-3 rounded-2xl bg-gradient-to-r from-luxury-teal to-luxury-gold text-white font-black cursor-pointer">Ã˜Â§Ã™â€žÃ˜Â¹Ã˜Â±Ã˜Â¨Ã™Å Ã˜Â©</button>
+          <button onClick={() => chooseLanguage('ku')} className="w-full py-3 rounded-2xl bg-gradient-to-r from-luxury-teal to-luxury-gold text-white font-black cursor-pointer">ÃšÂ©Ã™Ë†Ã˜Â±Ã˜Â¯Ã›Å’</button>`,
+`<p className="text-zinc-400 text-sm">اختر لغتك / زمانەکەت هەڵبژێرە</p>
+          <button onClick={() => chooseLanguage('ar')} className="w-full py-3 rounded-2xl bg-gradient-to-r from-luxury-teal to-luxury-gold text-white font-black cursor-pointer">العربية</button>
+          <button onClick={() => chooseLanguage('ku')} className="w-full py-3 rounded-2xl bg-gradient-to-r from-luxury-teal to-luxury-gold text-white font-black cursor-pointer">کوردی</button>`
+  );
+
+  const adminButtonRegex = /(\s*)<button\s+onClick=\{\(\) => setActiveTab\('admin'\)\}[\s\S]*?id="nav-tab-admin"[\s\S]*?<\/button>/m;
+  const match = content.match(adminButtonRegex);
+
+  if (match && !content.includes("{isAdmin && (\n" + match[0].trimStart().slice(0, 20))) {
+    content = content.replace(adminButtonRegex, `$1{isAdmin && (\n${match[0]}\n$1)}`);
+  }
+
+  write(path, content);
+}
+
+/**
+ * 2) Disable fake fallback social posts in production UI.
+ */
+{
+  const path = "src/components/SocialFeed.tsx";
+  let content = read(path);
+
+  content = content.replace(
+    "import { buildLocalizedSocialPosts, LOCALIZED_SOCIAL_POST_COUNT } from '../data/socialFeedSeed';\n",
+    ""
+  );
+
+  content = content.replace(
+    "  const [generatedPosts] = useState<SocialPost[]>(() => buildLocalizedSocialPosts([]));\n",
+    ""
+  );
+
+  content = content.replace(
+    "  const sourcePosts = posts.length > 0 ? posts : generatedPosts;",
+    "  const sourcePosts = posts;"
+  );
+
+  content = content.replace(
+    "{posts.length > 0 ? `${posts.length} ${t.backendLoaded}` : `${LOCALIZED_SOCIAL_POST_COUNT} ${t.fallbackLoaded}`}",
+    "{`${posts.length} ${t.backendLoaded}`}"
+  );
+
+  write(path, content);
+}
+
+/**
+ * 3) Replace public Add Business form with clean UTF-8 version.
+ */
+{
+  const path = "src/components/AddBusinessForm.tsx";
+
+  const clean = `import React, { useState } from 'react';
 import { Business, GovernorateCode, Language, UserProfile, SocialPost } from '../types';
 import { CATEGORIES, GOVERNORATES } from '../data';
 import { api } from '../api';
@@ -177,7 +260,7 @@ const AddBusinessForm: React.FC<AddBusinessFormProps> = ({ currentLang, user, on
           </div>
 
           {status.message && (
-            <div className={`text-sm rounded-lg px-3 py-2 ${status.type === 'success' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-red-50 text-red-800 border border-red-200'}`}>
+            <div className={\`text-sm rounded-lg px-3 py-2 \${status.type === 'success' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-red-50 text-red-800 border border-red-200'}\`}>
               {status.message}
             </div>
           )}
@@ -198,3 +281,9 @@ const AddBusinessForm: React.FC<AddBusinessFormProps> = ({ currentLang, user, on
 };
 
 export default AddBusinessForm;
+`;
+
+  write(path, clean);
+}
+
+console.log("Public launch fix pack applied.");

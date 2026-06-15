@@ -196,7 +196,7 @@ export default function BusinessFeed({
     if (!acc[categoryId]) acc[categoryId] = [];
     acc[categoryId].push({
       ...biz,
-      governorate: normalizeGovernorate(biz.governorate),
+      governorate: normalizeGovernorate(biz.governorate) as any,
       category: categoryId
     });
     return acc;

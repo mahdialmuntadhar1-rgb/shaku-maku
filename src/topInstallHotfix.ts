@@ -23,8 +23,8 @@ function hideTopInstallButton() {
     .sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top);
   const target = candidates[0];
   if (!target) return;
-  target.style.display = 'none';
-  target.style.visibility = 'hidden';
+  (target as HTMLElement).style.display = 'none';
+  (target as HTMLElement).style.visibility = 'hidden';
   target.setAttribute('aria-hidden', 'true');
 }
 

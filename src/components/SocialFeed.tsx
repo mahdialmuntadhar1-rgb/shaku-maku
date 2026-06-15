@@ -3,7 +3,6 @@ import { CheckCircle2, Edit3, Heart, ImagePlus, Loader2, MapPin, MessageCircle, 
 import { getApiErrorMessage, postsApi } from '../api';
 import { CATEGORIES, GOVERNORATES } from '../data';
 import { normalizeGovernorate } from '../utils/taxonomy';
-import { buildLocalizedSocialPosts, LOCALIZED_SOCIAL_POST_COUNT } from '../data/socialFeedSeed';
 import { GovernorateCode, Language, SocialPost } from '../types';
 
 interface SocialFeedProps {
@@ -207,7 +206,6 @@ export default function SocialFeed({
   const [attachmentKind, setAttachmentKind] = useState<'image' | 'video' | null>(null);
   const [statusText, setStatusText] = useState('');
   const [posting, setPosting] = useState(false);
-  const [generatedPosts] = useState<SocialPost[]>(() => buildLocalizedSocialPosts([]));
   const [visibleCount, setVisibleCount] = useState(12);
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
   const [editCaption, setEditCaption] = useState('');
@@ -220,7 +218,7 @@ export default function SocialFeed({
   const userEmail = String(user?.email || '').toLowerCase();
   const isAdmin = userEmail === 'safaribosafar@gmail.com' || user?.role === 'admin';
 
-  const sourcePosts = posts.length > 0 ? posts : generatedPosts;
+  const sourcePosts = posts;
 
   const filteredPosts = useMemo(() => {
     return sourcePosts.filter((post) => {
@@ -468,7 +466,7 @@ export default function SocialFeed({
             <h2 className="text-2xl md:text-3xl font-black leading-tight">{t.feedTitle}</h2>
             <p className="text-sm text-zinc-300 mt-2 max-w-2xl">{t.feedSub}</p>
             <p className="text-[11px] text-zinc-400 mt-2">
-              {posts.length > 0 ? `${posts.length} ${t.backendLoaded}` : `${LOCALIZED_SOCIAL_POST_COUNT} ${t.fallbackLoaded}`}
+              {`${posts.length} ${t.backendLoaded}`}
             </p>
           </div>
         </div>
@@ -520,7 +518,7 @@ export default function SocialFeed({
             <label className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-[#242526] border border-white/10 text-xs font-semibold cursor-pointer hover:bg-[#2f3031]">
               <ImagePlus className="w-4 h-4" />
               <span>{t.media}</span>
-              <input type="file" accept="image/*,video/*" className="hidden" onChange={onPickMedia} />
+              <input type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={onPickMedia} />
             </label>
 
             <button
@@ -734,3 +732,4 @@ export default function SocialFeed({
     </div>
   );
 }
+
