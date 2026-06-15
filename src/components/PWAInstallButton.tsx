@@ -26,22 +26,22 @@ const getText = (lang?: string) => {
     return {
       install: 'تثبيت',
       wait: 'افتح من قائمة المتصفح',
-      manual: 'إذا لم تظهر نافذة التثبيت، اضغط قائمة المتصفح واختر تثبيت التطبيق أو إضافة إلى الشاشة الرئيسية.'
+      manual: 'إذا لم يعمل التثبيت، افتح الرابط في Google Chrome ثم اختر تثبيت التطبيق أو إضافة إلى الشاشة الرئيسية.'
     };
   }
 
   if (lang === 'ku') {
     return {
-      install: 'دامەزراندن',
-      wait: 'لە لیستی وێبگەڕەوە',
-      manual: 'ئەگەر پەنجەرەی دامەزراندن دەرنەکەوت، لیستی وێبگەڕ بکەرەوە و Install app یان Add to Home screen هەڵبژێرە.'
+      install: 'دابەزاندن',
+      wait: 'لە Google Chrome بکەرەوە',
+      manual: 'ئەگەر دابەزاندن کار نەکرد، تکایە لینکەکە لە Google Chrome بکەرەوە، پاشان Install app یان Add to Home screen هەڵبژێرە.'
     };
   }
 
   return {
     install: 'Install',
     wait: 'Use browser menu',
-    manual: 'If the install prompt does not appear, open the browser menu and choose Install app or Add to Home screen.'
+    manual: 'If install does not work, open this link in Google Chrome, then choose Install app or Add to Home screen.'
   };
 };
 
