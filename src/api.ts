@@ -1,4 +1,4 @@
-const RAW_API_BASE_URL = (import.meta as any).env?.VITE_API_URL || 'https://shaku-maku.mahdialmuntadhar1.workers.dev';
+﻿const RAW_API_BASE_URL = (import.meta as any).env?.VITE_API_URL || 'https://shaku-maku.mahdialmuntadhar1.workers.dev';
 const RAW_API_BASE_URL_STRING = String(RAW_API_BASE_URL).trim();
 
 export const API_BASE_URL =
@@ -463,6 +463,38 @@ export const heroSlidesApi = {
     }, true);
   },
 };
+
+export const businessSubmissionsApi = {
+  async create(payload: any): Promise<any> {
+    const response = await apiRequest<ApiResponse<any>>('/business-submissions', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }, true);
+    return unwrap<any>(response);
+  },
+
+  async list(status = 'pending'): Promise<any[]> {
+    const response = await apiRequest<ApiResponse<any[]>>(`/business-submissions?status=${encodeURIComponent(status)}`, {}, true);
+    return unwrap<any[]>(response);
+  },
+
+  async approve(id: string): Promise<any> {
+    const response = await apiRequest<ApiResponse<any>>(`/business-submissions/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status: 'approved' }),
+    }, true);
+    return unwrap<any>(response);
+  },
+
+  async reject(id: string): Promise<any> {
+    const response = await apiRequest<ApiResponse<any>>(`/business-submissions/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status: 'rejected' }),
+    }, true);
+    return unwrap<any>(response);
+  },
+};
+
 export const adminApi = {
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     const response = await apiRequest<ApiResponse<AuthResponse>>('/admin/login', {
@@ -499,4 +531,5 @@ export async function getBusinesses(params?: { page?: number; limit?: number; go
   const businesses = await businessesApi.list(params);
   return { businesses, total: businesses.length, data: businesses };
 }
+
 

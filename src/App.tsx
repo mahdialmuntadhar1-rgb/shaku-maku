@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+﻿import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Compass, Flame, Map, PlusCircle, BookOpen, Search, X, 
@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import { Language, GovernorateCode, Business, SocialPost, UserProfile, HeroSlide } from './types';
 import { TRANSLATIONS, CATEGORIES, GOVERNORATES, HERO_SLIDES } from './data';
-import { authApi, businessesApi, postsApi, heroSlidesApi } from './api';
+import { authApi, businessesApi, postsApi, heroSlidesApi, businessSubmissionsApi } from './api';
 
 // Saku Maku Modular Components
 import Header from './components/Header';
@@ -133,27 +133,27 @@ function normalizeList(payload: any): any[] {
 function normalizeGovernorate(value: unknown): GovernorateCode {
   const raw = String(value || '').toLowerCase().trim();
   if (!raw) return 'all';
-  const compact = raw.replace(/[\s_\-،]+/g, '');
+  const compact = raw.replace(/[\s_\-ØŒ]+/g, '');
 
   const map: Record<string, GovernorateCode> = {
     all: 'all',
     iraq: 'all',
-    'العراق': 'all',
-    'عێراق': 'all',
+    'Ø§Ù„Ø¹Ø±Ø§Ù‚': 'all',
+    'Ø¹ÛŽØ±Ø§Ù‚': 'all',
     baghdad: 'baghdad',
-    'بغداد': 'baghdad',
+    'Ø¨ØºØ¯Ø§Ø¯': 'baghdad',
     erbil: 'erbil',
-    'اربيل': 'erbil',
-    'أربيل': 'erbil',
-    'هەولێر': 'erbil',
+    'Ø§Ø±Ø¨ÙŠÙ„': 'erbil',
+    'Ø£Ø±Ø¨ÙŠÙ„': 'erbil',
+    'Ù‡Û•ÙˆÙ„ÛŽØ±': 'erbil',
     basra: 'basra',
-    'البصرة': 'basra',
-    'بەسرە': 'basra',
+    'Ø§Ù„Ø¨ØµØ±Ø©': 'basra',
+    'Ø¨Û•Ø³Ø±Û•': 'basra',
     sulaymaniyah: 'sulaymaniyah',
     sulaymania: 'sulaymaniyah',
     slemani: 'sulaymaniyah',
-    'السليمانية': 'sulaymaniyah',
-    'سلێمانی': 'sulaymaniyah',
+    'Ø§Ù„Ø³Ù„ÙŠÙ…Ø§Ù†ÙŠØ©': 'sulaymaniyah',
+    'Ø³Ù„ÛŽÙ…Ø§Ù†ÛŒ': 'sulaymaniyah',
     mosul: 'mosul',
     mousl: 'mosul',
     mousul: 'mosul',
@@ -163,53 +163,53 @@ function normalizeGovernorate(value: unknown): GovernorateCode {
     nainawa: 'mosul',
     niniveh: 'mosul',
     neneveh: 'mosul',
-    'نينوى': 'mosul',
-    'نينوي': 'mosul',
-    'الموصل': 'mosul',
+    'Ù†ÙŠÙ†ÙˆÙ‰': 'mosul',
+    'Ù†ÙŠÙ†ÙˆÙŠ': 'mosul',
+    'Ø§Ù„Ù…ÙˆØµÙ„': 'mosul',
     najaf: 'najaf',
-    'النجف': 'najaf',
+    'Ø§Ù„Ù†Ø¬Ù': 'najaf',
     karbala: 'karbala',
-    'كربلاء': 'karbala',
+    'ÙƒØ±Ø¨Ù„Ø§Ø¡': 'karbala',
     kirkuk: 'kirkuk',
-    'كركوك': 'kirkuk',
+    'ÙƒØ±ÙƒÙˆÙƒ': 'kirkuk',
     anbar: 'anbar',
-    'الأنبار': 'anbar',
+    'Ø§Ù„Ø£Ù†Ø¨Ø§Ø±': 'anbar',
     duhok: 'duhok',
-    'دهوك': 'duhok',
-    'دهوک': 'duhok',
+    'Ø¯Ù‡ÙˆÙƒ': 'duhok',
+    'Ø¯Ù‡ÙˆÚ©': 'duhok',
     babil: 'babil',
     babylon: 'babil',
-    'بابل': 'babil',
+    'Ø¨Ø§Ø¨Ù„': 'babil',
     diyala: 'diyala',
-    'ديالى': 'diyala',
+    'Ø¯ÙŠØ§Ù„Ù‰': 'diyala',
     wasit: 'wasit',
-    'واسط': 'wasit',
+    'ÙˆØ§Ø³Ø·': 'wasit',
     saladin: 'saladin',
     salahaddin: 'saladin',
     salahaldin: 'saladin',
-    'صلاحالدين': 'saladin',
+    'ØµÙ„Ø§Ø­Ø§Ù„Ø¯ÙŠÙ†': 'saladin',
     maysan: 'maysan',
-    'ميسان': 'maysan',
+    'Ù…ÙŠØ³Ø§Ù†': 'maysan',
     dhiqar: 'dhiqar',
-    'ذيقار': 'dhiqar',
-    'ذي_قار': 'dhiqar',
+    'Ø°ÙŠÙ‚Ø§Ø±': 'dhiqar',
+    'Ø°ÙŠ_Ù‚Ø§Ø±': 'dhiqar',
     muthanna: 'muthanna',
-    'المثنى': 'muthanna',
+    'Ø§Ù„Ù…Ø«Ù†Ù‰': 'muthanna',
     qadisiya: 'qadisiya',
     qadisiyah: 'qadisiya',
-    'القادسية': 'qadisiya',
+    'Ø§Ù„Ù‚Ø§Ø¯Ø³ÙŠØ©': 'qadisiya',
     halabja: 'halabja',
-    'حلبجة': 'halabja',
+    'Ø­Ù„Ø¨Ø¬Ø©': 'halabja',
   };
 
   if (map[compact]) return map[compact];
 
   for (const gov of GOVERNORATES) {
-    const codeKey = gov.code.toLowerCase().replace(/[\s_\-،]+/g, '');
-    const englishKey = gov.englishLabel.toLowerCase().replace(/[\s_\-،]+/g, '');
-    const enKey = gov.name.en.toLowerCase().replace(/[\s_\-،]+/g, '');
-    const arKey = gov.name.ar.toLowerCase().replace(/[\s_\-،]+/g, '');
-    const kuKey = gov.name.ku.toLowerCase().replace(/[\s_\-،]+/g, '');
+    const codeKey = gov.code.toLowerCase().replace(/[\s_\-ØŒ]+/g, '');
+    const englishKey = gov.englishLabel.toLowerCase().replace(/[\s_\-ØŒ]+/g, '');
+    const enKey = gov.name.en.toLowerCase().replace(/[\s_\-ØŒ]+/g, '');
+    const arKey = gov.name.ar.toLowerCase().replace(/[\s_\-ØŒ]+/g, '');
+    const kuKey = gov.name.ku.toLowerCase().replace(/[\s_\-ØŒ]+/g, '');
     if (compact === codeKey || compact === englishKey || compact === enKey || compact === arKey || compact === kuKey) {
       return gov.code;
     }
@@ -218,10 +218,10 @@ function normalizeGovernorate(value: unknown): GovernorateCode {
   const administrativeWordsRemoved = compact
     .replace(/governorate/g, '')
     .replace(/province/g, '')
-    .replace(/محافظة/g, '')
-    .replace(/المحافظة/g, '')
-    .replace(/پارێزگای/g, '')
-    .replace(/پارێزگا/g, '');
+    .replace(/Ù…Ø­Ø§ÙØ¸Ø©/g, '')
+    .replace(/Ø§Ù„Ù…Ø­Ø§ÙØ¸Ø©/g, '')
+    .replace(/Ù¾Ø§Ø±ÛŽØ²Ú¯Ø§ÛŒ/g, '')
+    .replace(/Ù¾Ø§Ø±ÛŽØ²Ú¯Ø§/g, '');
 
   if (map[administrativeWordsRemoved]) {
     return map[administrativeWordsRemoved];
@@ -244,7 +244,7 @@ function normalizeDedupeText(value: unknown): string {
   return String(value || '')
     .toLowerCase()
     .trim()
-    .replace(/[\s\-_،.,()\[\]{}]+/g, '')
+    .replace(/[\s\-_ØŒ.,()\[\]{}]+/g, '')
     .replace(/[^\p{L}\p{N}]+/gu, '');
 }
 
@@ -275,14 +275,14 @@ function normalizeCategory(value: unknown): string {
   const raw = String(value || '').trim();
   if (!raw) return 'other';
 
-  const compact = raw.toLowerCase().replace(/[\s_\-&/،]+/g, '');
+  const compact = raw.toLowerCase().replace(/[\s_\-&/ØŒ]+/g, '');
   const byId = CATEGORIES.find((cat) => cat.id.toLowerCase() === compact || cat.id.toLowerCase() === raw.toLowerCase());
   if (byId) return byId.id;
 
   const byName = CATEGORIES.find((cat) => {
-    const en = cat.name.en.toLowerCase().replace(/[\s_\-&/،]+/g, '');
-    const ar = cat.name.ar.toLowerCase().replace(/[\s_\-&/،]+/g, '');
-    const ku = cat.name.ku.toLowerCase().replace(/[\s_\-&/،]+/g, '');
+    const en = cat.name.en.toLowerCase().replace(/[\s_\-&/ØŒ]+/g, '');
+    const ar = cat.name.ar.toLowerCase().replace(/[\s_\-&/ØŒ]+/g, '');
+    const ku = cat.name.ku.toLowerCase().replace(/[\s_\-&/ØŒ]+/g, '');
     return compact === en || compact === ar || compact === ku;
   });
   if (byName) return byName.id;
@@ -291,81 +291,81 @@ function normalizeCategory(value: unknown): string {
     restaurant: 'restaurant',
     restaurants: 'restaurant',
     food: 'restaurant',
-    'مطعم': 'restaurant',
-    'مطاعم': 'restaurant',
-    'خواردنگه': 'restaurant',
-    'چێشتخانه': 'restaurant',
+    'Ù…Ø·Ø¹Ù…': 'restaurant',
+    'Ù…Ø·Ø§Ø¹Ù…': 'restaurant',
+    'Ø®ÙˆØ§Ø±Ø¯Ù†Ú¯Ù‡': 'restaurant',
+    'Ú†ÛŽØ´ØªØ®Ø§Ù†Ù‡': 'restaurant',
     'restaurants & cafes': 'restaurant',
     cafe: 'cafe_bakery',
-    'café': 'cafe_bakery',
+    'cafÃ©': 'cafe_bakery',
     bakery: 'cafe_bakery',
-    'كافيه': 'cafe_bakery',
-    'مخبز': 'cafe_bakery',
-    'کافێ': 'cafe_bakery',
-    'نانەواخانه': 'cafe_bakery',
-    'cafés & bakeries': 'cafe_bakery',
+    'ÙƒØ§ÙÙŠÙ‡': 'cafe_bakery',
+    'Ù…Ø®Ø¨Ø²': 'cafe_bakery',
+    'Ú©Ø§ÙÛŽ': 'cafe_bakery',
+    'Ù†Ø§Ù†Û•ÙˆØ§Ø®Ø§Ù†Ù‡': 'cafe_bakery',
+    'cafÃ©s & bakeries': 'cafe_bakery',
     'cafes & bakeries': 'cafe_bakery',
     supermarket: 'supermarket',
     supermarkets: 'supermarket',
     market: 'supermarket',
     shopping: 'mall',
     mall: 'mall',
-    'مول': 'mall',
+    'Ù…ÙˆÙ„': 'mall',
     'malls & shopping': 'mall',
     pharmacy: 'pharmacy',
-    'صيدلية': 'pharmacy',
-    'دەرمانخانه': 'pharmacy',
+    'ØµÙŠØ¯Ù„ÙŠØ©': 'pharmacy',
+    'Ø¯Û•Ø±Ù…Ø§Ù†Ø®Ø§Ù†Ù‡': 'pharmacy',
     pharmacies: 'pharmacy',
     hospital: 'hospital',
-    'مستشفى': 'hospital',
-    'نەخۆشخانه': 'hospital',
+    'Ù…Ø³ØªØ´ÙÙ‰': 'hospital',
+    'Ù†Û•Ø®Û†Ø´Ø®Ø§Ù†Ù‡': 'hospital',
     hospitals: 'hospital',
     clinic: 'clinic',
-    'عيادة': 'clinic',
-    'کلینیک': 'clinic',
+    'Ø¹ÙŠØ§Ø¯Ø©': 'clinic',
+    'Ú©Ù„ÛŒÙ†ÛŒÚ©': 'clinic',
     clinics: 'clinic',
     doctor: 'doctor',
-    'طبيب': 'doctor',
-    'دکتۆر': 'doctor',
+    'Ø·Ø¨ÙŠØ¨': 'doctor',
+    'Ø¯Ú©ØªÛ†Ø±': 'doctor',
     doctors: 'doctor',
     dentist: 'dentist',
-    'طبيباسنان': 'dentist',
-    'پزیشکیددان': 'dentist',
+    'Ø·Ø¨ÙŠØ¨Ø§Ø³Ù†Ø§Ù†': 'dentist',
+    'Ù¾Ø²ÛŒØ´Ú©ÛŒØ¯Ø¯Ø§Ù†': 'dentist',
     dentists: 'dentist',
     salon: 'salon',
-    'تجميل': 'salon',
-    'ساڵۆن': 'salon',
+    'ØªØ¬Ù…ÙŠÙ„': 'salon',
+    'Ø³Ø§ÚµÛ†Ù†': 'salon',
     'beauty salons': 'salon',
     'beauty & salons': 'salon',
     gym: 'gym',
-    'نادي': 'gym',
-    'وەرزش': 'gym',
+    'Ù†Ø§Ø¯ÙŠ': 'gym',
+    'ÙˆÛ•Ø±Ø²Ø´': 'gym',
     'spas & wellness': 'spa',
     'fitness & gyms': 'gym',
     'gyms & fitness': 'gym',
     hotel: 'hotel',
-    'فندق': 'hotel',
-    'هۆتێل': 'hotel',
+    'ÙÙ†Ø¯Ù‚': 'hotel',
+    'Ù‡Û†ØªÛŽÙ„': 'hotel',
     'hotels & hospitality': 'hotel',
     'hotels & resorts': 'hotel',
     'travel agencies': 'travel_agency',
     education: 'university',
     school: 'university',
     university: 'university',
-    'جامعة': 'university',
-    'زانکۆ': 'university',
+    'Ø¬Ø§Ù…Ø¹Ø©': 'university',
+    'Ø²Ø§Ù†Ú©Û†': 'university',
     universities: 'university',
     electronics: 'mobile_shop',
     mobile: 'mobile_shop',
-    'موبايل': 'mobile_shop',
-    'مۆبایل': 'mobile_shop',
+    'Ù…ÙˆØ¨Ø§ÙŠÙ„': 'mobile_shop',
+    'Ù…Û†Ø¨Ø§ÛŒÙ„': 'mobile_shop',
     services: 'other',
     service: 'other',
-    'خدمة': 'other',
-    'خدمات': 'other',
+    'Ø®Ø¯Ù…Ø©': 'other',
+    'Ø®Ø¯Ù…Ø§Øª': 'other',
     other: 'other',
-    'اخرى': 'other',
-    'هیتر': 'other',
+    'Ø§Ø®Ø±Ù‰': 'other',
+    'Ù‡ÛŒØªØ±': 'other',
     'banks & finance': 'bank',
     'real estate': 'real_estate',
     'lawyers & legal': 'lawyer',
@@ -392,7 +392,7 @@ function normalizeCategory(value: unknown): string {
 
   const compactMap: Record<string, string> = {};
   Object.entries(map).forEach(([k, v]) => {
-    compactMap[k.toLowerCase().replace(/[\s_\-&/،]+/g, '')] = v;
+    compactMap[k.toLowerCase().replace(/[\s_\-&/ØŒ]+/g, '')] = v;
   });
 
   const exact = compactMap[compact];
@@ -883,7 +883,7 @@ export default function App() {
           commentsCount: Number(post.comments_count || 0),
           shares: Number(post.shares || 0),
           views: Number(post.views || 0),
-          timeAgo: { ar: 'الآن', ku: 'ئێستا', en: 'Just now' },
+          timeAgo: { ar: 'Ø§Ù„Ø¢Ù†', ku: 'Ø¦ÛŽØ³ØªØ§', en: 'Just now' },
           likedByUser: false,
           savedByUser: false,
           comments: [],
@@ -962,8 +962,17 @@ export default function App() {
 
   // Callback to add a new business (API support needed)
   const handleAddLiveBusiness = async (newBiz: Omit<Business, 'rating' | 'reviewsCount' | 'likes' | 'saves'>) => {
-    console.log("Add business not implemented in backend yet");
-    // TODO: Call API to create business
+    await businessSubmissionsApi.create({
+      ...newBiz,
+      source: 'public_add_business_form'
+    });
+    alert(
+      currentLang === 'en'
+        ? 'Business submitted. Admin will review it before publishing.'
+        : currentLang === 'ku'
+          ? 'بازرگانییەکە نێردرا. ئەدمین پێش بڵاوکردنەوە پێداچوونەوەی بۆ دەکات.'
+          : 'تم إرسال النشاط التجاري. سيقوم المدير بمراجعته قبل النشر.'
+    );
   };
 
   // Stories auto advancing timer handler
@@ -1019,9 +1028,9 @@ export default function App() {
       <div className="min-h-screen bg-[#1A1A1A] flex items-center justify-center p-6">
         <div className="w-full max-w-md bg-[#111] border border-luxury-gold/30 rounded-3xl p-6 space-y-4 text-center">
           <h2 className="text-white font-black text-xl">Choose Language</h2>
-          <p className="text-zinc-400 text-sm">اختر لغتك / زمانەکەت هەڵبژێرە</p>
-          <button onClick={() => chooseLanguage('ar')} className="w-full py-3 rounded-2xl bg-gradient-to-r from-luxury-teal to-luxury-gold text-white font-black cursor-pointer">العربية</button>
-          <button onClick={() => chooseLanguage('ku')} className="w-full py-3 rounded-2xl bg-gradient-to-r from-luxury-teal to-luxury-gold text-white font-black cursor-pointer">کوردی</button>
+          <p className="text-zinc-400 text-sm">Ø§Ø®ØªØ± Ù„ØºØªÙƒ / Ø²Ù…Ø§Ù†Û•Ú©Û•Øª Ù‡Û•ÚµØ¨Ú˜ÛŽØ±Û•</p>
+          <button onClick={() => chooseLanguage('ar')} className="w-full py-3 rounded-2xl bg-gradient-to-r from-luxury-teal to-luxury-gold text-white font-black cursor-pointer">Ø§Ù„Ø¹Ø±Ø¨ÙŠØ©</button>
+          <button onClick={() => chooseLanguage('ku')} className="w-full py-3 rounded-2xl bg-gradient-to-r from-luxury-teal to-luxury-gold text-white font-black cursor-pointer">Ú©ÙˆØ±Ø¯ÛŒ</button>
           <button onClick={() => chooseLanguage('en')} className="w-full py-3 rounded-2xl bg-gradient-to-r from-luxury-teal to-luxury-gold text-white font-black cursor-pointer">English</button>
         </div>
       </div>
@@ -1705,5 +1714,6 @@ export default function App() {
     </div>
   );
 }
+
 
 
