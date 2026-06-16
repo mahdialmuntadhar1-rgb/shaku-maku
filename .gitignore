@@ -63,3 +63,13 @@ firebase-applet-config.json
 firebase-blueprint.json
 firestore.rules
 vercel.json
+# Final MVP cleanup ignores
+LIVE-GOOD-*/
+_FINAL_MVP_REPORT_*/
+nabda-bulk-sender-boxes/
+nabda-dashboard-upgrade/
+
+# Local final MVP reports
+SHAKU_MAKU_*.txt
+scripts/final-mvp-sanity.cjs
+
