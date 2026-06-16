@@ -1,7 +1,15 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { Map, MapPin, Sparkles, Navigation, Globe, Eye, Compass, Heart, Bookmark } from 'lucide-react';
 import { Business, Language, GovernorateCode } from '../types';
 import { GOVERNORATES, TRANSLATIONS, CATEGORIES } from '../data';
+
+function safeLocalizedText(value: unknown, lang: string): string {
+  if (typeof value === 'string') return value;
+  if (!value || typeof value !== 'object') return '';
+  const record = value as Record<string, unknown>;
+  return String(record[lang] ?? record.en ?? record.ar ?? record.ku ?? '');
+}
+
 
 interface InteractiveMapProps {
   currentLang: Language;

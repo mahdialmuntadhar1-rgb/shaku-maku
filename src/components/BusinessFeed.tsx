@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Heart, Bookmark, Star, MapPin, Phone, Share2, Edit3, Save, 
@@ -8,6 +8,14 @@ import { Business, Language, GovernorateCode } from '../types';
 import { CATEGORIES, TRANSLATIONS } from '../data';
 import { normalizeGovernorate, normalizeCategory } from '../utils/taxonomy';
 import { businessesApi, getApiErrorMessage } from '../api';
+
+function safeLocalizedText(value: unknown, lang: string): string {
+  if (typeof value === 'string') return value;
+  if (!value || typeof value !== 'object') return '';
+  const record = value as Record<string, unknown>;
+  return String(record[lang] ?? record.en ?? record.ar ?? record.ku ?? '');
+}
+
 
 interface BusinessFeedProps {
   currentLang: Language;

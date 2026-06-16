@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Compass, Flame, Map, PlusCircle, BookOpen, Search, X, 
@@ -21,6 +21,14 @@ import AddBusinessForm from './components/AddBusinessForm';
 import AboutSakuMaku from './components/AboutSakuMaku';
 import AdminPanel from './components/AdminPanel';
 import AuthModal from './components/AuthModal';
+
+function safeLocalizedText(value: unknown, lang: string): string {
+  if (typeof value === 'string') return value;
+  if (!value || typeof value !== 'object') return '';
+  const record = value as Record<string, unknown>;
+  return String(record[lang] ?? record.en ?? record.ar ?? record.ku ?? '');
+}
+
 
 const FALLBACK_BUSINESS_IMAGE =
   'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&auto=format&fit=crop&q=80';
@@ -924,10 +932,10 @@ export default function App() {
       // Keyword Match (case-insensitive across translated fields)
       const keyword = searchQuery.toLowerCase().trim();
       const keywordMatch = !keyword || 
-        b.name[currentLang].toLowerCase().includes(keyword) ||
+        safeLocalizedText(b.name, currentLang).toLowerCase().includes(keyword) ||
         b.name.en.toLowerCase().includes(keyword) ||
-        b.description[currentLang].toLowerCase().includes(keyword) ||
-        b.address[currentLang].toLowerCase().includes(keyword) ||
+        safeLocalizedText(b.description, currentLang).toLowerCase().includes(keyword) ||
+        safeLocalizedText(b.address, currentLang).toLowerCase().includes(keyword) ||
         b.category.toLowerCase().includes(keyword);
         
       return govMatch && catMatch && keywordMatch;
