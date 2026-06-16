@@ -215,9 +215,9 @@ function normalizeGovernorate(value: unknown): GovernorateCode {
   for (const gov of GOVERNORATES) {
     const codeKey = gov.code.toLowerCase().replace(/[\s_\-ØŒ]+/g, '');
     const englishKey = gov.englishLabel.toLowerCase().replace(/[\s_\-ØŒ]+/g, '');
-    const enKey = gov.name.en.toLowerCase().replace(/[\s_\-ØŒ]+/g, '');
-    const arKey = gov.name.ar.toLowerCase().replace(/[\s_\-ØŒ]+/g, '');
-    const kuKey = gov.name.ku.toLowerCase().replace(/[\s_\-ØŒ]+/g, '');
+    const enKey = safeLocalizedText(gov.name, 'en').toLowerCase().replace(/[\s_\-ØŒ]+/g, '');
+    const arKey = safeLocalizedText(gov.name, 'ar').toLowerCase().replace(/[\s_\-ØŒ]+/g, '');
+    const kuKey = safeLocalizedText(gov.name, 'ku').toLowerCase().replace(/[\s_\-ØŒ]+/g, '');
     if (compact === codeKey || compact === englishKey || compact === enKey || compact === arKey || compact === kuKey) {
       return gov.code;
     }
@@ -288,9 +288,9 @@ function normalizeCategory(value: unknown): string {
   if (byId) return byId.id;
 
   const byName = CATEGORIES.find((cat) => {
-    const en = cat.name.en.toLowerCase().replace(/[\s_\-&/ØŒ]+/g, '');
-    const ar = cat.name.ar.toLowerCase().replace(/[\s_\-&/ØŒ]+/g, '');
-    const ku = cat.name.ku.toLowerCase().replace(/[\s_\-&/ØŒ]+/g, '');
+    const en = safeLocalizedText(cat.name, 'en').toLowerCase().replace(/[\s_\-&/ØŒ]+/g, '');
+    const ar = safeLocalizedText(cat.name, 'ar').toLowerCase().replace(/[\s_\-&/ØŒ]+/g, '');
+    const ku = safeLocalizedText(cat.name, 'ku').toLowerCase().replace(/[\s_\-&/ØŒ]+/g, '');
     return compact === en || compact === ar || compact === ku;
   });
   if (byName) return byName.id;
@@ -933,7 +933,7 @@ export default function App() {
       const keyword = searchQuery.toLowerCase().trim();
       const keywordMatch = !keyword || 
         safeLocalizedText(b.name, currentLang).toLowerCase().includes(keyword) ||
-        b.name.en.toLowerCase().includes(keyword) ||
+        safeLocalizedText(b.name, 'en').toLowerCase().includes(keyword) ||
         safeLocalizedText(b.description, currentLang).toLowerCase().includes(keyword) ||
         safeLocalizedText(b.address, currentLang).toLowerCase().includes(keyword) ||
         b.category.toLowerCase().includes(keyword);
