@@ -282,7 +282,7 @@ export const authApi = {
 
 export const CATEGORY_DB_MAP: Record<string, string> = {
   restaurant: 'Restaurants',
-  cafe_bakery: 'CafÃ©s & Bakeries',
+  cafe_bakery: 'Cafés & Bakeries',
   supermarket: 'Supermarkets',
   mall: 'Malls & Shopping',
   pharmacy: 'Pharmacies',

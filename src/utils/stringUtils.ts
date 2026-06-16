@@ -69,15 +69,15 @@ export function isGarbled(text: string): boolean {
   if (!text) return false;
   // Contains replacement chars
   if (/[\uFFFD\uFFFE\uFFFF]/.test(text)) return true;
-  // Contains Latin-1 supplement chars that appear in double-encoded Arabic (Ø Ù � � � ?�)
+  // Contains Latin-1 supplement chars that often appear in double-encoded Arabic/Kurdish.
   if (/[\u00C0-\u00FF]/.test(text)) return true;
   // Contains ASCII control or non-printable chars
   if (/[\x00-\x08\x0E-\x1F\x7F]/.test(text)) return true;
   // Contains sequences like random ASCII letters sandwiched between Arabic chars
-  // e.g. "????S?? ????" � ASCII letter between Arabic chars is a strong signal
+  // e.g. an ASCII letter between Arabic characters can indicate corruption.
   if (/[\u0600-\u06FF][A-Za-z][A-Za-z\?~^"]{1,2}[\u0600-\u06FF]/.test(text)) return true;
-  // Starts with garbage pattern like "�" or "�"
-  if (/^[���?�]/.test(text)) return true;
+  // Starts with replacement or placeholder garbage.
+  if (/^[\uFFFD?]/.test(text)) return true;
   return false;
 }
 
