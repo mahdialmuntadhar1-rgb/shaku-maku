@@ -1,4 +1,4 @@
-﻿import React, { useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Image as ImageIcon, UploadCloud, Trash2, CheckCircle2, AlertCircle, FileText, Loader2 } from 'lucide-react';
 import { Language } from '../types';

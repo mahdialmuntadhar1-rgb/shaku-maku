@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { useAdmin } from '../contexts/AdminContext';
 
 interface HeroSlide {

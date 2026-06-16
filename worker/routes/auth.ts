@@ -61,7 +61,7 @@ function getFrontendUrl(c: any): string {
 
 async function sendPasswordResetEmail(c: any, email: string, token: string): Promise<boolean> {
   const apiKey = String(c.env.RESEND_API_KEY || '').trim();
-  const fromEmail = String(c.env.PASSWORD_RESET_FROM_EMAIL || 'Shaku Maku <noreply@shakumaku.pages.dev>').trim();
+  const fromEmail = String(c.env.PASSWORD_RESET_FROM_EMAIL || 'Shaku Maku <hello@kaniq.org>').trim();
 
   if (!apiKey) {
     console.warn('[ShakuMaku] Password reset email not sent: RESEND_API_KEY is not configured.');

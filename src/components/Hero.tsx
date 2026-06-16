@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronLeft, ChevronRight, Sparkles, MapPin, Compass, Edit3, Save, Trash2, Image as ImageIcon, PlusCircle } from 'lucide-react';
 import { Language, GovernorateCode, HeroSlide } from '../types';
