@@ -62,6 +62,35 @@ export default function BusinessFeed({
   const [newReviewRating, setNewReviewRating] = useState(5);
 
   const t = TRANSLATIONS[currentLang];
+  function localizedText(value: unknown, fallback = ''): string {
+    if (typeof value === 'string') return value.trim() || fallback;
+    if (!value || typeof value !== 'object') return fallback;
+
+    const record = value as Record<string, unknown>;
+    const keys = [currentLang, 'en', 'ar', 'ku'];
+
+    for (const key of keys) {
+      const candidate = record[key];
+      if (candidate !== undefined && candidate !== null && String(candidate).trim()) {
+        return String(candidate).trim();
+      }
+    }
+
+    return fallback;
+  }
+
+  function businessName(biz: any): string {
+    return localizedText(biz?.name, 'Business');
+  }
+
+  function businessDescription(biz: any): string {
+    return localizedText(biz?.description, '');
+  }
+
+  function businessAddress(biz: any): string {
+    return localizedText(biz?.address, '');
+  }
+
 
   function cleanBusinessDisplayText(value: string | undefined): string {
     const raw = String(value || '').trim();
@@ -113,10 +142,10 @@ export default function BusinessFeed({
   function startInlineEdit(biz: Business) {
     setEditingBusinessId(biz.id);
     setBusinessEditDraft({
-      name: biz.name[currentLang] || biz.name.en || biz.name.ar || '',
+      name: businessName(biz),
       phoneNumber: biz.phoneNumber || '',
-      address: cleanBusinessDisplayText(biz.address[currentLang]) || '',
-      description: cleanBusinessDisplayText(biz.description[currentLang]) || '',
+      address: cleanBusinessDisplayText(businessAddress(biz)) || '',
+      description: cleanBusinessDisplayText(businessDescription(biz)) || '',
       image: biz.image || ''
     });
   }
@@ -133,9 +162,9 @@ export default function BusinessFeed({
     const updatedBusiness: Business = {
       ...biz,
       name: {
-        ar: payload.name || biz.name.ar,
-        ku: payload.name || biz.name.ku,
-        en: payload.name || biz.name.en
+        ar: payload.name || businessName(biz),
+        ku: payload.name || businessName(biz),
+        en: payload.name || businessName(biz)
       },
       phoneNumber: payload.phone,
       address: {
@@ -222,17 +251,6 @@ export default function BusinessFeed({
     });
   }, [selectedGov, normalizedSelectedGov, selectedCategory, businesses.length, govFiltered.length, visibleCount]);
 
-  React.useEffect(() => {
-    console.log('[ShakuMaku] business feed filter:', {
-      selectedGov,
-      normalizedSelectedGov,
-      selectedCategory,
-      inputBusinesses: businesses.length,
-      afterGovernorateFilter: govFiltered.length,
-      visibleCount
-    });
-  }, [selectedGov, normalizedSelectedGov, selectedCategory, businesses.length, govFiltered.length, visibleCount]);
-
   const handleToggleCategoryExpand = (catId: string) => {
     const isCurrentlyExpanded = expandedCategories[catId] || false;
     
@@ -251,13 +269,13 @@ export default function BusinessFeed({
   const handleShare = (biz: Business) => {
     if (navigator.share) {
       navigator.share({
-        title: biz.name[currentLang],
-        text: biz.description[currentLang],
+        title: businessName(biz),
+        text: businessDescription(biz),
         url: window.location.href,
       }).catch(console.error);
     } else {
       // Fallback
-      alert(`${t.share}: ${standardizeMosulNinevehDisplay(biz.name[currentLang])}\n${window.location.href}`);
+      alert(`${t.share}: ${standardizeMosulNinevehDisplay(businessName(biz))}\n${window.location.href}`);
     }
   };
 
@@ -345,7 +363,7 @@ export default function BusinessFeed({
               <div className="flex items-center gap-2.5">
                 <span className="text-2xl filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.15)]">{category.icon}</span>
                 <h2 className="text-xl font-extrabold text-white tracking-tight font-sans">
-                  {category.name[currentLang]}
+                  {localizedText(category.name, category.id)}
                 </h2>
                 <span className="text-[10px] bg-blue-500/20 text-blue-100 border border-blue-300/25 px-2 py-0.5 rounded-full font-bold">
                   {categoryBizs.length}
@@ -400,7 +418,7 @@ export default function BusinessFeed({
                         <div className="absolute bottom-2 left-2 right-2 z-10 p-1.5 bg-[#0F2E2F]/90 backdrop-blur-md rounded-lg border border-luxury-gold/30 flex items-center gap-1 pointer-events-none">
                           <Gift className="w-3 h-3 text-luxury-gold shrink-0 animate-bounce" />
                           <span className="text-[8px] xs:text-[10px] text-white font-black tracking-tight line-clamp-1">
-                            {biz.featuredDeal[currentLang]}
+                            {localizedText(biz.featuredDeal, '')}
                           </span>
                         </div>
                       )}
@@ -408,7 +426,7 @@ export default function BusinessFeed({
                       {/* Cover Photo */}
                       <img
                         src={biz.image}
-                        alt={standardizeMosulNinevehDisplay(biz.name[currentLang])}
+                        alt={standardizeMosulNinevehDisplay(businessName(biz))}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                         referrerPolicy="no-referrer"
                       />
@@ -421,7 +439,7 @@ export default function BusinessFeed({
                         {/* Title & Category with governorate */}
                         <div className="flex flex-col xs:flex-row xs:items-start justify-between gap-1 mb-1 xs:mb-1.5">
                           <h3 className="text-[10px] xs:text-xs sm:text-sm font-black text-white group-hover:text-blue-200 transition-colors line-clamp-1 font-sans">
-                            {standardizeMosulNinevehDisplay(biz.name[currentLang])}
+                            {standardizeMosulNinevehDisplay(businessName(biz))}
                           </h3>
                           
                           <div className="flex items-center gap-0.5 xs:gap-1 text-[9px] xs:text-[11px] text-amber-805 font-black shrink-0 bg-amber-500/10 px-1 xs:px-1.5 py-0.5 rounded-lg border border-amber-500/20 w-fit">
@@ -485,10 +503,10 @@ export default function BusinessFeed({
                         ) : (
                           <>
                             {/* Location Subtext */}
-                            {cleanBusinessDisplayText(biz.address[currentLang]) && (
+                            {cleanBusinessDisplayText(businessAddress(biz)) && (
                               <div className="flex items-center gap-0.5 xs:gap-1 text-[9px] xs:text-[11px] text-zinc-500 mb-1 xs:mb-2 font-black">
                                 <MapPin className="w-3 xs:w-3.5 h-3 xs:h-3.5 text-luxury-coral shrink-0" />
-                                <span className="truncate">{standardizeMosulNinevehDisplay(cleanBusinessDisplayText(biz.address[currentLang]))}</span>
+                                <span className="truncate">{standardizeMosulNinevehDisplay(cleanBusinessDisplayText(businessAddress(biz)))}</span>
                               </div>
                             )}
 
@@ -504,7 +522,7 @@ export default function BusinessFeed({
                             )}
 
                             <div className="flex flex-wrap gap-1 mb-1">
-                              {extractExternalLinks(biz.description[currentLang]).slice(0, 3).map((link) => (
+                              {extractExternalLinks(businessDescription(biz)).slice(0, 3).map((link) => (
                                 <a
                                   key={link.label}
                                   href={link.href}
@@ -518,9 +536,9 @@ export default function BusinessFeed({
                             </div>
 
                             {/* Description snippet */}
-                            {cleanBusinessDisplayText(biz.description[currentLang]) && (
+                            {cleanBusinessDisplayText(businessDescription(biz)) && (
                               <p className="text-[9px] xs:text-[11px] text-zinc-500 line-clamp-2 leading-relaxed mb-2 xs:mb-4">
-                                {standardizeMosulNinevehDisplay(cleanBusinessDisplayText(biz.description[currentLang]))}
+                                {standardizeMosulNinevehDisplay(cleanBusinessDisplayText(businessDescription(biz)))}
                               </p>
                             )}
                           </>
@@ -640,10 +658,10 @@ export default function BusinessFeed({
                     : isExpanded
                       ? t.showLess
                       : currentLang === 'en'
-                        ? `Load more ${category.name[currentLang]} (${categoryBizs.length - 3}) +`
+                        ? `Load more ${localizedText(category.name, category.id)} (${categoryBizs.length - 3}) +`
                         : currentLang === 'ku'
-                          ? `زیاتر لە ${category.name[currentLang]} (${categoryBizs.length - 3}) +`
-                          : `عرض المزيد من ${category.name[currentLang]} (${categoryBizs.length - 3}) +`}
+                          ? `زیاتر لە ${localizedText(category.name, category.id)} (${categoryBizs.length - 3}) +`
+                          : `عرض المزيد من ${localizedText(category.name, category.id)} (${categoryBizs.length - 3}) +`}
                 </button>
               </div>
             )}
