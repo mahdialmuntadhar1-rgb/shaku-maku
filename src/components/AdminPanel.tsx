@@ -4,6 +4,7 @@ import { api, API_BASE_URL, businessesApi, getApiErrorMessage, postsApi } from '
 import { readSession } from '../auth/session';
 import { Business, HeroSlide, Language, SocialPost, UserProfile } from '../types';
 import { IRAQ_GOVERNORATES, APP_CATEGORIES, normalizeGovernorate, normalizeCategory, getGovernorateLabel, getCategoryLabel } from '../utils/taxonomy';
+import { safeLocalizedText } from '../utils/stringUtils';
 
 interface AdminPanelProps {
   currentLang: Language;
@@ -83,10 +84,10 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
   const [businessSubmissionsStatus, setBusinessSubmissionsStatus] = useState('');
   const session = readSession();
   const signedInEmail = (userProfile?.email || session?.user?.email || '').toLowerCase();
-  const hasAdminAccess =
-    signedInEmail === 'safaribosafar@gmail.com' ||
-    userProfile?.role === 'admin' ||
+  const hasAdminAccess = userProfile?.role === 'admin' ||
     session?.user?.role === 'admin';
+  const localized = (value: unknown, fallback = '') => safeLocalizedText(value, currentLang, fallback);
+  const localizedEn = (value: unknown, fallback = '') => safeLocalizedText(value, 'en', fallback);
 
   if (!hasAdminAccess) {
     return (
@@ -327,7 +328,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
     const optimisticPost: SocialPost = {
       id: `local-post-${Date.now()}`,
       businessId: linkedBusiness.id,
-      businessName: linkedBusiness.name[currentLang] || linkedBusiness.name.en,
+      businessName: localized(linkedBusiness.name, localizedEn(linkedBusiness.name, 'Business')),
       businessAvatar: linkedBusiness.avatar,
       category: normalizeCategory(newPostDraft.category || linkedBusiness.category),
       governorate: normalizeGovernorate(newPostDraft.governorate || linkedBusiness.governorate) as SocialPost['governorate'],
@@ -371,9 +372,9 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
         setPosts((prev) => [{ ...optimisticPost, id: String(createdId) }, ...prev]);
         setPostStatus(t(currentLang, 'Post added.', 'تمت إضافة المنشور.', 'بابەتەکە زیادکرا.'));
       } catch (backendError) {
-        console.warn('Post backend create failed, using local fallback:', backendError);
-        setPosts((prev) => [optimisticPost, ...prev]);
-        setPostStatus(t(currentLang, 'Post added locally. Backend create route may need review.', 'تمت إضافة المنشور محلياً. قد يحتاج الخادم للمراجعة.', 'بابەتەکە ناوخۆیی زیادکرا.'));
+        console.error('Post backend create failed:', backendError);
+        setPostStatus(getApiErrorMessage(backendError));
+        return;
       }
 
       setNewPostDraft({
@@ -423,9 +424,9 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
   const startEditBusiness = (business: Business) => {
     setEditingBusinessId(business.id);
     setBusinessDraft({
-      name: business.name[currentLang] || business.name.en,
-      description: business.description[currentLang] || business.description.en,
-      address: business.address[currentLang] || business.address.en,
+      name: localized(business.name, localizedEn(business.name)),
+      description: localized(business.description, localizedEn(business.description)),
+      address: localized(business.address, localizedEn(business.address)),
       phoneNumber: business.phoneNumber || '',
       category: business.category,
       governorate: business.governorate
@@ -803,13 +804,13 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
             <div key={slide.id} className="bg-white/5 border border-white/10 rounded-xl p-4 space-y-3">
               <img src={slide.image} alt="" className="w-full h-36 object-cover rounded-lg bg-black" />
               <input
-                value={slide.slogan[currentLang]}
+                value={localized(slide.slogan)}
                 onChange={(event) => updateHeroField(slide.id, 'slogan', event.target.value)}
                 className="w-full bg-black/35 border border-white/10 rounded-lg px-3 py-2 text-sm"
                 dir={currentLang === 'en' ? 'ltr' : 'rtl'}
               />
               <input
-                value={slide.badge[currentLang]}
+                value={localized(slide.badge)}
                 onChange={(event) => updateHeroField(slide.id, 'badge', event.target.value)}
                 className="w-full bg-black/35 border border-white/10 rounded-lg px-3 py-2 text-sm"
                 dir={currentLang === 'en' ? 'ltr' : 'rtl'}
@@ -835,7 +836,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
                   onClick={() => deleteHeroSlide(slide.id)}
                   className="px-3 py-2 rounded-lg bg-red-500/15 text-red-200 border border-red-400/30 text-xs font-black"
                 >
-                  ðŸ—‘ Delete this slide
+                  Delete this slide
                 </button>
               </div>
             </div>
@@ -882,7 +883,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
             <option value="">Link to first available business</option>
             {businesses.slice(0, 80).map((business) => (
               <option key={business.id} value={business.id}>
-                {business.name[currentLang] || business.name.en}
+                {localized(business.name, localizedEn(business.name, 'Business'))}
               </option>
             ))}
           </select>
@@ -1009,7 +1010,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
                     type="button"
                     onClick={() => {
                       setEditingPostId(post.id);
-                      setEditingPostText(post.caption[currentLang] || post.caption.en);
+                      setEditingPostText(localized(post.caption, localizedEn(post.caption)));
                     }}
                     className="p-2 rounded-lg bg-blue-500/10 text-blue-400"
                   >
@@ -1044,7 +1045,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
                 </div>
               ) : (
                 <p className="text-sm text-zinc-300" dir={currentLang === 'en' ? 'ltr' : 'rtl'}>
-                  <bdi>{post.caption[currentLang]}</bdi>
+                  <bdi>{localized(post.caption)}</bdi>
                 </p>
               )}
             </div>
@@ -1108,7 +1109,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
               ) : (
                 <div className="flex items-center justify-between gap-3">
                   <div className="min-w-0">
-                    <strong className="block text-sm truncate">{business.name[currentLang]}</strong>
+                    <strong className="block text-sm truncate">{localized(business.name, localizedEn(business.name, 'Business'))}</strong>
                     <span className="text-[11px] text-zinc-500">{business.governorate}</span>
                   </div>
                   <div className="flex items-center gap-1">
@@ -1149,7 +1150,6 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
 };
 
 export default AdminPanel;
-
 
 
 

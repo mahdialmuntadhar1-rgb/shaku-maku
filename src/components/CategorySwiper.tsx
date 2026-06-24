@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import { Sparkles } from 'lucide-react';
 import { Language } from '../types';
 import { CATEGORIES, TRANSLATIONS } from '../data';
+import { safeLocalizedText } from '../utils/stringUtils';
 
 interface CategorySwiperProps {
   currentLang: Language;
@@ -22,6 +23,7 @@ export default function CategorySwiper({
   const [scrollLeftState, setScrollLeftState] = useState(0);
 
   const t = TRANSLATIONS[currentLang];
+  const categoryLabel = (value: unknown, fallback = '') => safeLocalizedText(value, currentLang, fallback);
 
   // Define the "All" virtual category chip
   const allChip = {
@@ -174,7 +176,7 @@ export default function CategorySwiper({
 
                 {/* Multilingual category label */}
                 <span className="whitespace-nowrap">
-                  {cat.name[currentLang]}
+                  {categoryLabel(cat.name)}
                 </span>
                 
                 {/* Glow pill active */}
@@ -198,7 +200,7 @@ export default function CategorySwiper({
                 ? 'پاڵاوتنی ئەنجامەکان بۆ ' 
                 : 'تصفية النتائج لـ '}
             <span className="text-cyan-400 font-black">
-              {CATEGORIES.find(c => c.id === selectedCategory)?.name[currentLang]}
+              {categoryLabel(CATEGORIES.find(c => c.id === selectedCategory)?.name)}
             </span>
           </span>
         </div>

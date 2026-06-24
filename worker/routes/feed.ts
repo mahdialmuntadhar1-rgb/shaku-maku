@@ -1,4 +1,4 @@
-import { Hono } from 'hono';
+﻿import { Hono } from 'hono';
 import { requireAuth } from './_authz';
 
 type Env = {
@@ -24,7 +24,7 @@ async function isAdminUser(c: any, payload: any): Promise<boolean> {
   const email = cleanText(payload?.email).toLowerCase();
   const role = cleanText(payload?.role).toLowerCase();
 
-  if (email === 'safaribosafar@gmail.com' || role === 'admin') return true;
+  if (role === 'admin') return true;
 
   const row = await c.env.DB.prepare(
     'SELECT role, is_admin FROM users WHERE id = ? OR lower(email) = ? LIMIT 1'
@@ -444,3 +444,4 @@ feedRoutes.post('/posts/:id/comments', async (c) => {
 });
 
 export default feedRoutes;
+

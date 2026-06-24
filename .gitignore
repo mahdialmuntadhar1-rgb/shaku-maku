@@ -73,3 +73,12 @@ nabda-dashboard-upgrade/
 SHAKU_MAKU_*.txt
 scripts/final-mvp-sanity.cjs
 
+# Local audit/review outputs
+LOCAL_REVIEW/
+SAFE_BACKUPS/
+HARDENING_AUDIT_POWERSHELL.md
+hardening-audit.ps1
+npm-typecheck-output.txt
+npm-lint-output.txt
+npm-build-output.txt
+git-status-output.txt

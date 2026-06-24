@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { Sparkles, Clock, MapPin, Check, User, LogOut, Shield, ChevronDown, Award, HelpCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Language, GovernorateCode, UserProfile } from '../types';
@@ -69,7 +69,7 @@ export default function Header({
   const t = TRANSLATIONS[currentLang];
   const isRtl = currentLang === 'ar' || currentLang === 'ku';
   const signedInEmail = String(user?.email || userProfile?.email || '').trim().toLowerCase();
-  const isProtectedAdmin = signedInEmail === 'safaribosafar@gmail.com' || userProfile?.role === 'admin';
+  const isProtectedAdmin = userProfile?.role === 'admin';
   const canUseRoleSwitcher = import.meta.env.DEV && isProtectedAdmin;
 
   const languages = [
@@ -346,4 +346,5 @@ export default function Header({
     </header>
   );
 }
+
 

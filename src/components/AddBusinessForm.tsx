@@ -2,6 +2,7 @@
 import { Business, GovernorateCode, Language, UserProfile, SocialPost } from '../types';
 import { CATEGORIES, GOVERNORATES } from '../data';
 import { api } from '../api';
+import { safeLocalizedText } from '../utils/stringUtils';
 
 interface AddBusinessFormProps {
   currentLang: Language;
@@ -36,6 +37,7 @@ const AddBusinessForm: React.FC<AddBusinessFormProps> = ({ currentLang, onAddBus
 
   const canSubmit = name.trim() && description.trim() && address.trim() && phone.trim();
   const isAdmin = userProfile?.role === 'admin';
+  const localized = (value: unknown, fallback = '') => safeLocalizedText(value, currentLang, fallback);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -183,14 +185,14 @@ const AddBusinessForm: React.FC<AddBusinessFormProps> = ({ currentLang, onAddBus
             <select value={category} onChange={(event) => setCategory(event.target.value)} className="w-full px-4 py-2.5 border border-zinc-300 rounded-lg">
               {CATEGORIES.map((item) => (
                 <option key={item.id} value={item.id}>
-                  {item.name[currentLang]}
+                  {localized(item.name, item.id)}
                 </option>
               ))}
             </select>
             <select value={governorate} onChange={(event) => setGovernorate(event.target.value as GovernorateCode)} className="w-full px-4 py-2.5 border border-zinc-300 rounded-lg">
               {GOVERNORATES.filter((item) => item.code !== 'all').map((item) => (
                 <option key={item.code} value={item.code}>
-                  {item.name[currentLang]}
+                  {localized(item.name, item.englishLabel)}
                 </option>
               ))}
             </select>
@@ -220,5 +222,4 @@ const AddBusinessForm: React.FC<AddBusinessFormProps> = ({ currentLang, onAddBus
 };
 
 export default AddBusinessForm;
-
 

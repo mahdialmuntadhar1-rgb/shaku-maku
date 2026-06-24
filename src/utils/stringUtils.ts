@@ -98,3 +98,46 @@ export function safeLocalized(
   if (lang === 'ar' && obj.ku && !isGarbled(obj.ku)) return obj.ku;
   return obj.en || obj.ar || obj.ku || '';
 }
+
+export type LocalizedRecord = {
+  ar?: unknown;
+  ku?: unknown;
+  en?: unknown;
+  [key: string]: unknown;
+};
+
+export function safeLocalizedText(value: unknown, lang: 'ar' | 'ku' | 'en', fallback = ''): string {
+  if (typeof value === 'string') {
+    const text = value.trim();
+    return text && !isGarbled(text) ? text : fallback;
+  }
+
+  if (!value || typeof value !== 'object') return fallback;
+
+  const record = value as LocalizedRecord;
+  const keys = [lang, 'en', 'ar', 'ku'];
+
+  for (const key of keys) {
+    const candidate = record[key];
+    if (candidate === undefined || candidate === null) continue;
+
+    const text = String(candidate).trim();
+    if (text && !isGarbled(text)) return text;
+  }
+
+  return fallback;
+}
+
+export const LANGUAGE_GATE_COPY = {
+  title: 'Choose Language',
+  subtitle: {
+    ar: 'اختر لغتك',
+    ku: 'زمانەکەت هەڵبژێرە',
+    en: 'Choose your language'
+  },
+  options: {
+    ar: 'العربية',
+    ku: 'کوردی',
+    en: 'English'
+  }
+} as const;

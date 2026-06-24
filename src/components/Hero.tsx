@@ -1,15 +1,9 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronLeft, ChevronRight, Sparkles, MapPin, Compass, Edit3, Save, Trash2, Image as ImageIcon, PlusCircle } from 'lucide-react';
 import { Language, GovernorateCode, HeroSlide } from '../types';
 import { HERO_SLIDES, TRANSLATIONS } from '../data';
-
-function safeLocalizedText(value: unknown, lang: string): string {
-  if (typeof value === 'string') return value;
-  if (!value || typeof value !== 'object') return '';
-  const record = value as Record<string, unknown>;
-  return String(record[lang] ?? record.en ?? record.ar ?? record.ku ?? '');
-}
+import { safeLocalizedText } from '../utils/stringUtils';
 
 
 interface HeroProps {
@@ -27,7 +21,7 @@ function isLocalAdminHeroEditor() {
     const parsed = JSON.parse(raw);
     const email = String(parsed?.email || '').trim().toLowerCase();
     const role = String(parsed?.role || '').trim().toLowerCase();
-    return email === 'safaribosafar@gmail.com' || role === 'admin';
+    return role === 'admin';
   } catch {
     return false;
   }
@@ -62,8 +56,8 @@ export default function Hero({ currentLang, onExploreClick, onSelectGov, slides,
   useEffect(() => {
     if (!activeSlide) return;
     setHeroDraft({
-      slogan: safeLocalizedText(activeSlide.slogan, currentLang) || activeSlide.slogan.en || '',
-      badge: safeLocalizedText(activeSlide.badge, currentLang) || activeSlide.badge.en || ''
+      slogan: safeLocalizedText(activeSlide.slogan, currentLang),
+      badge: safeLocalizedText(activeSlide.badge, currentLang)
     });
   }, [activeSlide?.id, currentLang]);
 
@@ -178,8 +172,8 @@ export default function Hero({ currentLang, onExploreClick, onSelectGov, slides,
     setCurrentIndex(0);
     setEditingHero(true);
     setHeroDraft({
-      slogan: newSlides[0].slogan[currentLang] || newSlides[0].slogan.en,
-      badge: newSlides[0].badge[currentLang] || newSlides[0].badge.en
+      slogan: safeLocalizedText(newSlides[0].slogan, currentLang),
+      badge: safeLocalizedText(newSlides[0].badge, currentLang)
     });
   };
 
@@ -218,8 +212,8 @@ export default function Hero({ currentLang, onExploreClick, onSelectGov, slides,
     setCurrentIndex(0);
     setEditingHero(true);
     setHeroDraft({
-      slogan: newSlide.slogan[currentLang] || newSlide.slogan.en,
-      badge: newSlide.badge[currentLang] || newSlide.badge.en
+      slogan: safeLocalizedText(newSlide.slogan, currentLang),
+      badge: safeLocalizedText(newSlide.badge, currentLang)
     });
   };
 
@@ -392,3 +386,4 @@ export default function Hero({ currentLang, onExploreClick, onSelectGov, slides,
     </div>
   );
 }
+

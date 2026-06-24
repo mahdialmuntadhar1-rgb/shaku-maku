@@ -1,4 +1,4 @@
-import type { UserProfile } from '../types';
+﻿import type { UserProfile } from '../types';
 
 export const AUTH_TOKEN_KEY = 'auth_token';
 export const AUTH_USER_KEY = 'user';
@@ -25,7 +25,7 @@ export interface AuthSession {
 
 export const normalizeEmail = (email?: string | null): string => (email || '').trim().toLowerCase();
 
-const ADMIN_EMAILS = new Set(['safaribosafar@gmail.com']);
+const ADMIN_EMAILS = new Set<string>();
 
 const notifyAuthChange = (): void => {
   window.dispatchEvent(new Event(AUTH_CHANGE_EVENT));
@@ -128,3 +128,4 @@ export const clearSession = (): void => {
   sessionStorage.removeItem(AUTH_USER_KEY);
   notifyAuthChange();
 };
+

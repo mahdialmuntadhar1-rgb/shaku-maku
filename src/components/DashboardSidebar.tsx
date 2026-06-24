@@ -4,6 +4,7 @@ import {
   Building, LayoutDashboard, Edit3, Image, Flame, Contact, BarChart3, LogOut, ArrowLeft 
 } from 'lucide-react';
 import { Language } from '../types';
+import { safeLocalizedText } from '../utils/stringUtils';
 
 export type DashboardTab = 'overview' | 'edit_profile' | 'media' | 'social_feed' | 'contact' | 'analytics';
 
@@ -21,6 +22,7 @@ export default function DashboardSidebar({
   onExitDashboard
 }: DashboardSidebarProps) {
   const isRtl = currentLang === 'ar' || currentLang === 'ku';
+  const localized = (value: unknown, fallback = '') => safeLocalizedText(value, currentLang, fallback);
 
   const menuItems = [
     { key: 'overview', icon: LayoutDashboard, label: { en: 'Dashboard Overview', ar: 'نظرة عامة على النشاط', ku: 'تێڕوانینی گشتی' } },
@@ -64,7 +66,7 @@ export default function DashboardSidebar({
               }`}
             >
               <IconComp className={`w-4 h-4 shrink-0 ${isActive ? 'text-amber-500 bg-transparent' : 'text-zinc-500 bg-transparent'}`} />
-              <span className="truncate">{item.label[currentLang] || item.label.en}</span>
+              <span className="truncate">{localized(item.label, item.label.en)}</span>
               
               {item.key === 'social_feed' && (
                 <span className="ml-auto bg-orange-600 text-white text-[8px] px-1.5 py-0.5 rounded font-mono font-black uppercase animate-pulse shrink-0">
@@ -93,7 +95,7 @@ export default function DashboardSidebar({
               }`}
             >
               <IconComp className="w-4 h-4 shrink-0" />
-              <span>{item.label[currentLang] || item.label.en}</span>
+              <span>{localized(item.label, item.label.en)}</span>
             </button>
           );
         })}
