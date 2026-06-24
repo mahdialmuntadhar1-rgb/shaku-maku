@@ -8,6 +8,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import { AdminProvider } from './contexts/AdminContext';
 import { registerServiceWorker } from './registerServiceWorker';
 import AppErrorBoundary from './components/AppErrorBoundary';
+import { LanguageProvider } from './i18n/LanguageProvider';
 import './index.css';
 
 registerServiceWorker();
@@ -17,11 +18,12 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <AppErrorBoundary>
       <AuthProvider>
         <AdminProvider>
-          <App />
+          <LanguageProvider>
+            <App />
+          </LanguageProvider>
         </AdminProvider>
       </AuthProvider>
     </AppErrorBoundary>
   </React.StrictMode>
 );
-
 

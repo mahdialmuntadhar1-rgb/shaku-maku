@@ -3,6 +3,7 @@ import { Sparkles, Clock, MapPin, Check, User, LogOut, Shield, ChevronDown, Awar
 import { motion, AnimatePresence } from 'motion/react';
 import { Language, GovernorateCode, UserProfile } from '../types';
 import { GOVERNORATES, TRANSLATIONS } from '../data';
+import { displayValue } from '../i18n/translations';
 
 interface HeaderProps {
   currentLang: Language;
@@ -149,7 +150,7 @@ export default function Header({
                 userProfile.role === 'owner' ? 'bg-amber-500/20 text-amber-400' :
                 'bg-blue-500/20 text-blue-400'
               }`}>
-                {userProfile.role || 'user'}
+                {displayValue(userProfile.role || 'user', currentLang)}
               </span>
             </div>
           )}
@@ -162,8 +163,6 @@ export default function Header({
               key={lang.code}
               onClick={() => {
                 onChangeLang(lang.code as Language);
-                // Dynamically update document direction for instant RTL layout transition support
-                document.documentElement.dir = lang.code === 'en' ? 'ltr' : 'rtl';
               }}
               className={`flex-1 sm:flex-initial px-3 py-2 rounded-xl text-[11px] xs:text-xs font-black uppercase transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer ${
                 currentLang === lang.code
@@ -203,7 +202,7 @@ export default function Header({
                 <div className="flex flex-col text-left text-zinc-300 hidden sm:flex truncate max-w-[80px]">
                   <span className="text-[10px] font-black leading-tight text-white truncate">{user.displayName || 'Iraqi User'}</span>
                   <span className="text-[8px] font-mono tracking-wider font-extrabold uppercase text-luxury-gold">
-                    {userProfile?.role || 'user'}
+                    {displayValue(userProfile?.role || 'user', currentLang)}
                   </span>
                 </div>
                 <ChevronDown className={`w-3.5 h-3.5 text-zinc-400 transition-transform ${profileOpen ? 'rotate-180' : ''}`} />
@@ -346,4 +345,3 @@ export default function Header({
     </header>
   );
 }
-
