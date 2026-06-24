@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Heart, Bookmark, Star, MapPin, Phone, Share2, Edit3, Save, 
@@ -8,7 +8,13 @@ import { Business, Language, GovernorateCode } from '../types';
 import { CATEGORIES, TRANSLATIONS } from '../data';
 import { normalizeGovernorate, normalizeCategory } from '../utils/taxonomy';
 import { businessesApi, getApiErrorMessage } from '../api';
-import { safeLocalizedText } from '../utils/stringUtils';
+
+function safeLocalizedText(value: unknown, lang: string): string {
+  if (typeof value === 'string') return value;
+  if (!value || typeof value !== 'object') return '';
+  const record = value as Record<string, unknown>;
+  return String(record[lang] ?? record.en ?? record.ar ?? record.ku ?? '');
+}
 
 
 interface BusinessFeedProps {
@@ -65,7 +71,20 @@ export default function BusinessFeed({
 
   const t = TRANSLATIONS[currentLang];
   function localizedText(value: unknown, fallback = ''): string {
-    return safeLocalizedText(value, currentLang, fallback);
+    if (typeof value === 'string') return value.trim() || fallback;
+    if (!value || typeof value !== 'object') return fallback;
+
+    const record = value as Record<string, unknown>;
+    const keys = [currentLang, 'en', 'ar', 'ku'];
+
+    for (const key of keys) {
+      const candidate = record[key];
+      if (candidate !== undefined && candidate !== null && String(candidate).trim()) {
+        return String(candidate).trim();
+      }
+    }
+
+    return fallback;
   }
 
   function businessName(biz: any): string {
@@ -175,9 +194,14 @@ export default function BusinessFeed({
         await businessesApi.update(biz.id, payload);
         setAdminStatus(currentLang === 'en' ? 'Business updated.' : currentLang === 'ku' ? 'بازرگانی نوێکرایەوە.' : 'تم تحديث النشاط.');
       } catch (backendError) {
-        console.error('Business backend update failed:', backendError);
-        setAdminStatus(getApiErrorMessage(backendError));
-        return;
+        console.warn('Business backend update failed, keeping local edit:', backendError);
+        setAdminStatus(
+          currentLang === 'en'
+            ? 'Updated locally. Backend update route may need review.'
+            : currentLang === 'ku'
+            ? 'ناوخۆیی نوێکرایەوە. باکئێند پێویستی بە پشکنین هەیە.'
+            : 'تم التحديث محلياً. قد يحتاج مسار الخادم للمراجعة.'
+        );
       }
 
       setBusinesses?.((prev) => prev.map((item) => (item.id === biz.id ? updatedBusiness : item)));
@@ -190,7 +214,7 @@ export default function BusinessFeed({
 
   function officialCategoryLabel(categoryId: string | undefined): string {
     const normalized = normalizeCategory(categoryId);
-    return safeLocalizedText(CATEGORIES.find((category) => category.id === normalized)?.name, currentLang, normalized || '');
+    return CATEGORIES.find((category) => category.id === normalized)?.name[currentLang] || normalized || '';
   }
   const isRtl = currentLang === 'ar' || currentLang === 'ku';
 
@@ -701,7 +725,7 @@ export default function BusinessFeed({
               <div className="relative h-64 md:h-72 w-full bg-slate-950">
                 <img
                   src={selectedBiz.image}
-                  alt={businessName(selectedBiz)}
+                  alt={selectedBiz.name[currentLang]}
                   className="w-full h-full object-cover"
                   referrerPolicy="no-referrer"
                 />
@@ -716,7 +740,7 @@ export default function BusinessFeed({
                       {officialCategoryLabel(selectedBiz.category)}
                     </span>
                     <h2 className="text-xl md:text-2xl font-black text-white leading-tight">
-                      {businessName(selectedBiz)}
+                      {selectedBiz.name[currentLang]}
                     </h2>
                   </div>
 
@@ -738,7 +762,7 @@ export default function BusinessFeed({
                     {currentLang === 'en' ? 'Lifestyle Description' : currentLang === 'ku' ? 'تایبەتمەندی شوێنەکە' : 'نبذة عن المكان التجاري'}
                   </h4>
                   <p className="text-sm text-zinc-300 leading-relaxed">
-                    {businessDescription(selectedBiz)}
+                    {selectedBiz.description[currentLang]}
                   </p>
                 </div>
 
@@ -750,7 +774,7 @@ export default function BusinessFeed({
                       <span>{t.specialOffer}</span>
                     </div>
                     <p className="text-xs text-zinc-200 font-bold">
-                      {localizedText(selectedBiz.featuredDeal)}
+                      {selectedBiz.featuredDeal[currentLang]}
                     </p>
                   </div>
                 )}
@@ -761,7 +785,7 @@ export default function BusinessFeed({
                     <span className="text-[10px] text-zinc-500 uppercase font-mono font-bold block">{t.address}</span>
                     <div className="flex items-center gap-1.5">
                       <MapPin className="w-3.5 h-3.5 text-rose-500 shrink-0" />
-                      <span className="text-xs text-zinc-300">{businessAddress(selectedBiz)}</span>
+                      <span className="text-xs text-zinc-300">{selectedBiz.address[currentLang]}</span>
                     </div>
                   </div>
 
@@ -970,4 +994,5 @@ export default function BusinessFeed({
     </div>
   );
 }
+
 

@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Store, CheckCircle, ArrowRight, ArrowLeft, Phone, MapPin, Sparkles, Navigation, Link, Globe } from 'lucide-react';
 import { Language, GovernorateCode, Business } from '../types';
 import { GOVERNORATES, CATEGORIES } from '../data';
-import { safeLocalizedText } from '../utils/stringUtils';
 
 interface BusinessOnboardingProps {
   currentLang: Language;
@@ -54,7 +53,6 @@ export default function BusinessOnboarding({
   const [error, setError] = useState('');
 
   const isRtl = currentLang === 'ar' || currentLang === 'ku';
-  const localized = (value: unknown, fallback = '') => safeLocalizedText(value, currentLang, fallback);
 
   // Preset lifestyle visual selections for owners
   const coverPresets = [
@@ -214,7 +212,7 @@ export default function BusinessOnboarding({
                       className="w-full bg-zinc-900 border border-white/10 rounded-xl text-xs px-4 py-3 text-white focus:outline-none focus:border-luxury-gold"
                     >
                       {CATEGORIES.map(cat => (
-                        <option key={cat.id} value={cat.id}>{localized(cat.name, cat.id)}</option>
+                        <option key={cat.id} value={cat.id}>{cat.name[currentLang]}</option>
                       ))}
                     </select>
                   </div>
@@ -229,7 +227,7 @@ export default function BusinessOnboarding({
                       className="w-full bg-zinc-900 border border-white/10 rounded-xl text-xs px-4 py-3 text-white focus:outline-none focus:border-luxury-gold"
                     >
                       {GOVERNORATES.filter(g => g.code !== 'all').map(g => (
-                        <option key={g.code} value={g.code}>{localized(g.name, g.englishLabel)}</option>
+                        <option key={g.code} value={g.code}>{g.name[currentLang]}</option>
                       ))}
                     </select>
                   </div>

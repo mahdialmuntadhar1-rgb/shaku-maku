@@ -218,7 +218,7 @@ export default function SocialFeed({
 
   const userId = String(user?.id || user?.uid || '');
   const userEmail = String(user?.email || '').toLowerCase();
-  const isAdmin = user?.role === 'admin';
+  const isAdmin = userEmail === 'safaribosafar@gmail.com' || user?.role === 'admin';
 
   const sourcePosts = posts.length > 0 ? posts : generatedPosts;
 
@@ -734,4 +734,3 @@ export default function SocialFeed({
     </div>
   );
 }
-

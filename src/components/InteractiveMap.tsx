@@ -2,7 +2,13 @@ import React, { useState } from 'react';
 import { Map, MapPin, Sparkles, Navigation, Globe, Eye, Compass, Heart, Bookmark } from 'lucide-react';
 import { Business, Language, GovernorateCode } from '../types';
 import { GOVERNORATES, TRANSLATIONS, CATEGORIES } from '../data';
-import { safeLocalizedText } from '../utils/stringUtils';
+
+function safeLocalizedText(value: unknown, lang: string): string {
+  if (typeof value === 'string') return value;
+  if (!value || typeof value !== 'object') return '';
+  const record = value as Record<string, unknown>;
+  return String(record[lang] ?? record.en ?? record.ar ?? record.ku ?? '');
+}
 
 
 interface InteractiveMapProps {
@@ -46,10 +52,6 @@ export default function InteractiveMap({
   const mappedBusinesses = selectedGov === 'all' 
     ? businesses 
     : businesses.filter(b => b.governorate === selectedGov);
-  const getBusinessName = (business: Business) => safeLocalizedText(business.name, currentLang);
-  const getBusinessAddress = (business: Business) => safeLocalizedText(business.address, currentLang);
-  const getCategoryLabel = (categoryId: string) =>
-    safeLocalizedText(CATEGORIES.find(c => c.id === categoryId)?.name, currentLang);
 
   // Iraqi Cities/Governorates mapped roughly onto an imaginary grid
   // Baghdad: center, Erbil: north, Basra: south, Sulaymaniyah: northeast, Mosul: northwest, Najaf: west-center
@@ -115,9 +117,9 @@ export default function InteractiveMap({
                        : 'bg-white/5 border-white/10 text-zinc-300 hover:border-blue-450/40'
                    }`}
                    aria-pressed={selectedGov === g.code}
-                   aria-label={currentLang === 'en' ? `Filter by ${safeLocalizedText(g.name, 'en')}` : `تصفية حسب ${safeLocalizedText(g.name, currentLang)}`}
+                   aria-label={currentLang === 'en' ? `Filter by ${g.name.en}` : `تصفية حسب ${g.name[currentLang]}`}
                 >
-                  {safeLocalizedText(g.name, currentLang)}
+                  {g.name[currentLang]}
                 </button>
               ))}
             </div>
@@ -238,8 +240,8 @@ export default function InteractiveMap({
                     onKeyDown={(e) => handlePinKeyDown(e, index, totalBiz, 'biz')}
                     className={`biz-pin-btn-${index} absolute leading-none cursor-pointer hover:scale-125 transition-transform duration-300 z-20 group`}
                     style={{ top: `${pinY}%`, left: `${pinX}%` }}
-                    title={`Fast explore ${getBusinessName(biz)}`}
-                    aria-label={currentLang === 'en' ? `Premium Spot: ${safeLocalizedText(biz.name, 'en')}. Click to view details.` : `متجر متميز: ${getBusinessName(biz)}. انقر للتفاصيل.`}
+                    title={`Fast explore ${biz.name[currentLang]}`}
+                    aria-label={currentLang === 'en' ? `Premium Spot: ${biz.name.en}. Click to view details.` : `متجر متميز: ${biz.name[currentLang]}. انقر للتفاصيل.`}
                     aria-haspopup="dialog"
                     aria-expanded={isSelected}
                     tabIndex={0}
@@ -251,7 +253,7 @@ export default function InteractiveMap({
                       
                       {/* Subtle hover business label drawer */}
                       <div className="absolute left-1/2 -translate-x-1/2 bottom-5 bg-slate-900 text-[9px] font-bold text-white px-1.5 py-0.5 rounded border border-zinc-800 scale-0 group-hover:scale-100 transition duration-300 pointer-events-none whitespace-nowrap shadow-xl">
-                        {getBusinessName(biz)}
+                        {biz.name[currentLang]}
                       </div>
                     </div>
                   </button>
@@ -321,10 +323,10 @@ export default function InteractiveMap({
                               <span className="text-pink-500 shrink-0 text-xs font-mono">•</span>
                               <div className="min-w-0">
                                 <h5 className="text-[11px] font-extrabold text-white truncate">
-                                  {getBusinessName(biz)}
+                                  {biz.name[currentLang]}
                                 </h5>
                                 <p className="text-[9px] text-zinc-500 truncate">
-                                  {getCategoryLabel(biz.category)} — {getBusinessAddress(biz)}
+                                  {CATEGORIES.find(c => c.id === biz.category)?.name[currentLang]} — {biz.address[currentLang]}
                                 </p>
                               </div>
                             </div>
@@ -336,7 +338,7 @@ export default function InteractiveMap({
                                   ? 'bg-pink-500/15 text-pink-300 border border-pink-500/30'
                                   : 'bg-white/5 text-zinc-300 hover:bg-white/10 border border-white/5'
                               }`}
-                              aria-label={currentLang === 'en' ? `Inspect Details for ${safeLocalizedText(biz.name, 'en')}` : `عرض تفاصيل ${getBusinessName(biz)}`}
+                              aria-label={currentLang === 'en' ? `Inspect Details for ${biz.name.en}` : `عرض تفاصيل ${biz.name[currentLang]}`}
                               aria-haspopup="dialog"
                               aria-expanded={isSelected}
                             >
@@ -363,19 +365,19 @@ export default function InteractiveMap({
             <div className="absolute inset-x-4 bottom-4 bg-[#020205]/95 border border-white/10 p-3 rounded-2xl flex gap-3 items-center z-30 animate-slideUp shadow-2xl backdrop-blur-md">
               <img
                 src={activePin.image}
-                alt={getBusinessName(activePin)}
+                alt={activePin.name[currentLang]}
                 className="w-14 h-14 rounded-xl object-cover shrink-0 border border-zinc-800"
                 referrerPolicy="no-referrer"
               />
               <div className="flex-1 min-w-0">
                 <span className="text-[8px] font-black uppercase text-pink-400 block mb-0.5">
-                  {getCategoryLabel(activePin.category)}
+                  {CATEGORIES.find(c => c.id === activePin.category)?.name[currentLang]}
                 </span>
                 <h4 className="text-xs font-bold text-white truncate leading-none">
-                  {getBusinessName(activePin)}
+                  {activePin.name[currentLang]}
                 </h4>
                 <p className="text-[10px] text-zinc-400 truncate mt-1">
-                  {getBusinessAddress(activePin)}
+                  {activePin.address[currentLang]}
                 </p>
               </div>
 
@@ -398,16 +400,16 @@ export default function InteractiveMap({
       <div className="sr-only keyboard-accessible-list" aria-label="Keyboard accessible map pin directory">
         {mappedBusinesses.map((biz) => (
           <div key={`sr-pin-${biz.id}`}>
-            <h3>{getBusinessName(biz)}</h3>
-            <p>{getCategoryLabel(biz.category)} - {getBusinessAddress(biz)}</p>
+            <h3>{biz.name[currentLang]}</h3>
+            <p>{CATEGORIES.find(c => c.id === biz.category)?.name[currentLang]} - {biz.address[currentLang]}</p>
             <button
               onClick={() => {
                 setActivePin(biz);
                 setViewMode('list');
               }}
-              aria-label={currentLang === 'en' ? `Open details for ${safeLocalizedText(biz.name, 'en')}` : `عرض تفاصيل ${getBusinessName(biz)}`}
+              aria-label={currentLang === 'en' ? `Open details for ${biz.name.en}` : `عرض تفاصيل ${biz.name[currentLang]}`}
             >
-              {currentLang === 'en' ? `View ${safeLocalizedText(biz.name, 'en')}` : `عرض ${getBusinessName(biz)}`}
+              {currentLang === 'en' ? `View ${biz.name.en}` : `عرض ${biz.name[currentLang]}`}
             </button>
           </div>
         ))}

@@ -3,7 +3,13 @@ import { motion } from 'motion/react';
 import { MapPin, Phone, Calendar, Heart, Bookmark, MessageSquare, ShieldCheck, Check } from 'lucide-react';
 import { Business, Language } from '../types';
 import { GOVERNORATES, CATEGORIES } from '../data';
-import { safeLocalizedText } from '../utils/stringUtils';
+
+function safeLocalizedText(value: unknown, lang: string): string {
+  if (typeof value === 'string') return value;
+  if (!value || typeof value !== 'object') return '';
+  const record = value as Record<string, unknown>;
+  return String(record[lang] ?? record.en ?? record.ar ?? record.ku ?? '');
+}
 
 
 interface BusinessCardProps {
@@ -30,15 +36,12 @@ export default function BusinessCard({
 
   // Find translated category
   const categoryMeta = CATEGORIES.find(c => c.id === business.category);
-  const categoryName = categoryMeta ? safeLocalizedText(categoryMeta.name, currentLang, categoryMeta.name.en) : business.category;
+  const categoryName = categoryMeta ? (categoryMeta.name[currentLang] || categoryMeta.name.en) : business.category;
   const categoryIcon = categoryMeta ? categoryMeta.icon : '🏢';
 
   // Find translated governorate
   const govMeta = GOVERNORATES.find(g => g.code === business.governorate);
-  const govLabel = govMeta ? safeLocalizedText(govMeta.name, currentLang, govMeta.name.en) : business.governorate;
-  const businessName = safeLocalizedText(business.name, currentLang, 'Business');
-  const businessDescription = safeLocalizedText(business.description, currentLang);
-  const businessAddress = safeLocalizedText(business.address, currentLang);
+  const govLabel = govMeta ? (govMeta.name[currentLang] || govMeta.name.en) : business.governorate;
 
   return (
     <motion.div
@@ -56,7 +59,7 @@ export default function BusinessCard({
       <div className="relative h-44 w-full overflow-hidden bg-zinc-950">
         <img
           src={business.image || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&auto=format&fit=crop&q=80'}
-          alt={businessName}
+          alt={safeLocalizedText(business.name, currentLang) || business.name.en}
           className="w-full h-full object-cover brightness-95 transform transition duration-500 hover:scale-105"
           referrerPolicy="no-referrer"
           loading="lazy"
@@ -97,14 +100,14 @@ export default function BusinessCard({
           <div className="space-y-0.5 min-w-0 flex-1">
             <div className="flex items-center gap-1.5 flex-wrap">
               <h4 className="text-sm font-extrabold text-white leading-tight tracking-tight truncate">
-                {businessName}
+                {safeLocalizedText(business.name, currentLang) || business.name.en}
               </h4>
               {business.isVerified && (
                 <ShieldCheck className="w-4 h-4 text-amber-500 shrink-0 fill-amber-500/10" />
               )}
             </div>
             <p className="text-[12px] text-zinc-400 font-medium line-clamp-1">
-              {businessDescription}
+              {safeLocalizedText(business.description, currentLang) || business.description.en}
             </p>
           </div>
         </div>
@@ -114,7 +117,7 @@ export default function BusinessCard({
           <div className="flex items-start gap-1.5">
             <MapPin className="w-3.5 h-3.5 text-zinc-500 shrink-0 mt-0.5" />
             <span className="font-semibold text-zinc-300 leading-normal">
-              {govLabel} — <span className="text-zinc-400 font-normal">{businessAddress}</span>
+              {govLabel} — <span className="text-zinc-400 font-normal">{safeLocalizedText(business.address, currentLang) || business.address.en}</span>
             </span>
           </div>
 
