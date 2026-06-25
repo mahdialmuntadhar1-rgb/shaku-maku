@@ -17,9 +17,8 @@ function isLocalAdminHeroEditor() {
   try {
     const raw = localStorage.getItem('current_user') || localStorage.getItem('user') || '{}';
     const parsed = JSON.parse(raw);
-    const email = String(parsed?.email || '').trim().toLowerCase();
     const role = String(parsed?.role || '').trim().toLowerCase();
-    return email === 'safaribosafar@gmail.com' || role === 'admin';
+    return role === 'admin' || Number(parsed?.is_admin || 0) === 1;
   } catch {
     return false;
   }

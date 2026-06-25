@@ -8,7 +8,7 @@ export const useAdmin = () => {
 
   const check = () => {
     const user = readSession()?.user;
-    const nextIsAdmin = user?.role === 'admin';
+    const nextIsAdmin = user?.role === 'admin' || Number(user?.is_admin || 0) === 1;
     setIsAdmin(nextIsAdmin);
     setAdminEmail(nextIsAdmin ? user.email : '');
     setLoading(false);

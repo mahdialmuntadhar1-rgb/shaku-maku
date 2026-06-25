@@ -6,7 +6,9 @@ import {
   ChevronDown, MapPin, Coffee, MessageCircle, Share2, Store
 } from 'lucide-react';
 import { Language, GovernorateCode, Business, SocialPost, UserProfile, HeroSlide } from './types';
-import { TRANSLATIONS, CATEGORIES, GOVERNORATES, HERO_SLIDES } from './data';
+import { CATEGORIES, GOVERNORATES, HERO_SLIDES } from './data';
+import { LANGUAGE_OPTIONS, TRANSLATIONS } from './i18n/translations';
+import { useLanguage } from './i18n/LanguageProvider';
 import { authApi, businessesApi, postsApi, heroSlidesApi } from './api';
 
 // Saku Maku Modular Components
@@ -445,13 +447,12 @@ function normalizeCategory(value: unknown): string {
 }
 
 export default function App() {
-  const preferredLang = (localStorage.getItem('preferred_lang') as Language | null);
+  const { currentLang, setLanguage, hasSavedLanguage } = useLanguage();
   const [user, setUser] = useState<any>(authApi.getCurrentUser());
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   
-  const [currentLang, setCurrentLang] = useState<Language>(preferredLang || 'ar');
-  const [showLanguageGate, setShowLanguageGate] = useState<boolean>(!preferredLang);
+  const [showLanguageGate, setShowLanguageGate] = useState<boolean>(() => !hasSavedLanguage);
   const [selectedGov, setSelectedGov] = useState<GovernorateCode>('all'); // Default: All Iraq
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
@@ -550,8 +551,8 @@ export default function App() {
     }));
     authApi.getMe()
       .then((me) => {
-        const meEmail = String(me.email || '').toLowerCase();
         const role = ((me.role as any) || 'user');
+        const backendIsAdmin = role === 'admin' || Number((me as any).is_admin || 0) === 1;
 
         setUserProfile({
           uid: me.id,
@@ -563,7 +564,7 @@ export default function App() {
           onboarded: true,
           businessId: null
         });
-        setIsAdmin(role === 'admin');
+        setIsAdmin(backendIsAdmin);
       })
       .catch((error) => {
         console.warn('Using local auth profile because /auth/me failed:', error);
@@ -765,6 +766,15 @@ export default function App() {
         avatar: biz.avatar || FALLBACK_AVATAR,
         isVerified: Boolean(biz.is_verified),
         phoneNumber: biz.phone_number || '',
+        email: biz.email || '',
+        website: biz.website || '',
+        whatsapp: biz.whatsapp || '',
+        facebook: biz.facebook || '',
+        instagram: biz.instagram || '',
+        source_url: biz.source_url || '',
+        source_name: biz.source_name || '',
+        status: biz.status || '',
+        verification_status: biz.verification_status || '',
         address: {
           ar: biz.address_ar || '',
           ku: biz.address_ku || '',
@@ -883,7 +893,7 @@ export default function App() {
           commentsCount: Number(post.comments_count || 0),
           shares: Number(post.shares || 0),
           views: Number(post.views || 0),
-          timeAgo: { ar: 'Ã˜Â§Ã™â€žÃ˜Â¢Ã™â€ ', ku: 'Ã˜Â¦Ã›Å½Ã˜Â³Ã˜ÂªÃ˜Â§', en: 'Just now' },
+          timeAgo: { ar: 'الآن', ku: 'ئێستا', en: 'Just now' },
           likedByUser: false,
           savedByUser: false,
           comments: [],
@@ -934,36 +944,47 @@ export default function App() {
     });
   }, [businesses, selectedGov, selectedCategory, searchQuery, currentLang]);
 
-  // Handle Likes state toggle (local state for now, API support needed)
-  const handleToggleLike = async (bizId: string) => {
-    const target = businesses.find(b => b.id === bizId);
-    if (!target) return;
-    const liked = !target.likedByUser;
-    setBusinesses(businesses.map(b => 
-      b.id === bizId 
-        ? { ...b, likedByUser: liked, likes: liked ? b.likes + 1 : b.likes - 1 }
-        : b
-    ));
-    // TODO: Call API to persist like
-  };
-
-  // Handle Saves state toggle (local state for now, API support needed)
-  const handleToggleSave = async (bizId: string) => {
-    const target = businesses.find(b => b.id === bizId);
-    if (!target) return;
-    const saved = !target.savedByUser;
-    setBusinesses(businesses.map(b => 
-      b.id === bizId 
-        ? { ...b, savedByUser: saved, saves: saved ? b.saves + 1 : b.saves - 1 }
-        : b
-    ));
-    // TODO: Call API to persist save
-  };
-
-  // Callback to add a new business (API support needed)
   const handleAddLiveBusiness = async (newBiz: Omit<Business, 'rating' | 'reviewsCount' | 'likes' | 'saves'>) => {
-    console.log("Add business not implemented in backend yet");
-    // TODO: Call API to create business
+    const response = await businessesApi.create({
+      name_ar: newBiz.name.ar,
+      name_ku: newBiz.name.ku,
+      name_en: newBiz.name.en,
+      description_ar: newBiz.description.ar,
+      description_ku: newBiz.description.ku,
+      description_en: newBiz.description.en,
+      address_ar: newBiz.address.ar,
+      address_ku: newBiz.address.ku,
+      address_en: newBiz.address.en,
+      phone_number: newBiz.phoneNumber,
+      category: newBiz.category,
+      governorate: newBiz.governorate,
+      image: newBiz.image,
+      avatar: newBiz.avatar,
+      is_verified: newBiz.isVerified ? 1 : 0,
+      map_coords_x: newBiz.mapCoords.x,
+      map_coords_y: newBiz.mapCoords.y,
+      email: newBiz.email,
+      website: newBiz.website,
+      whatsapp: newBiz.whatsapp,
+      facebook: newBiz.facebook,
+      instagram: newBiz.instagram,
+      source_url: newBiz.source_url,
+      source_name: newBiz.source_name,
+      status: newBiz.status || 'approved',
+      verification_status: newBiz.verification_status || 'unverified'
+    });
+    const row = (response as any)?.data || response;
+    setBusinesses((prev) => [
+      {
+        ...newBiz,
+        id: String(row?.id || newBiz.id),
+        rating: Number(row?.rating || 0),
+        reviewsCount: Number(row?.reviews_count || 0),
+        likes: Number(row?.likes || row?.like_count || 0),
+        saves: Number(row?.saves || row?.save_count || 0)
+      },
+      ...prev
+    ]);
   };
 
   // Stories auto advancing timer handler
@@ -1009,8 +1030,7 @@ export default function App() {
   };
 
   const chooseLanguage = (lang: Language) => {
-    setCurrentLang(lang);
-    localStorage.setItem('preferred_lang', lang);
+    setLanguage(lang);
     setShowLanguageGate(false);
   };
 
@@ -1018,11 +1038,19 @@ export default function App() {
     return (
       <div className="min-h-screen bg-[#1A1A1A] flex items-center justify-center p-6">
         <div className="w-full max-w-md bg-[#111] border border-luxury-gold/30 rounded-3xl p-6 space-y-4 text-center">
-          <h2 className="text-white font-black text-xl">Choose Language</h2>
-          <p className="text-zinc-400 text-sm">Ã˜Â§Ã˜Â®Ã˜ÂªÃ˜Â± Ã™â€žÃ˜ÂºÃ˜ÂªÃ™Æ’ / Ã˜Â²Ã™â€¦Ã˜Â§Ã™â€ Ã›â€¢ÃšÂ©Ã›â€¢Ã˜Âª Ã™â€¡Ã›â€¢ÃšÂµÃ˜Â¨ÃšËœÃ›Å½Ã˜Â±Ã›â€¢</p>
-          <button onClick={() => chooseLanguage('ar')} className="w-full py-3 rounded-2xl bg-gradient-to-r from-luxury-teal to-luxury-gold text-white font-black cursor-pointer">Ã˜Â§Ã™â€žÃ˜Â¹Ã˜Â±Ã˜Â¨Ã™Å Ã˜Â©</button>
-          <button onClick={() => chooseLanguage('ku')} className="w-full py-3 rounded-2xl bg-gradient-to-r from-luxury-teal to-luxury-gold text-white font-black cursor-pointer">ÃšÂ©Ã™Ë†Ã˜Â±Ã˜Â¯Ã›Å’</button>
-          <button onClick={() => chooseLanguage('en')} className="w-full py-3 rounded-2xl bg-gradient-to-r from-luxury-teal to-luxury-gold text-white font-black cursor-pointer">English</button>
+          <h2 className="text-white font-black text-xl">{t.languageGateTitle}</h2>
+          <p className="text-zinc-400 text-sm">{t.languageGateSubtitle}</p>
+          {LANGUAGE_OPTIONS.map((language) => (
+            <button
+              key={language.code}
+              onClick={() => chooseLanguage(language.code)}
+              className="w-full py-3 rounded-2xl bg-gradient-to-r from-luxury-teal to-luxury-gold text-white font-black cursor-pointer"
+              dir={language.dir}
+              lang={language.code}
+            >
+              {language.label}
+            </button>
+          ))}
         </div>
       </div>
     );
@@ -1042,11 +1070,7 @@ export default function App() {
       <Header
         currentLang={currentLang}
         onChangeLang={(lang) => {
-          setCurrentLang(lang);
-          localStorage.setItem('preferred_lang', lang);
-          // Sync HTML document direction and language attributes for responsive RTL/LTR transition support
-          document.documentElement.dir = lang === 'en' ? 'ltr' : 'rtl';
-          document.documentElement.lang = lang;
+          setLanguage(lang);
         }}
         selectedGov={selectedGov}
         onChangeGov={(gov) => {
@@ -1133,11 +1157,7 @@ export default function App() {
             <div className="text-[10px] font-black text-luxury-gold uppercase tracking-wider mb-1.5 text-center flex items-center justify-center gap-1.5">
               <MapPin className="w-3.5 h-3.5 text-luxury-gold shrink-0" />
               <span>
-                {currentLang === 'en'
-                  ? 'Select Iraqi Governorate / Region'
-                  : currentLang === 'ku'
-                    ? "\u067e\u0627\u0631\u06ce\u0632\u06af\u0627 \u0647\u06d5\u06b5\u0628\u0698\u06ce\u0631\u06d5"
-                    : "\u0627\u062e\u062a\u0631 \u0627\u0644\u0645\u062d\u0627\u0641\u0638\u0629 \u0627\u0644\u0639\u0631\u0627\u0642\u064a\u0629"}
+                {t.selectGovernorate}
               </span>
             </div>
 
@@ -1185,11 +1205,7 @@ export default function App() {
           <div>
             <div className="text-[10px] font-black text-luxury-gold uppercase tracking-wider mb-1.5 text-center flex items-center justify-center gap-1.5">
               <span>
-                {currentLang === 'en'
-                  ? '🔎 Filter by Category'
-                  : currentLang === 'ku'
-                    ? "\u{1F50E} \u0628\u06d5\u067e\u06ce\u06cc \u067e\u06c6\u0644 \u0647\u06d5\u06b5\u0628\u0698\u06ce\u0631\u06d5"
-                    : "\u{1F50E} \u062a\u0635\u0641\u064a\u0629 \u062d\u0633\u0628 \u0627\u0644\u0641\u0626\u0629"}
+                🔎 {t.filterByCategory}
               </span>
             </div>
 
@@ -1208,11 +1224,7 @@ export default function App() {
                   <span>
                     {selectedCategory
                       ? CATEGORIES.find(c => c.id === selectedCategory)?.name[currentLang]
-                      : (currentLang === 'en'
-                          ? 'All Categories'
-                          : currentLang === 'ku'
-                            ? "\u0647\u06d5\u0645\u0648\u0648 \u067e\u06c6\u0644\u06d5\u06a9\u0627\u0646"
-                            : "\u062c\u0645\u064a\u0639 \u0627\u0644\u0641\u0626\u0627\u062a")}
+                      : t.allCategories}
                   </span>
                 </div>
                 <ChevronDown className={'w-4 h-4 text-luxury-gold transition-transform duration-300 ' + (categoryDropdownOpen ? 'rotate-180' : '')} />
@@ -1234,11 +1246,7 @@ export default function App() {
                     }
                   >
                     <span>
-                      🏷️ {currentLang === 'en'
-                        ? 'All Categories'
-                        : currentLang === 'ku'
-                          ? "\u0647\u06d5\u0645\u0648\u0648 \u067e\u06c6\u0644\u06d5\u06a9\u0627\u0646"
-                          : "\u062c\u0645\u064a\u0639 \u0627\u0644\u0641\u0626\u0627\u062a"}
+                      🏷️ {t.allCategories}
                     </span>
                     {selectedCategory === null && <span className="text-[9px]">✨</span>}
                   </button>
@@ -1290,10 +1298,10 @@ export default function App() {
               <div className="relative z-10 flex h-full flex-col items-center justify-between gap-2 sm:gap-4">
                 <div>
                   <h3 className="text-lg xs:text-xl sm:text-5xl font-black text-rose-100 leading-tight [font-family:Tahoma,Arial,sans-serif]">
-                    {currentLang === 'en' ? 'Chaykhana' : currentLang === 'ku' ? 'چایخانە' : 'چايخانة'}
+                    {t.chaykhana}
                   </h3>
                   <p className="mt-1 text-[11px] sm:text-lg font-bold text-rose-100/75 [font-family:Tahoma,Arial,sans-serif]">
-                    {currentLang === 'en' ? 'See what is new' : currentLang === 'ku' ? 'ببینە چی نوێیە' : 'شوف شنو الجديد'}
+                    {t.chaykhanaSub}
                   </p>
                 </div>
 
@@ -1309,7 +1317,7 @@ export default function App() {
                 </div>
 
                 <div className="w-full rounded-full border border-rose-200/45 px-2 py-2 sm:px-5 sm:py-3 text-[11px] sm:text-sm font-black text-rose-50 [font-family:Tahoma,Arial,sans-serif]">
-                  {currentLang === 'en' ? 'Enter' : currentLang === 'ku' ? 'چوونەژوور' : 'الدخول'}
+                  {t.enter}
                 </div>
               </div>
             </button>
@@ -1333,10 +1341,10 @@ export default function App() {
               <div className="relative z-10 flex h-full flex-col items-center justify-between gap-2 sm:gap-4">
                 <div>
                   <h3 className="text-lg xs:text-xl sm:text-5xl font-black text-cyan-100 leading-tight [font-family:Tahoma,Arial,sans-serif]">
-                    {currentLang === 'en' ? 'Shko Maku' : currentLang === 'ku' ? 'شکو ماکو' : 'شكو ماكو'}
+                    {t.appName}
                   </h3>
                   <p className="mt-1 text-[11px] sm:text-lg font-bold text-cyan-100/75 [font-family:Tahoma,Arial,sans-serif]">
-                    {currentLang === 'en' ? 'Business directory' : currentLang === 'ku' ? 'ڕێبەری کار و خزمەتگوزاری' : 'دليل الأعمال والخدمات'}
+                    {t.businessDirectory}
                   </p>
                 </div>
 
@@ -1352,28 +1360,28 @@ export default function App() {
 
                 <div className="grid grid-cols-2 gap-1 sm:gap-2 w-full text-[9px] sm:text-sm font-black [font-family:Tahoma,Arial,sans-serif]">
                   <span className="rounded-full border border-cyan-100/25 bg-white/10 px-1.5 py-1 sm:px-3 sm:py-2 text-cyan-50">
-                    {currentLang === 'en' ? 'Cafes' : currentLang === 'ku' ? 'کافێ' : 'كافيهات'}
+                    {t.cafes}
                   </span>
                   <span className="rounded-full border border-cyan-100/25 bg-white/10 px-1.5 py-1 sm:px-3 sm:py-2 text-cyan-50">
-                    {currentLang === 'en' ? 'Restaurants' : currentLang === 'ku' ? 'چێشتخانە' : 'مطاعم'}
+                    {t.restaurants}
                   </span>
                   <span className="rounded-full border border-cyan-100/25 bg-white/10 px-1.5 py-1 sm:px-3 sm:py-2 text-cyan-50">
-                    {currentLang === 'en' ? 'Doctors' : currentLang === 'ku' ? 'دکتۆر' : 'أطباء'}
+                    {t.doctors}
                   </span>
                   <span className="rounded-full border border-cyan-100/25 bg-white/10 px-1.5 py-1 sm:px-3 sm:py-2 text-cyan-50">
-                    {currentLang === 'en' ? 'More' : currentLang === 'ku' ? 'زیاتر' : 'المزيد'}
+                    {t.more}
                   </span>
                 </div>
 
                 <div className="w-full rounded-full border border-cyan-100/45 px-2 py-2 sm:px-5 sm:py-3 text-[11px] sm:text-sm font-black text-cyan-50 [font-family:Tahoma,Arial,sans-serif]">
-                  {currentLang === 'en' ? 'Enter' : currentLang === 'ku' ? 'چوونەژوور' : 'الدخول'}
+                  {t.enter}
                 </div>
               </div>
             </button>
           </div>
 
           <p className="mt-3 sm:mt-5 text-center text-[11px] sm:text-sm font-bold text-zinc-400 [font-family:Tahoma,Arial,sans-serif]">
-            {currentLang === 'en' ? 'Choose the section you want to enter' : currentLang === 'ku' ? 'ئەو بەشە هەڵبژێرە کە دەتەوێت بچیتە ناوی' : 'اختر القسم الذي تريد الدخول إليه'}
+            {t.chooseSection}
           </p>
         </div>
 
@@ -1403,8 +1411,6 @@ export default function App() {
                   selectedCategory={selectedCategory}
                   businesses={filteredBusinesses}
                   businessesLoading={businessesLoading}
-                  onToggleLike={handleToggleLike}
-                  onToggleSave={handleToggleSave}
                   onSelectStory={(stories) => {
                     setActiveStory(stories);
                     setActiveStoryIdx(0);
@@ -1485,7 +1491,7 @@ export default function App() {
               </motion.div>
             )}
 
-            {activeTab === 'admin' && (
+            {activeTab === 'admin' && isAdmin && (
               <motion.div
                 key="admin"
                 initial={{ opacity: 0, y: 15 }}
@@ -1582,18 +1588,20 @@ export default function App() {
           <span className="text-[9px] font-black tracking-tight">Mission</span>
         </button>
 
-        <button
-          onClick={() => setActiveTab('admin')}
-          className={`flex flex-col items-center justify-center flex-1 py-1 px-2.5 rounded-xl transition-all duration-300 cursor-pointer ${
-            activeTab === 'admin'
-              ? 'text-luxury-gold font-bold bg-white/5 border border-luxury-gold/25'
-              : 'text-zinc-400 hover:text-white/80'
-          }`}
-          id="nav-tab-admin"
-        >
-          <Lock className="w-5 h-5 mb-1" />
-          <span className="text-[9px] font-black tracking-tight">Admin</span>
-        </button>
+        {isAdmin && (
+          <button
+            onClick={() => setActiveTab('admin')}
+            className={`flex flex-col items-center justify-center flex-1 py-1 px-2.5 rounded-xl transition-all duration-300 cursor-pointer ${
+              activeTab === 'admin'
+                ? 'text-luxury-gold font-bold bg-white/5 border border-luxury-gold/25'
+                : 'text-zinc-400 hover:text-white/80'
+            }`}
+            id="nav-tab-admin"
+          >
+            <Lock className="w-5 h-5 mb-1" />
+            <span className="text-[9px] font-black tracking-tight">Admin</span>
+          </button>
+        )}
         
       </div>
 
@@ -1705,5 +1713,3 @@ export default function App() {
     </div>
   );
 }
-
-

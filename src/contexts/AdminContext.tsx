@@ -27,12 +27,13 @@ export const AdminProvider: React.FC<AdminProviderProps> = ({ children }) => {
   const [isAdmin, setIsAdmin] = useState(false);
 
   const checkAdmin = (): void => {
-    setIsAdmin(readSession()?.user.role === 'admin');
+    const user = readSession()?.user;
+    setIsAdmin(user?.role === 'admin' || Number(user?.is_admin || 0) === 1);
   };
 
-  const setAdminByEmail = (email: string): void => {
+  const setAdminByEmail = (_email: string): void => {
     const session = readSession();
-    setIsAdmin(Boolean(email && session?.user.email === email && session.user.role === 'admin'));
+    setIsAdmin(session?.user.role === 'admin' || Number(session?.user.is_admin || 0) === 1);
   };
 
   useEffect(() => {

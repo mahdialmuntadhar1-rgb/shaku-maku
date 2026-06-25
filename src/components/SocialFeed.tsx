@@ -6,6 +6,8 @@ import { normalizeGovernorate } from '../utils/taxonomy';
 import { buildLocalizedSocialPosts, LOCALIZED_SOCIAL_POST_COUNT } from '../data/socialFeedSeed';
 import { GovernorateCode, Language, SocialPost } from '../types';
 
+const ENABLE_DEMO_SOCIAL_POSTS = import.meta.env.DEV || import.meta.env.VITE_ENABLE_DEMO_SOCIAL_POSTS === 'true';
+
 interface SocialFeedProps {
   currentLang: Language;
   selectedGov: GovernorateCode;
@@ -44,7 +46,8 @@ const text = {
     commentSend: 'Comment',
     copied: 'Link copied',
     backendLoaded: 'backend database posts loaded',
-    fallbackLoaded: 'fallback posts until backend loads',
+    fallbackLoaded: 'demo posts shown',
+    uploadDisabled: 'Media upload is disabled until object storage is connected. Paste a hosted image/video URL is planned next.',
   },
   ar: {
     composerTitle: 'إنشاء منشور',
@@ -74,7 +77,8 @@ const text = {
     commentSend: 'تعليق',
     copied: 'تم نسخ الرابط',
     backendLoaded: 'منشور من قاعدة البيانات',
-    fallbackLoaded: 'منشورات احتياطية إلى أن يعمل الخادم',
+    fallbackLoaded: 'منشورات تجريبية',
+    uploadDisabled: 'رفع الوسائط متوقف لحين ربط تخزين ملفات حقيقي.',
   },
   ku: {
     composerTitle: 'دروستکردنی بابەت',
@@ -104,7 +108,8 @@ const text = {
     commentSend: 'کۆمێنت',
     copied: 'لینک کۆپی کرا',
     backendLoaded: 'پۆستی داتابەیس بارکرا',
-    fallbackLoaded: 'پۆستی جێگرەوە تا باکەند کاردەکات',
+    fallbackLoaded: 'پۆستی دیمۆ',
+    uploadDisabled: 'بارکردنی میدیا ناچالاکە تا کۆگای فایل بەستراو دەبێت.',
   }
 } as const;
 
@@ -207,7 +212,7 @@ export default function SocialFeed({
   const [attachmentKind, setAttachmentKind] = useState<'image' | 'video' | null>(null);
   const [statusText, setStatusText] = useState('');
   const [posting, setPosting] = useState(false);
-  const [generatedPosts] = useState<SocialPost[]>(() => buildLocalizedSocialPosts([]));
+  const [generatedPosts] = useState<SocialPost[]>(() => ENABLE_DEMO_SOCIAL_POSTS ? buildLocalizedSocialPosts([]) : []);
   const [visibleCount, setVisibleCount] = useState(12);
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
   const [editCaption, setEditCaption] = useState('');
@@ -218,7 +223,7 @@ export default function SocialFeed({
 
   const userId = String(user?.id || user?.uid || '');
   const userEmail = String(user?.email || '').toLowerCase();
-  const isAdmin = userEmail === 'safaribosafar@gmail.com' || user?.role === 'admin';
+  const isAdmin = user?.role === 'admin' || Number(user?.is_admin || 0) === 1;
 
   const sourcePosts = posts.length > 0 ? posts : generatedPosts;
 
@@ -245,22 +250,10 @@ export default function SocialFeed({
   };
 
   const onPickMedia = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    if (file.size > 900000) {
-      setStatusText(currentLang === 'en' ? 'Media is too large. Please use a smaller image/video.' : currentLang === 'ku' ? 'میدیاکە زۆر گەورەیە. تکایە فایلێکی بچووکتر بەکاربهێنە.' : 'الملف كبير جداً. يرجى استخدام صورة/فيديو أصغر.');
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      const value = String(reader.result || '');
-      if (!value) return;
-      setAttachmentDataUrl(value);
-      setAttachmentKind(file.type.startsWith('video/') ? 'video' : 'image');
-    };
-    reader.readAsDataURL(file);
+    event.target.value = '';
+    setAttachmentDataUrl('');
+    setAttachmentKind(null);
+    setStatusText(t.uploadDisabled);
   };
 
   const onCreatePost = async (event: React.FormEvent) => {
@@ -287,8 +280,8 @@ export default function SocialFeed({
         caption_ar: caption.trim(),
         caption_ku: caption.trim(),
         caption_en: caption.trim(),
-        media_url: attachmentKind === 'image' ? attachmentDataUrl || null : null,
-        video_url: attachmentKind === 'video' ? attachmentDataUrl || null : null,
+        media_url: null,
+        video_url: null,
         governorate: selectedPostGov,
         category: 'community'
       };
@@ -468,7 +461,7 @@ export default function SocialFeed({
             <h2 className="text-2xl md:text-3xl font-black leading-tight">{t.feedTitle}</h2>
             <p className="text-sm text-zinc-300 mt-2 max-w-2xl">{t.feedSub}</p>
             <p className="text-[11px] text-zinc-400 mt-2">
-              {posts.length > 0 ? `${posts.length} ${t.backendLoaded}` : `${LOCALIZED_SOCIAL_POST_COUNT} ${t.fallbackLoaded}`}
+              {posts.length > 0 ? `${posts.length} ${t.backendLoaded}` : ENABLE_DEMO_SOCIAL_POSTS ? `${LOCALIZED_SOCIAL_POST_COUNT} ${t.fallbackLoaded}` : ''}
             </p>
           </div>
         </div>
@@ -517,10 +510,10 @@ export default function SocialFeed({
           )}
 
           <div className="flex flex-wrap items-center gap-2">
-            <label className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-[#242526] border border-white/10 text-xs font-semibold cursor-pointer hover:bg-[#2f3031]">
+            <label className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-[#242526] border border-white/10 text-xs font-semibold opacity-60 cursor-not-allowed">
               <ImagePlus className="w-4 h-4" />
               <span>{t.media}</span>
-              <input type="file" accept="image/*,video/*" className="hidden" onChange={onPickMedia} />
+              <input type="file" accept="image/*,video/*" className="hidden" onChange={onPickMedia} disabled />
             </label>
 
             <button

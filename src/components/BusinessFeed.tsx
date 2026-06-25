@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  Heart, Bookmark, Star, MapPin, Phone, Share2, Edit3, Save, 
+import {
+  Star, MapPin, Phone, Share2, Edit3, Save,
   CheckCircle2, FolderHeart, Award, Eye, MessageCircle, X, Send, Gift 
 } from 'lucide-react';
 import { Business, Language, GovernorateCode } from '../types';
@@ -9,14 +9,33 @@ import { CATEGORIES, TRANSLATIONS } from '../data';
 import { normalizeGovernorate, normalizeCategory } from '../utils/taxonomy';
 import { businessesApi, getApiErrorMessage } from '../api';
 
+const ENABLE_LOCAL_REVIEWS = import.meta.env.DEV || import.meta.env.VITE_ENABLE_DEMO_REVIEWS === 'true';
+
+function normalizePhoneForHref(value: string | undefined): string {
+  return String(value || '').replace(/[^\d+]/g, '');
+}
+
+function normalizeExternalUrl(value: string | undefined): string {
+  const clean = String(value || '').trim();
+  if (!clean || clean.startsWith('@')) return '';
+  return /^https?:\/\//i.test(clean) ? clean : `https://${clean}`;
+}
+
+function businessExternalLinks(biz: Business): Array<{ label: string; href: string }> {
+  return [
+    { label: 'Website', href: normalizeExternalUrl(biz.website) },
+    { label: 'Facebook', href: normalizeExternalUrl(biz.facebook) },
+    { label: 'Instagram', href: normalizeExternalUrl(biz.instagram) },
+    { label: biz.source_name || 'Source', href: normalizeExternalUrl(biz.source_url) }
+  ].filter((item) => item.href);
+}
+
 interface BusinessFeedProps {
   currentLang: Language;
   selectedGov: GovernorateCode;
   selectedCategory: string | null;
   businesses: Business[];
   businessesLoading?: boolean;
-  onToggleLike: (bizId: string) => void;
-  onToggleSave: (bizId: string) => void;
   onSelectStory: (stories: string[]) => void;
   isAdmin?: boolean;
   setBusinesses?: React.Dispatch<React.SetStateAction<Business[]>>;
@@ -28,8 +47,6 @@ export default function BusinessFeed({
   selectedCategory,
   businesses,
   businessesLoading = false,
-  onToggleLike,
-  onToggleSave,
   onSelectStory,
   isAdmin = false,
   setBusinesses
@@ -89,27 +106,6 @@ export default function BusinessFeed({
       .replace(/\b(nineveh|ninewa|ninawa|nainawa|niniveh|neneveh|neniva)\b/gi, 'Mosul / Nineveh')
       .replace(/نينوى|نينوي/g, 'الموصل / نينوى');
   }
-  function extractExternalLinks(value: string | undefined): Array<{ label: string; href: string }> {
-    const raw = String(value || '');
-    const links: Array<{ label: string; href: string }> = [];
-
-    const website = raw.match(/website:\s*([^|\n]+)/i)?.[1]?.trim();
-    const facebook = raw.match(/facebook:\s*([^|\n]+)/i)?.[1]?.trim();
-    const instagram = raw.match(/instagram:\s*([^|\n]+)/i)?.[1]?.trim();
-
-    if (website && !website.includes('example.com') && !website.includes('www.biz.iq')) {
-      links.push({ label: 'Website', href: website.startsWith('http') ? website : `https://${website}` });
-    }
-    if (facebook && !facebook.includes('fb.com/biz') && !facebook.includes('facebook.com/biz')) {
-      links.push({ label: 'Facebook', href: facebook.startsWith('http') ? facebook : `https://${facebook}` });
-    }
-    if (instagram && instagram !== '@biz' && !instagram.includes('instagram.com/biz')) {
-      links.push({ label: 'Instagram', href: instagram.startsWith('http') ? instagram : `https://${instagram}` });
-    }
-
-    return links;
-  }
-
   function startInlineEdit(biz: Business) {
     setEditingBusinessId(biz.id);
     setBusinessEditDraft({
@@ -494,7 +490,7 @@ export default function BusinessFeed({
 
                             {biz.phoneNumber && (
                               <a
-                                href={`tel:${biz.phoneNumber}`}
+                                href={`tel:${normalizePhoneForHref(biz.phoneNumber)}`}
                                 className="inline-flex items-center gap-1 text-[9px] xs:text-[11px] text-emerald-700 font-black mb-1 xs:mb-2"
                                 dir="ltr"
                               >
@@ -504,12 +500,12 @@ export default function BusinessFeed({
                             )}
 
                             <div className="flex flex-wrap gap-1 mb-1">
-                              {extractExternalLinks(biz.description[currentLang]).slice(0, 3).map((link) => (
+                              {businessExternalLinks(biz).slice(0, 3).map((link) => (
                                 <a
                                   key={link.label}
                                   href={link.href}
                                   target="_blank"
-                                  rel="noreferrer"
+                                  rel="noopener noreferrer"
                                   className="text-[8px] font-black px-1.5 py-0.5 rounded-full bg-zinc-100 text-zinc-300 border border-zinc-200"
                                 >
                                   {link.label}
@@ -545,38 +541,6 @@ export default function BusinessFeed({
 
                         <div className="flex items-center gap-1 w-full xs:w-auto justify-end">
                           
-                          {/* Like Button */}
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onToggleLike(biz.id);
-                            }}
-                            className={`p-1 xs:p-1.5 rounded-lg border transition cursor-pointer ${
-                              biz.likedByUser
-                                ? 'bg-pink-50 border-pink-500 text-pink-600'
-                                : 'bg-zinc-100 hover:bg-zinc-200 border-zinc-200 text-zinc-300 hover:text-pink-600'
-                            }`}
-                            title="Like place"
-                          >
-                            <Heart className={`w-3 xs:w-3.5 h-3 xs:h-3.5 ${biz.likedByUser ? 'fill-pink-600' : ''}`} />
-                          </button>
-
-                          {/* Save Button */}
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onToggleSave(biz.id);
-                            }}
-                            className={`p-1 xs:p-1.5 rounded-lg border transition cursor-pointer ${
-                              biz.savedByUser
-                                ? 'bg-teal-50 border-luxury-teal text-luxury-teal'
-                                : 'bg-zinc-100 hover:bg-zinc-200 border-zinc-200 text-zinc-300 hover:text-luxury-teal'
-                            }`}
-                            title="Save location"
-                          >
-                            <Bookmark className={`w-3 xs:w-3.5 h-3 xs:h-3.5 ${biz.savedByUser ? 'fill-luxury-teal' : ''}`} />
-                          </button>
-
                           {isAdmin && (
                             <button
                               onClick={(e) => {
@@ -775,6 +739,7 @@ export default function BusinessFeed({
                 </div>
 
                 {/* Visitor Review Center (Live Community Commenter) */}
+                {ENABLE_LOCAL_REVIEWS && (
                 <div className="space-y-4">
                   <div className="flex items-center justify-between border-b border-zinc-800 pb-2">
                     <h3 className="text-sm font-extrabold text-white flex items-center gap-1.5">
@@ -901,52 +866,46 @@ export default function BusinessFeed({
 
                   </div>
                 </div>
+                )}
 
               </div>
 
               {/* Bottom footer bar */}
               <div className="p-4 bg-slate-950 border-t border-zinc-800 flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => {
-                      onToggleLike(selectedBiz.id);
-                      // mutate local state in selectedBiz
-                      setSelectedBiz(prev => prev ? { ...prev, likedByUser: !prev.likedByUser } : null);
-                    }}
-                    className={`flex items-center gap-1 text-xs px-3 py-2 rounded-xl border ${
-                      selectedBiz.likedByUser
-                        ? 'bg-pink-950/40 border-pink-500 text-pink-400'
-                        : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-white'
-                    }`}
-                  >
-                    <Heart className={`w-4 h-4 ${selectedBiz.likedByUser ? 'fill-pink-500' : ''}`} />
-                    <span>{t.likes}</span>
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      onToggleSave(selectedBiz.id);
-                      setSelectedBiz(prev => prev ? { ...prev, savedByUser: !prev.savedByUser } : null);
-                    }}
-                    className={`flex items-center gap-1 text-xs px-3 py-2 rounded-xl border ${
-                      selectedBiz.savedByUser
-                        ? 'bg-cyan-950/40 border-cyan-500 text-cyan-400'
-                        : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-white'
-                    }`}
-                  >
-                    <Bookmark className={`w-4 h-4 ${selectedBiz.savedByUser ? 'fill-cyan-500' : ''}`} />
-                    <span>{t.saves}</span>
-                  </button>
+                <div className="flex items-center gap-2 flex-wrap">
+                  {businessExternalLinks(selectedBiz).map((link) => (
+                    <a
+                      key={link.label}
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs px-3 py-2 rounded-xl border bg-zinc-900 border-zinc-800 text-zinc-300 hover:text-white"
+                    >
+                      {link.label}
+                    </a>
+                  ))}
                 </div>
 
                 <div className="flex items-center gap-2">
                   {selectedBiz.phoneNumber && (
                     <a
-                      href={`tel:${selectedBiz.phoneNumber}`}
+                      href={`tel:${normalizePhoneForHref(selectedBiz.phoneNumber)}`}
                       className="p-2 bg-green-600 hover:bg-green-500 text-white rounded-xl transition"
                       title="Call business"
                     >
                       <Phone className="w-4 h-4" />
+                    </a>
+                  )}
+
+                  {(selectedBiz.whatsapp || selectedBiz.phoneNumber) && (
+                    <a
+                      href={`https://wa.me/${normalizePhoneForHref(selectedBiz.whatsapp || selectedBiz.phoneNumber).replace(/^\+/, '')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-2 bg-emerald-700 hover:bg-emerald-600 text-white rounded-xl transition text-xs font-black"
+                      title="WhatsApp"
+                    >
+                      WhatsApp
                     </a>
                   )}
 
@@ -968,4 +927,3 @@ export default function BusinessFeed({
     </div>
   );
 }
-

@@ -84,9 +84,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
   const session = readSession();
   const signedInEmail = (userProfile?.email || session?.user?.email || '').toLowerCase();
   const hasAdminAccess =
-    signedInEmail === 'safaribosafar@gmail.com' ||
     userProfile?.role === 'admin' ||
-    session?.user?.role === 'admin';
+    session?.user?.role === 'admin' ||
+    Number(session?.user?.is_admin || 0) === 1;
 
   if (!hasAdminAccess) {
     return (
@@ -1149,6 +1149,5 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
 };
 
 export default AdminPanel;
-
 
 

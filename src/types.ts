@@ -44,6 +44,15 @@ export interface Business {
   avatar: string;
   isVerified: boolean;
   phoneNumber?: string;
+  email?: string;
+  website?: string;
+  whatsapp?: string;
+  facebook?: string;
+  instagram?: string;
+  source_url?: string;
+  source_name?: string;
+  status?: string;
+  verification_status?: string;
   address: {
     ar: string;
     ku: string;

@@ -25,6 +25,13 @@ const AddBusinessForm: React.FC<AddBusinessFormProps> = ({ currentLang, onAddBus
   const [description, setDescription] = useState('');
   const [address, setAddress] = useState('');
   const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [website, setWebsite] = useState('');
+  const [whatsapp, setWhatsapp] = useState('');
+  const [facebook, setFacebook] = useState('');
+  const [instagram, setInstagram] = useState('');
+  const [sourceUrl, setSourceUrl] = useState('');
+  const [sourceName, setSourceName] = useState('');
   const [mediaUrl, setMediaUrl] = useState('');
   const [category, setCategory] = useState(CATEGORIES[0]?.id || 'restaurants');
   const [governorate, setGovernorate] = useState<GovernorateCode>('baghdad');
@@ -55,6 +62,13 @@ const AddBusinessForm: React.FC<AddBusinessFormProps> = ({ currentLang, onAddBus
       const cleanDesc = description.trim();
       const cleanAddress = address.trim();
       const cleanPhone = phone.trim();
+      const cleanEmail = email.trim();
+      const cleanWebsite = website.trim();
+      const cleanWhatsapp = whatsapp.trim();
+      const cleanFacebook = facebook.trim();
+      const cleanInstagram = instagram.trim();
+      const cleanSourceUrl = sourceUrl.trim();
+      const cleanSourceName = sourceName.trim();
       const cleanMediaUrl = mediaUrl.trim();
       const fallbackImage = cleanMediaUrl || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&auto=format&fit=crop&q=80';
 
@@ -64,6 +78,13 @@ const AddBusinessForm: React.FC<AddBusinessFormProps> = ({ currentLang, onAddBus
           description: cleanDesc,
           address: cleanAddress,
           phone: cleanPhone,
+          email: cleanEmail,
+          website: cleanWebsite,
+          whatsapp: cleanWhatsapp,
+          facebook: cleanFacebook,
+          instagram: cleanInstagram,
+          source_url: cleanSourceUrl,
+          source_name: cleanSourceName,
           category,
           governorate,
           media_url: cleanMediaUrl,
@@ -84,6 +105,13 @@ const AddBusinessForm: React.FC<AddBusinessFormProps> = ({ currentLang, onAddBus
         setDescription('');
         setAddress('');
         setPhone('');
+        setEmail('');
+        setWebsite('');
+        setWhatsapp('');
+        setFacebook('');
+        setInstagram('');
+        setSourceUrl('');
+        setSourceName('');
         setMediaUrl('');
         return;
       }
@@ -99,6 +127,15 @@ const AddBusinessForm: React.FC<AddBusinessFormProps> = ({ currentLang, onAddBus
         avatar: fallbackImage,
         isVerified: false,
         phoneNumber: cleanPhone,
+        email: cleanEmail,
+        website: cleanWebsite,
+        whatsapp: cleanWhatsapp,
+        facebook: cleanFacebook,
+        instagram: cleanInstagram,
+        source_url: cleanSourceUrl,
+        source_name: cleanSourceName,
+        status: 'approved',
+        verification_status: 'unverified',
         address: { ar: cleanAddress, ku: cleanAddress, en: cleanAddress },
         mapCoords: { x: 0, y: 0 },
         likedByUser: false,
@@ -114,6 +151,13 @@ const AddBusinessForm: React.FC<AddBusinessFormProps> = ({ currentLang, onAddBus
       setDescription('');
       setAddress('');
       setPhone('');
+      setEmail('');
+      setWebsite('');
+      setWhatsapp('');
+      setFacebook('');
+      setInstagram('');
+      setSourceUrl('');
+      setSourceName('');
       setMediaUrl('');
     } catch (error: any) {
       setStatus({
@@ -173,6 +217,52 @@ const AddBusinessForm: React.FC<AddBusinessFormProps> = ({ currentLang, onAddBus
             required
           />
           <input
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            placeholder={label(currentLang, 'Email (optional)', 'البريد الإلكتروني (اختياري)', 'ئیمەیڵ (ئارەزوومەندانە)')}
+            className="w-full px-4 py-2.5 border border-zinc-300 rounded-lg"
+          />
+          <input
+            value={website}
+            onChange={(event) => setWebsite(event.target.value)}
+            placeholder={label(currentLang, 'Website (optional)', 'الموقع الإلكتروني (اختياري)', 'ماڵپەڕ (ئارەزوومەندانە)')}
+            className="w-full px-4 py-2.5 border border-zinc-300 rounded-lg"
+          />
+          <input
+            value={whatsapp}
+            onChange={(event) => setWhatsapp(event.target.value)}
+            placeholder={label(currentLang, 'WhatsApp (optional)', 'واتساب (اختياري)', 'واتساپ (ئارەزوومەندانە)')}
+            className="w-full px-4 py-2.5 border border-zinc-300 rounded-lg"
+          />
+          <div className="grid sm:grid-cols-2 gap-3">
+            <input
+              value={facebook}
+              onChange={(event) => setFacebook(event.target.value)}
+              placeholder={label(currentLang, 'Facebook (optional)', 'فيسبوك (اختياري)', 'فەیسبووک (ئارەزوومەندانە)')}
+              className="w-full px-4 py-2.5 border border-zinc-300 rounded-lg"
+            />
+            <input
+              value={instagram}
+              onChange={(event) => setInstagram(event.target.value)}
+              placeholder={label(currentLang, 'Instagram (optional)', 'إنستغرام (اختياري)', 'ئینستاگرام (ئارەزوومەندانە)')}
+              className="w-full px-4 py-2.5 border border-zinc-300 rounded-lg"
+            />
+          </div>
+          <div className="grid sm:grid-cols-2 gap-3">
+            <input
+              value={sourceUrl}
+              onChange={(event) => setSourceUrl(event.target.value)}
+              placeholder={label(currentLang, 'Source URL (optional)', 'رابط المصدر (اختياري)', 'لینکی سەرچاوە (ئارەزوومەندانە)')}
+              className="w-full px-4 py-2.5 border border-zinc-300 rounded-lg"
+            />
+            <input
+              value={sourceName}
+              onChange={(event) => setSourceName(event.target.value)}
+              placeholder={label(currentLang, 'Source name (optional)', 'اسم المصدر (اختياري)', 'ناوی سەرچاوە (ئارەزوومەندانە)')}
+              className="w-full px-4 py-2.5 border border-zinc-300 rounded-lg"
+            />
+          </div>
+          <input
             value={mediaUrl}
             onChange={(event) => setMediaUrl(event.target.value)}
             placeholder={label(currentLang, 'Image URL (optional)', 'Ø±Ø§Ø¨Ø· Ø§Ù„ØµÙˆØ±Ø© (Ø§Ø®ØªÙŠØ§Ø±ÙŠ)', 'Ù„ÛŒÙ†Ú©ÛŒ ÙˆÛŽÙ†Û• (Ø¦Ø§Ø±Û•Ø²ÙˆÙˆÙ…Û•Ù†Ø¯Ø§Ù†Û•)')}
@@ -220,5 +310,4 @@ const AddBusinessForm: React.FC<AddBusinessFormProps> = ({ currentLang, onAddBus
 };
 
 export default AddBusinessForm;
-
 
