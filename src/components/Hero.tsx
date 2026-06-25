@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronLeft, ChevronRight, Sparkles, MapPin, Compass, Edit3, Save, Trash2, Image as ImageIcon, PlusCircle } from 'lucide-react';
 import { Language, GovernorateCode, HeroSlide } from '../types';
@@ -25,12 +25,72 @@ function isLocalAdminHeroEditor() {
   }
 }
 
+
+type LooseHeroSlide = Partial<HeroSlide> & Record<string, unknown>;
+
+function safeText(value: Partial<Record<Language, string>> | undefined, lang: Language, fallback = ''): string {
+  if (!value) return fallback;
+  return value[lang] || value.ku || value.ar || value.en || fallback;
+}
+
+function normalizeLangObject(value: unknown, fallback: Partial<Record<Language, string>>) {
+  if (value && typeof value === 'object') {
+    const record = value as Partial<Record<Language, string>>;
+    return {
+      ar: record.ar || record.ku || record.en || fallback.ar || '',
+      ku: record.ku || record.ar || record.en || fallback.ku || fallback.ar || '',
+      en: record.en || record.ar || record.ku || fallback.en || fallback.ar || ''
+    };
+  }
+
+  if (typeof value === 'string' && value.trim()) {
+    return {
+      ar: value,
+      ku: value,
+      en: value
+    };
+  }
+
+  return {
+    ar: fallback.ar || fallback.ku || fallback.en || '',
+    ku: fallback.ku || fallback.ar || fallback.en || '',
+    en: fallback.en || fallback.ar || fallback.ku || ''
+  };
+}
+
+function normalizeHeroSlide(raw: LooseHeroSlide | null | undefined, index: number): HeroSlide {
+  const fallback = HERO_SLIDES[index % HERO_SLIDES.length] || HERO_SLIDES[0];
+  const slide = (raw || {}) as LooseHeroSlide;
+
+  const slogan = normalizeLangObject(slide.slogan, {
+    ar: String(slide.title_ar || slide.subtitle_ar || slide.cta_ar || fallback.slogan.ar || ''),
+    ku: String(slide.title_ku || slide.subtitle_ku || slide.cta_ku || fallback.slogan.ku || ''),
+    en: String(slide.title_en || slide.subtitle_en || slide.cta_en || fallback.slogan.en || '')
+  });
+
+  const badge = normalizeLangObject(slide.badge, {
+    ar: String(slide.badge_ar || slide.cta_ar || slide.subtitle_ar || fallback.badge.ar || ''),
+    ku: String(slide.badge_ku || slide.cta_ku || slide.subtitle_ku || fallback.badge.ku || ''),
+    en: String(slide.badge_en || slide.cta_en || slide.subtitle_en || fallback.badge.en || '')
+  });
+
+  return {
+    id: String(slide.id || `hero-safe-${index}`),
+    image: String(slide.image || slide.image_url || slide.media_url || fallback.image || ''),
+    slogan,
+    governorate: (slide.governorate || fallback.governorate || 'all') as GovernorateCode,
+    category: (slide.category || fallback.category || 'restaurant') as HeroSlide['category'],
+    badge
+  };
+}
+
 export default function Hero({ currentLang, onExploreClick, onSelectGov, slides, isAdmin = false, setSlides }: HeroProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [editingHero, setEditingHero] = useState(false);
   const [heroDraft, setHeroDraft] = useState({ slogan: '', badge: '' });
 
-  const activeSlidesList = slides && slides.length > 0 ? slides : HERO_SLIDES;
+  const sourceSlides = slides && slides.length > 0 ? slides : HERO_SLIDES;
+  const activeSlidesList = sourceSlides.map((slide, index) => normalizeHeroSlide(slide as LooseHeroSlide, index));
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -54,8 +114,8 @@ export default function Hero({ currentLang, onExploreClick, onSelectGov, slides,
   useEffect(() => {
     if (!activeSlide) return;
     setHeroDraft({
-      slogan: activeSlide.slogan[currentLang] || activeSlide.slogan.en || '',
-      badge: activeSlide.badge[currentLang] || activeSlide.badge.en || ''
+      slogan: safeText(activeSlide.slogan, currentLang, ''),
+      badge: safeText(activeSlide.badge, currentLang, '')
     });
   }, [activeSlide?.id, currentLang]);
 
@@ -63,14 +123,19 @@ export default function Hero({ currentLang, onExploreClick, onSelectGov, slides,
 
   const updateActiveHeroSlide = (updater: (slide: HeroSlide) => HeroSlide) => {
     if (!setSlides || !activeSlide) return;
-    setSlides((prev) => prev.map((slide) => (slide.id === activeSlide.id ? updater(slide) : slide)));
+    setSlides((prev) =>
+      prev.map((slide, index) => {
+        const safeSlide = normalizeHeroSlide(slide as LooseHeroSlide, index);
+        return safeSlide.id === activeSlide.id ? updater(safeSlide) : slide;
+      })
+    );
   };
 
   const saveHeroText = () => {
     updateActiveHeroSlide((slide) => ({
       ...slide,
-      slogan: { ...slide.slogan, [currentLang]: heroDraft.slogan },
-      badge: { ...slide.badge, [currentLang]: heroDraft.badge }
+      slogan: { ar: '', ku: '', en: '', ...slide.slogan, [currentLang]: heroDraft.slogan },
+      badge: { ar: '', ku: '', en: '', ...slide.badge, [currentLang]: heroDraft.badge }
     }));
     setEditingHero(false);
   };
@@ -384,3 +449,4 @@ export default function Hero({ currentLang, onExploreClick, onSelectGov, slides,
     </div>
   );
 }
+
