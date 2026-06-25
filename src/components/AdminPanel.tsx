@@ -82,11 +82,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
   const [businessSubmissionsLoading, setBusinessSubmissionsLoading] = useState(false);
   const [businessSubmissionsStatus, setBusinessSubmissionsStatus] = useState('');
   const session = readSession();
-  const signedInEmail = (userProfile?.email || session?.user?.email || '').toLowerCase();
-  const hasAdminAccess =
-    userProfile?.role === 'admin' ||
-    session?.user?.role === 'admin' ||
-    Number(session?.user?.is_admin || 0) === 1;
+  const hasAdminAccess = userProfile?.role === 'admin';
 
   if (!hasAdminAccess) {
     return (
@@ -348,7 +344,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
       videoUrl: videoUrl || undefined,
       status: 'approved',
       updatedAt: new Date().toISOString(),
-      authorEmail: signedInEmail
+      authorEmail: undefined
     };
 
     try {
@@ -371,9 +367,9 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
         setPosts((prev) => [{ ...optimisticPost, id: String(createdId) }, ...prev]);
         setPostStatus(t(currentLang, 'Post added.', 'Ã˜ÂªÃ™â€¦Ã˜Âª Ã˜Â¥Ã˜Â¶Ã˜Â§Ã™ÂÃ˜Â© Ã˜Â§Ã™â€žÃ™â€¦Ã™â€ Ã˜Â´Ã™Ë†Ã˜Â±.', 'Ã˜Â¨Ã˜Â§Ã˜Â¨Ã›â€¢Ã˜ÂªÃ›â€¢ÃšÂ©Ã›â€¢ Ã˜Â²Ã›Å’Ã˜Â§Ã˜Â¯ÃšÂ©Ã˜Â±Ã˜Â§.'));
       } catch (backendError) {
-        console.warn('Post backend create failed, using local fallback:', backendError);
-        setPosts((prev) => [optimisticPost, ...prev]);
-        setPostStatus(t(currentLang, 'Post added locally. Backend create route may need review.', 'Ã˜ÂªÃ™â€¦Ã˜Âª Ã˜Â¥Ã˜Â¶Ã˜Â§Ã™ÂÃ˜Â© Ã˜Â§Ã™â€žÃ™â€¦Ã™â€ Ã˜Â´Ã™Ë†Ã˜Â± Ã™â€¦Ã˜Â­Ã™â€žÃ™Å Ã˜Â§Ã™â€¹. Ã™â€šÃ˜Â¯ Ã™Å Ã˜Â­Ã˜ÂªÃ˜Â§Ã˜Â¬ Ã˜Â§Ã™â€žÃ˜Â®Ã˜Â§Ã˜Â¯Ã™â€¦ Ã™â€žÃ™â€žÃ™â€¦Ã˜Â±Ã˜Â§Ã˜Â¬Ã˜Â¹Ã˜Â©.', 'Ã˜Â¨Ã˜Â§Ã˜Â¨Ã›â€¢Ã˜ÂªÃ›â€¢ÃšÂ©Ã›â€¢ Ã™â€ Ã˜Â§Ã™Ë†Ã˜Â®Ã›â€ Ã›Å’Ã›Å’ Ã˜Â²Ã›Å’Ã˜Â§Ã˜Â¯ÃšÂ©Ã˜Â±Ã˜Â§.'));
+        console.warn('Post backend create failed:', backendError);
+        setPostStatus(t(currentLang, 'Could not publish. Please try again.', 'تعذر النشر. يرجى المحاولة مرة أخرى.', 'نەتوانرا بڵاو بکرێتەوە. تکایە دووبارە هەوڵ بدەوە.'));
+        return;
       }
 
       setNewPostDraft({
@@ -642,7 +638,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
   };
 
   const pendingPosts = posts.filter((post) => post.status === 'pending').length;
-  const displayEmail = userProfile?.email || session?.user?.email || 'admin@shaku-maku';
+  const displayEmail = userProfile?.email || session?.user?.email || 'admin';
 
   return (
     <div className="max-w-6xl mx-auto p-4 md:p-6 space-y-6" dir={currentLang === 'en' ? 'ltr' : 'rtl'}>
@@ -763,7 +759,7 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
         </div>
         <div className="text-xs text-zinc-400 space-y-1">
           <p>API base: {API_BASE_URL}</p>
-          <p>Signed-in email: {signedInEmail || 'none'}</p>
+          <p>Signed-in email: {displayEmail || 'none'}</p>
           <p>Backend admin role: {hasAdminAccess ? 'yes' : 'no'}</p>
         </div>
         {diagnostics.length > 0 && (
@@ -1149,5 +1145,3 @@ const linkedBusiness = businesses.find((business) => business.id === newPostDraf
 };
 
 export default AdminPanel;
-
-

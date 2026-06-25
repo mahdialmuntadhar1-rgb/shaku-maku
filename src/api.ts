@@ -391,13 +391,13 @@ export const postsApi = {
     if (params?.category) queryParams.append('category', params.category);
     if (params?.search) queryParams.append('search', params.search);
 
-    const endpoint = `/feed/business-posts${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+    const endpoint = `/business-posts${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
     const response = await apiRequest<ApiResponse<any[]>>(endpoint, {}, true);
     return unwrap<any[]>(response);
   },
 
   async create(post: any): Promise<any> {
-    return apiRequest<any>('/feed/posts', { method: 'POST', body: JSON.stringify(post) }, true);
+    return apiRequest<any>('/posts', { method: 'POST', body: JSON.stringify(post) }, true);
   },
 
   async like(postId: string | number): Promise<any> {
@@ -408,12 +408,12 @@ export const postsApi = {
   },
 
   async getComments(postId: string | number): Promise<any[]> {
-    const response = await apiRequest<ApiResponse<any[]>>(`/feed/posts/${postId}/comments`, {}, true);
+    const response = await apiRequest<ApiResponse<any[]>>(`/posts/${postId}/comments`, {}, true);
     return unwrap<any[]>(response);
   },
 
   async createComment(postId: string | number, text: string): Promise<any> {
-    return apiRequest<any>(`/feed/posts/${postId}/comments`, {
+    return apiRequest<any>(`/posts/${postId}/comments`, {
       method: 'POST',
       body: JSON.stringify({ text }),
     }, true);

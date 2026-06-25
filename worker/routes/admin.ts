@@ -32,7 +32,7 @@ adminRoutes.post('/login', async (c) => {
 
     // Find user
     const user = await c.env.DB.prepare(
-      'SELECT * FROM users WHERE email = ? AND is_admin = 1'
+      "SELECT * FROM users WHERE email = ? AND (is_admin = 1 OR role = 'admin')"
     ).bind(email.toLowerCase()).first() as any;
 
     if (!user) {

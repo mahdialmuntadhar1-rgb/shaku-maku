@@ -6,7 +6,7 @@ describe('session helpers', () => {
     expect(normalizeEmail('  USER@Example.COM  ')).toBe('user@example.com');
   });
 
-  it('normalizes a valid raw user object', () => {
+  it('normalizes a valid raw user object without trusting cached admin role', () => {
     const user = normalizeUser({
       id: '123',
       email: 'USER@example.com',
@@ -17,7 +17,7 @@ describe('session helpers', () => {
     expect(user).not.toBeNull();
     expect(user?.email).toBe('user@example.com');
     expect(user?.name).toBe('Mahdi');
-    expect(user?.role).toBe('admin');
+    expect(user?.role).toBe('user');
   });
 
   it('does not promote a user to admin based on email alone', () => {

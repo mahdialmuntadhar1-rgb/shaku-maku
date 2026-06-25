@@ -191,7 +191,7 @@ function mapApiPostToUi(post: any): SocialPost {
     status: post.status || 'approved',
     updatedAt: post.updated_at || undefined,
     authorUid: post.author_id || undefined,
-    authorEmail: post.author_email || undefined,
+    authorEmail: undefined,
   };
 }
 
@@ -222,7 +222,6 @@ export default function SocialFeed({
   const [busyPostId, setBusyPostId] = useState<string | null>(null);
 
   const userId = String(user?.id || user?.uid || '');
-  const userEmail = String(user?.email || '').toLowerCase();
   const isAdmin = user?.role === 'admin' || Number(user?.is_admin || 0) === 1;
 
   const sourcePosts = posts.length > 0 ? posts : generatedPosts;
@@ -237,8 +236,7 @@ export default function SocialFeed({
 
   const canManagePost = (post: SocialPost) => {
     const postAuthorId = String(post.authorUid || '');
-    const postAuthorEmail = String(post.authorEmail || '').toLowerCase();
-    return isAdmin || (!!userId && postAuthorId === userId) || (!!userEmail && postAuthorEmail === userEmail);
+    return isAdmin || (!!userId && postAuthorId === userId);
   };
 
   const updatePostLocally = (postId: string, updater: (post: SocialPost) => SocialPost) => {
@@ -297,7 +295,7 @@ export default function SocialFeed({
       setAttachmentKind(null);
       setStatusText(t.published);
     } catch (error) {
-      setStatusText(`${t.failed}: ${getApiErrorMessage(error)}`);
+      setStatusText(`${t.failed}: Could not publish. Please try again. ${getApiErrorMessage(error)}`);
     } finally {
       setPosting(false);
     }

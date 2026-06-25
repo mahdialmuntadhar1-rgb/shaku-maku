@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { AUTH_CHANGE_EVENT, readSession } from '../auth/session';
+import { authApi } from '../api';
 
 interface AdminContextType {
   isAdmin: boolean;
@@ -27,8 +28,19 @@ export const AdminProvider: React.FC<AdminProviderProps> = ({ children }) => {
   const [isAdmin, setIsAdmin] = useState(false);
 
   const checkAdmin = (): void => {
-    const user = readSession()?.user;
-    setIsAdmin(user?.role === 'admin' || Number(user?.is_admin || 0) === 1);
+    const session = readSession();
+    if (!session) {
+      setIsAdmin(false);
+      return;
+    }
+
+    authApi.getMe()
+      .then((user) => {
+        setIsAdmin(user?.role === 'admin' || Number((user as any)?.is_admin || 0) === 1);
+      })
+      .catch(() => {
+        setIsAdmin(false);
+      });
   };
 
   const setAdminByEmail = (_email: string): void => {

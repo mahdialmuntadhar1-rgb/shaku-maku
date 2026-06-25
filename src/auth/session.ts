@@ -44,12 +44,7 @@ export const normalizeUser = (raw: unknown): SessionUser | null => {
     return null;
   }
 
-  const roleFromBackend =
-    source.role === 'admin' || Number(source.is_admin || 0) === 1
-      ? 'admin'
-      : source.role === 'owner' || source.user_type === 'business'
-        ? 'owner'
-        : 'user';
+  const roleFromBackend = source.role === 'owner' || source.user_type === 'business' ? 'owner' : 'user';
 
   const displayName = String(source.displayName || source.name || email.split('@')[0]);
 

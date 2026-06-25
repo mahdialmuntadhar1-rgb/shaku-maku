@@ -149,25 +149,19 @@ export default function BusinessFeed({
     };
 
     try {
-      try {
-        await businessesApi.update(biz.id, payload);
-        setAdminStatus(currentLang === 'en' ? 'Business updated.' : currentLang === 'ku' ? 'بازرگانی نوێکرایەوە.' : 'تم تحديث النشاط.');
-      } catch (backendError) {
-        console.warn('Business backend update failed, keeping local edit:', backendError);
-        setAdminStatus(
-          currentLang === 'en'
-            ? 'Updated locally. Backend update route may need review.'
-            : currentLang === 'ku'
-            ? 'ناوخۆیی نوێکرایەوە. باکئێند پێویستی بە پشکنین هەیە.'
-            : 'تم التحديث محلياً. قد يحتاج مسار الخادم للمراجعة.'
-        );
-      }
-
+      await businessesApi.update(biz.id, payload);
       setBusinesses?.((prev) => prev.map((item) => (item.id === biz.id ? updatedBusiness : item)));
       setSelectedBiz((prev) => (prev?.id === biz.id ? updatedBusiness : prev));
       setEditingBusinessId(null);
+      setAdminStatus(currentLang === 'en' ? 'Business updated.' : currentLang === 'ku' ? 'بازرگانی نوێکرایەوە.' : 'تم تحديث النشاط.');
     } catch (error) {
-      setAdminStatus(getApiErrorMessage(error));
+      setAdminStatus(
+        currentLang === 'en'
+          ? `Could not save. Please try again. ${getApiErrorMessage(error)}`
+          : currentLang === 'ku'
+          ? `پاشەکەوت نەکرا. تکایە دووبارە هەوڵ بدەوە. ${getApiErrorMessage(error)}`
+          : `تعذر الحفظ. يرجى المحاولة مرة أخرى. ${getApiErrorMessage(error)}`
+      );
     }
   }
 

@@ -68,7 +68,7 @@ export default function Header({
 
   const t = TRANSLATIONS[currentLang];
   const isRtl = currentLang === 'ar' || currentLang === 'ku';
-  const isProtectedAdmin = userProfile?.role === 'admin' || user?.role === 'admin' || Number(user?.is_admin || 0) === 1;
+  const isProtectedAdmin = userProfile?.role === 'admin';
   const canUseRoleSwitcher = import.meta.env.DEV && isProtectedAdmin;
 
   const languages = [

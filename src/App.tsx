@@ -498,6 +498,9 @@ export default function App() {
   const t = TRANSLATIONS[currentLang];
   const isRtl = currentLang === 'ar' || currentLang === 'ku';
   const liveDataError = businessesLoadError || postsLoadError;
+  const verifiedUserForUi = user
+    ? { ...user, role: userProfile?.role || 'user', is_admin: isAdmin ? 1 : 0 }
+    : null;
 
   const formatLiveDataError = (endpoint: string, error: any) => {
     const status = error?.response?.status ?? 'NETWORK';
@@ -538,14 +541,14 @@ export default function App() {
     }
 
     const localEmail = String(user.email || '').toLowerCase();
-    setIsAdmin(user.role === 'admin' || Number(user.is_admin || 0) === 1);
+    setIsAdmin(false);
     setUserProfile((prev) => ({
       uid: String(user.id || prev?.uid || localEmail),
       displayName: user.name || user.email?.split('@')[0] || 'User',
       photoURL: '',
       email: user.email,
       createdAt: prev?.createdAt || new Date().toISOString(),
-      role: user.role || prev?.role || 'user',
+      role: 'user',
       onboarded: true,
       businessId: null
     }));
@@ -567,7 +570,9 @@ export default function App() {
         setIsAdmin(backendIsAdmin);
       })
       .catch((error) => {
-        console.warn('Using local auth profile because /auth/me failed:', error);
+        console.warn('Could not verify authenticated profile with backend:', error);
+        setUserProfile(null);
+        setIsAdmin(false);
       });
   }, [user]);
 
@@ -689,8 +694,9 @@ export default function App() {
           'Unknown backend error';
 
         window.alert(
-          `Hero change was saved locally, but database sync failed.\n\nReason: ${status} - ${backendMessage}\n\nFix: log out, log in again with an admin account, then try saving the hero again.`
+          `Could not save hero changes. Please try again.\n\nReason: ${status} - ${backendMessage}\n\nFix: log out, log in again with an admin account, then try saving the hero again.`
         );
+        setHeroSlides(previousSlides);
       }
     })();
   };
@@ -1078,7 +1084,7 @@ export default function App() {
           // Auto scroll to discovery catalog on change
           setActiveTab('discover');
         }}
-        user={user}
+        user={verifiedUserForUi}
         userProfile={userProfile}
         onSignIn={() => setAuthModalOpen(true)}
         onSignOut={handleSecureLogout}
@@ -1436,7 +1442,7 @@ export default function App() {
                   posts={posts}
                   setPosts={setPosts}
                   onSignIn={() => setAuthModalOpen(true)}
-                  user={user}
+                  user={verifiedUserForUi}
                 />
               </motion.div>
             )}
@@ -1469,7 +1475,7 @@ export default function App() {
                 <AddBusinessForm
                   currentLang={currentLang}
                   onAddBusiness={handleAddLiveBusiness}
-                  user={user}
+                  user={verifiedUserForUi}
                   userProfile={userProfile}
                   onUpdateProfile={handleUpdateProfile}
                   onSignIn={() => setAuthModalOpen(true)}

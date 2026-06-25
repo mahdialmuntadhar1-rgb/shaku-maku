@@ -13,17 +13,6 @@ interface HeroProps {
   setSlides?: React.Dispatch<React.SetStateAction<HeroSlide[]>>;
 }
 
-function isLocalAdminHeroEditor() {
-  try {
-    const raw = localStorage.getItem('current_user') || localStorage.getItem('user') || '{}';
-    const parsed = JSON.parse(raw);
-    const role = String(parsed?.role || '').trim().toLowerCase();
-    return role === 'admin' || Number(parsed?.is_admin || 0) === 1;
-  } catch {
-    return false;
-  }
-}
-
 export default function Hero({ currentLang, onExploreClick, onSelectGov, slides, isAdmin = false, setSlides }: HeroProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [editingHero, setEditingHero] = useState(false);
@@ -58,7 +47,7 @@ export default function Hero({ currentLang, onExploreClick, onSelectGov, slides,
     });
   }, [activeSlide?.id, currentLang]);
 
-  const canInlineEditHero = Boolean((isAdmin || isLocalAdminHeroEditor()) && setSlides && activeSlide);
+  const canInlineEditHero = Boolean(isAdmin && setSlides && activeSlide);
 
   const updateActiveHeroSlide = (updater: (slide: HeroSlide) => HeroSlide) => {
     if (!setSlides || !activeSlide) return;

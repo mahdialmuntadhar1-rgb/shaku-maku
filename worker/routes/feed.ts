@@ -20,11 +20,25 @@ function cleanGov(value: unknown): string {
   return cleanText(value).toLowerCase().replace(/[\s_\-،]+/g, '');
 }
 
+function sanitizePublicPost(row: any): any {
+  if (!row || typeof row !== 'object') return row;
+  const safe = { ...row };
+  delete safe.author_email;
+  delete safe.author_id;
+  delete safe.email;
+  return safe;
+}
+
+function sanitizePublicComment(row: any): any {
+  if (!row || typeof row !== 'object') return row;
+  const safe = { ...row };
+  delete safe.user_id;
+  delete safe.email;
+  return safe;
+}
+
 async function isAdminUser(c: any, payload: any): Promise<boolean> {
   const email = cleanText(payload?.email).toLowerCase();
-  const role = cleanText(payload?.role).toLowerCase();
-
-  if (role === 'admin' || Number(payload?.is_admin || 0) === 1) return true;
 
   const row = await c.env.DB.prepare(
     'SELECT role, is_admin FROM users WHERE id = ? OR lower(email) = ? LIMIT 1'
@@ -62,16 +76,15 @@ async function listPosts(c: any) {
         COALESCE(p.governorate, b.governorate, '') as governorate,
         COALESCE(p.category, b.category, 'community') as category,
         CASE
-          WHEN COALESCE(p.category, '') = 'community' THEN COALESCE(u.name, u.email, 'Shaku Maku User')
-          ELSE COALESCE(b.name_ar, b.name_en, u.name, u.email, 'Shaku Maku')
+          WHEN COALESCE(p.category, '') = 'community' THEN COALESCE(u.name, 'Shaku Maku User')
+          ELSE COALESCE(b.name_ar, b.name_en, u.name, 'Shaku Maku')
         END as business_name_ar,
         CASE
-          WHEN COALESCE(p.category, '') = 'community' THEN COALESCE(u.name, u.email, 'Shaku Maku User')
-          ELSE COALESCE(b.name_en, b.name_ar, u.name, u.email, 'Shaku Maku')
+          WHEN COALESCE(p.category, '') = 'community' THEN COALESCE(u.name, 'Shaku Maku User')
+          ELSE COALESCE(b.name_en, b.name_ar, u.name, 'Shaku Maku')
         END as business_name_en,
         COALESCE(b.avatar, u.photo_url, '') as business_avatar,
         u.name as author_name,
-        u.email as author_email,
         u.photo_url as author_avatar
       FROM posts p
       LEFT JOIN businesses b ON p.business_id = b.id
@@ -104,7 +117,7 @@ async function listPosts(c: any) {
 
     return c.json({
       success: true,
-      data: posts.results,
+      data: (posts.results || []).map(sanitizePublicPost),
       pagination: {
         page: pageNum,
         limit: limitNum,
@@ -129,11 +142,10 @@ feedRoutes.get('/posts/:id', async (c) => {
         p.*,
         COALESCE(p.governorate, b.governorate, '') as governorate,
         COALESCE(p.category, b.category, 'community') as category,
-        COALESCE(b.name_ar, u.name, u.email, 'Shaku Maku') as business_name_ar,
-        COALESCE(b.name_en, b.name_ar, u.name, u.email, 'Shaku Maku') as business_name_en,
+        COALESCE(b.name_ar, u.name, 'Shaku Maku') as business_name_ar,
+        COALESCE(b.name_en, b.name_ar, u.name, 'Shaku Maku') as business_name_en,
         COALESCE(b.avatar, u.photo_url, '') as business_avatar,
         u.name as author_name,
-        u.email as author_email,
         u.photo_url as author_avatar
       FROM posts p
       LEFT JOIN businesses b ON p.business_id = b.id
@@ -143,7 +155,7 @@ feedRoutes.get('/posts/:id', async (c) => {
 
     if (!post) return c.json({ success: false, error: 'Not found' }, 404);
 
-    return c.json({ success: true, data: post });
+    return c.json({ success: true, data: sanitizePublicPost(post) });
   } catch (error) {
     console.error('Get post error:', error);
     return c.json({ success: false, error: 'Failed to get post' }, 500);
@@ -228,13 +240,12 @@ feedRoutes.post('/posts', async (c) => {
         COALESCE(p.governorate, b.governorate, '') as governorate,
         COALESCE(p.category, b.category, 'community') as category,
         CASE
-          WHEN COALESCE(p.category, '') = 'community' THEN COALESCE(u.name, u.email, 'Shaku Maku User')
-          ELSE COALESCE(b.name_ar, b.name_en, u.name, u.email, 'Shaku Maku')
+          WHEN COALESCE(p.category, '') = 'community' THEN COALESCE(u.name, 'Shaku Maku User')
+          ELSE COALESCE(b.name_ar, b.name_en, u.name, 'Shaku Maku')
         END as business_name_ar,
-        COALESCE(b.name_en, b.name_ar, u.name, u.email, 'Shaku Maku') as business_name_en,
+        COALESCE(b.name_en, b.name_ar, u.name, 'Shaku Maku') as business_name_en,
         COALESCE(b.avatar, u.photo_url, '') as business_avatar,
         u.name as author_name,
-        u.email as author_email,
         u.photo_url as author_avatar
       FROM posts p
       LEFT JOIN businesses b ON p.business_id = b.id
@@ -242,7 +253,7 @@ feedRoutes.post('/posts', async (c) => {
       WHERE p.id = ?`
     ).bind(postId).first();
 
-    return c.json({ success: true, data: post });
+    return c.json({ success: true, data: sanitizePublicPost(post) });
   } catch (error) {
     console.error('Create post error:', error);
     return c.json({ success: false, error: 'Failed to create post' }, 500);
@@ -401,7 +412,7 @@ feedRoutes.get('/posts/:id/comments', async (c) => {
       ORDER BY c.created_at DESC`
     ).bind(id).all();
 
-    return c.json({ success: true, data: comments.results });
+    return c.json({ success: true, data: (comments.results || []).map(sanitizePublicComment) });
   } catch (error) {
     console.error('Get comments error:', error);
     return c.json({ success: false, error: 'Failed to get comments' }, 500);
@@ -442,7 +453,7 @@ feedRoutes.post('/posts/:id/comments', async (c) => {
       WHERE c.id = ?`
     ).bind(commentId).first();
 
-    return c.json({ success: true, data: comment });
+    return c.json({ success: true, data: sanitizePublicComment(comment) });
   } catch (error) {
     console.error('Create comment error:', error);
     return c.json({ success: false, error: 'Failed to create comment' }, 500);
