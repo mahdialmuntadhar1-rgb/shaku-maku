@@ -1,4 +1,4 @@
-import { Hono } from 'hono';
+﻿import { Hono } from 'hono';
 import { sign } from 'hono/jwt';
 import bcrypt from 'bcryptjs';
 import { requireAuth } from './_authz';
@@ -54,21 +54,25 @@ async function generateToken(payload: any, secret: string): Promise<string> {
 }
 
 const PASSWORD_RESET_MESSAGE = 'If the email exists, a reset link has been sent';
+const PASSWORD_RESET_DIAGNOSTIC_HEADER = 'X-Password-Reset-Email-Status';
+
+function publicResetUrl(c: any, email: string, token: string): string {
+  return `${getFrontendUrl(c)}/?token=${encodeURIComponent(token)}&email=${encodeURIComponent(email)}`;
+}
 
 function getFrontendUrl(c: any): string {
   return String(c.env.FRONTEND_URL || 'https://shakumaku.pages.dev').replace(/\/+$/, '');
 }
 
-async function sendPasswordResetEmail(c: any, email: string, token: string): Promise<boolean> {
+async function sendPasswordResetEmail(c: any, email: string, token: string): Promise<{ sent: boolean; reason: string }> {
   const apiKey = String(c.env.RESEND_API_KEY || '').trim();
   const fromEmail = String(c.env.PASSWORD_RESET_FROM_EMAIL || 'Shaku Maku <hello@kaniq.org>').trim();
+  const resetUrl = publicResetUrl(c, email, token);
 
   if (!apiKey) {
     console.warn('[ShakuMaku] Password reset email not sent: RESEND_API_KEY is not configured.');
-    return false;
+    return { sent: false, reason: 'RESEND_API_KEY_NOT_CONFIGURED' };
   }
-
-  const resetUrl = `${getFrontendUrl(c)}/?token=${encodeURIComponent(token)}&email=${encodeURIComponent(email)}`;
 
   const response = await fetch('https://api.resend.com/emails', {
     method: 'POST',
@@ -81,27 +85,30 @@ async function sendPasswordResetEmail(c: any, email: string, token: string): Pro
       to: [email],
       subject: 'Reset your Shaku Maku password',
       html: `
-        <div style="font-family:Arial,sans-serif;line-height:1.6;color:#111">
+        <div style="font-family:Arial,sans-serif;line-height:1.6;color:#111;max-width:620px;margin:0 auto">
           <h2>Reset your Shaku Maku password</h2>
-          <p>Click the button below to reset your password. This link expires in 1 hour.</p>
+          <p>You requested to reset your password. Click the button below. This link expires in 1 hour.</p>
           <p>
             <a href="${resetUrl}" style="display:inline-block;background:#0F2E2F;color:#fff;padding:12px 18px;border-radius:10px;text-decoration:none;font-weight:bold">
               Reset Password
             </a>
           </p>
+          <p style="font-size:12px;color:#555">If the button does not work, copy and paste this link:</p>
+          <p style="font-size:12px;word-break:break-all;color:#0F2E2F">${resetUrl}</p>
           <p>If you did not request this, you can ignore this email.</p>
         </div>
-      `
+      `,
+      text: `Reset your Shaku Maku password: ${resetUrl}`
     })
   });
 
   if (!response.ok) {
     const text = await response.text().catch(() => '');
-    console.warn('[ShakuMaku] Password reset email failed:', response.status, text.slice(0, 300));
-    return false;
+    console.warn('[ShakuMaku] Password reset email failed:', response.status, text.slice(0, 500));
+    return { sent: false, reason: `RESEND_FAILED_${response.status}` };
   }
 
-  return true;
+  return { sent: true, reason: 'SENT' };
 }
 
 // Register
@@ -183,10 +190,16 @@ authRoutes.post('/login', async (c) => {
       return c.json({ error: 'Email and password are required' }, 400);
     }
 
+    const normalizedEmail = normalizeEmail(email);
+
+    if (!isValidEmail(normalizedEmail)) {
+      return c.json({ error: 'Invalid email address' }, 400);
+    }
+
     // Find user
     const user = await c.env.DB.prepare(
       'SELECT * FROM users WHERE email = ?'
-    ).bind(email.toLowerCase()).first() as any;
+    ).bind(normalizedEmail).first() as any;
 
     if (!user) {
       return c.json({ error: 'Invalid credentials' }, 401);
@@ -270,10 +283,16 @@ authRoutes.post('/forgot-password', async (c) => {
       return c.json({ error: 'Email is required' }, 400);
     }
 
+    const normalizedEmail = normalizeEmail(email);
+
+    if (!isValidEmail(normalizedEmail)) {
+      return c.json({ error: 'Invalid email address' }, 400);
+    }
+
     // Find user
     const user = await c.env.DB.prepare(
       'SELECT id FROM users WHERE email = ?'
-    ).bind(email.toLowerCase()).first() as any;
+    ).bind(normalizedEmail).first() as any;
 
     if (!user) {
       // Don't reveal if user exists or not
@@ -301,11 +320,13 @@ authRoutes.post('/forgot-password', async (c) => {
 
     // Send reset email when email provider is configured.
     // Do not expose the token in API response.
-    await sendPasswordResetEmail(c, email.toLowerCase(), resetToken);
+    const emailResult = await sendPasswordResetEmail(c, normalizedEmail, resetToken);
+    c.header(PASSWORD_RESET_DIAGNOSTIC_HEADER, emailResult.reason);
 
     return c.json({
       success: true,
-      message: PASSWORD_RESET_MESSAGE
+      message: PASSWORD_RESET_MESSAGE,
+      emailSent: emailResult.sent
     });
   } catch (error) {
     console.error('Forgot password error:', error);
@@ -362,3 +383,4 @@ authRoutes.post('/reset-password', async (c) => {
 });
 
 export default authRoutes;
+

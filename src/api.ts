@@ -232,14 +232,18 @@ export const authApi = {
     return unwrap<AuthResponse['user']>(response);
   },
 
-  async forgotPassword(email: string): Promise<{ message: string }> {
+  async forgotPassword(email: string): Promise<{ message: string; emailSent?: boolean }> {
     localStorage.setItem('password_reset_email', email);
     const response = await apiRequest<any>('/auth/forgot-password', {
       method: 'POST',
       body: JSON.stringify({ email }),
     }, true);
-    if (response?.data) return response.data;
-    return { message: response?.message || 'If the email exists, a reset link has been sent' };
+
+    const data = response?.data || response || {};
+    return {
+      message: data.message || response?.message || 'If the email exists, a reset link has been sent',
+      emailSent: data.emailSent
+    };
   },
 
   async resetPassword(email: string, token: string, newPassword: string): Promise<{ message: string }> {
@@ -531,5 +535,6 @@ export async function getBusinesses(params?: { page?: number; limit?: number; go
   const businesses = await businessesApi.list(params);
   return { businesses, total: businesses.length, data: businesses };
 }
+
 
 

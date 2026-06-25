@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+﻿import React, { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   X, Lock, Mail, User, Shield, Sparkles, AlertCircle, Key, 
@@ -263,8 +263,18 @@ export default function AuthModal({
     setSuccessMsg('');
 
     try {
-      await authApi.forgotPassword(email.trim());
-      setSuccessMsg(L.forgot_success);
+      const result = await authApi.forgotPassword(email.trim());
+      if (result.emailSent === false) {
+        setErrorMsg(
+          currentLang === 'en'
+            ? 'Reset request was created, but email sending is not configured yet. Add RESEND_API_KEY and PASSWORD_RESET_FROM_EMAIL in Cloudflare secrets.'
+            : currentLang === 'ku'
+            ? 'داواکارییەکە دروستکرا، بەڵام ناردنی ئیمەیڵ هێشتا ڕێک نەخراوە. RESEND_API_KEY و PASSWORD_RESET_FROM_EMAIL لە Cloudflare secrets زیاد بکە.'
+            : 'تم إنشاء طلب إعادة التعيين، لكن إرسال البريد غير مفعّل بعد. أضف RESEND_API_KEY و PASSWORD_RESET_FROM_EMAIL في Cloudflare secrets.'
+        );
+      } else {
+        setSuccessMsg(L.forgot_success);
+      }
     } catch (err: any) {
       setErrorMsg(err.message || 'Failed to send reset link');
     } finally {
@@ -744,3 +754,4 @@ export default function AuthModal({
     </div>
   );
 }
+
