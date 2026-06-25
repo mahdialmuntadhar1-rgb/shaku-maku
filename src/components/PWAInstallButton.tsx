@@ -1,5 +1,5 @@
-﻿import React, { useEffect, useState } from 'react';
-import { Download, CheckCircle2, ExternalLink } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { CheckCircle2, Download, ExternalLink, Info, X } from 'lucide-react';
 import { Language } from '../types';
 
 interface BeforeInstallPromptEvent extends Event {
@@ -9,6 +9,7 @@ interface BeforeInstallPromptEvent extends Event {
 
 declare global {
   interface Window {
+    __shakuMakuInstallPrompt?: BeforeInstallPromptEvent | null;
     __shakuMakuPwaDebug?: () => Promise<void>;
   }
 }
@@ -19,26 +20,62 @@ interface PWAInstallButtonProps {
 
 const copyByLang = {
   en: {
-    install: 'Install App',
+    install: 'Install',
     installed: 'Installed',
-    openChrome: 'Open in Chrome'
+    openChrome: 'Open Chrome',
+    guideTitle: 'Install Shaku Maku',
+    directReady: 'Your browser can install the app directly. Tap Install and confirm.',
+    directMissing: 'This browser did not show the direct install prompt. Use the steps below.',
+    inAppWarning: 'If you opened this from WhatsApp, Facebook, Instagram, Gmail, or TikTok, first open it in Chrome or Safari.',
+    androidTitle: 'Android / Chrome',
+    androidSteps: ['Tap the button again if Chrome shows Install.', 'Or tap ⋮ menu.', 'Choose Add to Home screen or Install app.', 'Confirm Install.'],
+    iosTitle: 'iPhone / Safari',
+    iosSteps: ['Open this site in Safari.', 'Tap the Share button.', 'Choose Add to Home Screen.', 'Tap Add.'],
+    desktopTitle: 'Desktop Chrome / Edge',
+    desktopSteps: ['Look for the install icon in the address bar.', 'Or open the browser menu.', 'Choose Install app.', 'Confirm.'],
+    close: 'Close',
+    help: 'Help'
   },
   ar: {
-    install: 'ثبّت التطبيق',
-    installed: 'تم التثبيت',
-    openChrome: 'افتح في Chrome'
+    install: 'تثبيت',
+    installed: 'تم',
+    openChrome: 'افتح Chrome',
+    guideTitle: 'تثبيت شكو ماكو',
+    directReady: 'المتصفح يستطيع تثبيت التطبيق مباشرة. اضغط تثبيت ثم وافق.',
+    directMissing: 'هذا المتصفح لم يظهر زر التثبيت المباشر. استخدم الخطوات أدناه.',
+    inAppWarning: 'إذا فتحت الرابط من واتساب أو فيسبوك أو إنستغرام أو Gmail أو TikTok، افتحه أولاً في Chrome أو Safari.',
+    androidTitle: 'أندرويد / Chrome',
+    androidSteps: ['اضغط الزر مرة ثانية إذا ظهر خيار التثبيت.', 'أو اضغط قائمة ⋮.', 'اختر إضافة إلى الشاشة الرئيسية أو تثبيت التطبيق.', 'اضغط تثبيت.'],
+    iosTitle: 'آيفون / Safari',
+    iosSteps: ['افتح الموقع في Safari.', 'اضغط زر المشاركة.', 'اختر إضافة إلى الشاشة الرئيسية.', 'اضغط إضافة.'],
+    desktopTitle: 'كمبيوتر / Chrome أو Edge',
+    desktopSteps: ['ابحث عن أيقونة التثبيت في شريط الرابط.', 'أو افتح قائمة المتصفح.', 'اختر تثبيت التطبيق.', 'ثم وافق.'],
+    close: 'إغلاق',
+    help: 'شرح'
   },
   ku: {
-    install: 'دایبەزێنە',
+    install: 'دابەزێنە',
     installed: 'دامەزرا',
-    openChrome: 'لە Chrome بکەرەوە'
+    openChrome: 'Chrome بکەرەوە',
+    guideTitle: 'دامەزراندنی شەکو مەکو',
+    directReady: 'وێبگەڕەکەت دەتوانێت ڕاستەوخۆ ئەپەکە دابمەزرێنێت. دابەزاندن دابگرە و پەسەندی بکە.',
+    directMissing: 'ئەم وێبگەڕە دوگمەی دامەزراندنی ڕاستەوخۆی پیشان نەدا. ئەم هەنگاوانە بەکاربهێنە.',
+    inAppWarning: 'ئەگەر لینکەکەت لە WhatsApp، Facebook، Instagram، Gmail یان TikTok کردووەتەوە، سەرەتا لە Chrome یان Safari بیکەرەوە.',
+    androidTitle: 'ئەندرۆید / Chrome',
+    androidSteps: ['ئەگەر Chrome هەڵبژاردەی Install پیشاندا، دوگمەکە جارێکی تر دابگرە.', 'یان لیستی ⋮ دابگرە.', 'Add to Home screen یان Install app هەڵبژێرە.', 'Install پەسەند بکە.'],
+    iosTitle: 'ئایفۆن / Safari',
+    iosSteps: ['ماڵپەڕەکە لە Safari بکەرەوە.', 'دوگمەی Share دابگرە.', 'Add to Home Screen هەڵبژێرە.', 'Add دابگرە.'],
+    desktopTitle: 'کۆمپیوتەر / Chrome یان Edge',
+    desktopSteps: ['ئایکۆنی دامەزراندن لە شریتی ناونیشان بگەڕێ.', 'یان لیستی وێبگەڕ بکەرەوە.', 'Install app هەڵبژێرە.', 'پەسەند بکە.'],
+    close: 'داخستن',
+    help: 'ڕێنمایی'
   }
 };
 
 function isStandaloneMode(): boolean {
   return (
     window.matchMedia?.('(display-mode: standalone)').matches ||
-    (window.navigator as any).standalone === true
+    (window.navigator as Navigator & { standalone?: boolean }).standalone === true
   );
 }
 
@@ -58,10 +95,15 @@ function openInChrome(): void {
   window.location.href = `intent://${path}#Intent;scheme=https;package=com.android.chrome;end`;
 }
 
+function getGlobalPrompt(): BeforeInstallPromptEvent | null {
+  return window.__shakuMakuInstallPrompt || null;
+}
+
 export default function PWAInstallButton({ currentLang }: PWAInstallButtonProps) {
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [visible, setVisible] = useState(false);
   const [installed, setInstalled] = useState(false);
+  const [guideOpen, setGuideOpen] = useState(false);
 
   const copy = copyByLang[currentLang] || copyByLang.en;
   const isRtl = currentLang === 'ar' || currentLang === 'ku';
@@ -78,25 +120,25 @@ export default function PWAInstallButton({ currentLang }: PWAInstallButtonProps)
     const handleBeforeInstallPrompt = (event: Event) => {
       event.preventDefault();
       const promptEvent = event as BeforeInstallPromptEvent;
-      (window as any).__shakuMakuInstallPrompt = promptEvent;
+      window.__shakuMakuInstallPrompt = promptEvent;
       setInstallPrompt(promptEvent);
       setVisible(true);
       setInstalled(false);
     };
 
     const syncGlobalInstallPrompt = () => {
-      const globalPrompt = (window as any).__shakuMakuInstallPrompt as BeforeInstallPromptEvent | null | undefined;
-
+      const globalPrompt = getGlobalPrompt();
       if (!globalPrompt) return;
-
       setInstallPrompt(globalPrompt);
       setVisible(true);
       setInstalled(false);
     };
 
     const handleAppInstalled = () => {
+      window.__shakuMakuInstallPrompt = null;
       setInstallPrompt(null);
       setVisible(false);
+      setGuideOpen(false);
       setInstalled(true);
     };
 
@@ -126,78 +168,147 @@ export default function PWAInstallButton({ currentLang }: PWAInstallButtonProps)
 
     if (isStandaloneMode()) {
       setVisible(false);
+      setGuideOpen(false);
       setInstalled(true);
       return;
     }
 
-    const globalPrompt = (window as any).__shakuMakuInstallPrompt as BeforeInstallPromptEvent | undefined;
-    const activePrompt = installPrompt || globalPrompt || null;
+    const activePrompt = installPrompt || getGlobalPrompt();
 
     if (isAndroid() && isInAppBrowser() && !activePrompt) {
+      setGuideOpen(true);
       openInChrome();
       return;
     }
 
     if (!activePrompt) {
-      console.info('[ShakuMaku] PWA no install prompt available');
       setVisible(true);
+      setGuideOpen(true);
       return;
     }
 
-    const promptEvent = activePrompt;
-    (window as any).__shakuMakuInstallPrompt = null;
+    window.__shakuMakuInstallPrompt = null;
     setInstallPrompt(null);
 
     try {
-      await promptEvent.prompt();
-      const choice = await promptEvent.userChoice.catch(() => null);
+      await activePrompt.prompt();
+      const choice = await activePrompt.userChoice.catch(() => null);
 
       if (choice?.outcome === 'accepted') {
         setInstalled(true);
         setVisible(false);
+        setGuideOpen(false);
       } else {
-        setVisible(false);
+        setGuideOpen(true);
       }
     } catch {
-      console.info('[ShakuMaku] PWA no install prompt available');
-      setVisible(false);
+      setGuideOpen(true);
     }
   };
 
   if (!visible) return null;
 
-  const globalPrompt = (window as any).__shakuMakuInstallPrompt as BeforeInstallPromptEvent | null | undefined;
-  const canInstallNow = Boolean(installPrompt || globalPrompt);
+  const canInstallNow = Boolean(installPrompt || getGlobalPrompt());
   const canOpenChrome = isAndroid() && isInAppBrowser() && !canInstallNow;
   const shouldPulse = canInstallNow || canOpenChrome;
+  const buttonText = canOpenChrome ? copy.openChrome : installed ? copy.installed : copy.install;
 
   return (
-    <button
-      type="button"
-      onClick={handleInstallClick}
-      className={`fixed left-4 top-1/2 z-[9999] -translate-y-1/2 rounded-full border border-emerald-300/80 bg-gradient-to-br from-emerald-500 via-cyan-500 to-blue-500 px-4 py-3 text-white shadow-[0_0_26px_rgba(16,185,129,0.85)] backdrop-blur-xl transition hover:scale-110 active:scale-95 ${
-        shouldPulse ? 'animate-pulse' : ''
-      }`}
-      aria-label={canOpenChrome ? copy.openChrome : copy.install}
-      title={canOpenChrome ? copy.openChrome : copy.install}
-      dir={isRtl ? 'rtl' : 'ltr'}
-    >
-      <span className="absolute inset-[-7px] -z-10 rounded-full bg-cyan-400/20 blur-xl" />
-      <span className="absolute inset-[-14px] -z-20 rounded-full bg-emerald-500/20 blur-2xl" />
-
-      <span className="flex flex-col items-center justify-center gap-1 text-[11px] font-black leading-tight">
-        {canOpenChrome ? (
-          <ExternalLink className="h-5 w-5 drop-shadow" />
-        ) : installed ? (
-          <CheckCircle2 className="h-5 w-5 drop-shadow" />
-        ) : (
-          <Download className="h-5 w-5 drop-shadow" />
-        )}
-
-        <span className="max-w-[82px] text-center">
-          {canOpenChrome ? copy.openChrome : copy.install}
+    <>
+      <button
+        type="button"
+        onClick={handleInstallClick}
+        className={`fixed left-0 top-1/2 z-[9999] -translate-y-1/2 rounded-r-2xl border border-luxury-gold/70 border-l-0 bg-[#0F2E2F]/95 px-2.5 py-2 text-white shadow-lg backdrop-blur-xl transition active:scale-95 md:left-2 md:rounded-2xl md:border-l ${
+          shouldPulse ? 'animate-pulse' : ''
+        }`}
+        aria-label={buttonText}
+        aria-expanded={guideOpen}
+        title={buttonText}
+        dir={isRtl ? 'rtl' : 'ltr'}
+      >
+        <span className="flex min-w-[74px] items-center justify-center gap-1.5 text-[11px] font-black leading-tight">
+          {canOpenChrome ? (
+            <ExternalLink className="h-4 w-4 shrink-0" />
+          ) : installed ? (
+            <CheckCircle2 className="h-4 w-4 shrink-0" />
+          ) : (
+            <Download className="h-4 w-4 shrink-0" />
+          )}
+          <span className="whitespace-nowrap">{buttonText}</span>
         </span>
-      </span>
-    </button>
+      </button>
+
+      <button
+        type="button"
+        onClick={() => setGuideOpen((value) => !value)}
+        className="fixed left-0 top-[calc(50%+44px)] z-[9999] rounded-r-xl border border-luxury-gold/50 border-l-0 bg-black/85 px-2 py-1.5 text-white shadow-md backdrop-blur md:left-2 md:rounded-xl md:border-l"
+        aria-label={copy.help}
+        title={copy.help}
+      >
+        <Info className="h-4 w-4" />
+      </button>
+
+      {guideOpen && (
+        <aside
+          className="fixed left-2 top-[calc(50%+82px)] z-[9999] w-[min(88vw,330px)] rounded-2xl border border-luxury-gold/30 bg-[#101014]/95 p-4 text-white shadow-2xl backdrop-blur-xl md:left-4"
+          dir={isRtl ? 'rtl' : 'ltr'}
+          role="dialog"
+          aria-label={copy.guideTitle}
+        >
+          <div className="mb-3 flex items-start justify-between gap-3">
+            <div>
+              <h2 className="text-sm font-black text-luxury-gold">{copy.guideTitle}</h2>
+              <p className="mt-1 text-xs leading-relaxed text-zinc-300">
+                {canInstallNow ? copy.directReady : copy.directMissing}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setGuideOpen(false)}
+              className="rounded-full bg-white/10 p-1.5 text-zinc-300 hover:bg-white/20 hover:text-white"
+              aria-label={copy.close}
+              title={copy.close}
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+
+          {isInAppBrowser() && (
+            <div className="mb-3 rounded-xl border border-amber-400/30 bg-amber-400/10 px-3 py-2 text-xs font-bold leading-relaxed text-amber-100">
+              {copy.inAppWarning}
+            </div>
+          )}
+
+          <div className="space-y-3 text-xs leading-relaxed text-zinc-200">
+            <section>
+              <h3 className="mb-1 font-black text-white">{copy.androidTitle}</h3>
+              <ol className="list-decimal space-y-0.5 ps-5">
+                {copy.androidSteps.map((step) => (
+                  <li key={step}>{step}</li>
+                ))}
+              </ol>
+            </section>
+
+            <section>
+              <h3 className="mb-1 font-black text-white">{copy.iosTitle}</h3>
+              <ol className="list-decimal space-y-0.5 ps-5">
+                {copy.iosSteps.map((step) => (
+                  <li key={step}>{step}</li>
+                ))}
+              </ol>
+            </section>
+
+            <section className="hidden sm:block">
+              <h3 className="mb-1 font-black text-white">{copy.desktopTitle}</h3>
+              <ol className="list-decimal space-y-0.5 ps-5">
+                {copy.desktopSteps.map((step) => (
+                  <li key={step}>{step}</li>
+                ))}
+              </ol>
+            </section>
+          </div>
+        </aside>
+      )}
+    </>
   );
 }
