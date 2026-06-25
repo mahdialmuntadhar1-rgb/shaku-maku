@@ -4,6 +4,14 @@ import { ChevronLeft, ChevronRight, Sparkles, MapPin, Compass, Edit3, Save, Tras
 import { Language, GovernorateCode, HeroSlide } from '../types';
 import { HERO_SLIDES, TRANSLATIONS } from '../data';
 
+function safeLocalizedText(value: unknown, lang: string): string {
+  if (typeof value === 'string') return value;
+  if (!value || typeof value !== 'object') return '';
+  const record = value as Record<string, unknown>;
+  return String(record[lang] ?? record.en ?? record.ar ?? record.ku ?? '');
+}
+
+
 interface HeroProps {
   currentLang: Language;
   onExploreClick: () => void;
@@ -54,8 +62,8 @@ export default function Hero({ currentLang, onExploreClick, onSelectGov, slides,
   useEffect(() => {
     if (!activeSlide) return;
     setHeroDraft({
-      slogan: activeSlide.slogan[currentLang] || activeSlide.slogan.en || '',
-      badge: activeSlide.badge[currentLang] || activeSlide.badge.en || ''
+      slogan: safeLocalizedText(activeSlide.slogan, currentLang) || activeSlide.slogan.en || '',
+      badge: safeLocalizedText(activeSlide.badge, currentLang) || activeSlide.badge.en || ''
     });
   }, [activeSlide?.id, currentLang]);
 

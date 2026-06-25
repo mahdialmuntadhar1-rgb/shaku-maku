@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Compass, Flame, Map, PlusCircle, BookOpen, Search, X, 
@@ -21,6 +21,14 @@ import AddBusinessForm from './components/AddBusinessForm';
 import AboutSakuMaku from './components/AboutSakuMaku';
 import AdminPanel from './components/AdminPanel';
 import AuthModal from './components/AuthModal';
+
+function safeLocalizedText(value: unknown, lang: string): string {
+  if (typeof value === 'string') return value;
+  if (!value || typeof value !== 'object') return '';
+  const record = value as Record<string, unknown>;
+  return String(record[lang] ?? record.en ?? record.ar ?? record.ku ?? '');
+}
+
 
 const FALLBACK_BUSINESS_IMAGE =
   'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&auto=format&fit=crop&q=80';
@@ -207,9 +215,9 @@ function normalizeGovernorate(value: unknown): GovernorateCode {
   for (const gov of GOVERNORATES) {
     const codeKey = gov.code.toLowerCase().replace(/[\s_\-ØŒ]+/g, '');
     const englishKey = gov.englishLabel.toLowerCase().replace(/[\s_\-ØŒ]+/g, '');
-    const enKey = gov.name.en.toLowerCase().replace(/[\s_\-ØŒ]+/g, '');
-    const arKey = gov.name.ar.toLowerCase().replace(/[\s_\-ØŒ]+/g, '');
-    const kuKey = gov.name.ku.toLowerCase().replace(/[\s_\-ØŒ]+/g, '');
+    const enKey = safeLocalizedText(gov.name, 'en').toLowerCase().replace(/[\s_\-ØŒ]+/g, '');
+    const arKey = safeLocalizedText(gov.name, 'ar').toLowerCase().replace(/[\s_\-ØŒ]+/g, '');
+    const kuKey = safeLocalizedText(gov.name, 'ku').toLowerCase().replace(/[\s_\-ØŒ]+/g, '');
     if (compact === codeKey || compact === englishKey || compact === enKey || compact === arKey || compact === kuKey) {
       return gov.code;
     }
@@ -280,9 +288,9 @@ function normalizeCategory(value: unknown): string {
   if (byId) return byId.id;
 
   const byName = CATEGORIES.find((cat) => {
-    const en = cat.name.en.toLowerCase().replace(/[\s_\-&/ØŒ]+/g, '');
-    const ar = cat.name.ar.toLowerCase().replace(/[\s_\-&/ØŒ]+/g, '');
-    const ku = cat.name.ku.toLowerCase().replace(/[\s_\-&/ØŒ]+/g, '');
+    const en = safeLocalizedText(cat.name, 'en').toLowerCase().replace(/[\s_\-&/ØŒ]+/g, '');
+    const ar = safeLocalizedText(cat.name, 'ar').toLowerCase().replace(/[\s_\-&/ØŒ]+/g, '');
+    const ku = safeLocalizedText(cat.name, 'ku').toLowerCase().replace(/[\s_\-&/ØŒ]+/g, '');
     return compact === en || compact === ar || compact === ku;
   });
   if (byName) return byName.id;
@@ -924,10 +932,10 @@ export default function App() {
       // Keyword Match (case-insensitive across translated fields)
       const keyword = searchQuery.toLowerCase().trim();
       const keywordMatch = !keyword || 
-        b.name[currentLang].toLowerCase().includes(keyword) ||
-        b.name.en.toLowerCase().includes(keyword) ||
-        b.description[currentLang].toLowerCase().includes(keyword) ||
-        b.address[currentLang].toLowerCase().includes(keyword) ||
+        safeLocalizedText(b.name, currentLang).toLowerCase().includes(keyword) ||
+        safeLocalizedText(b.name, 'en').toLowerCase().includes(keyword) ||
+        safeLocalizedText(b.description, currentLang).toLowerCase().includes(keyword) ||
+        safeLocalizedText(b.address, currentLang).toLowerCase().includes(keyword) ||
         b.category.toLowerCase().includes(keyword);
         
       return govMatch && catMatch && keywordMatch;
