@@ -1,4 +1,5 @@
-name = "shaku-maku"
+﻿name = "shaku-maku"
+pages_build_output_dir = "dist"
 main = "worker/index.ts"
 compatibility_date = "2024-01-01"
 account_id = "81ee673bbeb157f09443fab6e1a11fd5"
@@ -15,4 +16,3 @@ binding = "DB"
 database_name = "shaku_maku_db"
 database_id = "6e1cf3c7-0b05-4e85-bae8-83e96044a864"
 
-pages_build_output_dir = "dist"
