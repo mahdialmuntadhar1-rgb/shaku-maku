@@ -39,8 +39,44 @@ async function ensureBusinessSubmissionsTable(db: any) {
   const columns = await db.prepare(`PRAGMA table_info(business_submissions)`).all();
   const names = (columns.results || []).map((column: any) => String(column.name));
 
-  if (!names.includes('approved_business_id')) {
-    await db.prepare(`ALTER TABLE business_submissions ADD COLUMN approved_business_id TEXT`).run();
+  const optionalColumns: Record<string, string> = {
+    approved_business_id: 'TEXT',
+    email: 'TEXT',
+    website: 'TEXT',
+    whatsapp: 'TEXT',
+    facebook: 'TEXT',
+    instagram: 'TEXT',
+    source_url: 'TEXT',
+    source_name: 'TEXT',
+    verification_status: `TEXT NOT NULL DEFAULT 'pending'`
+  };
+
+  for (const [name, definition] of Object.entries(optionalColumns)) {
+    if (!names.includes(name)) {
+      await db.prepare(`ALTER TABLE business_submissions ADD COLUMN ${name} ${definition}`).run();
+    }
+  }
+}
+
+async function ensureBusinessFields(db: any) {
+  const columns = await db.prepare(`PRAGMA table_info(businesses)`).all();
+  const names = new Set((columns.results || []).map((column: any) => String(column.name)));
+  const optionalColumns: Record<string, string> = {
+    email: 'TEXT',
+    website: 'TEXT',
+    whatsapp: 'TEXT',
+    facebook: 'TEXT',
+    instagram: 'TEXT',
+    source_url: 'TEXT',
+    source_name: 'TEXT',
+    status: `TEXT NOT NULL DEFAULT 'approved'`,
+    verification_status: `TEXT NOT NULL DEFAULT 'unverified'`
+  };
+
+  for (const [name, definition] of Object.entries(optionalColumns)) {
+    if (!names.has(name)) {
+      await db.prepare(`ALTER TABLE businesses ADD COLUMN ${name} ${definition}`).run();
+    }
   }
 }
 
@@ -58,6 +94,13 @@ submissionsRoutes.post('/', async (c) => {
     const governorate = cleanText(body.governorate);
     const mediaUrl = cleanText(body.media_url || body.image || body.avatar);
     const source = cleanText(body.source || 'add_business_form');
+    const email = cleanText(body.email);
+    const website = cleanText(body.website);
+    const whatsapp = cleanText(body.whatsapp);
+    const facebook = cleanText(body.facebook);
+    const instagram = cleanText(body.instagram);
+    const sourceUrl = cleanText(body.source_url);
+    const sourceName = cleanText(body.source_name);
 
     if (!name || !phone) {
       return c.json({
@@ -70,9 +113,11 @@ submissionsRoutes.post('/', async (c) => {
 
     await c.env.DB.prepare(`
       INSERT INTO business_submissions (
-        id, name, description, address, phone, category, governorate, media_url, status, source, approved_business_id, created_at, updated_at
+        id, name, description, address, phone, category, governorate, media_url,
+        email, website, whatsapp, facebook, instagram, source_url, source_name,
+        status, source, approved_business_id, verification_status, created_at, updated_at
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, NULL, 'pending', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
     `).bind(
       id,
       name,
@@ -82,6 +127,13 @@ submissionsRoutes.post('/', async (c) => {
       category,
       governorate,
       mediaUrl,
+      email,
+      website,
+      whatsapp,
+      facebook,
+      instagram,
+      sourceUrl,
+      sourceName,
       source
     ).run();
 
@@ -160,6 +212,7 @@ submissionsRoutes.patch('/:id', async (c) => {
     let approvedBusinessId = cleanText(submission.approved_business_id);
 
     if (status === 'approved') {
+      await ensureBusinessFields(c.env.DB);
       if (approvedBusinessId) {
         publishedBusiness = await c.env.DB.prepare(
           'SELECT * FROM businesses WHERE id = ?'
@@ -184,8 +237,10 @@ submissionsRoutes.patch('/:id', async (c) => {
             category, governorate, phone_number,
             address_ar, address_ku, address_en,
             image, avatar, is_verified,
-            map_coords_x, map_coords_y
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            map_coords_x, map_coords_y,
+            email, website, whatsapp, facebook, instagram,
+            source_url, source_name, status, verification_status
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `).bind(
           approvedBusinessId,
           admin.userId,
@@ -205,7 +260,16 @@ submissionsRoutes.patch('/:id', async (c) => {
           mediaUrl || null,
           0,
           null,
-          null
+          null,
+          cleanText(submission.email) || null,
+          cleanText(submission.website) || null,
+          cleanText(submission.whatsapp) || phone || null,
+          cleanText(submission.facebook) || null,
+          cleanText(submission.instagram) || null,
+          cleanText(submission.source_url) || null,
+          cleanText(submission.source_name) || cleanText(submission.source) || null,
+          'approved',
+          'unverified'
         ).run();
 
         publishedBusiness = await c.env.DB.prepare(
@@ -281,4 +345,3 @@ submissionsRoutes.delete('/:id', async (c) => {
 });
 
 export default submissionsRoutes;
-

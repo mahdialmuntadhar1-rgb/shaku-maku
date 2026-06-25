@@ -24,7 +24,7 @@ async function isAdminUser(c: any, payload: any): Promise<boolean> {
   const email = cleanText(payload?.email).toLowerCase();
   const role = cleanText(payload?.role).toLowerCase();
 
-  if (email === 'safaribosafar@gmail.com' || role === 'admin') return true;
+  if (role === 'admin' || Number(payload?.is_admin || 0) === 1) return true;
 
   const row = await c.env.DB.prepare(
     'SELECT role, is_admin FROM users WHERE id = ? OR lower(email) = ? LIMIT 1'
@@ -176,6 +176,12 @@ feedRoutes.post('/posts', async (c) => {
       return c.json({ success: false, error: 'Caption is too long' }, 400);
     }
 
+    const mediaUrl = cleanText(data?.media_url);
+    const videoUrl = cleanText(data?.video_url);
+    if (mediaUrl.startsWith('data:') || videoUrl.startsWith('data:')) {
+      return c.json({ success: false, error: 'Base64 media uploads are disabled. Use hosted media storage.' }, 400);
+    }
+
     let businessId = cleanText(data?.business_id);
 
     if (businessId) {
@@ -201,14 +207,14 @@ feedRoutes.post('/posts', async (c) => {
       postId,
       businessId,
       cleanText(payload?.id),
-      data.media_url || null,
+      mediaUrl || null,
       data.caption_ar || caption,
       data.caption_ku || caption,
       data.caption_en || caption,
       data.promotion_badge_ar || null,
       data.promotion_badge_ku || null,
       data.promotion_badge_en || null,
-      data.video_url || null,
+      videoUrl || null,
       data.file_attachment_name || null,
       data.file_attachment_size || null,
       data.file_attachment_type || null,

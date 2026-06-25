@@ -13,10 +13,33 @@ function generateId(): string {
   return crypto.randomUUID();
 }
 
+async function ensureBusinessFields(db: any) {
+  const columns = await db.prepare(`PRAGMA table_info(businesses)`).all();
+  const names = new Set((columns.results || []).map((column: any) => String(column.name)));
+  const optionalColumns: Record<string, string> = {
+    email: 'TEXT',
+    website: 'TEXT',
+    whatsapp: 'TEXT',
+    facebook: 'TEXT',
+    instagram: 'TEXT',
+    source_url: 'TEXT',
+    source_name: 'TEXT',
+    status: `TEXT NOT NULL DEFAULT 'approved'`,
+    verification_status: `TEXT NOT NULL DEFAULT 'unverified'`
+  };
+
+  for (const [name, definition] of Object.entries(optionalColumns)) {
+    if (!names.has(name)) {
+      await db.prepare(`ALTER TABLE businesses ADD COLUMN ${name} ${definition}`).run();
+    }
+  }
+}
+
 
 // List businesses with filters
 businessRoutes.get('/', async (c) => {
   try {
+    await ensureBusinessFields(c.env.DB);
     const { page = '1', limit = '20', governorate, category, search } = c.req.query();
     
     const limitNum = parseInt(limit);
@@ -71,6 +94,7 @@ businessRoutes.get('/', async (c) => {
 // Get single business
 businessRoutes.get('/:id', async (c) => {
   try {
+    await ensureBusinessFields(c.env.DB);
     const { id } = c.req.param();
 
     const business = await c.env.DB.prepare(
@@ -100,6 +124,7 @@ businessRoutes.post('/', async (c) => {
   try {
     const admin = await requireAdmin(c);
     if (admin.ok === false) return admin.response;
+    await ensureBusinessFields(c.env.DB);
     const data = await c.req.json();
 
     if (!data?.name_ar || !data?.name_ku || !data?.name_en || !data?.category || !data?.governorate) {
@@ -115,8 +140,10 @@ businessRoutes.post('/', async (c) => {
         category, governorate, phone_number,
         address_ar, address_ku, address_en,
         image, avatar, is_verified,
-        map_coords_x, map_coords_y
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+        map_coords_x, map_coords_y,
+        email, website, whatsapp, facebook, instagram,
+        source_url, source_name, status, verification_status
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     ).bind(
       businessId,
       admin.userId,
@@ -136,7 +163,16 @@ businessRoutes.post('/', async (c) => {
       data.avatar || null,
       data.is_verified || 0,
       data.map_coords_x || null,
-      data.map_coords_y || null
+      data.map_coords_y || null,
+      data.email || null,
+      data.website || null,
+      data.whatsapp || null,
+      data.facebook || null,
+      data.instagram || null,
+      data.source_url || null,
+      data.source_name || null,
+      data.status || 'approved',
+      data.verification_status || (data.is_verified ? 'verified' : 'unverified')
     ).run();
 
     const business = await c.env.DB.prepare(
@@ -157,6 +193,7 @@ async function updateBusiness(c: any) {
   try {
     const admin = await requireAdmin(c);
     if (admin.ok === false) return admin.response;
+    await ensureBusinessFields(c.env.DB);
     const { id } = c.req.param();
     const data = await c.req.json();
 
@@ -177,7 +214,9 @@ async function updateBusiness(c: any) {
       'category', 'governorate', 'phone_number',
       'address_ar', 'address_ku', 'address_en',
       'image', 'avatar', 'is_verified',
-      'map_coords_x', 'map_coords_y'
+      'map_coords_x', 'map_coords_y',
+      'email', 'website', 'whatsapp', 'facebook', 'instagram',
+      'source_url', 'source_name', 'status', 'verification_status'
     ];
 
     for (const field of allowedFields) {

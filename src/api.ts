@@ -339,6 +339,15 @@ export const businessesApi = {
       is_verified: payload?.is_verified ?? 0,
       map_coords_x: payload?.map_coords_x ?? null,
       map_coords_y: payload?.map_coords_y ?? null,
+      email: payload?.email ?? null,
+      website: payload?.website ?? null,
+      whatsapp: payload?.whatsapp ?? null,
+      facebook: payload?.facebook ?? null,
+      instagram: payload?.instagram ?? null,
+      source_url: payload?.source_url ?? null,
+      source_name: payload?.source_name ?? null,
+      status: payload?.status ?? 'approved',
+      verification_status: payload?.verification_status ?? (payload?.is_verified ? 'verified' : 'unverified'),
     };
 
     return apiRequest<any>(`/businesses`, {
@@ -355,6 +364,15 @@ export const businessesApi = {
       ...(payload?.phone ? { phone_number: payload.phone } : {}),
       ...(payload?.category ? { category: payload.category } : {}),
       ...(payload?.governorate ? { governorate: payload.governorate } : {}),
+      ...(payload?.email !== undefined ? { email: payload.email } : {}),
+      ...(payload?.website !== undefined ? { website: payload.website } : {}),
+      ...(payload?.whatsapp !== undefined ? { whatsapp: payload.whatsapp } : {}),
+      ...(payload?.facebook !== undefined ? { facebook: payload.facebook } : {}),
+      ...(payload?.instagram !== undefined ? { instagram: payload.instagram } : {}),
+      ...(payload?.source_url !== undefined ? { source_url: payload.source_url } : {}),
+      ...(payload?.source_name !== undefined ? { source_name: payload.source_name } : {}),
+      ...(payload?.status !== undefined ? { status: payload.status } : {}),
+      ...(payload?.verification_status !== undefined ? { verification_status: payload.verification_status } : {}),
     };
     return apiRequest<any>(`/businesses/${id}`, { method: 'PATCH', body: JSON.stringify(mapped) }, true);
   },
@@ -499,4 +517,3 @@ export async function getBusinesses(params?: { page?: number; limit?: number; go
   const businesses = await businessesApi.list(params);
   return { businesses, total: businesses.length, data: businesses };
 }
-
