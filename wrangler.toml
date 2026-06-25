@@ -14,3 +14,5 @@ FRONTEND_URL = "https://shakumaku.pages.dev"
 binding = "DB"
 database_name = "shaku_maku_db"
 database_id = "6e1cf3c7-0b05-4e85-bae8-83e96044a864"
+
+pages_build_output_dir = "dist"
