@@ -1,4 +1,4 @@
-name = "shaku-maku"
+name = "shakumakuiq"
 main = "worker/index.ts"
 compatibility_date = "2024-01-01"
 account_id = "81ee673bbeb157f09443fab6e1a11fd5"
