@@ -119,11 +119,11 @@ export default function Header({
 
   return (
     <header className="sticky z-50 flex flex-col w-full shadow-lg" style={{ top: "calc(var(--shaku-register-banner-height) - 1px)" }}>
-<div className="backdrop-blur-md bg-luxury-bg/90 border-b border-luxury-gold/20 pb-2 pt-2.5 px-3 xs:px-6 w-full flex flex-wrap md:flex-nowrap items-center justify-between gap-2 md:gap-4">
+<div className="backdrop-blur-md bg-luxury-bg/90 border-b border-luxury-gold/20 pt-2.5 px-3 xs:px-6 w-full flex flex-col gap-2">
         
         {/* Left/Right Brand Column */}
-        <div className="order-1 flex items-center justify-between flex-1 min-w-0 md:w-auto gap-2">
-          <div className="flex items-center gap-1.5.5">
+        <div className="w-full flex items-center justify-between gap-2">
+          <div className="flex items-center gap-1.5">
             <div className="relative group cursor-pointer" onClick={() => onChangeTab('discover')}>
               <div className="absolute -inset-0.5 bg-gradient-to-r from-luxury-teal via-luxury-gold to-white rounded-xl blur opacity-75 group-hover:opacity-100 transition duration-500"></div>
               <div className="relative px-3 py-1.5 bg-[#16161a] rounded-xl leading-none flex items-center border border-luxury-gold/30">
@@ -156,7 +156,7 @@ export default function Header({
         </div>
 
         {/* Center balanced Language bar (Unified, elegant UI Switcher row) */}
-        <div className="order-3 md:order-2 flex items-center justify-center gap-1 bg-white/5 p-1 rounded-2xl border border-white/10 shrink-0 w-full md:w-auto shadow-inner relative">
+        <div className="w-full flex items-center justify-center gap-1 bg-white/5 p-1 rounded-2xl border border-white/10 shadow-inner relative">
           {languages.map((lang) => (
             <button
               key={lang.code}
@@ -178,7 +178,7 @@ export default function Header({
         </div>
 
         {/* Action Controls & User Identity */}
-        <div className="order-2 md:order-3 flex items-center gap-2 w-auto justify-end shrink-0">
+        <div className="flex items-center gap-2 justify-end shrink-0">
           
           {/* Real-time Google Sign-In with Firebase Auth */}
           {user ? (
@@ -346,4 +346,5 @@ export default function Header({
     </header>
   );
 }
+
 
