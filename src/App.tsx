@@ -451,7 +451,7 @@ export default function App() {
   const [isAdmin, setIsAdmin] = useState(false);
   
   const [currentLang, setCurrentLang] = useState<Language>(preferredLang || 'ar');
-  const [showLanguageGate, setShowLanguageGate] = useState<boolean>(!preferredLang);
+  const [showLanguageGate] = useState(false);
   const [selectedGov, setSelectedGov] = useState<GovernorateCode>('all'); // Default: All Iraq
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
@@ -1714,6 +1714,7 @@ export default function App() {
     </div>
   );
 }
+
 
 
 
