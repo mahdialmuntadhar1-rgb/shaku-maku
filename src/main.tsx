@@ -1,5 +1,4 @@
-﻿import './shaku-brand.css';
-import './pwaInstallPrompt';
+﻿import './pwaInstallPrompt';
 import './topInstallHotfix';
 import './pwa-hotfix.css';
 import React from 'react';
@@ -24,6 +23,5 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     </AppErrorBoundary>
   </React.StrictMode>
 );
-
 
 
