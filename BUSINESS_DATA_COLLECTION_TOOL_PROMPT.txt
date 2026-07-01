@@ -1,0 +1,179 @@
+﻿Build a simple Business Data Collection & Quality Intelligence Tool.
+
+IMPORTANT:
+This is NOT an app.
+This is NOT Shaku Maku.
+This is NOT Talaba.
+This is NOT Halal.
+
+Purpose:
+Create a tool that collects, imports, cleans, validates, scores, ranks, deduplicates, and permanently saves business data.
+
+Use:
+- Frontend: simple HTML/CSS/JS dashboard
+- Backend: Cloudflare Worker
+- Database: Cloudflare D1
+- Optional backup: Cloudflare R2
+- Real collection source: OpenStreetMap / Overpass API
+- No Google Maps API key
+
+Core requirements:
+
+1. Real online business collection
+- Search OpenStreetMap using Overpass API
+- User can select multiple governorates with checkboxes
+- User can select multiple categories with checkboxes
+- Add Select All / Clear All for both governorates and categories
+- Search each selected governorate + category combination
+- Save source as OSM
+
+2. Import existing data
+- CSV import
+- JSON import
+- Clean imported data before saving
+- Save source as CSV or JSON
+- Allow manual source label
+
+3. Controls
+- Play button
+- Pause button
+- Stop button
+- Resume scanning without losing progress
+- Avoid timeout problems by processing in small batches
+
+4. Live progress monitor
+Show:
+- Current governorate
+- Current category
+- Current source
+- Found count
+- Validated count
+- Duplicates count
+- Saved count
+- Rejected count
+- Current business being checked
+- Progress percentage
+
+5. Backend persistence
+- Do NOT rely only on localStorage
+- Save all businesses permanently in Cloudflare D1
+- Closing browser must not lose data
+- Deduplicate against saved database before inserting
+
+6. D1 database tables
+Create migrations for:
+- businesses
+- business_sources
+- scan_runs
+- import_batches
+- duplicate_matches
+- quality_audits
+
+7. Deduplication
+Detect duplicates by:
+- OSM ID
+- Phone
+- Email
+- Website
+- Facebook / Instagram
+- Similar name + same governorate
+- Similar name + nearby location
+
+When duplicate found:
+- Merge better data
+- Keep best phone/email/website/social/address
+- Save duplicate reason
+- Do not blindly delete
+
+8. Quality scoring
+Each business gets score 0–100.
+
+Quality tiers:
+- VIP: 90–100
+- Premium: 75–89
+- Standard: 60–74
+- Needs Review: 40–59
+- Rejected: below 40
+
+Score factors:
+- Business name quality
+- Phone availability and format
+- Email availability and format
+- Website
+- Facebook
+- Instagram
+- Address
+- GPS location
+- Category match
+- Brand/social presence
+- Data completeness
+- Source trust
+
+9. Explain score
+For every business show:
+- Final score
+- Tier
+- Positive reasons
+- Missing fields
+- Problems
+- Duplicate warning if any
+
+Example:
+Score 84 — Premium
+Reasons:
++ Phone exists
++ Website exists
++ GPS exists
++ Address exists
++ Facebook found
+Missing:
+- Email
+- Instagram
+
+10. Top-quality filtering
+For each governorate/category allow:
+- Top 10
+- Top 25
+- Top 50
+- Top 100
+- Custom
+- Unlimited
+
+Important:
+Top means best quality, not first found.
+
+11. Filters
+Filter saved businesses by:
+- Governorate
+- Category
+- Tier
+- Source
+- Has phone
+- Has website
+- Has social media
+- Needs review
+- Rejected
+
+12. Exports
+Export:
+- CSV
+- JSON
+- VIP only
+- Premium only
+- Needs Review
+- Full database backup
+
+13. Deliver files
+Provide:
+- Frontend page/tool
+- Cloudflare Worker API
+- D1 schema migration
+- wrangler.toml
+- Baby-step setup notes
+- Clear PowerShell commands for deployment
+
+Keep design simple, serious, and data-focused.
+No social feed.
+No public app.
+No unnecessary features.
+This is only a business data collection and quality intelligence tool.

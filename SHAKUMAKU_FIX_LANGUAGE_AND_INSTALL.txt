@@ -1,0 +1,112 @@
+﻿Apply this to Shaku Maku only.
+
+Repository:
+https://github.com/mahdialmuntadhar1-rgb/shaku-maku
+
+Live:
+https://shakumaku.pages.dev/
+
+Do NOT touch Talaba.
+Do NOT touch Halal.
+
+Before making any changes:
+- Automatically create backups of every modified file.
+- Preserve all existing functionality.
+- Do not redesign the application.
+
+==================================================
+FIX 1 — REMOVE THE FLOATING LANGUAGE BAR
+==================================================
+
+The language selector currently floats over the page while scrolling and hides content.
+
+Requirements:
+
+- Remove the floating language bar completely OR move it into the normal header.
+- It must NOT use:
+  - position: fixed
+  - position: sticky
+  - position: absolute
+- It must remain inside the normal document flow.
+- It must never cover:
+  • Hero
+  • Cards
+  • Categories
+  • Navigation
+  • Profile
+- Remove any unnecessary dark overlay or empty spacing.
+
+==================================================
+FIX 2 — FIX THE INSTALL BUTTON
+==================================================
+
+The Install button currently only shows instructions.
+
+Implement a real PWA installation flow.
+
+If beforeinstallprompt is available:
+- Save the event.
+- Trigger prompt().
+- Handle userChoice.
+- Hide the button after successful installation.
+
+If beforeinstallprompt is unavailable:
+
+Android:
+Chrome → ⋮ → Add to Home Screen
+
+iPhone:
+Safari → Share → Add to Home Screen
+
+Desktop:
+Browser Menu → Install App
+
+If already installed:
+Open the application normally.
+
+==================================================
+INSTALL BUTTON
+==================================================
+
+- Keep it on the left side.
+- Fully clickable.
+- Responsive.
+- Small animation allowed.
+- Never block content.
+- Never overlap menus.
+- Works on Android, iPhone and Desktop.
+
+==================================================
+VERIFY PWA
+==================================================
+
+Verify:
+
+✓ manifest.json
+✓ service worker
+✓ beforeinstallprompt
+✓ appinstalled
+✓ icons
+✓ display: standalone
+✓ scope
+✓ start_url
+
+Fix anything missing.
+
+==================================================
+AFTER COMPLETION
+==================================================
+
+Run:
+
+npm install
+npm run build
+
+Deploy to Cloudflare Pages.
+
+Finally report:
+
+- Files modified
+- What was fixed
+- Deployment status
+- Final live URL

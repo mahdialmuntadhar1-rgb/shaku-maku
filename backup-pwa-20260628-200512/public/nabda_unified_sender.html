@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Nabda Unified Sender</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+:root{--bg:#0b1220;--card:#111a2b;--line:#22314d;--text:#e7eefc;--muted:#9fb2d3;--ok:#22c55e;--bad:#ef4444}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:Segoe UI,Tahoma,sans-serif;padding:16px}
+.wrap{max-width:980px;margin:auto}.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:8px} @media(max-width:760px){.row{grid-template-columns:1fr}}
+input,select,textarea,button{width:100%;padding:10px;border-radius:8px;border:1px solid var(--line);background:#0f1728;color:var(--text)}
+button{cursor:pointer;font-weight:700}.primary{background:#164e2d;border-color:#206c41}.danger{background:#5b1f29;border-color:#8a2c3a}
+textarea{min-height:88px}.small{font-size:12px;color:var(--muted)} .log{height:220px;overflow:auto;background:#0d1525;border:1px solid var(--line);border-radius:8px;padding:8px;font-family:Consolas,monospace;font-size:12px}
+.badge{display:inline-block;padding:4px 8px;border-radius:999px;border:1px solid var(--line);font-size:11px;margin-right:6px}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tabBtn{background:#0f1728;border:1px solid var(--line)}
+.tabBtn.active{background:#1d4ed8;border-color:#3b82f6}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h2 style="margin:0 0 6px">Nabda Unified Sender</h2>
+  <div class="small">Two separate modes: (1) Governorate from CSV, (2) Manual number batch.</div>
+
+  <div class="card">
+    <div class="row">
+      <div><label>API URL</label><input id="apiUrl" placeholder="https://api.nabdaotp.com/inst/..." /></div>
+      <div><label>API Key</label><input id="apiKey" type="password" placeholder="sk_..." /></div>
+    </div>
+    <label style="display:block;margin-top:8px">Message</label>
+    <textarea id="message" placeholder="Write your message..."></textarea>
+    <div class="row" style="margin-top:8px">
+      <div><label>Delay (seconds)</label><input id="delay" type="number" min="1" value="5" /></div>
+      <div><label>Skip already sent (same message)</label><select id="skip"><option value="yes">Yes</option><option value="no">No</option></select></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="tabs" style="margin-bottom:10px">
+      <button id="tabGov" class="tabBtn active" type="button">Governorate Mode</button>
+      <button id="tabManual" class="tabBtn" type="button">Manual Mode</button>
+    </div>
+  </div>
+
+  <div class="card" id="govCard">
+    <h3 style="margin:0 0 8px">A) Governorate Batch (from CSV/Excel)</h3>
+    <div class="row">
+      <div><label>Import Recipients (CSV/Excel)</label><input id="file" type="file" accept=".csv,.xlsx,.xls" /></div>
+      <div><label>Governorate</label><select id="gov"><option value="">Select governorate...</option></select></div>
+    </div>
+    <div style="margin-top:8px">
+      <span class="badge" id="bRows">Rows: 0</span>
+      <span class="badge" id="bGovs">Governorates: 0</span>
+      <span class="badge" id="bHistory">History: 0</span>
+    </div>
+    <div class="small" id="stats" style="margin-top:8px">No recipients loaded.</div>
+    <div class="row" style="margin-top:8px">
+      <button id="testGovBtn">Test Governorate (first number)</button>
+      <button id="sendGovBtn" class="primary">Send To Governorate</button>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <button id="previewGovBtn">Preview Governorate</button>
+      <button id="stopBtn" class="danger" disabled>Stop</button>
+    </div>
+  </div>
+
+  <div class="card" id="manualCard" style="display:none">
+    <h3 style="margin:0 0 8px">B) Manual Number Batch (separate)</h3>
+    <label>Manual Phone List (one per line or comma-separated)</label>
+    <textarea id="manualNumbers" placeholder="9647700000000&#10;9647711111111"></textarea>
+    <div class="row" style="margin-top:8px">
+      <button id="testManualBtn">Test Manual (first number)</button>
+      <button id="sendManualBtn" class="primary">Send To Manual List</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <button id="exportRecipients">Export Recipients CSV</button>
+      <button id="exportReport">Export Last Report CSV</button>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <button id="exportState">Export Full State JSON</button>
+      <div><input id="importStateFile" type="file" accept=".json" /></div>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <button id="resetHistory" class="danger">Reset History Only</button>
+      <button id="resetAll" class="danger">Reset All Data</button>
+    </div>
+  </div>
+
+  <div class="card"><div id="log" class="log"></div></div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const LS_KEY='nabda_unified_state_v2';
+const IRAQI_GOVS=['Baghdad','Basra','Nineveh (Mosul)','Erbil','Sulaymaniyah','Kirkuk','Duhok','Anbar','Babil','Karbala','Najaf','Diyala','Wasit','Saladin','Maysan','Dhi Qar','Muthanna','Al-Qadisiyyah','Halabja'];
+const state=loadState();
+let stopRequested=false;
+
+function loadState(){
+  try{
+    const raw=localStorage.getItem(LS_KEY);
+    const base={recipients:[],history:[],sentMemory:[],lastReport:[],lastRun:null,settings:{apiUrl:'',apiKey:'',message:'',delay:5,skip:'yes',manualNumbers:''}};
+    if(!raw) return base;
+    const parsed=JSON.parse(raw);
+    return {...base,...parsed,settings:{...base.settings,...(parsed.settings||{})}};
+  }catch{return {recipients:[],history:[],sentMemory:[],lastReport:[],lastRun:null,settings:{}};}
+}
+function saveState(){ localStorage.setItem(LS_KEY, JSON.stringify(state)); updateBadges(); }
+function log(msg){ const d=$("log"); d.innerHTML += `<div>[${new Date().toLocaleTimeString()}] ${msg}</div>`; d.scrollTop=d.scrollHeight; }
+function normPhone(n){ let s=String(n||'').replace(/[^\d]/g,''); if(s.startsWith('00964')) s=s.slice(2); if(/^07\d{9}$/.test(s)) s='964'+s.slice(1); if(/^7\d{9}$/.test(s)) s='964'+s; return s; }
+function validPhone(n){ return /^\d{12,15}$/.test(n); }
+function normGov(v){ return String(v||'').trim().toLowerCase().replace(/\s+/g,' '); }
+function headerNorm(v){ return String(v||'').trim().toLowerCase().replace(/\s+/g,''); }
+function mapToIraqiGov(v){
+  const x=normGov(v);
+  const map={'baghdad':'Baghdad','بغداد':'Baghdad','basra':'Basra','البصرة':'Basra','nineveh':'Nineveh (Mosul)','mosul':'Nineveh (Mosul)','نينوى':'Nineveh (Mosul)','الموصل':'Nineveh (Mosul)','erbil':'Erbil','اربيل':'Erbil','أربيل':'Erbil','sulaymaniyah':'Sulaymaniyah','slemani':'Sulaymaniyah','السليمانية':'Sulaymaniyah','kirkuk':'Kirkuk','كركوك':'Kirkuk','duhok':'Duhok','دهوك':'Duhok','anbar':'Anbar','الأنبار':'Anbar','الانبار':'Anbar','babil':'Babil','babylon':'Babil','بابل':'Babil','karbala':'Karbala','كربلاء':'Karbala','najaf':'Najaf','النجف':'Najaf','diyala':'Diyala','ديالى':'Diyala','wasit':'Wasit','واسط':'Wasit','saladin':'Saladin','salah ad din':'Saladin','صلاح الدين':'Saladin','maysan':'Maysan','ميسان':'Maysan','dhi qar':'Dhi Qar','thi qar':'Dhi Qar','ذي قار':'Dhi Qar','muthanna':'Muthanna','المثنى':'Muthanna','al-qadisiyyah':'Al-Qadisiyyah','qadisiyyah':'Al-Qadisiyyah','القادسية':'Al-Qadisiyyah','halabja':'Halabja'};
+  return map[x] || String(v||'').trim();
+}
+
+function updateBadges(){
+  const govs=[...new Set(state.recipients.map(r=>r.gov))].filter(Boolean);
+  $('bRows').textContent=`Rows: ${state.recipients.length}`;
+  $('bGovs').textContent=`Governorates: ${govs.length}`;
+  $('bHistory').textContent=`History: ${state.history.length}`;
+}
+
+function refreshGovDropdown(){
+  const counts={};
+  for(const r of state.recipients){ const g=mapToIraqiGov(r.gov); counts[g]=(counts[g]||0)+1; }
+  $('gov').innerHTML='<option value="">Select governorate...</option>'+IRAQI_GOVS.map(g=>`<option value="${normGov(g)}">${g} (${counts[g]||0})</option>`).join('');
+  if(!$('gov').value){ const first=IRAQI_GOVS.find(g=>(counts[g]||0)>0); if(first) $('gov').value=normGov(first); }
+  $('stats').textContent = state.recipients.length ? `Loaded ${state.recipients.length} recipients.` : 'No recipients loaded.';
+}
+
+function parseRows(table){
+  if(!table?.length) return [];
+  const head=(table[0]||[]).map(headerNorm);
+  const nIdx=head.findIndex(h=>['number','phone','mobile','msisdn','whatsapp','to','phonenumber'].includes(h));
+  const gIdx=head.findIndex(h=>['governorate','gov','city','province','region','state'].includes(h));
+  if(nIdx<0 || gIdx<0) return [];
+  const out=[]; const seen=new Set();
+  for(let i=1;i<table.length;i++){
+    const row=table[i]||[];
+    const phone=normPhone(row[nIdx]);
+    const gov=String(row[gIdx]||'').trim();
+    if(!validPhone(phone) || !gov) continue;
+    const key=`${phone}|${normGov(gov)}`;
+    if(seen.has(key)) continue;
+    seen.add(key);
+    out.push({phone, gov:mapToIraqiGov(gov)});
+  }
+  return out;
+}
+
+async function readFileAsTable(file){
+  const name=file.name.toLowerCase();
+  if(name.endsWith('.xlsx')||name.endsWith('.xls')){
+    const wb=XLSX.read(await file.arrayBuffer(),{type:'array'});
+    return XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], {header:1, defval:''});
+  }
+  const txt=await file.text();
+  const lines=txt.split(/\r?\n/).filter(Boolean);
+  const delim=((lines[0]?.match(/;/g)||[]).length>(lines[0]?.match(/,/g)||[]).length)?';':',';
+  return lines.map(line=>{const out=[];let cur='',q=false;for(let i=0;i<line.length;i++){const ch=line[i];if(ch==='"'){if(q&&line[i+1]==='"'){cur+='"';i++;}else q=!q;continue;}if(ch===delim&&!q){out.push(cur.trim());cur='';continue;}cur+=ch;}out.push(cur.trim());return out;});
+}
+
+async function sendOne(base,key,phone,msg){
+  const to=phone.startsWith('+')?phone:'+'+phone;
+  const tries=[
+    {u:`${base}/messages/send`, b:{phone:to,message:msg}},
+    {u:`${base}/messages/send`, b:{phone:to,text:msg}},
+    {u:`${base}/messages/send`, b:{to,message:msg}},
+    {u:`${base}/messages/send`, b:{to,text:msg}},
+    {u:`${base}/send-message`, b:{phone:to,message:msg}},
+    {u:`${base}/send-message`, b:{phone:to,text:msg}},
+    {u:`${base}/send-message`, b:{to,message:msg}},
+    {u:`${base}/send-message`, b:{to,text:msg}}
+  ];
+  let last='';
+  for(const t of tries){
+    try{
+      const r=await fetch(t.u,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${key}`,'x-api-key':key},body:JSON.stringify(t.b)});
+      if(r.ok) return {ok:true,endpoint:t.u};
+      last=await r.text();
+    }catch(e){last=e.message;}
+  }
+  return {ok:false,error:last||'failed'};
+}
+
+function selectedGovList(){
+  const g=$('gov').value;
+  if(!g) return [];
+  return state.recipients.filter(r=>normGov(mapToIraqiGov(r.gov))===g);
+}
+
+function selectedManualList(){
+  const raw=$('manualNumbers').value||'';
+  const nums=raw.split(/[\n,;\s]+/).map(normPhone).filter(validPhone);
+  const uniq=[...new Set(nums)];
+  return uniq.map(phone=>({phone,gov:'Manual Batch'}));
+}
+
+function validateCommon(){
+  const missing=[];
+  if(!$('apiUrl').value.trim()) missing.push('API URL');
+  if(!$('apiKey').value.trim()) missing.push('API Key');
+  if(!$('message').value.trim()) missing.push('Message');
+  return missing;
+}
+
+function validateGovInputs(){
+  const missing=validateCommon();
+  if(!$('gov').value) missing.push('Governorate');
+  const list=selectedGovList();
+  if(!list.length) missing.push('Recipients for selected governorate');
+  return {ok:missing.length===0,missing,list,label:$('gov').selectedOptions[0]?.textContent?.trim()||'Governorate'};
+}
+
+function validateManualInputs(){
+  const missing=validateCommon();
+  const list=selectedManualList();
+  if(!list.length) missing.push('Manual phone numbers');
+  return {ok:missing.length===0,missing,list,label:'Manual Batch'};
+}
+
+async function runSend(flow){
+  const base=$('apiUrl').value.trim().replace(/\/+$/,'');
+  const key=$('apiKey').value.trim();
+  const msg=$('message').value.trim();
+  const delay=Math.max(1,Number($('delay').value||5))*1000;
+  const skip=$('skip').value==='yes';
+  const check=flow==='gov'?validateGovInputs():validateManualInputs();
+  if(!check.ok){ log(`Cannot send (${flow==='gov'?'Governorate':'Manual'}). Missing/invalid: ${check.missing.join(', ')}`); return; }
+
+  stopRequested=false; $('stopBtn').disabled=false;
+  state.lastReport=[];
+  let sent=0,failed=0,skipped=0;
+  const startedAt=new Date().toISOString();
+
+  for(const r of check.list){
+    if(stopRequested){ log('Stopped by user.'); break; }
+    const memKey=`${flow}|${r.phone}|${msg}`;
+    if(skip && state.sentMemory.includes(memKey)){ skipped++; continue; }
+    const res=await sendOne(base,key,r.phone,msg);
+    if(res.ok){
+      sent++;
+      if(!state.sentMemory.includes(memKey)) state.sentMemory.push(memKey);
+      state.history.push({ts:new Date().toISOString(),flow,phone:r.phone,gov:r.gov,status:'SENT',message:msg});
+      state.lastReport.push({phone:r.phone,gov:r.gov,status:'SENT',error:''});
+      log(`SENT ${r.phone} via ${res.endpoint}`);
+    }else{
+      failed++;
+      state.history.push({ts:new Date().toISOString(),flow,phone:r.phone,gov:r.gov,status:'FAILED',message:msg,error:res.error||''});
+      state.lastReport.push({phone:r.phone,gov:r.gov,status:'FAILED',error:res.error||''});
+      log(`FAILED ${r.phone}: ${res.error||'failed'}`);
+    }
+    saveState();
+    await new Promise(r=>setTimeout(r,delay));
+  }
+
+  state.lastRun={startedAt,endedAt:new Date().toISOString(),flow,label:check.label,total:check.list.length,sent,failed,skipped};
+  saveState();
+  $('stopBtn').disabled=true;
+  log(`Done (${check.label}). Total=${check.list.length} Sent=${sent} Failed=${failed} Skipped=${skipped}`);
+}
+
+function saveSettingsFromForm(){
+  state.settings={...(state.settings||{}),apiUrl:$('apiUrl').value||'',apiKey:$('apiKey').value||'',message:$('message').value||'',delay:Number($('delay').value||5),skip:$('skip').value||'yes',manualNumbers:$('manualNumbers').value||'',activeMode:(state.settings?.activeMode||'gov')};
+  saveState();
+}
+function restoreSettingsToForm(){
+  const s=state.settings||{};
+  if(typeof s.apiUrl==='string') $('apiUrl').value=s.apiUrl;
+  if(typeof s.apiKey==='string') $('apiKey').value=s.apiKey;
+  if(typeof s.message==='string') $('message').value=s.message;
+  if(typeof s.manualNumbers==='string') $('manualNumbers').value=s.manualNumbers;
+  if(s.delay!==undefined) $('delay').value=String(s.delay);
+  if(typeof s.skip==='string') $('skip').value=s.skip;
+}
+
+function setMode(mode){
+  const isGov=mode==='gov';
+  $('govCard').style.display=isGov?'block':'none';
+  $('manualCard').style.display=isGov?'none':'block';
+  $('tabGov').classList.toggle('active',isGov);
+  $('tabManual').classList.toggle('active',!isGov);
+  state.settings={...(state.settings||{}),activeMode:mode};
+  saveState();
+}
+
+$('file').addEventListener('change', async (e)=>{
+  const f=e.target.files?.[0]; if(!f) return;
+  try{
+    const table=await readFileAsTable(f);
+    const parsed=parseRows(table);
+    state.recipients=parsed;
+    saveState();
+    refreshGovDropdown();
+    log(`Imported ${parsed.length} recipients from ${f.name}`);
+  }catch(err){ log('Import failed: '+err.message); }
+  e.target.value='';
+});
+
+$('previewGovBtn').addEventListener('click',()=>{
+  const list=selectedGovList();
+  if(!list.length){ log('No recipients for selected governorate.'); return; }
+  log(`Governorate preview: ${list.length}. First 5: ${list.slice(0,5).map(x=>x.phone).join(', ')}`);
+});
+$('testGovBtn').addEventListener('click', async ()=>{
+  const check=validateGovInputs();
+  if(!check.ok){ log(`Cannot test (Governorate). Missing/invalid: ${check.missing.join(', ')}`); return; }
+  const base=$('apiUrl').value.trim().replace(/\/+$/,'');
+  const key=$('apiKey').value.trim();
+  const msg=$('message').value.trim();
+  const first=check.list[0].phone;
+  log(`Testing governorate first number: ${first}`);
+  const res=await sendOne(base,key,first,msg);
+  if(res.ok) log(`TEST SENT: ${first} via ${res.endpoint}`); else log(`TEST FAILED: ${first} -> ${res.error}`);
+});
+$('sendGovBtn').addEventListener('click',()=>runSend('gov'));
+
+$('testManualBtn').addEventListener('click', async ()=>{
+  const check=validateManualInputs();
+  if(!check.ok){ log(`Cannot test (Manual). Missing/invalid: ${check.missing.join(', ')}`); return; }
+  const base=$('apiUrl').value.trim().replace(/\/+$/,'');
+  const key=$('apiKey').value.trim();
+  const msg=$('message').value.trim();
+  const first=check.list[0].phone;
+  log(`Testing manual first number: ${first}`);
+  const res=await sendOne(base,key,first,msg);
+  if(res.ok) log(`TEST SENT: ${first} via ${res.endpoint}`); else log(`TEST FAILED: ${first} -> ${res.error}`);
+});
+$('sendManualBtn').addEventListener('click',()=>runSend('manual'));
+$('tabGov').addEventListener('click',()=>setMode('gov'));
+$('tabManual').addEventListener('click',()=>setMode('manual'));
+
+$('stopBtn').addEventListener('click',()=>{ stopRequested=true; $('stopBtn').disabled=true; });
+
+$('exportRecipients').addEventListener('click',()=>{
+  if(!state.recipients.length){ log('No recipients to export.'); return; }
+  const rows=[['phone','governorate'],...state.recipients.map(r=>[r.phone,r.gov])];
+  const csv=rows.map(r=>r.join(',')).join('\n');
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download='recipients_export.csv'; a.click();
+});
+$('exportReport').addEventListener('click',()=>{
+  if(!state.lastReport.length){ log('No report yet.'); return; }
+  const rows=[['phone','governorate','status','error'],...state.lastReport.map(r=>[r.phone,r.gov,r.status,(r.error||'').replace(/,/g,' ')])];
+  const csv=rows.map(r=>r.join(',')).join('\n');
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download='last_report.csv'; a.click();
+});
+$('exportState').addEventListener('click',()=>{
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([JSON.stringify(state,null,2)],{type:'application/json'}));
+  a.download='nabda_unified_state.json';
+  a.click();
+});
+$('importStateFile').addEventListener('change', async (e)=>{
+  const f=e.target.files?.[0]; if(!f) return;
+  try{
+    const incoming=JSON.parse(await f.text());
+    if(Array.isArray(incoming.recipients)) state.recipients=incoming.recipients;
+    if(Array.isArray(incoming.history)) state.history=incoming.history;
+    if(Array.isArray(incoming.sentMemory)) state.sentMemory=incoming.sentMemory;
+    if(Array.isArray(incoming.lastReport)) state.lastReport=incoming.lastReport;
+    state.lastRun=incoming.lastRun||state.lastRun;
+    saveState(); refreshGovDropdown();
+    log('State imported successfully.');
+  }catch(err){ log('State import failed: '+err.message); }
+  e.target.value='';
+});
+$('resetHistory').addEventListener('click',()=>{
+  if(!confirm('Reset history and sent-memory only?')) return;
+  state.history=[]; state.sentMemory=[]; state.lastReport=[]; state.lastRun=null; saveState(); log('History reset done.');
+});
+$('resetAll').addEventListener('click',()=>{
+  if(!confirm('Reset ALL data (recipients + history + reports)?')) return;
+  state.recipients=[]; state.history=[]; state.sentMemory=[]; state.lastReport=[]; state.lastRun=null; saveState(); refreshGovDropdown(); log('All data reset done.');
+});
+
+['apiUrl','apiKey','message','delay','skip','manualNumbers'].forEach(id=>{
+  $(id).addEventListener('input', saveSettingsFromForm);
+  $(id).addEventListener('change', saveSettingsFromForm);
+});
+
+updateBadges();
+refreshGovDropdown();
+restoreSettingsToForm();
+setMode(state.settings?.activeMode==='manual'?'manual':'gov');
+log('Ready. Use Governorate Batch OR Manual Batch separately.');
+</script>
+</body>
+</html>
